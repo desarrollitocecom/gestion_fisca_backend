@@ -1,20 +1,20 @@
 const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
-    const IFI = sequelize.define('IFI', {
+    const RG = sequelize.define('RG', {
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
             defaultValue: DataTypes.UUIDV4,
         },
-        nro_ifi: {
+        nro_rg: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        fecha: {
+        fecha_rg: {
             type: DataTypes.DATEONLY,
             allowNull: false
         },
-        documento_ifi: {
+        documento_rg: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -22,40 +22,26 @@ module.exports = (sequelize) => {
             type: DataTypes.ENUM('RSG1', 'RSA', 'RSG2'),
             allowNull: false
         },
-        id_evaluar: {
+        id_g: {
             type: DataTypes.UUID,
             allowNull: false,
         },
-        id_descargo_ifi: {
-            type: DataTypes.UUID,
-            references: {
-                model: 'DescargoIFIs',
-                key: 'id',
-            },
+        documento_ac: {
+            type: DataTypes.STRING,
             allowNull: false
         },
+        
         //  id_AI1:{
         //      type: DataTypes.UUID,
         //      references: {
-        //          model: 'Analista1s',
+        //          model: 'Analista5',
         //          key: 'id',
         //      },
         //      allowNull: false
         //  }
     }, {
-        tableName: 'IFIs',
+        tableName: 'RGs',
         timestamps: true
     });
-    IFI.associate = (db) => {
-        // Relación de 1 a 1 entre IFI y los tipos basados en 'tipo'
-        IFI.belongsTo(db.RSA, { foreignKey: 'id_evaluar', as: 'RSA', constraints: false });
-        IFI.belongsTo(db.RSG1, { foreignKey: 'id_evaluar', as: 'RSG1', constraints: false });
-        IFI.belongsTo(db.RSG2, { foreignKey: 'id_evaluar', as: 'RSG2', constraints: false });
-
-        // Relación con DescargoIFI
-        IFI.hasOne(db.DescargoIFI, { foreignKey: 'id_descargo_ifi', as: 'DescargoIFIs' });
-    };
-
-
-    return IFI;
+       return RG;
 };
