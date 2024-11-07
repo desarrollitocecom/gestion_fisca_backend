@@ -22,22 +22,22 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        // id_descargo_RSGNP:{
-        //     type:DataTypes.UUID,
-        //     references: {
-        //         model: 'DescargoRGs',
-        //         key: 'id',
-        //     },
-        //     allowNull:false
-        // },
-        // id_rg:{
-        //     type:DataTypes.UUID,
-        //     references: {
-        //         model: 'RGs',
-        //         key: 'id',
-        //     },
-        //     allowNull:false
-        // },
+        id_descargo_RSGNP:{
+            type:DataTypes.UUID,
+            references: {
+                model: 'DescargoRGs',
+                key: 'id',
+            },
+            allowNull:false
+        },
+        id_rg:{
+            type:DataTypes.UUID,
+            references: {
+                model: 'RGs',
+                key: 'id',
+            },
+            allowNull:false
+        },
         //  id_AR3:{
         //      type: DataTypes.UUID,
         //      references: {
@@ -51,5 +51,11 @@ module.exports = (sequelize) => {
         tableName: 'RGSNPs',
         timestamps: true
     });
+    
+    RSGNP.associate = (db) => {
+        // Relación con DescargoRG
+        RSGNP.hasOne(db.RG, { foreignKey: 'id_rg', as: 'RGs' });
+        RSGNP.hasOne(db.RG, { foreignKey: 'id_descargo_RSGNP', as: 'DescargoRGs' });
+    };
     return RSGNP;
 };

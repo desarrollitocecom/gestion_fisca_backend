@@ -22,22 +22,22 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        // tipo:{
-        //     type:DataTypes.ENUM('RSGP','RSGNP'),
-        //     allowNull:false
-        // },
-        // id_evaluar_rsa:{
-        //     type:DataTypes.UUID,
-        //     allowNull:false,
-        //  },
-        //  id_descargo_RSA:{
-        //      type: DataTypes.UUID,
-        //      references: {
-        //          model: 'DescargoRSAs',
-        //          key: 'id',
-        //      },
-        //      allowNull: false
-        //  },
+        tipo:{
+            type:DataTypes.ENUM('RSGP','RSGNP'),
+            allowNull:false
+        },
+        id_evaluar_rsa:{
+            type:DataTypes.UUID,
+            allowNull:false,
+         },
+         id_descargo_RSA:{
+             type: DataTypes.UUID,
+             references: {
+                 model: 'DescargoRSAs',
+                 key: 'id',
+             },
+             allowNull: false
+         },
         //  id_AR2:{
         //      type: DataTypes.UUID,
         //      references: {
@@ -50,5 +50,9 @@ module.exports = (sequelize) => {
         tableName: 'RSAs',
         timestamps: true
     });
+    RSA.associate = (db) => {
+        // Relación con DescargoRSA
+        RSA.hasOne(db.DescargoRSA, { foreignKey: 'id_descargo_RSA', as: 'DescargoRSAs' });
+    };
     return RSA;
 };

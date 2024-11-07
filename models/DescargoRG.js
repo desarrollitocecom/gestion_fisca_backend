@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize")
 module.exports = (sequelize) => {
-    const DescargoRG = sequelize.define('RSGP', {
+    const DescargoRG = sequelize.define('DescargoRG', {
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
