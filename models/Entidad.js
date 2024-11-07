@@ -1,40 +1,33 @@
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
-    const Infraccion = sequelize.define('Infraccion', {
+    const Entidad = sequelize.define('Entidad', {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true
         },
-        actividad_economica: {
+        nombre: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        codigo: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        descripcion: {
+        domicilio: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        tipo: {
+        distrito: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        monto: {
-            type: DataTypes.DOUBLE,
-            allowNull: true
-        },
-        lugar_infraccion: {
+        giro_uso: { 
             type: DataTypes.STRING,
             allowNull: true
         }
     }, {
-        tableName: 'Infracciones',
+        tableName: 'Entidades',
         timestamps: true
     });
 
-    return Infraccion;
+   
+    return Entidad;
 };
