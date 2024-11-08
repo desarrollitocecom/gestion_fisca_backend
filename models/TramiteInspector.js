@@ -24,11 +24,11 @@ module.exports=(sequelize)=>{
         },
         nro_opcional:{
             type:DataTypes.STRING,
-            allowNull:false
+            allowNull:true
         },
-        documento_opcional:{
+        acta_opcional:{
             type:DataTypes.STRING,
-            allowNull:false
+            allowNull:true
         },
 
     }, {
@@ -36,12 +36,9 @@ module.exports=(sequelize)=>{
         timestamps: true
     });
 
-    // // Relación: Un InspectorDocumento tiene muchos NC
-    // inspectorDocumento.hasMany(sequelize.models.NC, {
-    //     foreignKey: 'id_inspectorDocumento',  // FK en NC que hace referencia a InspectorDocumento
-    //     as: 'ncs',  // Alias para acceder a los NC relacionados
-    // });
-    
+    TramiteInspector.associate = (db) => {
+        TramiteInspector.hasMany(db.NC, { foreignKey: 'id_tramiteInspector', as: 'nc'})
+    }
 
     return TramiteInspector;
 };

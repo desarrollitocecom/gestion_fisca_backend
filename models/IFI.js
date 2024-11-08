@@ -26,22 +26,22 @@ module.exports=(sequelize)=>{
             type:DataTypes.UUID,
             allowNull:false,
         },
-        id_descargo_ifi:{
-            type: DataTypes.UUID,
-            references: {
-                model: 'DescargoIFIs',
-                key: 'id',
-            },
-            allowNull: false
-        },
-        id_AI1:{
-            type: DataTypes.UUID,
-            references: {
-                model: 'Analista1s',
-                key: 'id',
-            },
-            allowNull: false
-        }
+        // id_descargo_ifi:{
+        //     type: DataTypes.UUID,
+        //     references: {
+        //         model: 'DescargoIFIs',
+        //         key: 'id',
+        //     },
+        //     allowNull: false
+        // },
+        // id_AI1:{
+        //     type: DataTypes.UUID,
+        //     references: {
+        //         model: 'Analista1s',
+        //         key: 'id',
+        //     },
+        //     allowNull: false
+        // }
 
 
     }, {

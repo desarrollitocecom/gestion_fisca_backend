@@ -31,5 +31,9 @@ module.exports=(sequelize)=>{
         timestamps: true
     });
 
+    Administrado.associate = (db) => {
+        Administrado.hasMany(db.NC, { foreignKey: 'id_administrado', as: 'nc'})
+    }
+
     return Administrado;
 }
