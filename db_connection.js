@@ -23,7 +23,7 @@ fs.readdirSync(path.join(__dirname, 'models'))
     console.log(`Modelo ${file} cargado`);
   });
 
-//Configurar asociaciones si los modelos tienen asociaciones
+// Configurar asociaciones si los modelos tienen asociaciones
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
     db[modelName].associate(db);
