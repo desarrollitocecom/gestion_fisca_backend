@@ -27,7 +27,8 @@ module.exports = (sequelize) => {
             references: {
                 model: 'EjecucionMCs',
                 key: 'id',
-            }
+            },
+            unique: true
         },
 
         id_estado: { 
