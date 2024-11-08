@@ -23,14 +23,14 @@ fs.readdirSync(path.join(__dirname, 'models'))
     console.log(`Modelo ${file} cargado`);
   });
 
- //Configurar asociaciones si los modelos tienen asociaciones
- Object.keys(db).forEach((modelName) => {
-   if (db[modelName].associate) {
-     db[modelName].associate(db);
-     console.log("asociando: ", modelName);
-   }
- }
- );
+// Configurar asociaciones si los modelos tienen asociaciones
+Object.keys(db).forEach((modelName) => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+    console.log("asociando: ", modelName);
+  }
+}
+);
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
