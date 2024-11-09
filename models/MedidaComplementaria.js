@@ -3,8 +3,7 @@ const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
     const MedidaComplementaria = sequelize.define('MedidaComplementaria', {
         id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
+            type: DataTypes.UUID,
             primaryKey: true
         },
         nro_acta_ejecucion: {

@@ -3,8 +3,7 @@ const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
     const Infraccion = sequelize.define('Infraccion', {
         id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
+            type: DataTypes.UUID,
             primaryKey: true
         },
         actividad_economica: {
