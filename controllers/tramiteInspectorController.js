@@ -1,20 +1,24 @@
-const tramiteInspector = require('../models/TramiteInspector')
+const {TramiteInspector} = require('../db_connection')
 
-const createTramiteInspector = async (nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional) => {
-    
-    if(nro_nc && documento_nc && nro_acta && documento_acta && nro_opcional && acta_opcional){
-        
+const createTramiteInspector = async ({nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional}) => {
         try {
-            const newTramiteNC = await tramiteInspector.create({nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional}); 
-            
+            const newTramiteNC = await TramiteInspector.create(
+                {
+                    nro_nc,
+                    documento_nc,
+                    nro_acta,
+                    documento_acta,
+                    nro_opcional,
+                    acta_opcional
+                }
+            ); 
+            console.log('fin');
             return newTramiteNC || null;
+
         } catch (error) {
             console.log('error creando usuario');
             return false;
         }
-    }else{
-        return false;
-    }
 }
 
 module.exports = { createTramiteInspector }

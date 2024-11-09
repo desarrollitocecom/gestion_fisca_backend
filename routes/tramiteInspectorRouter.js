@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { createTramiteHandler } = require('../handler/tramiteInspectorHandler');
+const { createTramiteHandler } = require('../handlers/tramiteInspectorHandler');
 
 router.post('/nuevoTramiteNC', createTramiteHandler);
 
