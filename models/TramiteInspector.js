@@ -1,6 +1,7 @@
-const { DataTypes } = require("sequelize");
-module.exports=(sequelize)=>{
-    const TramiteInspector=sequelize.define('TramiteInspector',{
+const { DataTypes } = require('sequelize');
+
+module.exports = (sequelize) => {
+    const TramiteInspector = sequelize.define('TramiteInspector',{
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
@@ -8,19 +9,19 @@ module.exports=(sequelize)=>{
         },
         nro_nc:{
           type:DataTypes.STRING,
-          allowNull: false
+          allowNull: true
         },
         documento_nc:{
             type:DataTypes.STRING,
-            allowNull:false
+            allowNull:true
         },
         nro_acta:{
             type:DataTypes.STRING,
-            allowNull:false
+            allowNull:true
         },
         documento_acta:{
             type:DataTypes.STRING,
-            allowNull:false
+            allowNull:true
         },
         nro_opcional:{
             type:DataTypes.STRING,

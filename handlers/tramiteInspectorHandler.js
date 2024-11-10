@@ -1,8 +1,8 @@
-const { createTramiteInspector } = require('../controller/tramiteInspectorController');
+const { createTramiteInspector } = require('../controllers/tramiteInspectorController');
 
 const createTramiteHandler = async(req, res) => {
     
-    console.log(req.body);  
+    
     
     const { nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional  } = req.body; 
     const errors = []; 
@@ -32,7 +32,7 @@ const createTramiteHandler = async(req, res) => {
 
     try {
         
-        const newTramiteInspector = await createTramiteInspector( nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional );
+        const newTramiteInspector = await createTramiteInspector( {nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional} );
         if(newTramiteInspector){ 
             res.status(201).json({ 
                 message: 'se creo', 
