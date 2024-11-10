@@ -2,8 +2,6 @@ const { createTramiteInspector } = require('../controllers/tramiteInspectorContr
 
 const createTramiteHandler = async(req, res) => {
     
-    
-    
     const { nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional  } = req.body; 
     const errors = []; 
 
