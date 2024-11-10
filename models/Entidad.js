@@ -4,7 +4,8 @@ module.exports = (sequelize) => {
     const Entidad = sequelize.define('Entidad', {
         id: {
             type: DataTypes.UUID,
-            primaryKey: true
+            primaryKey: true,
+            defaultValue: DataTypes.UUIDV4,
         },
         nombre: {
             type: DataTypes.STRING,

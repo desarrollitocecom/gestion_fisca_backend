@@ -4,7 +4,8 @@ module.exports = (sequelize) => {
     const MedidaComplementaria = sequelize.define('MedidaComplementaria', {
         id: {
             type: DataTypes.UUID,
-            primaryKey: true
+            primaryKey: true,
+            defaultValue: DataTypes.UUIDV4,
         },
         nro_acta_ejecucion: {
             type: DataTypes.INTEGER,
@@ -15,14 +16,14 @@ module.exports = (sequelize) => {
             allowNull: true
          },
         id_documento: {
-             type: DataTypes.INTEGER,
+             type: DataTypes.UUID,
              references: {
               model: 'TipoDocumentoComplementarios',
                  key: 'id',
              }
         },
         id_ejecucionMC: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.UUID,
             references: {
                 model: 'EjecucionMCs',
                 key: 'id',
@@ -30,7 +31,7 @@ module.exports = (sequelize) => {
         },
 
         id_estado: { 
-            type: DataTypes.INTEGER,
+            type: DataTypes.UUID,
             references: {
                 model: 'EstadoMCs', 
                 key: 'id'
