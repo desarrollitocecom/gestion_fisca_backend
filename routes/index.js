@@ -1,9 +1,12 @@
 const { Router } = require("express");
 const router = Router();
 
-const tramiteInspector = require('../routes/tramiteInspectorRouter');
+const tramiteInspector = require('./tramiteInspectorRouter');
+const informeFinal=require('./informeFinalRouter');
+const descargoIFI=require('./descargoInformeFinalRouter')
 
 router.use('/inspector', tramiteInspector);
+router.use('/ifi',informeFinal);
 
 
 /*
