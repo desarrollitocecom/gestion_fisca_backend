@@ -1,11 +1,11 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes, UUIDV4 } = require('sequelize');
 
 module.exports = (sequelize) => {
     const EjecucionMC = sequelize.define('EjecucionMC', {
         id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
+            type: DataTypes.UUID,
+            primaryKey: true,
+            defaultValue: DataTypes.UUIDV4
         },
         nombre: {
             type: DataTypes.STRING,
@@ -15,11 +15,6 @@ module.exports = (sequelize) => {
         tableName: 'EjecucionMCs',
         timestamps: true
     });
-
-    EjecucionMC.associate = (db) => {
-        EjecucionMC.hasOne(db.MedidaComplementaria, { foreignKey: 'id_ejecucionMC', as: 'medidaComplementaria' });
-    };
-
-
+    
     return EjecucionMC;
 };

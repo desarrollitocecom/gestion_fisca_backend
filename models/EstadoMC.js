@@ -3,9 +3,9 @@ const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
     const EstadoMC = sequelize.define('EstadoMC', {
         id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
+            type: DataTypes.UUID,
+            primaryKey: true,
+            defaultValue: DataTypes.UUIDV4
         },
         nombre: {
             type: DataTypes.STRING,
@@ -18,8 +18,5 @@ module.exports = (sequelize) => {
         timestamps: true
     });
     
-
-    
-
     return EstadoMC;
 };

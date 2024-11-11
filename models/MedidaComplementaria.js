@@ -3,9 +3,9 @@ const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
     const MedidaComplementaria = sequelize.define('MedidaComplementaria', {
         id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
+            type: DataTypes.UUID,
+            primaryKey: true,
+            defaultValue: DataTypes.UUIDV4
         },
         nro_acta_ejecucion: {
             type: DataTypes.INTEGER,
@@ -16,28 +16,30 @@ module.exports = (sequelize) => {
             allowNull: true
          },
         id_documento: {
-             type: DataTypes.INTEGER,
+             type: DataTypes.UUID,
+             allowNull: false,
              references: {
               model: 'TipoDocumentoComplementarios',
                  key: 'id',
-             }
+             },
+             unique:true
         },
         id_ejecucionMC: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.UUID,
+            allowNull: false,
             references: {
                 model: 'EjecucionMCs',
                 key: 'id',
-            },
-            unique: true
+            },       
         },
 
         id_estado: { 
-            type: DataTypes.INTEGER,
+            type: DataTypes.UUID,
+            allowNull: false,
             references: {
                 model: 'EstadoMCs', 
                 key: 'id'
             },
-            allowNull: false
         }
         
 
@@ -49,8 +51,8 @@ module.exports = (sequelize) => {
 
     MedidaComplementaria.associate = (db) => {
         MedidaComplementaria.belongsTo(db.TipoDocumentoComplementario, { foreignKey: 'id_documento', as: 'tipoDocumento' });
-         MedidaComplementaria.belongsTo(db.EjecucionMC, { foreignKey: 'id_ejecucionMC', as: 'ejecucion' });
-         MedidaComplementaria.belongsTo(db.EstadoMC, { foreignKey: 'id_estado', as: 'estado' });
+        MedidaComplementaria.belongsTo(db.EjecucionMC, { foreignKey: 'id_ejecucionMC', as: 'ejecucion' });
+        MedidaComplementaria.belongsTo(db.EstadoMC, { foreignKey: 'id_estado', as: 'estado' });
     };
 
     return MedidaComplementaria;
