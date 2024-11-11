@@ -10,7 +10,7 @@ const estadomc = require('../routes/estadoMCRouter');
 const medidacomplementaria = require('./medidaComplementariaRouter');
 const TipoDocumentoComplementario = require('./tipoDCRouter')
 const informeFinal=require('./informeFinalRouter');
-const descargoIFI=require('./descargoInformeFinalRouter')
+
 
 router.use('/tipodocumentoidentidad',TipoDocumentoIdentidad);
 router.use('/ejecucionmc',ejecucionmc);
@@ -19,5 +19,5 @@ router.use('/medidacomplementaria',medidacomplementaria);
 router.use('/documentocomplementario',TipoDocumentoComplementario);
 router.use('/inspector', tramiteInspector);
 router.use('/ifi',informeFinal);
-
+router.use('/descargoIFI',descargoIFI);
 module.exports = router;
