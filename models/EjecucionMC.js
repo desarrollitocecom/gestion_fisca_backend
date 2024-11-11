@@ -4,8 +4,7 @@ module.exports = (sequelize) => {
     const EjecucionMC = sequelize.define('EjecucionMC', {
         id: {
             type: DataTypes.UUID,
-            primaryKey: true,
-            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true
         },
         nombre: {
             type: DataTypes.STRING,
