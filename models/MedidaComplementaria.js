@@ -15,14 +15,14 @@ module.exports = (sequelize) => {
             allowNull: true
          },
         id_documento: {
-             type: DataTypes.INTEGER,
+             type: DataTypes.UUID,
              references: {
               model: 'TipoDocumentoComplementarios',
                  key: 'id',
              }
         },
         id_ejecucionMC: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.UUID,
             references: {
                 model: 'EjecucionMCs',
                 key: 'id',
@@ -30,7 +30,7 @@ module.exports = (sequelize) => {
         },
 
         id_estado: { 
-            type: DataTypes.INTEGER,
+            type: DataTypes.UUID,
             references: {
                 model: 'EstadoMCs', 
                 key: 'id'

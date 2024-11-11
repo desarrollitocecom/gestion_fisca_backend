@@ -27,7 +27,7 @@ module.exports=(sequelize)=>{
             allowNull:false
         },
         nro_documento:{
-            type:DataTypes.INTEGER,
+            type:DataTypes.UUID,
             allowNull:false
         },
         id_administrado:{
@@ -47,7 +47,7 @@ module.exports=(sequelize)=>{
             allowNull:false
         },
         nro_licencia_funcionamiento:{
-            type:DataTypes.INTEGER,
+            type:DataTypes.UUID,
             allowNull:false
         },
         id_infraccion:{
