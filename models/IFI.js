@@ -32,7 +32,7 @@ module.exports = (sequelize) => {
                 model: 'DescargoIFIs',
                 key: 'id',
             },
-            allowNull: false
+            allowNull: true
         },
         // id_AI1:{
         //     type: DataTypes.UUID,
@@ -42,8 +42,6 @@ module.exports = (sequelize) => {
         //     },
         //     allowNull: false
         // }
-
-
     }, {
         tableName: 'IFIs',
         timestamps: true
@@ -55,7 +53,7 @@ module.exports = (sequelize) => {
         IFI.belongsTo(db.RSG2, { foreignKey: 'id_evaluar', as: 'RSG2', constraints: false });
 
         // Relación con DescargoIFI
-        IFI.hasOne(db.DescargoIFI, { foreignKey: 'id_descargo_ifi', as: 'DescargoIFIs' });
+        IFI.hasOne(db.DescargoIFI, { foreignKey: 'id_descargo_ifi', as: 'DescargoIFIs',unique:true });
     };
 
 
