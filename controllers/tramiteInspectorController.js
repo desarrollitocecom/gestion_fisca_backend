@@ -1,13 +1,14 @@
-const { TramiteInspector } = require('../db_connection');
+const { TramiteInspector, NC } = require('../db_connection');
 const fs = require('fs');
 const path = require('path');
 
 
 // Función para guardar archivos PDF desde base64 en una carpeta específica
 const saveBase64ToFile = (base64Data, prefix, nro, folder) => {
+    const nroFormatted = nro.replace(/\s+/g, '_');
     const base64Content = base64Data.replace(/^data:image\/\w+;base64,/, '');
     const buffer = Buffer.from(base64Content, 'base64');
-    const fileName = `${prefix}_${nro}_${Date.now()}.pdf`;
+    const fileName = `${prefix}_${nroFormatted}_${Date.now()}.pdf`;
     const filePath = path.posix.join('uploads', folder, fileName); // Ruta con `/` incluso en Windows
     const fullFilePath = path.join(__dirname, '../', filePath); // Ruta absoluta
 
@@ -17,13 +18,16 @@ const saveBase64ToFile = (base64Data, prefix, nro, folder) => {
 
 const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional, id_inspector }) => {
     try {
+        // Guardar los archivos base64 y obtener las rutas
         documento_nc = saveBase64ToFile(documento_nc, 'NC', nro_nc, 'NC');
         documento_acta = saveBase64ToFile(documento_acta, 'AF', nro_nc, 'AF');
 
+        // Si existe el acta opcional, también guardarla
         if (acta_opcional) {
             acta_opcional = saveBase64ToFile(acta_opcional, 'ActaOpcional', nro_nc, 'Opcional');
         }
 
+        // Crear el trámite en la tabla TramiteInspector
         const newTramiteNC = await TramiteInspector.create({
             nro_nc,
             documento_nc, 
@@ -31,6 +35,12 @@ const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, document
             documento_acta,
             nro_opcional,
             acta_opcional,
+            id_inspector
+        });
+
+        // Usar el id generado del trámite para crear el registro en NC
+        const newNC = await NC.create({
+            id_tramiteInspector: newTramiteNC.id // Usar el id del trámite creado
         });
 
         console.log('Trámite creado con éxito');
@@ -41,6 +51,7 @@ const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, document
         return false;
     }
 };
+
 
 
 const getAllTramiteInspector = async (page = 1, limit = 20) => {

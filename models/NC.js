@@ -12,11 +12,11 @@ module.exports=(sequelize)=>{
                 model: 'TramiteInspectores',
                 key: 'id',
             },
-            allowNull: false
+            allowNull: true
         },
         id_digitador:{
             type:DataTypes.STRING,
-            allowNull:false
+            allowNull:true
         },
         id_tipoDocumento:{
             type: DataTypes.UUID,
@@ -24,11 +24,11 @@ module.exports=(sequelize)=>{
                 model: 'TipoDocumentoIdentidades',
                 key: 'id',
             },
-            allowNull:false
+            allowNull:true
         },
         nro_documento:{
             type:DataTypes.UUID,
-            allowNull:false
+            allowNull:true
         },
         id_administrado:{
             type: DataTypes.UUID,
@@ -36,7 +36,7 @@ module.exports=(sequelize)=>{
                 model: 'Administrados',
                 key: 'id',
             },
-            allowNull:false
+            allowNull:true
         },
         id_entidad:{
             type: DataTypes.UUID,
@@ -44,11 +44,11 @@ module.exports=(sequelize)=>{
                 model: 'Entidades',
                 key: 'id',
             },
-            allowNull:false
+            allowNull:true
         },
         nro_licencia_funcionamiento:{
             type:DataTypes.UUID,
-            allowNull:false
+            allowNull:true
         },
         id_infraccion:{
             type: DataTypes.UUID,
@@ -56,23 +56,23 @@ module.exports=(sequelize)=>{
                 model: 'Infracciones',
                 key: 'id',
             },
-            allowNull:false
+            allowNull:true
         },
         placa_rodaje:{
             type:DataTypes.STRING,
-            allowNull:false
+            allowNull:true
         },
         fecha_detencion:{
             type:DataTypes.DATE,
-            allowNull:false
+            allowNull:true
         },
         fecha_notificacion:{
             type:DataTypes.DATE,
-            allowNull:false
+            allowNull:true
         },
         observaciones:{
             type:DataTypes.STRING,
-            allowNull:false
+            allowNull:true
         },
         id_medida_complementaria:{
             type: DataTypes.UUID,
@@ -80,7 +80,7 @@ module.exports=(sequelize)=>{
                 model: 'MedidaComplementarias',
                 key: 'id',
             },
-            allowNull:false
+            allowNull:true
         },
         id_descargo_NC:{
             type: DataTypes.UUID,
@@ -88,7 +88,7 @@ module.exports=(sequelize)=>{
                 model: 'DescargoNCs',
                 key: 'id',
             },
-            allowNull:false
+            allowNull:true
         },
         id_nro_IFI:{
             type: DataTypes.UUID,
@@ -96,7 +96,7 @@ module.exports=(sequelize)=>{
                 model: 'IFIs',
                 key: 'id',
             },
-            allowNull:false
+            allowNull:true
         },
         id_estado_NC:{
             type: DataTypes.UUID,
@@ -104,7 +104,7 @@ module.exports=(sequelize)=>{
                 model: 'EstadoNCs',
                 key: 'id',
             },
-            allowNull:false
+            allowNull:true
         },
         id_const_noti:{
             type: DataTypes.UUID,
@@ -112,7 +112,7 @@ module.exports=(sequelize)=>{
                 model: 'ConstanciaNotificaciones',
                 key: 'id',
             },
-            allowNull:false
+            allowNull:true
         },
 
     }, {

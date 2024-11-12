@@ -29,7 +29,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); //para lee
 
 server.listen(PORT_FISCA, () => {
   console.log(`FISCA Server is running on port ${PORT_FISCA}`);
-  sequelize.sync({ force: true }) // cambiar de alter a force para que se borren las tablas y se creen de nuevo, hasta que queden bien diseñadas
+  sequelize.sync({ alter: true }) // cambiar de alter a force para que se borren las tablas y se creen de nuevo, hasta que queden bien diseñadas
     .then(() => console.log("Database is connected"))
     .catch(err => console.error("Error connecting to the database:", err));
 });
