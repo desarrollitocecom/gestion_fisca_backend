@@ -9,8 +9,6 @@ const ejecucionmc=require('../routes/ejecucionMCRouter');
 const estadomc = require('../routes/estadoMCRouter');
 const medidacomplementaria = require('./medidaComplementariaRouter');
 const TipoDocumentoComplementario = require('./tipoDCRouter')
-const tramiteInspector = require('../routes/tramiteInspectorRouter');
-const informeFinal=require('./informeFinalRouter');
 
 
 router.use('/inspector',tramiteInspector);

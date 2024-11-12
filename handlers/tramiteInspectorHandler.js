@@ -1,51 +1,41 @@
 const { createTramiteInspector } = require('../controllers/tramiteInspectorController');
 
+const validatePDF = (base64String, fieldName, errors) => {
+    if (base64String) {
+        const base64Data = base64String.replace(/^data:image\/\w+;base64,/, '');
+        const buffer = Buffer.from(base64Data, 'base64');
+        const pdfSignature = buffer.slice(0, 4).toString();
+
+        if (pdfSignature !== '%PDF') {
+            errors.push(`El archivo proporcionado en ${fieldName} debe ser un PDF`);
+        }
+    } else {
+        errors.push(`El campo ${fieldName} es obligatorio`);
+    }
+};
+
 const createTramiteHandler = async (req, res) => {
-    const { nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional } = req.body;
+    const { nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional, id_inspector } = req.body;
     const errors = [];
 
     if (!nro_nc) {
         errors.push('Ingrese nro_nc obligatorio');
     }
 
-    if (!documento_nc) {
-        errors.push('El documento NC es obligatorio');
-    } else {
-        const base64Data = documento_nc.replace(/^data:image\/\w+;base64,/, '');
-        const buffer = Buffer.from(base64Data, 'base64');
-        const pdfSignature = buffer.slice(0, 4).toString();
-    
-        if (pdfSignature !== '%PDF') {
-            errors.push('El archivo proporcionado debe ser un PDF');
-        }    
-    }
+    validatePDF(documento_nc, 'documento_nc', errors);
 
     if (!nro_acta) {
         errors.push('Ingrese nro_acta obligatorio');
     }
 
-    if (!documento_acta) {
-        errors.push('El documento NC es obligatorio');
-    } else {
-        const base64Data = documento_acta.replace(/^data:image\/\w+;base64,/, '');
-        const buffer = Buffer.from(base64Data, 'base64');
-        const pdfSignature = buffer.slice(0, 4).toString();
-    
-        if (pdfSignature !== '%PDF') {
-            errors.push('El archivo proporcionado debe ser un PDF');
-        }    
-    }
-
+    validatePDF(documento_acta, 'documento_acta', errors);
 
     if (acta_opcional) {
-        
-        const base64Data = acta_opcional.replace(/^data:image\/\w+;base64,/, '');
-        const buffer = Buffer.from(base64Data, 'base64');
-        const pdfSignature = buffer.slice(0, 4).toString();
-    
-        if (pdfSignature !== '%PDF') {
-            errors.push('El archivo proporcionado debe ser un PDF');
-        }    
+        validatePDF(acta_opcional, 'acta_opcional', errors);
+    }
+
+    if (!id_inspector) {
+        errors.push('El inspector es obligatorio');
     }
 
     if (errors.length > 0) {

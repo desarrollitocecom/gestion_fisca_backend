@@ -1,50 +1,43 @@
-const {TramiteInspector} = require('../db_connection');
+const { TramiteInspector } = require('../db_connection');
 const fs = require('fs');
 const path = require('path');
 
-const createTramiteInspector = async ({nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional}) => {
-        try {
-            const base64DataNC = documento_nc.replace(/^data:image\/\w+;base64,/, '');
-            const bufferNC = Buffer.from(base64DataNC, 'base64');
-            const fileNameNC = `NC_${nro_nc}_${Date.now()}.pdf`; 
-            const filePathNC = path.join(__dirname, '../uploads/NC', fileNameNC);
-            fs.writeFileSync(filePathNC, bufferNC);
-            documento_nc = fileNameNC;
+// Función para guardar archivos PDF desde base64 en una carpeta específica
+const saveBase64ToFile = (base64Data, prefix, nro, folder) => {
+    const base64Content = base64Data.replace(/^data:image\/\w+;base64,/, '');
+    const buffer = Buffer.from(base64Content, 'base64');
+    const fileName = `${prefix}_${nro}_${Date.now()}.pdf`;
+    const filePath = path.join(__dirname, `../uploads/${folder}`, fileName);
+    fs.writeFileSync(filePath, buffer);
+    return fileName;
+};
 
-            const base64DataAF = documento_acta.replace(/^data:image\/\w+;base64,/, '');
-            const bufferAF = Buffer.from(base64DataAF, 'base64');
-            const fileNameAF = `NC_${nro_nc}_${Date.now()}.pdf`; 
-            const filePathAF = path.join(__dirname, '../uploads/NC', fileNameAF);
-            fs.writeFileSync(filePathAF, bufferAF);
-            documento_acta = fileNameAF;
+const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional, id_inspector }) => {
+    try {
+        documento_nc = saveBase64ToFile(documento_nc, 'NC', nro_nc, 'NC');
 
-            if(acta_opcional){
-                const base64DataAF = documento_acta.replace(/^data:image\/\w+;base64,/, '');
-                const bufferAF = Buffer.from(base64DataAF, 'base64');
-                const fileNameAF = `NC_${nro_nc}_${Date.now()}.pdf`; 
-                const filePathAF = path.join(__dirname, '../uploads/NC', fileNameAF);
-                fs.writeFileSync(filePathAF, bufferAF);
-                documento_acta = fileNameAF;
-            }
+        documento_acta = saveBase64ToFile(documento_acta, 'Acta', nro_nc, 'AF');
 
-
-            const newTramiteNC = await TramiteInspector.create(
-                {
-                    nro_nc,
-                    documento_nc,
-                    nro_acta,
-                    documento_acta,
-                    nro_opcional,
-                    acta_opcional
-                }
-            ); 
-            console.log('fin');
-            return newTramiteNC || null;
-
-        } catch (error) {
-            console.log('error creando usuario');
-            return false;
+        if (acta_opcional) {
+            acta_opcional = saveBase64ToFile(acta_opcional, 'ActaOpcional', nro_nc, 'Opcional');
         }
-}
 
-module.exports = { createTramiteInspector }
+        const newTramiteNC = await TramiteInspector.create({
+            nro_nc,
+            documento_nc,
+            nro_acta,
+            documento_acta,
+            nro_opcional,
+            acta_opcional,
+        });
+
+        console.log('Trámite creado con éxito');
+        return newTramiteNC || null;
+
+    } catch (error) {
+        console.error('Error creando trámite:', error);
+        return false;
+    }
+};
+
+module.exports = { createTramiteInspector };
