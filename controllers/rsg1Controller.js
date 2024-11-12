@@ -10,11 +10,12 @@ const createRSG1Controller = async (nro_resolucion, fecha_resolucion, documento)
         });
 
         return newRSG1 || null;
-    } catch (error) {
+    } catch (error){
         console.error('Error al crear RSG1:', error);
-        return { message: 'Error al crear RSG1', error };
-    }
+        return {message: 'Error al crear RSG1', error} 
+    };   
 };
+
 
 // Función para actualizar una instancia existente de RSG1
 const updateRSG1Controller = async (id, nro_resolucion, fecha_resolucion, documento) => {
@@ -25,7 +26,6 @@ const updateRSG1Controller = async (id, nro_resolucion, fecha_resolucion, docume
             console.error('RSG1 no encontrada');
             return { message: 'RSG1 no encontrada' };
         }
-
         await rsg1.update({
             nro_resolucion,
             fecha_resolucion,

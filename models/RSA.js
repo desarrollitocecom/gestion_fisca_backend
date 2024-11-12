@@ -24,7 +24,7 @@ module.exports = (sequelize) => {
         },
         tipo:{
             type:DataTypes.ENUM('RSGP','RSGNP'),
-            allowNull:false
+            allowNull:true
         },
         id_evaluar_rsa:{
             type:DataTypes.UUID,

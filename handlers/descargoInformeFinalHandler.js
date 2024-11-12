@@ -4,9 +4,10 @@ const {
 } = require('../controllers/descargoInformeFinalController');
 
 const createDescargoHandler = async (req, res) => {
-    const { nro_descargo, fecha_descargo, documento_RSA, ifiId } = req.body;
+    const { nro_descargo, fecha_descargo,  documento_DIFI } = req.body;
+    
     try {
-        const response = await createDescargoAndAssociate(nro_descargo, fecha_descargo, documento_RSA, ifiId);
+        const response = await createDescargoAndAssociate({nro_descargo, fecha_descargo,  documento_DIFI});
         
         if (!response) {
             return res.status(400).json({

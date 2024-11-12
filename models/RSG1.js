@@ -20,14 +20,14 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        //  id_AR1: {
-        //      type: DataTypes.UUID,
-        //      references: {
-        //          model: 'AResolutiva1s',
-        //          key: 'id',
-        //      },
-        //      allowNull: false
-        //  }
+        // //  id_AR1: {
+        // //      type: DataTypes.UUID,
+        // //      references: {
+        // //          model: 'AResolutiva1s',
+        // //          key: 'id',
+        // //      },
+        // //      allowNull: false
+        // //  }
 
     }, {
         tableName: 'RSG1s',

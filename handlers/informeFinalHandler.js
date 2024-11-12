@@ -4,25 +4,35 @@ const {
     getAllInformeFinalController,
     getInformeFinalController
 }=require('../controllers/informeFinalController');
+
 const createInformeFinalHandler=async (req,res) => {
-    const {nro_ifi, fecha, documento_ifi,tipo,id_evaluar}=req.body; 
-    try {
-        const response=await createInformeFinalController(nro_ifi,fecha,documento_ifi,tipo,id_evaluar);
-        if(!response)res.status(201).json({
-            message:'Error al crear nuevo informe Final',
+    const {nro_ifi, fecha, documento_ifi,tipo,id_descargo_ifi}=req.body; 
+    
+    if(tipo !== 'RSG1'){
+        res.status(400).json({message: 'Solo puedes crear RSG1'})
+    }
+  try {
+        const response=await createInformeFinalController({nro_ifi,fecha,documento_ifi,tipo,id_descargo_ifi});
+        if(!response)
+            return res.status(201).json({
+            message:'Error al crear nuevo informe Final ',
             data:[]
         })
-        res.status(200).json({message:'Nuevo Informe Final Creado',data:response})
+      return  res.status(200).json({message:'Nuevo Informe Final Creado',data:response})
     } catch (error) {
         console.error('Error al crear el Informe final:', error);
-        return res.status(500).json({ message: 'Error al crear el informe Final', error });
+        return res.status(500).json({
+            message: 'Error al crear el informe Final',
+            error: error.message
+        });
     }
 };
+
 const updateInformeFinalHandler=async (req,res) => {
     const {id}=req.params
-    const {nro_ifi, fecha, documento_ifi,tipo,id_evaluar}=req.body; 
+    const {nro_ifi, fecha, documento_ifi,tipo,id_descargo_ifi}=req.body; 
     try {
-        const response=await updateInformeFinalController(id,nro_ifi,fecha,documento_ifi,tipo,id_evaluar);
+        const response=await updateInformeFinalController(id,nro_ifi,fecha,documento_ifi,tipo,id_descargo_ifi);
         if(!response)res.status(201).json({
             message:`Error al Modificar el IFI con el id:${id}`,
             data:[]

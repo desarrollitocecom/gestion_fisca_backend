@@ -1,25 +1,32 @@
-const {IFI}=require('../db_connection');
+const {IFI,DescargoIFI}=require('../db_connection');
 
-const createInformeFinalController=async (nro_ifi,fecha,documento_ifi,tipo,id_evaluar,id_descargo_ifi) => {
+const createInformeFinalController=async ({nro_ifi,fecha,documento_ifi,tipo,id_descargo_ifi}) => {
+    
     try {
-        const response=await IFI.create(id,nro_ifi,fecha,documento_ifi,tipo,id_evaluar,id_descargo_ifi);
-        return response
+        const checking=await DescargoIFI.findByPk(id_descargo_ifi)
+        console.log(id_descargo_ifi);
+        
+        if(!checking){
+        const response=await IFI.create({nro_ifi,fecha,documento_ifi,tipo,id_descargo_ifi});
+        return response || null
+        }
+         throw new Error("El id de DescargoID ya existe ");
+        
     } catch (error) {
         console.error("Error al crear el Informe Final:", error);
         return false;
     }
 };
 
-const updateInformeFinalController=async (id,nro_ifi,fecha,documento_ifi,tipo,id_evaluar,id_descargo_ifi) => {
+const updateInformeFinalController=async (id,nro_ifi,fecha,documento_ifi,tipo,id_descargo_ifi) => {
     try {
-        const updateIfi=await IFI.getInformeFinalController(id);
+        const updateIfi=await getInformeFinalController(id);
         if(updateIfi){
-            await IFI.update({
+            await updateIfi.update({
                 nro_ifi:nro_ifi,
                 fecha:fecha,
                 documento_ifi:documento_ifi,
                 tipo:tipo,
-                id_evaluar:id_evaluar,
                 id_descargo_ifi:id_descargo_ifi
                 });
         }
@@ -45,20 +52,11 @@ const getAllInformeFinalController=async () => {
 };
 const getInformeFinalController=async (id) => {
     try {
-        const response=await IFI.findOne({where: {
-            id ,           
-        },
+        const response=await IFI.findOne({where: {id},
         include: [{
             model: DescargoIFI,
             as: 'DescargoIFIs'
         }]});
-        // const ifi = await IFI.findOne({
-        //     where: { id: ifiId },
-        //     include: [{
-        //         model: DescargoIFI,
-        //         as: 'DescargoIFIs'
-        //     }]
-        // });
         return response || null
     } catch (error) {
         console.error('Error al traer un solo Informe Final',error);

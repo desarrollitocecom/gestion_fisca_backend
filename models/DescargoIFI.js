@@ -15,7 +15,7 @@ module.exports = (sequelize) => {
             allowNull: false
         },
 
-        documento_RSA: {
+        documento_DIFI: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -32,10 +32,7 @@ module.exports = (sequelize) => {
         tableName: 'DescargoIFIs',
         timestamps: true
     });
-    DescargoIFI.associate = (db) => {
-        // Relación de 1 a 1 entre DescargoIFI y los tipos basados en 'tipo'
-        DescargoIFI.belongsTo(db.IFI, {  foreignKey: 'id_descargo_ifi', as: 'DescargoIFIs',unique:true});       
-    };
+ 
 
 
     return DescargoIFI;
