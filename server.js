@@ -8,6 +8,7 @@ const { initializeSocket, userSockets } = require("./sockets");
 //const loginMiddleware = require("./checkers/validateToken");
 //const usuariosRouter = require("./routes/loginRouter");
 const cors = require("cors");
+const path = require('path'); //traer path
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,8 @@ app.use("/", router);
 app.get("/", (req, res) => {
   res.json({ message: "El servidor esta funcionando!", data: "Bien perro!" });
 });
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); //para leerlo defrente y el front tenga acceso a esos archivos
 
 server.listen(PORT_FISCA, () => {
   console.log(`FISCA Server is running on port ${PORT_FISCA}`);
