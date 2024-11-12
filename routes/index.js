@@ -2,6 +2,7 @@ const { Router } = require("express");
 const router = Router();
 
 const tramiteInspector = require('./tramiteInspectorRouter');
+const digitadorNC = require('./digitadorRouter');
 const informeFinal=require('./informeFinalRouter');
 const descargoIFI=require('./descargoInformeFinalRouter')
 const TipoDocumentoIdentidad = require('../routes/tipoDocumentoIdentidadRouter');
@@ -12,6 +13,7 @@ const TipoDocumentoComplementario = require('./tipoDCRouter')
 
 
 router.use('/inspector',tramiteInspector);
+router.use('/digitador',digitadorNC);
 router.use('/tipodocumentoidentidad',TipoDocumentoIdentidad);
 router.use('/ejecucionmc',ejecucionmc);
 router.use('/estadomc',estadomc);
