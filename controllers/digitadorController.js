@@ -1,6 +1,6 @@
-const { NC } = require("../db_connection");
+const { Administrado, Entidad, Infraccion, MedidaComplementaria, NC } = require("../db_connection");
 
-const updateNC = async (id_tramiteInspector, { 
+const updateNC = async (id, { 
     id_tipoDocumento, 
     nro_documento, 
 
@@ -29,44 +29,86 @@ const updateNC = async (id_tramiteInspector, {
     fecha_notificacion,
     observaciones,
 
-    id_documento,
-    documento_MC,
-    id_ejecucionMC,
-    nro_acta_ejecucion,
-    dc_levantamiento,
-    id_estado,
+    // id_documento,
+    // documento_MC,
+    // id_ejecucionMC,
+    // nro_acta_ejecucion,
+    // dc_levantamiento,
+    // id_estado,
 
-    id_descargo_NC,
-    id_nro_IFI,
-    id_estado_NC,
-    id_const_noti,
+    id_medida_complementaria,
 
     id_digitador 
 
  }) => {
     
     try {
-        console.log(id_tramiteInspector);
 
-        const newAdministrado = await Administrado.create({
-            nombres,
-            apellidos,
-            domicilio,
-            distrito,
-            giro,
-        });
+        let newAdministrado = null;
+        let newEntidad = null;
+        let newInfraccion = null;
 
-        const newEntidad = await Entidad.create({
-            nombre_entidad,
-            domicilio_entidad,
-            distrito_entidad,
-            giro_entidad,
-        });
+        if (nombres || apellidos || domicilio || distrito || giro) {
+            newAdministrado = await Administrado.create({
+                nombres,
+                apellidos,
+                domicilio,
+                distrito,
+                giro,
+            });
+        }
+
+        if (nombre_entidad || domicilio_entidad || distrito_entidad || giro_entidad) {
+            newEntidad = await Entidad.create({
+                nombre_entidad,
+                domicilio_entidad,
+                distrito_entidad,
+                giro_entidad,
+            });
+        }
+
+        if (actividad_economica || codigo || descripcion || tipo || monto || lugar_infraccion) {
+            newInfraccion = await Infraccion.create({
+                actividad_economica,    
+                codigo,
+                descripcion,
+                tipo,
+                monto,
+                lugar_infraccion,
+            });
+        }
+
+        // const newMC = await MedidaComplementaria.create({
+        //     id_documento,
+        //     documento_MC,
+        //     id_ejecucionMC,
+        //     nro_acta_ejecucion,
+        //     dc_levantamiento,
+        //     id_estado,
+        // });
         
-        const response = await getTipoDocumentoIdentidad(id_tramiteInspector);
-        console.log(response);
-        // if (response) await response.update({ documento });
-        return  null;
+        
+        const findNC = await NC.findOne({ where: { id } });
+
+        if (findNC) {
+            await findNC.update({ 
+                id_tipoDocumento,
+                nro_documento,
+                id_administrado: newAdministrado ? newAdministrado.id : null,
+                id_entidad: newEntidad ? newEntidad.id : null,
+                nro_licencia_funcionamiento,
+                id_infraccion: newInfraccion ? newInfraccion.id : null,
+                placa_rodaje,
+                fecha_detencion,
+                fecha_notificacion,
+                observaciones,
+                id_medida_complementaria,
+                id_digitador
+             });
+        }
+
+        return findNC ||  null;
+
     } catch (error) {
         console.error("Error al modificar el Tipo de Documento de Identidad en el controlador:", error);
         return false;

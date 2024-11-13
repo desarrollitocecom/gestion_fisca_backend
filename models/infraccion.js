@@ -9,11 +9,11 @@ module.exports = (sequelize) => {
         },
         actividad_economica: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         codigo: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         descripcion: {
             type: DataTypes.STRING,
