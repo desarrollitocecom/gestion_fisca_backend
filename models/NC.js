@@ -74,14 +74,14 @@ module.exports=(sequelize)=>{
             type:DataTypes.STRING,
             allowNull:true
         },
-        id_medida_complementaria:{
-            type: DataTypes.UUID,
-            references: {
-                model: 'MedidaComplementarias',
-                key: 'id',
-            },
-            allowNull:true
-        },
+        // id_medida_complementaria:{
+        //     type: DataTypes.UUID,
+        //     references: {
+        //         model: 'MedidaComplementarias',
+        //         key: 'id',
+        //     },
+        //     allowNull:true
+        // },
         id_descargo_NC:{
             type: DataTypes.UUID,
             references: {
@@ -129,7 +129,7 @@ module.exports=(sequelize)=>{
         NC.belongsTo(db.TipoDocumentoIdentidad, { foreignKey: 'id_tipoDocumento', as: 'DocIdentidad'})
         NC.belongsTo(db.Entidad, { foreignKey: 'id_entidad', as: 'entidad'})
         NC.belongsTo(db.Infraccion, { foreignKey: 'id_infraccion', as: 'infraccion'})
-        NC.belongsTo(db.MedidaComplementaria, { foreignKey: 'id_medida_complementaria', as: 'medidaComplementaria'})
+        // NC.belongsTo(db.MedidaComplementaria, { foreignKey: 'id_medida_complementaria', as: 'medidaComplementaria'})
         NC.belongsTo(db.ConstanciaNotificacion, { foreignKey: 'id_const_noti', as: 'ConstNotifi'})
         NC.belongsTo(db.EstadoNC, { foreignKey: 'id_estado_NC', as: 'estadoNC'})
         NC.belongsTo(db.IFI, { foreignKey: 'id_nro_IFI', as: 'IFI'})

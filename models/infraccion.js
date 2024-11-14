@@ -36,5 +36,10 @@ module.exports = (sequelize) => {
         timestamps: true
     });
 
+
+    Infraccion.associate = (db) => {
+        Infraccion.hasMany(db.NC, { foreignKey: 'id_tramiteInspector', as: 'nc'})
+    }
+
     return Infraccion;
 };

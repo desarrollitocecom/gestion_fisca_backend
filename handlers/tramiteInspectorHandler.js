@@ -17,7 +17,20 @@ const validatePDF = (base64String, fieldName, errors) => {
 };
 
 const createTramiteHandler = async (req, res) => {
-    const { nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional, id_inspector } = req.body;
+    const { 
+            id_documento, 
+            nro_acta_ejecucion, 
+            documento_medida_complementaria, 
+            id_estado,
+
+            nro_nc, 
+            documento_nc, 
+            nro_acta, 
+            documento_acta, 
+            id_inspector, 
+    
+        } = req.body;
+
     const errors = [];
 
     if (!nro_nc) {
@@ -32,12 +45,32 @@ const createTramiteHandler = async (req, res) => {
 
     validatePDF(documento_acta, 'documento_acta', errors);
 
-    if (acta_opcional) {
-        validatePDF(acta_opcional, 'acta_opcional', errors);
-    }
-
     if (!id_inspector) {
         errors.push('El inspector es obligatorio');
+    }
+
+
+
+    // Validación condicional de los 4 campos
+    const relatedFields = [id_documento, nro_acta_ejecucion, documento_medida_complementaria, id_estado];
+    const anyRelatedFieldFilled = relatedFields.some(field => field !== undefined && field !== null);
+
+    if (anyRelatedFieldFilled) {
+        if (!id_documento) {
+            errors.push('El campo id_documento es obligatorio cuando se proporciona alguno de los otros campos relacionados.');
+        }
+        if (!nro_acta_ejecucion) {
+            errors.push('El campo nro_acta_ejecucion es obligatorio cuando se proporciona alguno de los otros campos relacionados.');
+        }
+        if (!documento_medida_complementaria) {
+            errors.push('El campo documento_medida_complementaria es obligatorio cuando se proporciona alguno de los otros campos relacionados.');
+        }
+        if (documento_medida_complementaria) {
+            validatePDF(documento_medida_complementaria, 'acta_opcional', errors);
+        }
+        if (!id_estado) {
+            errors.push('El campo id_estado es obligatorio cuando se proporciona alguno de los otros campos relacionados.');
+        }
     }
 
     if (errors.length > 0) {
@@ -45,7 +78,7 @@ const createTramiteHandler = async (req, res) => {
     }
 
     try {
-        const newTramiteInspector = await createTramiteInspector({ nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional });
+        const newTramiteInspector = await createTramiteInspector({ nro_nc, documento_nc, nro_acta, documento_acta, id_documento, documento_medida_complementaria, id_estado });
         if (newTramiteInspector) {
             res.status(201).json({
                 message: 'Trámite creado con éxito',

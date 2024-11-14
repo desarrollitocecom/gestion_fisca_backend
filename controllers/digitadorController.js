@@ -1,4 +1,4 @@
-const { Administrado, Entidad, Infraccion, MedidaComplementaria, NC } = require("../db_connection");
+const { Administrado, Entidad, Infraccion, MedidaComplementaria, NC, sequelize } = require("../db_connection");
 
 const updateNC = async (id, { 
     id_tipoDocumento, 
@@ -41,6 +41,9 @@ const updateNC = async (id, {
     id_digitador 
 
  }) => {
+
+    // Iniciar una transacción
+    const transaction = await sequelize.transaction();
     
     try {
 
@@ -55,7 +58,7 @@ const updateNC = async (id, {
                 domicilio,
                 distrito,
                 giro,
-            });
+            }, { transaction }); // Incluir la transacción
         }
 
         if (nombre_entidad || domicilio_entidad || distrito_entidad || giro_entidad) {
@@ -64,7 +67,7 @@ const updateNC = async (id, {
                 domicilio_entidad,
                 distrito_entidad,
                 giro_entidad,
-            });
+            }, { transaction });
         }
 
         if (actividad_economica || codigo || descripcion || tipo || monto || lugar_infraccion) {
@@ -75,7 +78,7 @@ const updateNC = async (id, {
                 tipo,
                 monto,
                 lugar_infraccion,
-            });
+            }, { transaction });
         }
 
         // const newMC = await MedidaComplementaria.create({
@@ -88,10 +91,12 @@ const updateNC = async (id, {
         // });
         
         
-        const findNC = await NC.findOne({ where: { id } });
+        // Buscar el registro NC existente
+        const findNC = await NC.findOne({ where: { id }, transaction });
 
         if (findNC) {
-            await findNC.update({ 
+            // Actualizar el registro NC
+            await findNC.update({
                 id_tipoDocumento,
                 nro_documento,
                 id_administrado: newAdministrado ? newAdministrado.id : null,
@@ -104,12 +109,16 @@ const updateNC = async (id, {
                 observaciones,
                 id_medida_complementaria,
                 id_digitador
-             });
+            }, { transaction });
         }
 
-        return findNC ||  null;
-
+        // Confirmar la transacción
+        await transaction.commit();
+        return findNC || null;
+        
     } catch (error) {
+        // Revertir la transacción en caso de error
+        await transaction.rollback();
         console.error("Error al modificar el Tipo de Documento de Identidad en el controlador:", error);
         return false;
     }

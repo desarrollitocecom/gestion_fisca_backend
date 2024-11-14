@@ -16,15 +16,23 @@ const saveBase64ToFile = (base64Data, prefix, nro, folder) => {
     return filePath;
 };
 
-const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, nro_opcional, acta_opcional, id_inspector }) => {
+const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, id_documento, documento_medida_complementaria, id_estado }) => {
     try {
         // Guardar los archivos base64 y obtener las rutas
         documento_nc = saveBase64ToFile(documento_nc, 'NC', nro_nc, 'NC');
-        documento_acta = saveBase64ToFile(documento_acta, 'AF', nro_nc, 'AF');
+        documento_acta = saveBase64ToFile(documento_acta, 'AF', nro_acta, 'AF');
 
         // Si existe el acta opcional, también guardarla
-        if (acta_opcional) {
-            acta_opcional = saveBase64ToFile(acta_opcional, 'ActaOpcional', nro_nc, 'Opcional');
+        if (documento_medida_complementaria) {
+            documento_medida_complementaria = saveBase64ToFile(documento_medida_complementaria, 'ActaOpcional', id_documento, 'Opcional');
+        }
+
+        if(documento_medida_complementaria && id_documento){
+            newMedidaComplementaria = await MedidaComplementaria.create({
+                id_documento,
+                documento_medida_complementaria,
+                id_estado
+            });
         }
 
         // Crear el trámite en la tabla TramiteInspector
@@ -33,8 +41,8 @@ const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, document
             documento_nc, 
             nro_acta,
             documento_acta,
-            nro_opcional,
-            acta_opcional,
+            id_documento,
+            documento_medida_complementaria,
             id_inspector
         });
 
