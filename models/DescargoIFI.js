@@ -14,7 +14,6 @@ module.exports = (sequelize) => {
             type: DataTypes.DATEONLY,
             allowNull: false
         },
-
         documento_DIFI: {
             type: DataTypes.STRING,
             allowNull: false

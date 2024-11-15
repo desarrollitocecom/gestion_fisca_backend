@@ -28,7 +28,7 @@ module.exports = (sequelize) => {
         },
         id_evaluar_rsa:{
             type:DataTypes.UUID,
-            allowNull:false,
+            allowNull:true,
          },
          id_descargo_RSA:{
              type: DataTypes.UUID,
@@ -36,8 +36,9 @@ module.exports = (sequelize) => {
                  model: 'DescargoRSAs',
                  key: 'id',
              },
-             allowNull: false
-         },
+             allowNull: true,
+             unique:true
+         }, 
         //  id_AR2:{
         //      type: DataTypes.UUID,
         //      references: {
@@ -52,7 +53,7 @@ module.exports = (sequelize) => {
     });
     RSA.associate = (db) => {
         // Relación con DescargoRSA
-        RSA.hasOne(db.DescargoRSA, { foreignKey: 'id_descargo_RSA', as: 'DescargoRSAs' });
+        RSA.belongsTo(db.DescargoRSA, { foreignKey: 'id_descargo_RSA', as: 'DescargoRSAs' });
     };
     return RSA;
 };

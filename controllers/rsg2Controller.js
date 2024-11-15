@@ -1,7 +1,7 @@
-const { RSG2 } = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
+const { RSG2} = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
 
 // Función para crear una nueva instancia de RSG2
-const createRSG2 = async (nro_resolucion2, fecha_resolucion, documento) => {
+const createRSG2Controller = async ({nro_resolucion2, fecha_resolucion, documento}) => {
     try {
         const newRSG2 = await RSG2.create({
             nro_resolucion2,
@@ -15,9 +15,17 @@ const createRSG2 = async (nro_resolucion2, fecha_resolucion, documento) => {
         return { message: 'Error al crear RSG2', error };
     }
 };
+const getRSG2Controller=async (id) => {
+    try {
+        const response=await RSG2.findByPk(id)
+        return response || null 
+    } catch (error) {
+        console.error('Error  crear RSG2:', error);
+        return false;
+    }
+}
 
-// Función para actualizar una instancia existente de RSG2
-const updateRSG2 = async (id, nro_resolucion2, fecha_resolucion, documento) => {
+const updateRSG2Controller = async (id, nro_resolucion2, fecha_resolucion, documento) => {
     try {
         const rsg2 = await RSG2.findOne({ where: { id } });
 
@@ -40,6 +48,8 @@ const updateRSG2 = async (id, nro_resolucion2, fecha_resolucion, documento) => {
 };
 
 module.exports = {
-    createRSG2,
-    updateRSG2
-};
+    createRSG2Controller,
+    updateRSG2Controller,
+    getRSG2Controller
+    
+}

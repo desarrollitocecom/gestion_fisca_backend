@@ -1,5 +1,5 @@
 const { RSA } = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
-const createRsaController = async (nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA) => {
+const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA}) => {
     try {
         const newRsa = await RSA.create({
             nro_rsa,

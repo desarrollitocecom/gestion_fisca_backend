@@ -7,10 +7,9 @@ const {
 
 const createInformeFinalHandler=async (req,res) => {
     const {nro_ifi, fecha, documento_ifi,tipo,id_descargo_ifi}=req.body; 
+    console.log(nro_ifi, fecha, documento_ifi,tipo,id_descargo_ifi);
     
-    if(tipo !== 'RSG1'){
-        res.status(400).json({message: 'Solo puedes crear RSG1'})
-    }
+    
   try {
         const response=await createInformeFinalController({nro_ifi,fecha,documento_ifi,tipo,id_descargo_ifi});
         if(!response)

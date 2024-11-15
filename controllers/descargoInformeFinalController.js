@@ -1,5 +1,5 @@
 const {DescargoIFI } = require('../db_connection');
-const createDescargoAndAssociate = async ({nro_descargo, fecha_descargo, documento_DIFI,}) => {
+const createDescargoAndAssociate = async ({nro_descargo, fecha_descargo, documento_DIFI}) => {
     try {
         const newDescargo = await DescargoIFI.create({
             nro_descargo,
@@ -14,7 +14,7 @@ const createDescargoAndAssociate = async ({nro_descargo, fecha_descargo, documen
         return false
     }
 };
-const updateDescargoAndAssociate = async (descargoId, nro_descargo, fecha_descargo, documento_RSA, ifiId) => {
+const updateDescargoAndAssociate = async (descargoId, nro_descargo, fecha_descargo, documento_RSA) => {
     try {
      
         const descargo = await DescargoIFI.findOne({ where: { id: descargoId } });
@@ -22,8 +22,7 @@ const updateDescargoAndAssociate = async (descargoId, nro_descargo, fecha_descar
         await descargo.update({
             nro_descargo,
             fecha_descargo,
-            documento_RSA,
-            id_descargo_ifi: ifiId 
+            documento_RSA 
         });
 
         return descargo|| null ;

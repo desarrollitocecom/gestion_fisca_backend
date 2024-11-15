@@ -14,7 +14,7 @@ module.exports = (sequelize) => {
             type: DataTypes.DATEONLY,
             allowNull: false
         },
-        documento_descargo: {
+        documento_DRSA: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -25,7 +25,7 @@ module.exports = (sequelize) => {
         //          model: 'Analista3',
         //          key: 'id',
         //      },
-        //      allowNull: false
+        //      allowNull3: false
         //  }
 
     }, {

@@ -1,11 +1,12 @@
 const{DescargoRSA}=require('../db_connection');
-const createDescargoRsaController=async (nro_descargo,fecha_descargo,documento_descargo,RsaId) => {
+const createDescargoRsaController=async ({nro_descargo,fecha_descargo,documento_DRSA}) => {
+    console.log();
+    
     try {
         const newDescargo = await DescargoRSA.create({
             nro_descargo,
             fecha_descargo,
-            documento_descargo,
-            id_descargo_ifi: RsaId
+            documento_DRSA            
         });
 
         return newDescargo || null;
@@ -14,16 +15,16 @@ const createDescargoRsaController=async (nro_descargo,fecha_descargo,documento_d
         return { message: 'Error al crear y asociar DescargoRSA', error };
     }
 }
-const updateDescargoRsaController=async (descargoId,nro_descargo,fecha_descargo,documento_descargo,RsaId) => {
+const updateDescargoRsaController=async ({id,nro_descargo,fecha_descargo,documento_DRSA}) => {
     try {
      
-        const descargo = await DescargoRSA.findOne({ where: { id: descargoId } });
+        const descargo = await DescargoRSA.findOne({ where: { id } });
 
         await descargo.update({
             nro_descargo,
             fecha_descargo,
-            documento_descargo,
-            id_descargo_ifi: RsaId 
+            documento_DRSA,
+
         });
 
         return descargo|| null ;
@@ -33,5 +34,6 @@ const updateDescargoRsaController=async (descargoId,nro_descargo,fecha_descargo,
     } 
 }
 module.exports={
-
+    createDescargoRsaController,
+    updateDescargoRsaController
 }
