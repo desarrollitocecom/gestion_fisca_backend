@@ -9,7 +9,11 @@ module.exports=(sequelize)=>{
         tipo:{
           type:DataTypes.STRING,
           allowNull: false
-        },    
+        },
+        state: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true, 
+          },    
     }, {
         tableName: 'EstadoDescargoNCs',
         timestamps: true
