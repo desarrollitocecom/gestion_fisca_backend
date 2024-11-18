@@ -1,38 +1,27 @@
 const {Entidad}= require ("../db_connection");
 
- const getAllEntidades = async (page = 1 , limit=20 )=>{
-    const offset = (page = 1)* limit ;
+const createEntidad = async ({
+    nombre_entidad,
+    domicilio_entidad,
+    distrito_entidad,
+    giro_entidad
+    }) => {
 
-    try{
-        const response = await Entidad.findAndCountAll({
-            limit,
-            offset,
-            order:[['id','ASC']],           
+    try {
+        const newEntidad = Entidad.create({
+            nombre_entidad,
+            domicilio_entidad,
+            distrito_entidad,
+            giro_entidad
         });
 
-        return {totalCount : response.count , data: response.rows, currentPage: page} || null;
+        console.log('Entidad creado con éxito');
+        return newEntidad || null;
 
-
-    }
-    catch(error){
-        console.error({message :"Error en el controlador al traer todos las Entidades", data : error});
-        return false;
-
-    }
-
- };
-
- const getEntidades = async (id) => {
-    try{
-        const response = await Entidad.findOne({where:{id}});
-        return response || null;
-    }
-    catch(error){
-        console.error({message:"Error en el controlador al traer la Entidad", data:error})
+    } catch (error) {
+        console.error('Entidad creando trámite:', error);
         return false;
     }
- };
+}
 
- const createEntidad = async ({nombre}) => {
-    
- }
+module.exports = { createEntidad };
