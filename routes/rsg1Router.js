@@ -9,6 +9,6 @@ const {createRSG1Handler,
 
 router.post("/",createRSG1Handler);
 router.patch("/:id",updateRSG1Handler);
-router.post("/modiIFI",updateinIfiHandler);
+router.post("/modiRGS1",updateinIfiHandler);
 
 module.exports = router;

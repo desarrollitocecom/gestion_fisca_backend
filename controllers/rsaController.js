@@ -18,14 +18,9 @@ const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, docu
     }
 };
 // Función para actualizar una instancia existente de RSA
-const updateRsaController = async (id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA) => {
+const updateRsaController = async ({id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA}) => {
     try {
-        const rsa = await RSA.findOne({ where: { id } });
-
-        if (!rsa) {
-            console.error('RSA no encontrada');
-            return { message: 'RSA no encontrada' };
-        }
+        const rsa = await RSA.findByPk(id);
 
         await rsa.update({
             nro_rsa,
@@ -63,9 +58,22 @@ const getAllRsaController = async () => {
         return false;
     }
 };
+const updateinRsaController = async (uuid, tipo, id_evaluar_rsa) => {
+    const Rsa = await RSA.findByPk(uuid);
+    if (!Rsa) {
+        throw new Error(`Registro con uuid ${uuid} no encontrado en Rsa.`);
+    }
+
+    // Actualizar los campos de Rsa y recargar el registro
+    await Rsa.update({ tipo:tipo, id_evaluar_rsa:id_evaluar_rsa });
+    const updatedRsa = await Rsa.reload();
+    return updatedRsa;
+};
+
 module.exports = {
     createRsaController,
     updateRsaController,
     getRsaController,
-    getAllRsaController
+    getAllRsaController,
+    updateinRsaController
 };

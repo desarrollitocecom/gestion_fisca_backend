@@ -28,7 +28,8 @@ module.exports = (sequelize) => {
                 model: 'DescargoRGs',
                 key: 'id',
             },
-            allowNull:false
+            allowNull:true,
+            unique:true
         },
         id_rg:{
             type:DataTypes.UUID,
@@ -36,7 +37,8 @@ module.exports = (sequelize) => {
                 model: 'RGs',
                 key: 'id',
             },
-            allowNull:false
+            allowNull:true,
+            unique:true
         },
         //  id_AR3:{
         //      type: DataTypes.UUID,
@@ -54,8 +56,8 @@ module.exports = (sequelize) => {
     
     RSGNP.associate = (db) => {
         // Relación con DescargoRG
-        RSGNP.hasOne(db.RG, { foreignKey: 'id_rg', as: 'RGs' });
-        RSGNP.hasOne(db.RG, { foreignKey: 'id_descargo_RSGNP', as: 'DescargoRGs' });
+        RSGNP.belongsTo(db.RG, { foreignKey: 'id_rg', as: 'RGs' });
+        RSGNP.belongsTo(db.DescargoRG, { foreignKey: 'id_descargo_RSGNP', as: 'DescargoRGs' });
     };
     return RSGNP;
 };

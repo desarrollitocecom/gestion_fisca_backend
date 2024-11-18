@@ -5,7 +5,7 @@ const {
     updateRsaHandler,
     getRsaHandler,
     getAllRsaHandler,
-    updateinIfiHandler
+    updateinRSAHandler
     
 }=require('../handlers/rsaHandler');
 
@@ -13,6 +13,6 @@ router.get("/",getAllRsaHandler);
 router.get('/:id',getRsaHandler)
 router.post("/",createRsaHandler);
 router.patch("/:id",updateRsaHandler);
-router.post("/modiIFI",updateinIfiHandler);
+router.post("/modiIFI",updateinRSAHandler);
 
 module.exports = router;

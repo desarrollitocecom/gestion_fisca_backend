@@ -14,17 +14,17 @@ module.exports = (sequelize) => {
             type: DataTypes.DATEONLY,
             allowNull: false
         },
+        fecha_notificacion: {
+            type: DataTypes.DATEONLY,
+            allowNull: false
+        },
         documento_rg: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        tipo: {
-            type: DataTypes.ENUM('RSG1', 'RSA', 'RSG2'),
-            allowNull: false
-        },
-        id_g: {
-            type: DataTypes.UUID,
-            allowNull: false,
+        estado:{
+            type: DataTypes.ENUM('NP', 'P'),
+            allowNull: true
         },
         documento_ac: {
             type: DataTypes.STRING,

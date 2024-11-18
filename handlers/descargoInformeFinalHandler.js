@@ -51,7 +51,7 @@ const updateDescargoHandler = async (req, res) => {
         console.error('Error al actualizar DescargoIFI y asociarlo a IFI:', error);
         return res.status(500).json({
             message: 'Error al actualizar DescargoIFI y asociarlo a IFI',
-            error
+            data:error
         });
     }
 };

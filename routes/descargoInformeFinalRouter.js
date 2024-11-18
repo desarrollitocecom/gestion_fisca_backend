@@ -6,7 +6,7 @@ const {
     updateDescargoHandler
 }= require('../handlers/descargoInformeFinalHandler');
 
-router.post('/nuevoDIF',  createDescargoHandler);
+router.post('/newifi',  createDescargoHandler);
 router.patch('/:id',updateDescargoHandler)
 
 module.exports = router;

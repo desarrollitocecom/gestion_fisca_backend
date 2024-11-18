@@ -12,7 +12,7 @@ const createRSG2Controller = async ({nro_resolucion2, fecha_resolucion, document
         return newRSG2 || null;
     } catch (error) {
         console.error('Error al crear RSG2:', error);
-        return { message: 'Error al crear RSG2', error };
+        return false;
     }
 };
 const getRSG2Controller=async (id) => {
@@ -43,7 +43,7 @@ const updateRSG2Controller = async (id, nro_resolucion2, fecha_resolucion, docum
         return rsg2 || null;
     } catch (error) {
         console.error('Error al actualizar RSG2:', error);
-        return { message: 'Error al actualizar RSG2', error };
+        return false;
     }
 };
 

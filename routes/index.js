@@ -3,7 +3,6 @@ const router = Router();
 
 const tramiteInspector = require('./tramiteInspectorRouter');
 const informeFinal=require('./informeFinalRouter');
-const descargoIFI=require('./descargoInformeFinalRouter')
 const TipoDocumentoIdentidad = require('../routes/tipoDocumentoIdentidadRouter');
 const ejecucionmc=require('../routes/ejecucionMCRouter');
 const estadomc = require('../routes/estadoMCRouter');
@@ -13,6 +12,12 @@ const rsg1=require('./rsg1Router');
 const rsg2=require('./rsg2Router');
 const rsa=require('./rsaRouter');
 const descargoRsa=require('./descargoRsaRouter')
+const descargoIFI=require('./descargoInformeFinalRouter')
+const descargoRg=require('./descargoRgRouter');
+const rsgp=require('./rsgpRouter')
+const rsgnp=require('./rsgnpRouter')
+const rg=require('./rgRouter');
+
 
 router.use('/tipodocumentoidentidad',TipoDocumentoIdentidad);
 router.use('/ejecucionmc',ejecucionmc);
@@ -21,10 +26,14 @@ router.use('/medidacomplementaria',medidacomplementaria);
 router.use('/documentocomplementario',TipoDocumentoComplementario);
 router.use('/inspector', tramiteInspector);
 router.use('/ifi',informeFinal);
-router.use('/descargoIFI',descargoIFI);
+router.use('/difi',descargoIFI);
+router.use('/drsa',descargoRsa);
 router.use('/rsg1',rsg1);
 router.use("/rsg2",rsg2);
 router.use('/rsa',rsa);
-router.use('/drsa',descargoRsa);
+router.use('/rsgp',rsgp);
+router.use('/rsgnp',rsgnp);
+router.use("./drg",descargoRg);
+router.use('./rg',rg);
 
 module.exports = router;

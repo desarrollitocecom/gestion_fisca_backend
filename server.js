@@ -4,6 +4,7 @@ const http = require("http");
 const { sequelize } = require("./db_connection");
 const router = require("./routes/index");
 const { PORT_FISCA } = process.env;
+const path=require('path')
 const { initializeSocket, userSockets } = require("./sockets");
 //const loginMiddleware = require("./checkers/validateToken");
 //const usuariosRouter = require("./routes/loginRouter");
@@ -23,7 +24,7 @@ app.use("/", router);
 app.get("/", (req, res) => {
   res.json({ message: "El servidor esta funcionando!", data: "Bien perro!" });
 });
-
+app.use('/uploads',express.static(path.join(__dirname,'uploads')))
 server.listen(PORT_FISCA, () => {
   console.log(`FISCA Server is running on port ${PORT_FISCA}`);
   sequelize.sync({ alter: true }) // cambiar de alter a force para que se borren las tablas y se creen de nuevo, hasta que queden bien diseñadas

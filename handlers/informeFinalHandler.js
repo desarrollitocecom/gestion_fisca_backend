@@ -1,3 +1,5 @@
+
+const { getDescargoRgController } = require('../controllers/descargoRgController');
 const {
     createInformeFinalController,
     updateInformeFinalController,
@@ -5,13 +7,18 @@ const {
     getInformeFinalController
 }=require('../controllers/informeFinalController');
 
-const createInformeFinalHandler=async (req,res) => {
-    const {nro_ifi, fecha, documento_ifi,tipo,id_descargo_ifi}=req.body; 
-    console.log(nro_ifi, fecha, documento_ifi,tipo,id_descargo_ifi);
-    
-    
+const fs=require('node:fs');
+function saveImagen(file) {
+    const newpath=`./uploads/ifi/${file.originalname}`
+    fs.renameSync(file.path,newpath);
+    return newpath
+}
+const   createInformeFinalHandler=async (req,res) => {
+    const {nro_ifi, fecha,tipo,id_evaluar,id_descargo_ifi}=req.body;
+    const doc=saveImagen(req.files['documento_ifi'][0]).replace(/^.\//,'');
   try {
-        const response=await createInformeFinalController({nro_ifi,fecha,documento_ifi,tipo,id_descargo_ifi});
+       
+        const response=await createInformeFinalController({nro_ifi,fecha,documento_ifi:doc,tipo,id_evaluar,id_descargo_ifi});
         if(!response)
             return res.status(201).json({
             message:'Error al crear nuevo informe Final ',
@@ -29,9 +36,10 @@ const createInformeFinalHandler=async (req,res) => {
 
 const updateInformeFinalHandler=async (req,res) => {
     const {id}=req.params
-    const {nro_ifi, fecha, documento_ifi,tipo,id_descargo_ifi}=req.body; 
+    const {nro_ifi, fecha, documento_ifi,tipo,id_evaluar,id_descargo_ifi}=req.body; 
     try {
-        const response=await updateInformeFinalController(id,nro_ifi,fecha,documento_ifi,tipo,id_descargo_ifi);
+        
+        const response=await updateInformeFinalController({id,nro_ifi,fecha,documento_ifi,tipo,id_evaluar,id_descargo_ifi});
         if(!response)res.status(201).json({
             message:`Error al Modificar el IFI con el id:${id}`,
             data:[]
@@ -45,9 +53,10 @@ const updateInformeFinalHandler=async (req,res) => {
 const getAllInformesFinalesHandler=async (req,res) => {
     try {
         const response=await getAllInformeFinalController();
-        if(response)
-            return res.status(201).status({message:'No se pudo traer todos IFIs',data:[]})
-        return res.status(200).status({
+        
+        if(!response)
+            return res.status(201).json({message:'No se pudo traer todos IFIs',data:[]})
+        return res.status(200).json({
             message:"Estos son los IFIs",
             data:response
         });

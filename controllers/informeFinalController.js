@@ -1,13 +1,13 @@
 const {IFI,DescargoIFI}=require('../db_connection');
 
-const createInformeFinalController=async ({nro_ifi,fecha,documento_ifi,tipo,id_evaluar, id_descargo_ifi}) => {
+const createInformeFinalController=async ({nro_ifi,fecha,documento_ifi,tipo, id_evaluar,id_descargo_ifi}) => {
     
     try {
         const checking=await DescargoIFI.findByPk(id_descargo_ifi)
-        console.log(id_descargo_ifi);
+        //console.log(id_descargo_ifi);
         
         if(!checking){
-        const response=await IFI.create({nro_ifi,fecha,documento_ifi,tipo,id_evaluar, id_descargo_ifi});
+        const response=await IFI.create({nro_ifi,fecha,documento_ifi,tipo, id_evaluar,id_descargo_ifi});
         return response || null
         }
          throw new Error("El id de DescargoID ya existe ");
@@ -18,7 +18,7 @@ const createInformeFinalController=async ({nro_ifi,fecha,documento_ifi,tipo,id_e
     }
 };
 
-const updateInformeFinalController=async (id,nro_ifi,fecha,documento_ifi,tipo,id_evaluar, id_descargo_ifi) => {
+const updateInformeFinalController=async ({id,nro_ifi,fecha,documento_ifi,tipo,id_evaluar, id_descargo_ifi}) => {
     try {
         const updateIfi=await getInformeFinalController(id);
         if(updateIfi){

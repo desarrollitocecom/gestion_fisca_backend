@@ -4,7 +4,9 @@ const {
     getRsaController,
     getAllRsaController
 } = require('../controllers/rsaController');
-const{updateinIfiController}=require('../controllers/informeFinalController')
+const{
+    updateinIfiController
+}=require('../controllers/informeFinalController')
 // Handler para crear una nueva RSA
 const createRsaHandler = async (req, res) => {
    const { nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA } = req.body;
@@ -24,10 +26,12 @@ const createRsaHandler = async (req, res) => {
 const updateRsaHandler = async (req, res) => {
    const { id } = req.params;
    const { nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA } = req.body;
+   console.log(id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA);
+   
    try {
-       const response = await updateRsaController(id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA);
-       if (response.message) {
-           return res.status(404).json({ message: response.message });
+       const response = await updateRsaController({id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA});
+       if (!response) {
+           return res.status(201).json({ message: "Error al actializar el RSA",data:[] });
        }
        return res.status(200).json({ message: "RSA actualizada con éxito", data: response });
    } catch (error) {
@@ -64,7 +68,7 @@ const getAllRsaHandler = async (req, res) => {
        return res.status(500).json({ message: "Error en el handler", error });
    }
 };
-const updateinIfiHandler = async (req, res) => {
+const updateinRSAHandler = async (req, res) => {
     const { uuid, id } = req.body;
     const vRSA= "RSA";
     try {
@@ -89,5 +93,5 @@ module.exports = {
     updateRsaHandler,
     getRsaHandler,
     getAllRsaHandler,
-    updateinIfiHandler
+    updateinRSAHandler
 };
