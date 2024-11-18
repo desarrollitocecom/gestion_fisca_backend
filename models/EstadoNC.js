@@ -2,9 +2,9 @@ const { DataTypes } = require("sequelize");
 module.exports=(sequelize)=>{
     const EstadoNC=sequelize.define('EstadoNC',{
         id: {
-            type: DataTypes.UUID,
+            type: DataTypes.INTEGER,
             primaryKey: true,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true,
         },
         tipo:{
           type:DataTypes.STRING,

@@ -3,17 +3,17 @@ const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
     const Infraccion = sequelize.define('Infraccion', {
         id: {
-            type: DataTypes.UUID,
+            type: DataTypes.INTEGER,
             primaryKey: true,
-            defaultValue: DataTypes.UUIDV4
+            autoIncrement: true,
         },
         actividad_economica: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         codigo: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         descripcion: {
             type: DataTypes.STRING,
@@ -35,6 +35,11 @@ module.exports = (sequelize) => {
         tableName: 'Infracciones',
         timestamps: true
     });
+
+
+    Infraccion.associate = (db) => {
+        Infraccion.hasMany(db.NC, { foreignKey: 'id_tramiteInspector', as: 'nc'})
+    }
 
     return Infraccion;
 };
