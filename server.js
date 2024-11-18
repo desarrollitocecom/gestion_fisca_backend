@@ -4,7 +4,7 @@ const http = require("http");
 const { sequelize } = require("./db_connection");
 const router = require("./routes/index");
 const { PORT_FISCA } = process.env;
-const path=require('path')
+
 const { initializeSocket, userSockets } = require("./sockets");
 //const loginMiddleware = require("./checkers/validateToken");
 //const usuariosRouter = require("./routes/loginRouter");

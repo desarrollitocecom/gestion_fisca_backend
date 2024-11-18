@@ -1,5 +1,5 @@
 const {IFI,DescargoIFI}=require('../db_connection');
-
+const {saveImage}=require('../utils/fileUtils')
 const createInformeFinalController=async ({nro_ifi,fecha,documento_ifi,tipo, id_evaluar,id_descargo_ifi}) => {
     
     try {
@@ -7,7 +7,8 @@ const createInformeFinalController=async ({nro_ifi,fecha,documento_ifi,tipo, id_
         //console.log(id_descargo_ifi);
         
         if(!checking){
-        const response=await IFI.create({nro_ifi,fecha,documento_ifi,tipo, id_evaluar,id_descargo_ifi});
+        const documento_ifi_path=saveImage(documento_ifi,'ifi')    
+        const response=await IFI.create({nro_ifi,fecha,documento_ifi:documento_ifi_path,tipo, id_evaluar,id_descargo_ifi});
         return response || null
         }
          throw new Error("El id de DescargoID ya existe ");
@@ -19,16 +20,19 @@ const createInformeFinalController=async ({nro_ifi,fecha,documento_ifi,tipo, id_
 };
 
 const updateInformeFinalController=async ({id,nro_ifi,fecha,documento_ifi,tipo,id_evaluar, id_descargo_ifi}) => {
+
     try {
         const updateIfi=await getInformeFinalController(id);
+        const documento_ifi_path=saveImage(documento_ifi,'ifi')    
+
         if(updateIfi){
             await updateIfi.update({
-                nro_ifi:nro_ifi,
-                fecha:fecha,
-                documento_ifi:documento_ifi,
-                tipo:tipo,
-                id_evaluar:id_evaluar,
-                id_descargo_ifi:id_descargo_ifi
+                nro_ifi,
+                fecha,
+                documento_ifi:documento_ifi_path,
+                tipo,
+                id_evaluar,
+                id_descargo_ifi
                 });
         }
       return updateIfi || null;
@@ -72,7 +76,9 @@ const updateinIfiController = async (uuid, tipo, id_evaluar) => {
 
     // Actualizar los campos de IFI y recargar el registro
     await ifi.update({ tipo:tipo, id_evaluar:id_evaluar });
+
     const updatedIfi = await ifi.reload();
+    
     return updatedIfi;
 };
 
