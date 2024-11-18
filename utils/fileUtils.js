@@ -14,4 +14,16 @@ function saveImage(file, folder) {
     return relativePath.replace(/^.\//, '');
 }
 
-module.exports = { saveImage };
+
+const deleteFile = (filePath) => {
+    if (filePath) {
+        try {
+            fs.unlinkSync(path.resolve(filePath));
+            console.log(`Archivo ${filePath} eliminado`);
+        } catch (error) {
+            console.error(`Error eliminando archivo ${filePath}:`, error);
+        }
+    }
+};
+
+module.exports = { saveImage, deleteFile };

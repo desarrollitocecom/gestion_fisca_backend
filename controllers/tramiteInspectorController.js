@@ -1,25 +1,30 @@
 const { TramiteInspector, MedidaComplementaria, EstadoMC, TipoDocumentoComplementario, EjecucionMC } = require('../db_connection');
-const { saveImage } = require('../utils/fileUtils');
+const { saveImage, deleteFile } = require('../utils/fileUtils');
 
 const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, id_medida_complementaria, id_inspector }) => {
-    try {
-        const documento_ncPath = saveImage(documento_nc, 'NC');
-        const documento_actaPath = saveImage(documento_acta, 'AF');
 
+    const documento_ncPath = saveImage(documento_nc, 'NC');
+    const documento_actaPath = saveImage(documento_acta, 'AF');
+
+    try {
         const newTramiteNC = await TramiteInspector.create({
             nro_nc,
             documento_nc: documento_ncPath,
             nro_acta,
             documento_acta: documento_actaPath,
-            id_medida_complementaria, 
+            id_medida_complementaria,
             id_inspector
         });
 
         console.log('Trámite creado con éxito');
-        return newTramiteNC;  
+        return newTramiteNC;
     } catch (error) {
         console.error('Error creando trámite:', error);
-        return false;  
+
+        deleteFile(documento_ncPath);
+        deleteFile(documento_actaPath);
+
+        return false;
     }
 };
 
