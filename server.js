@@ -9,10 +9,10 @@ const { initializeSocket, userSockets } = require("./sockets");
 //const usuariosRouter = require("./routes/loginRouter");
 const cors = require("cors");
 const path = require('path'); //traer path
-
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
+const multer = require('multer');
 //app.use("/login", usuariosRouter); // no aplica authMiddleware para el manejo de usuarios
 //app.use(loginMiddleware); // usa el middleware globalmente para validar todas las rutas a las que se va a acceder en el sistema solo estando logeado
 const server = http.createServer(app); // servidor http a partir de express
@@ -35,3 +35,5 @@ server.listen(PORT_FISCA, () => {
 });
 
 module.exports = { userSockets };
+
+// expressurl encode

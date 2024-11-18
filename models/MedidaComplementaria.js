@@ -8,37 +8,37 @@ module.exports = (sequelize) => {
             defaultValue: DataTypes.UUIDV4
         },
         id_documento: {
-            type: DataTypes.UUID,
-            allowNull: false,
+            type: DataTypes.INTEGER,
+            allowNull: true,
             references: {
              model: 'TipoDocumentoComplementarios',
                 key: 'id',
             },
-            unique:true
        },
-       documento_MC: {
+       nro_acta_ejecucion: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+       documento_medida_complementaria: {
             type: DataTypes.STRING,
             allowNull: true
        },
         id_ejecucionMC: {
-            type: DataTypes.UUID,
-            allowNull: false,
+            type: DataTypes.INTEGER,
+            allowNull: true,
             references: {
                 model: 'EjecucionMCs',
                 key: 'id',
             },       
         },
-        nro_acta_ejecucion: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
+        
         dc_levantamiento: {
             type: DataTypes.STRING,
             allowNull: true
          },
         id_estado: { 
-            type: DataTypes.UUID,
-            allowNull: false,
+            type: DataTypes.INTEGER,
+            allowNull: true,
             references: {
                 model: 'EstadoMCs', 
                 key: 'id'

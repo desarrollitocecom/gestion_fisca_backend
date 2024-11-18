@@ -8,55 +8,55 @@ module.exports=(sequelize)=>{
         },
         fecha: {
             type: DataTypes.DATE,
-            allowNull: false
+            allowNull: true
         },
         hora: {
             type: DataTypes.TIME,
-            allowNull: false
+            allowNull: true
         },
         lugar:{
           type:DataTypes.STRING,
-          allowNull: false
+          allowNull: true
         }, 
         caracteristicas:{
           type:DataTypes.STRING,
-          allowNull: false
+          allowNull: true
         },
         nro_nc:{
             type:DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         nombre_test1:{
             type:DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },  
         doc_test1:{
             type:DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         }, 
         nombre_test2:{
             type:DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },  
         doc_test2:{
             type:DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         }, 
         puerta:{
             type:DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         nro_pisos:{
             type:DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         },
         nro_suministro:{
             type:DataTypes.INTEGER,
-            allowNull: false
+            allowNull: true
         },
-        observaciones:{
+        observaciones_cn:{
             type:DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
     }, {
         tableName: 'ConstanciaNotificaciones',

@@ -14,12 +14,9 @@ module.exports=(sequelize)=>{
             },
             allowNull: true
         },
-        id_digitador:{
-            type:DataTypes.STRING,
-            allowNull:true
-        },
+
         id_tipoDocumento:{
-            type: DataTypes.UUID,
+            type: DataTypes.INTEGER,
             references: {
                 model: 'TipoDocumentoIdentidades',
                 key: 'id',
@@ -30,6 +27,12 @@ module.exports=(sequelize)=>{
             type:DataTypes.UUID,
             allowNull:true
         },
+        
+        id_digitador:{
+            type:DataTypes.STRING,
+            allowNull:true
+        },
+        
         id_administrado:{
             type: DataTypes.UUID,
             references: {
@@ -46,16 +49,16 @@ module.exports=(sequelize)=>{
             },
             allowNull:true
         },
-        nro_licencia_funcionamiento:{
-            type:DataTypes.UUID,
-            allowNull:true
-        },
         id_infraccion:{
-            type: DataTypes.UUID,
+            type: DataTypes.INTEGER,
             references: {
                 model: 'Infracciones',
                 key: 'id',
             },
+            allowNull:true
+        },
+        nro_licencia_funcionamiento:{
+            type:DataTypes.STRING,
             allowNull:true
         },
         placa_rodaje:{
@@ -74,14 +77,6 @@ module.exports=(sequelize)=>{
             type:DataTypes.STRING,
             allowNull:true
         },
-        // id_medida_complementaria:{
-        //     type: DataTypes.UUID,
-        //     references: {
-        //         model: 'MedidaComplementarias',
-        //         key: 'id',
-        //     },
-        //     allowNull:true
-        // },
         id_descargo_NC:{
             type: DataTypes.UUID,
             references: {
@@ -99,7 +94,7 @@ module.exports=(sequelize)=>{
             allowNull:true
         },
         id_estado_NC:{
-            type: DataTypes.UUID,
+            type: DataTypes.INTEGER,
             references: {
                 model: 'EstadoNCs',
                 key: 'id',

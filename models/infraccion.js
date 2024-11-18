@@ -3,9 +3,9 @@ const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
     const Infraccion = sequelize.define('Infraccion', {
         id: {
-            type: DataTypes.UUID,
+            type: DataTypes.INTEGER,
             primaryKey: true,
-            defaultValue: DataTypes.UUIDV4
+            autoIncrement: true,
         },
         actividad_economica: {
             type: DataTypes.STRING,

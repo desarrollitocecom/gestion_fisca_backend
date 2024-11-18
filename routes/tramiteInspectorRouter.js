@@ -1,11 +1,10 @@
 const { Router } = require('express');
 const router = Router();
+const { uploadDocuments }  = require('../middlewares/uploadMiddleware');
 
-const { createTramiteHandler, usuarioPruebaHandler, allTramiteHandler } = require('../handlers/tramiteInspectorHandler');
+const { createTramiteHandler, allTramiteHandler } = require('../handlers/tramiteInspectorHandler');
 
-router.post('/nuevoTramiteNC', createTramiteHandler);
-router.get('/allTramitesNC', allTramiteHandler);
-router.get('/usuarioPrueba', usuarioPruebaHandler);
+router.post('/nuevoTramiteNC', uploadDocuments, createTramiteHandler);
+router.get('/misTramites/:id', allTramiteHandler);
 
-
-module.exports = router;
+module.exports = router;    

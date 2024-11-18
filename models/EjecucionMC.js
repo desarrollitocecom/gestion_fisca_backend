@@ -3,9 +3,9 @@ const { DataTypes, UUIDV4 } = require('sequelize');
 module.exports = (sequelize) => {
     const EjecucionMC = sequelize.define('EjecucionMC', {
         id: {
-            type: DataTypes.UUID,
+            type: DataTypes.INTEGER,
             primaryKey: true,
-            defaultValue: DataTypes.UUIDV4
+            autoIncrement: true,
         },
         nombre: {
             type: DataTypes.STRING,

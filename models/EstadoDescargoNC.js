@@ -2,13 +2,13 @@ const { DataTypes } = require("sequelize");
 module.exports=(sequelize)=>{
     const EstadoDescargoNC=sequelize.define('EstadoDescargoNC',{
         id: {
-            type: DataTypes.UUID,
+            type: DataTypes.INTEGER,
             primaryKey: true,
-            defaultValue: DataTypes.UUIDV4,
+            autoIncrement: true,
         },
         tipo:{
           type:DataTypes.STRING,
-          allowNull: false
+          allowNull: true
         },    
     }, {
         tableName: 'EstadoDescargoNCs',
