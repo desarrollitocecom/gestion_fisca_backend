@@ -24,6 +24,5 @@ const createEntidad = async ({
     }
  };
 
- const createEntidad = async ({nombre}) => {
-    
- }
+ module.exports = {createEntidad};
+
