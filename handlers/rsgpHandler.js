@@ -10,7 +10,7 @@ const {
 
 const createRsgpHandler = async (req, res) => {
     const { nro_rsg, fecha_rsg } = req.body;
-    const documento_RSGP = req.files["documento_RSGP"][0];
+    const documento_RSGP = req.files && req.files["documento_RSGP"] ? req.files["documento_RSGP"][0] : null;
     const errores = [];
 
     // Validaciones de `nro_rsg`
@@ -47,8 +47,10 @@ const createRsgpHandler = async (req, res) => {
     }
 
     try {
+        
+        
         const newRsgp = await createRsgpController({ nro_rsg, fecha_rsg, documento_RSGP });
-        if (newRsgp) {
+        if (!newRsgp) {
             return res.status(201).json({
                 message: 'Error al Crear RSGP',
                 data: []
@@ -100,15 +102,18 @@ const updateRsgpHandler = async (req, res) => {
     }
 
     try {
-        const message = await updateRsgpController({ id, nro_rsg, fecha_rsg, documento_RSGP });
-        if (!message) return res.status(201).json({ message: "Error al moficar", data: [] })
+        const RSGP = await updateRsgpController({ id, nro_rsg, fecha_rsg, documento_RSGP });
+        
+        if (!RSGP) 
+            return res.status(201).json({ message: "Error al moficar", data: [] })
+
         return res.status(200).json({
             message: 'RSGP modificado correctamente',
-            data: message
+            data: RSGP
         });
     } catch (error) {
         console.error("Error al modificar RSGP:", error);
-        return res.status(500).json({ error: error.message });
+        return res.status(500).json({ message:"Error al Modificar" ,data:error });
     }
 };
 

@@ -1,11 +1,14 @@
 const { RSGP } = require('../db_connection');
+const {saveImage,deleteFile}=require('../utils/fileUtils')
 
 const createRsgpController = async ({ nro_rsg, fecha_rsg, documento_RSGP }) => {
     try {
+        const documento_path=saveImage(documento_RSGP,'Resolucion(RSGP)')       
+
         const newRsgp = await RSGP.create({
             nro_rsg,
             fecha_rsg,
-            documento_RSGP,
+            documento_RSGP:documento_path
         });
         return newRsgp || null;
     } catch (error) {
@@ -15,13 +18,22 @@ const createRsgpController = async ({ nro_rsg, fecha_rsg, documento_RSGP }) => {
 };
 
 const updateRsgpController = async ({ id, nro_rsg, fecha_rsg, documento_RSGP }) => {
+    //console.log(id, nro_rsg, fecha_rsg, documento_RSGP);
+    
     try {
-        const updated = await RSGP.update(
-            { nro_rsg, fecha_rsg, documento_RSGP },
-            { where: { id } }
-        );
+        const documento_path=saveImage(documento_RSGP,'Resolucion(RSGP)')       
+
        
-        return updated || null
+        const rsgp = await RSGP.findOne({ where: { id } });
+
+        if (rsgp) {
+            await rsgp.update({
+                nro_rsg,
+                fecha_rsg,
+                documento_RSGP:documento_path
+            });
+        }
+        return rsgp || null
     } catch (error) {
         console.error('Error updating RSGP:', error);
         return false

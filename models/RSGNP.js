@@ -22,7 +22,7 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        id_descargo_RSGNP:{
+        id_descargo_RG:{
             type:DataTypes.UUID,
             references: {
                 model: 'DescargoRGs',

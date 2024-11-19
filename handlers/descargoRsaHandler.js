@@ -5,7 +5,8 @@ const {
 
 const createDescargoRsaHandler = async (req, res) => {
     const { nro_descargo, fecha_descargo } = req.body;
-    const documento_DRSA =req.files["documento_DRSA"][0];
+    const documento_DRSA = req.files && req.files["documento_DRSA"] ? req.files["documento_DRSA"][0] : null;
+
     const errores = [];
 
     // Validaciones de `nro_descargo`
@@ -67,7 +68,7 @@ const createDescargoRsaHandler = async (req, res) => {
 const updateDescargoRsaHandler = async (req, res) => {
     const { id } = req.params;
     const { nro_descargo, fecha_descargo } = req.body;
-    const documento_RSA =req.files["documento_RSA"][0];
+    const documento_DRSA = req.files && req.files["documento_DRSA"] ? req.files["documento_DRSA"][0] : null;
     const errores = [];
 
     // Validaciones de `nro_descargo`
@@ -100,7 +101,7 @@ const updateDescargoRsaHandler = async (req, res) => {
     }
 
     try {
-        const response = await updateDescargoRsaController(id, nro_descargo, fecha_descargo, documento_RSA);
+        const response = await updateDescargoRsaController(id, nro_descargo, fecha_descargo, documento_DRSA);
 
         if (!response) {
             return res.status(400).json({

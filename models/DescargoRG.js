@@ -14,7 +14,7 @@ module.exports = (sequelize) => {
             type: DataTypes.DATEONLY,
             allowNull: false
         },
-        documento_descargo: {
+        documento: {
             type: DataTypes.STRING,
             allowNull: false
         },

@@ -1,5 +1,7 @@
 const {Router}=require ('express');
 const router = Router();
+const {uploadRSGP,uploadNone}=require('../middlewares/uploadMiddleware')
+
 const {
     createRsgpHandler,
     updateRsgpHandler,
@@ -9,8 +11,8 @@ const {
 }=require('../handlers/rsgpHandler');
 
 
-router.post("/",createRsgpHandler);
-router.patch("/:id",updateRsgpHandler);
-router.post("/modiRGSP",updateinRsaHandler);
+router.post("/",uploadRSGP,createRsgpHandler);
+router.patch("/:id",uploadRSGP,updateRsgpHandler);
+router.post("/modiRGSP",uploadNone,updateinRsaHandler);
 
 module.exports = router;

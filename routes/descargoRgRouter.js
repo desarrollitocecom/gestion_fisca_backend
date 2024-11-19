@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const {uploadDRG,uploadNone}=require('../middlewares/uploadMiddleware')
 
 const {
     createDescargoRgHandler,
@@ -7,7 +8,7 @@ const {
     
 }= require('../handlers/descargoRgHandler');
 
-router.post('/',  createDescargoRgHandler);
-router.patch('/:id',   updateDescargoRgHandler)
+router.post('/',  uploadDRG,createDescargoRgHandler);
+router.patch('/:id',  uploadDRG, updateDescargoRgHandler)
 
 module.exports = router;

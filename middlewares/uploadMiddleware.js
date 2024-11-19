@@ -29,8 +29,25 @@ const uploadNone = upload.none();
 
 const uploadRSA = upload.fields([
     { name: 'documento_RSA', maxCount: 1 }
+])
+const uploadDRSA = upload.fields([
+    { name: 'documento_DRSA', maxCount: 1 }
+])
+const uploadRSGP = upload.fields([
+    { name: 'documento_RSGP', maxCount: 1 }
+])
+const uploadRSGNP = upload.fields([
+    { name: 'documento_RSGNP', maxCount: 1 }
+])
+const uploadDRG = upload.fields([
+    { name: 'documento', maxCount: 1 }
+])
+const uploadRG = upload.fields([
+    { name: 'documento_rg', maxCount: 1 },
+    { name: 'documento_ac', maxCount: 1 }
 
 ])
+
 module.exports = {
     uploadDocuments,
     uploadDocumentsDescargoNC,
@@ -39,5 +56,10 @@ module.exports = {
     uploadRSG1,
     uploadRSG2,
     uploadRSA,
+    uploadDRSA,
+    uploadRSGP,
+    uploadRSGNP,
+    uploadDRG,
+    uploadRG,
     uploadNone
 };

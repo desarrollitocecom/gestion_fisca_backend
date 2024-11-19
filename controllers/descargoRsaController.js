@@ -1,12 +1,15 @@
 const{DescargoRSA}=require('../db_connection');
+const {saveImage,deleteFile}=require('../utils/fileUtils')
+
 const createDescargoRsaController=async ({nro_descargo,fecha_descargo,documento_DRSA}) => {
-    console.log();
     
     try {
+        const documento_path=saveImage(documento_DRSA,'Descargo(RSA)')  
+
         const newDescargo = await DescargoRSA.create({
             nro_descargo,
             fecha_descargo,
-            documento_DRSA            
+            documento_DRSA:documento_path           
         });
 
         return newDescargo || null;
@@ -17,13 +20,14 @@ const createDescargoRsaController=async ({nro_descargo,fecha_descargo,documento_
 }
 const updateDescargoRsaController=async ({id,nro_descargo,fecha_descargo,documento_DRSA}) => {
     try {
+        const documento_path=saveImage(documento_DRSA,'Descargo(RSA)')  
      
         const descargo = await DescargoRSA.findOne({ where: { id } });
 
         await descargo.update({
             nro_descargo,
             fecha_descargo,
-            documento_DRSA,
+            documento_DRSA:documento_path
 
         });
 

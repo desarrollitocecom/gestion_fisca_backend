@@ -1,41 +1,3 @@
-// const {
-//     createDescargoRgController,
-//     updateDescargoRgController,
-    
-// } = require('../controllers/descargoRgController');
-
-// // Crear un descargo
-// const createDescargoRgHandler = async (req, res) => {
-//     const{ nro_descargo, fecha_descargo, documento_descargo }=req.body
-//     try {
-//         const newDescargo = await createDescargoRgController({ nro_descargo, fecha_descargo, documento_descargo });
-//         if(!newDescargo){
-//             return  res.status(201).json({ message: "Descargo no fue creado ", data:[] });
-//         }
-//         return res.status(200).json({ message: "Descargo creado con éxito", data: newDescargo });
-//     } catch (error) {
-//         console.error("Error al crear el descargo:", error);
-//         return res.status(500).json({ message: "Error al crear el descargo", error: error.message });
-//     }
-// };
-
-// // Actualizar un descargo
-// const updateDescargoRgHandler = async (req, res) => {
-//     const { id } = req.params;
-//     const{ nro_descargo, fecha_descargo, documento_descargo }=req.body
-
-//     try {
-//         const updatedDescargo = await updateDescargoRgController({id, nro_descargo, fecha_descargo, documento_descargo });
-//         if (!updatedDescargo) {
-//             return res.status(201).json({ message: "Descargo no encontrado" });
-//         }
-//         return res.status(200).json({ message: "Descargo actualizado con éxito", data: updatedDescargo });
-//     } catch (error) {
-//         console.error("Error al actualizar el descargo:", error);
-//         return res.status(500).json({ message: "Error al actualizar el descargo", error: error.message });
-//     }
-// };
-
 const {
     createDescargoRgController,
     updateDescargoRgController
@@ -45,7 +7,7 @@ const {
 const createDescargoRgHandler = async (req, res) => {
     const { nro_descargo, fecha_descargo } = req.body;
     const errores = [];
-    const documento_descargo =req.files["documento_descargo"][0];
+    const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
 
     // Validación del campo nro_descargo
     if (!nro_descargo) errores.push('El campo nro_descargo es requerido');
@@ -64,9 +26,9 @@ const createDescargoRgHandler = async (req, res) => {
     }
 
     // Validación de documento_descargo
-    if (!documento_descargo) errores.push('El campo documento_descargo es requerido');
-    if (documento_descargo && documento_descargo.mimetype !== 'application/pdf') {
-        errores.push('El documento_descargo debe ser un archivo PDF');
+    if (!documento) errores.push('El campo documento es requerido');
+    if (documento && documento.mimetype !== 'application/pdf') {
+        errores.push('El documento debe ser un archivo PDF');
     }
 
     // Si hay errores, devolverlos
@@ -78,7 +40,7 @@ const createDescargoRgHandler = async (req, res) => {
     }
 
     try {
-        const newDescargo = await createDescargoRgController({ nro_descargo, fecha_descargo, documento_descargo });
+        const newDescargo = await createDescargoRgController({ nro_descargo, fecha_descargo, documento });
         if (!newDescargo) {
             return res.status(400).json({ message: "Descargo no fue creado", data: [] });
         }
@@ -94,7 +56,8 @@ const updateDescargoRgHandler = async (req, res) => {
     const { id } = req.params;
     const { nro_descargo, fecha_descargo} = req.body;
     const errores = [];
-    const documento_descargo =req.files["documento_descargo"][0];
+    const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
+
     // Validación del campo nro_descargo
     if (!nro_descargo) errores.push('El campo nro_descargo es requerido');
     if (typeof nro_descargo !== 'string') errores.push('El nro_descargo debe ser una cadena de texto');
@@ -112,7 +75,7 @@ const updateDescargoRgHandler = async (req, res) => {
     }
 
     // Validación de documento_descargo
-    if (documento_descargo && documento_descargo.mimetype !== 'application/pdf') {
+    if (documento && documento.mimetype !== 'application/pdf') {
         errores.push('El documento_descargo debe ser un archivo PDF');
     }
 
@@ -125,7 +88,7 @@ const updateDescargoRgHandler = async (req, res) => {
     }
 
     try {
-        const updatedDescargo = await updateDescargoRgController({ id, nro_descargo, fecha_descargo, documento_descargo });
+        const updatedDescargo = await updateDescargoRgController({ id, nro_descargo, fecha_descargo, documento});
         if (!updatedDescargo) {
             return res.status(404).json({ message: "Descargo no encontrado" });
         }

@@ -38,7 +38,7 @@ router.use("/rsg2",rsg2);
 router.use('/rsa',rsa);
 router.use('/rsgp',rsgp);
 router.use('/rsgnp',rsgnp);
-router.use("./drg",descargoRg);
-router.use('./rg',rg);
+router.use("/drg",descargoRg);
+router.use('/rg',rg);
 
 module.exports = router;
