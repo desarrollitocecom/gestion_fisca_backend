@@ -23,15 +23,22 @@ module.exports = (sequelize) => {
             type:DataTypes.STRING,
             allowNull:true
         },
-        nro_opcional:{
-            type:DataTypes.STRING,
+        id_medida_complementaria: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'MedidaComplementarias',
+                key: 'id',
+            },
             allowNull:true
         },
-        acta_opcional:{
-            type:DataTypes.STRING,
+        id_inspector: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Usuarios',
+                key: 'id',
+            },
             allowNull:true
         },
-
     }, {
         tableName: 'TramiteInspectores',
         timestamps: true
@@ -39,6 +46,7 @@ module.exports = (sequelize) => {
 
     TramiteInspector.associate = (db) => {
         TramiteInspector.hasMany(db.NC, { foreignKey: 'id_tramiteInspector', as: 'nc'})
+        TramiteInspector.belongsTo(db.MedidaComplementaria, { foreignKey: 'id_medida_complementaria', as: 'medidaComplementaria' });
     }
 
     return TramiteInspector;
