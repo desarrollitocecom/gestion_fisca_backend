@@ -1,11 +1,15 @@
 const { RSA } = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
+const {saveImage,deleteFile}=require('../utils/fileUtils')
+
 const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA}) => {
     try {
+        const documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
+
         const newRsa = await RSA.create({
             nro_rsa,
             fecha_rsa,
             fecha_notificacion,
-            documento_RSA,
+            documento_RSA:documento_path,
             tipo,
             id_evaluar_rsa,
             id_descargo_RSA
@@ -20,13 +24,15 @@ const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, docu
 // Función para actualizar una instancia existente de RSA
 const updateRsaController = async ({id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA}) => {
     try {
+        const documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
+
         const rsa = await RSA.findByPk(id);
 
         await rsa.update({
             nro_rsa,
             fecha_rsa,
             fecha_notificacion,
-            documento_RSA,
+            documento_RSA:documento_path,
             tipo,
             id_evaluar_rsa,
             id_descargo_RSA

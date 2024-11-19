@@ -1,5 +1,5 @@
-const {IFI,DescargoIFI}=require('../db_connection');
-const {saveImage}=require('../utils/fileUtils')
+const {IFI,DescargoIFI,RSA,RSG1,RSG2}=require('../db_connection');
+const {saveImage,deleteFile}=require('../utils/fileUtils')
 const createInformeFinalController=async ({nro_ifi,fecha,documento_ifi,tipo, id_evaluar,id_descargo_ifi}) => {
     
     try {
@@ -14,6 +14,7 @@ const createInformeFinalController=async ({nro_ifi,fecha,documento_ifi,tipo, id_
          throw new Error("El id de DescargoID ya existe ");
         
     } catch (error) {
+       // deleteFile(documento_ifi);
         console.error("Error al crear el Informe Final:", error);
         return false;
     }
@@ -44,13 +45,17 @@ const updateInformeFinalController=async ({id,nro_ifi,fecha,documento_ifi,tipo,i
 const getAllInformeFinalController=async () => {
   try {
     const response=await IFI.findAll({
-        include: [{
-            model: DescargoIFI,
-            as: 'DescargoIFIs'
-        }]
+        include: [
+            {model: DescargoIFI, as: 'DescargoIFIs'},
+            { model: RSA,as: 'RSA'},
+            { model: RSG1,as: 'RSG1'},
+            { model: RSG2,as: 'RSG2'}
+        
+        ]
     });
     return response || null;
   } catch (error) {
+    
     console.error('Error al traer todos los Informes Finales',error);
     return false;
   }  
@@ -69,17 +74,21 @@ const getInformeFinalController=async (id) => {
     }
 };
 const updateinIfiController = async (uuid, tipo, id_evaluar) => {
-    const ifi = await IFI.findByPk(uuid);
-    if (!ifi) {
-        throw new Error(`Registro con uuid ${uuid} no encontrado en IFI.`);
-    }
-
+  
+  
     // Actualizar los campos de IFI y recargar el registro
+    try {
+        const ifi = await IFI.findByPk(uuid);
+    
     await ifi.update({ tipo:tipo, id_evaluar:id_evaluar });
 
     const updatedIfi = await ifi.reload();
     
-    return updatedIfi;
+    return updatedIfi || null;
+    } catch (error) {
+        console.error('Error al traer un solo Informe Final',error);
+        return false;
+    }
 };
 
 

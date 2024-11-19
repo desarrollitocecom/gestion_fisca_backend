@@ -1,12 +1,13 @@
 const { RSG2} = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
-
+const {saveImage,deleteFile}=require('../utils/fileUtils')
 // Función para crear una nueva instancia de RSG2
 const createRSG2Controller = async ({nro_resolucion2, fecha_resolucion, documento}) => {
     try {
+        const documento_path=saveImage(documento,'Resolucion(RSG2)')       
         const newRSG2 = await RSG2.create({
             nro_resolucion2,
             fecha_resolucion,
-            documento
+            documento: documento_path
         });
 
         return newRSG2 || null;
@@ -25,20 +26,23 @@ const getRSG2Controller=async (id) => {
     }
 }
 
-const updateRSG2Controller = async (id, nro_resolucion2, fecha_resolucion, documento) => {
+const updateRSG2Controller = async ({id, nro_resolucion2, fecha_resolucion, documento}) => {
+    console.log(id, nro_resolucion2, fecha_resolucion, documento);
+    
     try {
+        const documento_path=saveImage(documento,'Resolucion(RSG2)')  ;
+        //console.log(documento_path);
+        
+
         const rsg2 = await RSG2.findOne({ where: { id } });
 
-        if (!rsg2) {
-            console.error('RSG2 no encontrada');
-            return { message: 'RSG2 no encontrada' };
+        if (rsg2) {
+            await rsg2.update({
+                nro_resolucion2,
+                fecha_resolucion,
+                documento:documento_path
+            });
         }
-
-        await rsg2.update({
-            nro_resolucion2,
-            fecha_resolucion,
-            documento
-        });
 
         return rsg2 || null;
     } catch (error) {

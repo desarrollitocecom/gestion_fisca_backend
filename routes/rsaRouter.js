@@ -1,5 +1,7 @@
 const {Router}=require ('express');
 const router = Router();
+const {uploadRSA,uploadNone}=require('../middlewares/uploadMiddleware')
+
 const {
     createRsaHandler,
     updateRsaHandler,
@@ -11,8 +13,8 @@ const {
 
 router.get("/",getAllRsaHandler);
 router.get('/:id',getRsaHandler)
-router.post("/",createRsaHandler);
-router.patch("/:id",updateRsaHandler);
-router.post("/modiIFI",updateinRSAHandler);
+router.post("/",uploadRSA,createRsaHandler);
+router.patch("/:id",uploadRSA,updateRsaHandler);
+router.post("/modiIFI",uploadNone,updateinRSAHandler);
 
 module.exports = router;

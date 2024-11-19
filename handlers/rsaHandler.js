@@ -1,74 +1,4 @@
-// const {
-//     createRsaController,
-//     updateRsaController,
-//     getRsaController,
-//     getAllRsaController
-// } = require('../controllers/rsaController');
-// const{
-//     updateinIfiController
-// }=require('../controllers/informeFinalController')
-// // Handler para crear una nueva RSA
-// const createRsaHandler = async (req, res) => {
-//    const { nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA } = req.body;
 
-//    try {
-//        const response = await createRsaController({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA});
-//        if (!response) {
-//            return res.status(400).json({ message: "Error al crear una RSA", data: [] });
-//        }
-//        return res.status(200).json({ message: "RSA creada con éxito", data: response });
-//    } catch (error) {
-//        console.error('Error en crateRsaHandler:', error);
-//        return res.status(500).json({ message: "Error en el handler", error });
-//    }
-// };
-
-// // Handler para actualizar una RSA existente
-// const updateRsaHandler = async (req, res) => {
-//    const { id } = req.params;
-//    const { nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA } = req.body;
-//    console.log(id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA);
-   
-//    try {
-//        const response = await updateRsaController({id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA});
-//        if (!response) {
-//            return res.status(201).json({ message: "Error al actializar el RSA",data:[] });
-//        }
-//        return res.status(200).json({ message: "RSA actualizada con éxito", data: response });
-//    } catch (error) {
-//        console.error('Error en updateRsaHandler:', error);
-//        return res.status(500).json({ message: "Error en el handler", error });
-//    }
-// };
-
-// // Handler para obtener una RSA por ID
-// const getRsaHandler = async (req, res) => {
-//    const { id } = req.params;
-//    try {
-//        const response = await getRsaController(id);
-//        if (!response) {
-//            return res.status(404).json({ message: "RSA no encontrada" });
-//        }
-//        return res.status(200).json({ message: "RSA obtenida con éxito", data: response });
-//    } catch (error) {
-//        console.error('Error en getRsaHandler:', error);
-//        return res.status(500).json({ message: "Error en el handler", error });
-//    }
-// };
-
-// // Handler para obtener todas las RSAs
-// const getAllRsaHandler = async (req, res) => {
-//    try {
-//        const response = await getAllRsaController();
-//        if (!response) {
-//            return res.status(404).json({ message: "No se encontraron RSAs" });
-//        }
-//        return res.status(200).json({ message: "RSAs obtenidas con éxito", data: response });
-//    } catch (error) {
-//        console.error('Error en getAllRsaHandler:', error);
-//        return res.status(500).json({ message: "Error en el handler", error });
-//    }
-// };
 const {
     createRsaController,
     updateRsaController,
@@ -82,7 +12,7 @@ const {
 // Handler para crear una nueva RSA
 const createRsaHandler = async (req, res) => {
     const { nro_rsa, fecha_rsa, fecha_notificacion, tipo, id_evaluar_rsa, id_descargo_RSA } = req.body;
-    const documento_RSA =req.files["documento_RSA"][0];
+    const documento_RSA = req.files && req.files["documento_RSA"] ? req.files["documento_RSA"][0] : null;
     const errores = [];
 
     // Validaciones de `nro_rsa`
@@ -120,9 +50,9 @@ const createRsaHandler = async (req, res) => {
     }
 
     // Validaciones de los campos adicionales
-    if (!tipo) errores.push('El campo tipo es requerido');
-    if (!id_evaluar_rsa) errores.push('El campo id_evaluar_rsa es requerido');
-    if (!id_descargo_RSA) errores.push('El campo id_descargo_RSA es requerido');
+    if (tipo && typeof tipo!=="string") errores.push('El campo tipo debe ser una cadena de texto');
+    if (id_evaluar_rsa && typeof id_evaluar_rsa!=="string") errores.push('El campo id_evaluar_rsa debe ser una cadena de texto');
+    if ( id_descargo_RSA && typeof id_descargo_RSA!=="string")errores.push('El campo id_descargo_RSA debe ser una cadena de texto');
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
@@ -149,7 +79,8 @@ const createRsaHandler = async (req, res) => {
 const updateRsaHandler = async (req, res) => {
     const { id } = req.params;
     const { nro_rsa, fecha_rsa, fecha_notificacion, tipo, id_evaluar_rsa, id_descargo_RSA } = req.body;
-    const documento_RSA =req.files["documento_RSA"][0];
+    const documento_RSA = req.files && req.files["documento_RSA"] ? req.files["documento_RSA"][0] : null;
+
     const errores = [];
 
     // Validaciones de `nro_rsa`
@@ -185,9 +116,9 @@ const updateRsaHandler = async (req, res) => {
     }
 
     // Validaciones de los campos adicionales
-    if (!tipo) errores.push('El campo tipo es requerido');
-    if (!id_evaluar_rsa) errores.push('El campo id_evaluar_rsa es requerido');
-    if (!id_descargo_RSA) errores.push('El campo id_descargo_RSA es requerido');
+    if (tipo && typeof tipo!=="string") errores.push('El campo tipo debe ser una cadena de texto');
+    if (id_evaluar_rsa && typeof id_evaluar_rsa!=="string") errores.push('El campo id_evaluar_rsa debe ser una cadena de texto');
+    if ( id_descargo_RSA && typeof id_descargo_RSA!=="string")errores.push('El campo id_descargo_RSA debe ser una cadena de texto');
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {

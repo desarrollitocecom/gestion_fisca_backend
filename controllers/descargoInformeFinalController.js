@@ -1,11 +1,13 @@
 const {DescargoIFI } = require('../db_connection');
+const {saveImage}=require('../utils/fileUtils');
 const createDescargoAndAssociate = async ({nro_descargo, fecha_descargo, documento_DIFI}) => {
+    
     try {
+        const documento_DIFI_path=saveImage(documento_DIFI,'Descargos_IFIs') 
         const newDescargo = await DescargoIFI.create({
             nro_descargo,
             fecha_descargo,
-            documento_DIFI,
-            
+            documento_DIFI:documento_DIFI_path         
         });
 
         return newDescargo || null;
