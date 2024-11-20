@@ -23,7 +23,3 @@ const createEntidad = async ({
         return false;
     }
  };
-
- const createEntidad = async ({nombre}) => {
-    
- }
