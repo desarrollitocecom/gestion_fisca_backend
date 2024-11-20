@@ -14,21 +14,27 @@ const createDescargoRgController = async ({ nro_descargo, fecha_descargo, docume
     }
 };
 
-// Actualizar un registro existente en la tabla DescargoRG
 const updateDescargoRgController = async ({ id, nro_descargo, fecha_descargo, documento }) => {
     try {
-        const documento_path=saveImage(documento,'Descargo(RG)')  
         const descargoRG = await getDescargoRgController(id);
-        if (descargoRG) {
-            await descargoRG.update({ nro_descargo, fecha_descargo, documento:documento_path});
-        }       
+
+        let documento_path = descargoRG.documento;
+
+        if (documento) {
+            // Guardar nuevo archivo y eliminar el anterior
+            documento_path = saveImage(documento, 'Descargo(RG)');
+            if (descargoRG.documento) {
+                deleteFile(descargoRG.documento);
+            }
+        }
+
+        await descargoRG.update({ nro_descargo, fecha_descargo, documento: documento_path });
         return descargoRG || null;
     } catch (error) {
-        console.error('Error al crear y asociar DescargoRG:', error);
-       return false
+        console.error('Error al actualizar DescargoRG:', error.message);
+        return false;
     }
 };
-
 // Obtener un registro específico de la tabla DescargoRG
 const getDescargoRgController = async (id) => {
     try {
