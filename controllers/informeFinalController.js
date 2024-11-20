@@ -1,20 +1,23 @@
 const {IFI,DescargoIFI,RSA,RSG1,RSG2}=require('../db_connection');
 const {saveImage,deleteFile}=require('../utils/fileUtils')
+
 const createInformeFinalController=async ({nro_ifi,fecha,documento_ifi,tipo, id_evaluar,id_descargo_ifi}) => {
-    
+    let documento_ifi_path; 
+
     try {
         const checking=await DescargoIFI.findByPk(id_descargo_ifi)
-        //console.log(id_descargo_ifi);
-        
+
         if(!checking){
-        const documento_ifi_path=saveImage(documento_ifi,'ifi')    
-        const response=await IFI.create({nro_ifi,fecha,documento_ifi:documento_ifi_path,tipo, id_evaluar,id_descargo_ifi});
-        return response || null
+            documento_ifi_path=saveImage(documento_ifi, 'ifi');
+            const response=await IFI.create({nro_ifi,fecha,documento_ifi:documento_ifi_path,tipo, id_evaluar,id_descargo_ifi});
+            return response || null
         }
-         throw new Error("El id de DescargoID ya existe ");
+        throw new Error("El id de DescargoIFI ya existe");
         
     } catch (error) {
-       // deleteFile(documento_ifi);
+        if (documento_ifi_path) {
+            deleteFile(documento_ifi_path);
+        }
         console.error("Error al crear el Informe Final:", error);
         return false;
     }
