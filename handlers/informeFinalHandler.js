@@ -12,7 +12,8 @@ function isValidUUID(uuid) {
   }
 const createInformeFinalHandler = async (req, res) => {
     const { nro_ifi, fecha, tipo, id_evaluar, id_descargo_ifi } = req.body;
-    const documento_ifi = req.files["documento_ifi"][0]
+    const documento_ifi = req.files && req.files["documento_ifi"] ? req.files["documento_ifi"][0] : null;
+
     const errores = []
     if (!nro_ifi) errores.push('El campo es requerido')
     if (typeof nro_ifi != 'string') errores.push('El nro debe ser una cadena de texto')
@@ -88,6 +89,9 @@ const updateInformeFinalHandler = async (req, res) => {
     if (id_evaluar && !isValidUUID(id_evaluar)) errores.push('El id_evaluar debe ser un uuid');
     if (id_descargo_ifi && !isValidUUID(id_descargo_ifi)) errores.push('El id_descargo_ifi debe ser un uuid');
     if (errores.length > 0) {
+        if (documento_ifi) {
+            fs.unlinkSync(documento_ifi.path); 
+        }
        return res.status(400).json({
             message: "Se encontraron los Siguientes Errores",
             data: errores
