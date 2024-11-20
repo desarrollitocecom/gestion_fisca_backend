@@ -8,7 +8,7 @@ module.exports=(sequelize)=>{
         },
         tipo:{
           type:DataTypes.STRING,
-          allowNull: true
+          allowNull: false
         },    
     }, {
         tableName: 'EstadoDescargoNCs',

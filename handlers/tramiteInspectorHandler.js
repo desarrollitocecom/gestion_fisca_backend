@@ -2,6 +2,7 @@ const { createTramiteInspector, getAllTramiteInspectorById } = require('../contr
 const { createMedidaComplementaria } = require('../controllers/medidaComplementariaController')
 const { createNC } = require('../controllers/ncController');
 const fs = require('fs');
+const { scheduleDescargoJobTest } = require('../jobs/descargoJob');
 
 const createTramiteHandler = async (req, res) => {
     const { 
@@ -124,13 +125,15 @@ const createTramiteHandler = async (req, res) => {
 
             const id_tramiteInspector = newTramiteInspector.id;
 
-            const newNC = await createNC({ id_tramiteInspector });
-
-           if (newNC) {
-               res.status(201).json({
-                   message: 'NC creado con éxito',
-                   data: { newMedidaComplementaria, newTramiteInspector, newNC }
-               });
+            const newNC = await createNC({ id_tramiteInspector: newTramiteInspector.id });
+            if (newNC) {
+                const ncId = newNC.id; // Asegúrate de usar este ID
+                const startDate = new Date(); // Fecha actual
+                scheduleDescargoJobTest(ncId, startDate, 5); // Usa el ID de NC para el "job"
+                res.status(201).json({
+                    message: 'NC creado con éxito',
+                    data: { newMedidaComplementaria, newTramiteInspector, newNC }
+                });
            } else {
                res.status(400).json({
                    message: 'Error al crear el NC',

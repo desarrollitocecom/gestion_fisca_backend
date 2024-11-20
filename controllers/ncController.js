@@ -126,4 +126,22 @@ const getAllNC = async (page = 1, limit = 20) => {
 };
 
 
-module.exports = { createNC, updateNC, getNC, getAllNC };
+const updateNCState = async (id, newState) => {
+    try {
+        const nc = await NC.findByPk(id); // Busca el registro por ID
+        if (!nc) {
+            console.error(`No se encontró el NC con ID ${id}.`);
+            return null;
+        }
+        nc.id_estado_NC = newState; // Actualiza el estado del NC
+        await nc.save(); // Guarda los cambios en la base de datos
+        console.log(`Estado del NC con ID ${id} actualizado a ${newState}.`);
+        return nc;
+    } catch (error) {
+        console.error(`Error al actualizar el estado del NC con ID ${id}:`, error);
+        throw error;
+    }
+};
+
+
+module.exports = { createNC, updateNC, getNC, getAllNC , updateNCState};

@@ -1,4 +1,4 @@
-const {Entidad}= require ("../db_connection");
+const { Entidad } = require("../db_connection");
 
 const createEntidad = async ({
     nombre_entidad,
@@ -22,6 +22,4 @@ const createEntidad = async ({
         console.error('Entidad creando trámite:', error);
         return false;
     }
-}
-
-module.exports = { createEntidad };
+ };
