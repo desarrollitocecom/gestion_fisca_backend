@@ -2,7 +2,7 @@ const { createTramiteInspector, getAllTramiteInspectorById } = require('../contr
 const { createMedidaComplementaria } = require('../controllers/medidaComplementariaController')
 const { createNC } = require('../controllers/ncController');
 const fs = require('fs');
-const { scheduleDescargoJobTest } = require('../jobs/descargoJob');
+const { startJobForDocument } = require('../jobs/descargoJob');
 
 const createTramiteHandler = async (req, res) => {
     const { 
@@ -129,7 +129,10 @@ const createTramiteHandler = async (req, res) => {
             if (newNC) {
                 const ncId = newNC.id; // Asegúrate de usar este ID
                 const startDate = new Date(); // Fecha actual
-                scheduleDescargoJobTest(ncId, startDate, 5); // Usa el ID de NC para el "job"
+    
+                // Programar el job para cambiar el estado del NC después de 5 minutos
+                startJobForDocument(ncId, startDate, 'nc');
+
                 res.status(201).json({
                     message: 'NC creado con éxito',
                     data: { newMedidaComplementaria, newTramiteInspector, newNC }
