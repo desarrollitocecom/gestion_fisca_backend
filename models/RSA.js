@@ -47,7 +47,15 @@ module.exports = (sequelize) => {
             },
             allowNull: true,
             unique:true
-        }
+        },
+        id_estado_RSA:{
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'EstadoRSAs',
+                key: 'id',
+            },
+            allowNull:true
+        },
         //  id_AR2:{
         //      type: DataTypes.UUID,
         //      references: {
@@ -64,6 +72,8 @@ module.exports = (sequelize) => {
         // Relación con DescargoRSA
         RSA.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
         RSA.belongsTo(db.DescargoRSA, { foreignKey: 'id_descargo_RSA', as: 'DescargoRSAs' });
+        RSA.belongsTo(db.EstadoRSA, { foreignKey: 'id_estado_RSA', as: 'estadoIFI'})
+   
     };
     return RSA;
 };
