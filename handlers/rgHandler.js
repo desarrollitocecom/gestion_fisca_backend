@@ -4,7 +4,7 @@ const {
     getRGController,
     getAllRGController
 } = require('../controllers/rgController');
-
+const fs = require('node:fs');
 // Crear un registro RG
 const createRGHandler = async (req, res) => {
     const { nro_rg, fecha_rg, fecha_notificacion, estado } = req.body;
@@ -36,17 +36,33 @@ const createRGHandler = async (req, res) => {
     if (estado && typeof estado!=="string") errores.push('El campo estado es obligatorio');
     
     // Validación de archivos
-    if (!documento_rg) errores.push('El archivo documento_rg es obligatorio');
-    if (documento_rg && documento_rg.mimetype !== 'application/pdf') {
-        errores.push('El archivo documento_rg debe ser un PDF');
+    if (!documento_rg || documento_rg.length === 0) {
+        errores.push("El documento_rg es requerido.");
+    } else {
+        if (documento_rg.length > 1) {
+            errores.push("Solo se permite un documento_rg.");
+        } else if (documento_rg.mimetype !== "application/pdf") {
+            errores.push("El documento_rg debe ser un archivo PDF.");
+        }
     }
-    
-    if (documento_ac && documento_ac.mimetype !== 'application/pdf') {
-        errores.push('El archivo documento_ac debe ser un PDF');
+    if (!documento_ac || documento_ac.length === 0) {
+        errores.push("El documento_ac es requerido.");
+    } else {
+        if (documento_ac.length > 1) {
+            errores.push("Solo se permite un documento_ac.");
+        } else if (documento_ac.mimetype !== "application/pdf") {
+            errores.push("El documento_ac debe ser un archivo PDF.");
+        }
     }
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento_rg) {
+            fs.unlinkSync(documento_rg.path);
+        }
+        if (documento_ac) {
+            fs.unlinkSync(documento_ac.path);
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores
@@ -107,15 +123,32 @@ const updateRGHandler = async (req, res) => {
     if (estado && typeof estado!=="string") errores.push('El campo estado es obligatorio');
 
     // Validación de archivos
-    if (documento_rg && documento_rg.mimetype !== 'application/pdf') {
-        errores.push('El archivo documento_rg debe ser un PDF');
+    if (!documento_rg || documento_rg.length === 0) {
+        errores.push("El documento_rg es requerido.");
+    } else {
+        if (documento_rg.length > 1) {
+            errores.push("Solo se permite un documento_rg.");
+        } else if (documento_rg.mimetype !== "application/pdf") {
+            errores.push("El documento_rg debe ser un archivo PDF.");
+        }
     }
-    if (documento_ac && documento_ac.mimetype !== 'application/pdf') {
-        errores.push('El archivo documento_ac debe ser un PDF');
+    if (!documento_ac || documento_ac.length === 0) {
+        errores.push("El documento_ac es requerido.");
+    } else {
+        if (documento_ac.length > 1) {
+            errores.push("Solo se permite un documento_ac.");
+        } else if (documento_ac.mimetype !== "application/pdf") {
+            errores.push("El documento_ac debe ser un archivo PDF.");
+        }
     }
-
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento_rg) {
+            fs.unlinkSync(documento_rg.path);
+        }
+        if (documento_ac) {
+            fs.unlinkSync(documento_ac.path);
+        }   
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores

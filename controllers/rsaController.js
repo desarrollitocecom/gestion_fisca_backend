@@ -2,8 +2,9 @@ const { RSA } = require('../db_connection'); // Asegúrate de que la ruta al mod
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
 const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA}) => {
+    let documento_path;
     try {
-        const documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
+        documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
 
         const newRsa = await RSA.create({
             nro_rsa,
@@ -17,17 +18,29 @@ const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, docu
 
         return newRsa || null;
     } catch (error) {
+        if (documento_path) {
+            deleteFile(documento_path);
+        }
         console.error('Error al crear RSA:', error);
         return false
     }
 };
 // Función para actualizar una instancia existente de RSA
 const updateRsaController = async ({id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA}) => {
+    let documento_path;
+
     try {
-        const documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
+        // documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
 
         const rsa = await RSA.findByPk(id);
-
+        documento_path=rsa.documento_RSA
+        if (documento_RSA) {
+            documento_path = saveImage(documento_RSA, 'Resolucion(RSA)');
+            if (rsa.documento_RSA) {
+                deleteFile(rsa.documento_RSA);
+            }
+        }
+        if(rsa){
         await rsa.update({
             nro_rsa,
             fecha_rsa,
@@ -36,10 +49,13 @@ const updateRsaController = async ({id, nro_rsa, fecha_rsa, fecha_notificacion, 
             tipo,
             id_evaluar_rsa,
             id_descargo_RSA
-        });
+        });}
 
         return rsa || null;
     } catch (error) {
+        if (documento_path) {
+            deleteFile(documento_path);
+        }
         console.error('Error al actualizar RSA:', error);
         return false
     }

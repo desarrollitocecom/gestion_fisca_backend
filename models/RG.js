@@ -30,7 +30,15 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        
+        id_nc:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'NCs',
+                key: 'id',
+            },
+            allowNull: true,
+            unique:true
+        }
         //  id_AI1:{
         //      type: DataTypes.UUID,
         //      references: {
@@ -43,5 +51,11 @@ module.exports = (sequelize) => {
         tableName: 'RGs',
         timestamps: true
     });
+   RG.associate = (db) => {
+     
+       RG.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
+        
+    };
+    
        return RG;
 };

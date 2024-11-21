@@ -8,7 +8,7 @@ const {
 const {
     updateinIfiController
 } = require('../controllers/informeFinalController');
-
+const fs = require('node:fs');
 // Handler para crear una nueva RSA
 const createRsaHandler = async (req, res) => {
     const { nro_rsa, fecha_rsa, fecha_notificacion, tipo, id_evaluar_rsa, id_descargo_RSA } = req.body;
@@ -42,20 +42,24 @@ const createRsaHandler = async (req, res) => {
         }
     }
 
+    // Validaciones de los campos adicionales
+    if (tipo && typeof tipo !== "string") errores.push('El campo tipo debe ser una cadena de texto');
+    if (id_evaluar_rsa && typeof id_evaluar_rsa !== "string") errores.push('El campo id_evaluar_rsa debe ser una cadena de texto');
     // Validaciones de `documento_RSA`
-    if (documento_RSA) {
-        if (documento_RSA.mimetype !== 'application/pdf') {
-            errores.push('El documento debe ser un archivo PDF');
+    if (!documento_RSA || documento_RSA.length === 0) {
+        errores.push("El documento_RSA es requerido.");
+    } else {
+        if (documento_RSA.length > 1) {
+            errores.push("Solo se permite un documento_RSA.");
+        } else if (documento_RSA.mimetype !== "application/pdf") {
+            errores.push("El documento_RSA debe ser un archivo PDF.");
         }
     }
-
-    // Validaciones de los campos adicionales
-    if (tipo && typeof tipo!=="string") errores.push('El campo tipo debe ser una cadena de texto');
-    if (id_evaluar_rsa && typeof id_evaluar_rsa!=="string") errores.push('El campo id_evaluar_rsa debe ser una cadena de texto');
-    if ( id_descargo_RSA && typeof id_descargo_RSA!=="string")errores.push('El campo id_descargo_RSA debe ser una cadena de texto');
-
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento_RSA) {
+            fs.unlinkSync(documento_RSA.path);
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores
@@ -111,17 +115,27 @@ const updateRsaHandler = async (req, res) => {
     }
 
     // Validaciones de `documento_RSA`
-    if (documento_RSA && documento_RSA.mimetype !== 'application/pdf') {
-        errores.push('El documento debe ser un archivo PDF');
+    if (!documento_RSA || documento_RSA.length === 0) {
+        errores.push("El documento_RSA es requerido.");
+    } else {
+        if (documento_RSA.length > 1) {
+            errores.push("Solo se permite un documento_RSA.");
+        } else if (documento_RSA.mimetype !== "application/pdf") {
+            errores.push("El documento_RSA debe ser un archivo PDF.");
+        }
     }
 
+
     // Validaciones de los campos adicionales
-    if (tipo && typeof tipo!=="string") errores.push('El campo tipo debe ser una cadena de texto');
-    if (id_evaluar_rsa && typeof id_evaluar_rsa!=="string") errores.push('El campo id_evaluar_rsa debe ser una cadena de texto');
-    if ( id_descargo_RSA && typeof id_descargo_RSA!=="string")errores.push('El campo id_descargo_RSA debe ser una cadena de texto');
+    if (tipo && typeof tipo !== "string") errores.push('El campo tipo debe ser una cadena de texto');
+    if (id_evaluar_rsa && typeof id_evaluar_rsa !== "string") errores.push('El campo id_evaluar_rsa debe ser una cadena de texto');
+
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento_RSA) {
+            fs.unlinkSync(documento_RSA.path);
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores
@@ -144,7 +158,7 @@ const updateRsaHandler = async (req, res) => {
 // Handler para obtener una RSA por ID
 const getRsaHandler = async (req, res) => {
     const { id } = req.params;
-    
+
     try {
         const response = await getRsaController(id);
         if (!response) {
@@ -173,37 +187,37 @@ const getAllRsaHandler = async (req, res) => {
 function isValidUUID(uuid) {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return uuidRegex.test(uuid);
-  }
-  
+}
+
 const updateinRSAHandler = async (req, res) => {
     const { uuid, id } = req.body;
-    const vRSA= "RSA";
-     const errores=[]
-    if(!uuid)errores.push('El campo es requerido')
-    if(!isValidUUID(uuid)) errores.push('Debe ser un tipo uuid')
-    if(!id)errores.push('El campo es requerido')
-    if(!isValidUUID(id)) errores.push('Debe ser un tipo uuid') 
-        if(errores>0){
-            return res.status(404).json({
-                message:'Se Encontraron los siguientes Errores',
-                data:errores
-            })
-        }
+    const vRSA = "RSA";
+    const errores = []
+    if (!uuid) errores.push('El campo es requerido')
+    if (!isValidUUID(uuid)) errores.push('Debe ser un tipo uuid')
+    if (!id) errores.push('El campo es requerido')
+    if (!isValidUUID(id)) errores.push('Debe ser un tipo uuid')
+    if (errores > 0) {
+        return res.status(404).json({
+            message: 'Se Encontraron los siguientes Errores',
+            data: errores
+        })
+    }
     try {
         const rsa = await getRsaController(id);
         if (!rsa) {
             return res.status(201).json({ message: "No se ecuentra el ID en RSA", data: [] })
         }
-        const ifi = await updateinIfiController(uuid,vRSA,rsa.id);
+        const ifi = await updateinIfiController(uuid, vRSA, rsa.id);
         if (!ifi) {
             return res.status(201).json({ message: "No se pudo modificar el IFI", data: [] })
         }
-      
-       
-       return res.status(200).json({ message: 'Nuevo IFI modificado', data: ifi })
+
+
+        return res.status(200).json({ message: 'Nuevo IFI modificado', data: ifi })
     } catch (error) {
         console.error("Error al modificar IFI:", error);
-       return res.status(500).json({ error: "Error interno del servidor al obtener modificar ifi." });
+        return res.status(500).json({ error: "Error interno del servidor al obtener modificar ifi." });
     }
 }
 module.exports = {

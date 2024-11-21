@@ -2,6 +2,7 @@ const {
     createDescargoRgController,
     updateDescargoRgController
 } = require('../controllers/descargoRgController');
+const fs = require('node:fs');
 
 // Crear un descargo
 const createDescargoRgHandler = async (req, res) => {
@@ -26,13 +27,21 @@ const createDescargoRgHandler = async (req, res) => {
     }
 
     // Validación de documento_descargo
-    if (!documento) errores.push('El campo documento es requerido');
-    if (documento && documento.mimetype !== 'application/pdf') {
-        errores.push('El documento debe ser un archivo PDF');
+    if (!documento || documento.length === 0) {
+        errores.push("El documento es requerido.");
+    } else {
+        if (documento.length > 1) {
+            errores.push("Solo se permite un documento.");
+        } else if (documento.mimetype !== "application/pdf") {
+            errores.push("El documento debe ser un archivo PDF.");
+        }
     }
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento) {
+            fs.unlinkSync(documento.path);
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores
@@ -75,12 +84,21 @@ const updateDescargoRgHandler = async (req, res) => {
     }
 
     // Validación de documento_descargo
-    if (documento && documento.mimetype !== 'application/pdf') {
-        errores.push('El documento_descargo debe ser un archivo PDF');
+    if (!documento || documento.length === 0) {
+        errores.push("El documento es requerido.");
+    } else {
+        if (documento.length > 1) {
+            errores.push("Solo se permite un documento.");
+        } else if (documento.mimetype !== "application/pdf") {
+            errores.push("El documento debe ser un archivo PDF.");
+        }
     }
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento) {
+            fs.unlinkSync(documento.path);
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores

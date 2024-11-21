@@ -18,6 +18,15 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        id_nc:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'NCs',
+                key: 'id',
+            },
+            allowNull: true,
+            unique:true
+        }
    
         //  id_AR3:{
         //      type: DataTypes.UUID,
@@ -32,5 +41,11 @@ module.exports = (sequelize) => {
         tableName: 'RGSPs',
         timestamps: true
     });
+
+    RSGP.associate = (db) => {
+        // Relación de 1 a 1 entre RSGP 
+
+        RSGP.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
+    };
     return RSGP;
 };

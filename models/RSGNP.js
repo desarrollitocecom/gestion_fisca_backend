@@ -40,6 +40,15 @@ module.exports = (sequelize) => {
             allowNull:true,
             unique:true
         },
+        id_nc:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'NCs',
+                key: 'id',
+            },
+            allowNull: true,
+            unique:true
+        }
         //  id_AR3:{
         //      type: DataTypes.UUID,
         //      references: {
@@ -58,6 +67,7 @@ module.exports = (sequelize) => {
         // Relación con DescargoRG
         RSGNP.belongsTo(db.RG, { foreignKey: 'id_rg', as: 'RGs' });
         RSGNP.belongsTo(db.DescargoRG, { foreignKey: 'id_descargo_RSGNP', as: 'DescargoRGs' });
+        RSGNP.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
     };
     return RSGNP;
 };

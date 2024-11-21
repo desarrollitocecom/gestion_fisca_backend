@@ -2,8 +2,9 @@ const { RSGNP } = require("../db_connection");
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
 const createRsgnpController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RG, id_rg }) => {
+    let documento_path;
     try {
-        const documento_path=saveImage(documento_RSGNP,'Resolucion(RSGNP)')       
+        documento_path=saveImage(documento_RSGNP,'Resolucion(RSGNP)')       
 
         const newRgsnp = await RSGNP.create({
             nro_rsg,
@@ -15,31 +16,42 @@ const createRsgnpController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, d
         });
         return newRgsnp;
     } catch (error) {
+        if (documento_path) {
+            deleteFile(documento_path);
+        }
         console.error("Error creating RGSNP:", error);
       return false
     }
 };
 
 const updateRsgnpController = async ({ id, nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RG, id_rg }) => {
+    let documento_path;
     try {
-        const documento_path=saveImage(documento_RSGNP,'Resolucion(RSGNP)')       
+           
         
         const rsgnp = await RSGNP.findOne({ where: { id } });
-
+        documento_path=rsgnp.documento_RSGNP
+        if (documento_RSGNP) {
+            documento_path = saveImage(documento_RSGNP, 'Resolucion(RSGNP)');
+            if (rsgnp.documento_RSGNP) {
+                deleteFile(rsgnp.documento_RSGNP);
+            }
+        }
         if (rsgnp) {
             await rsgnp.update({
                 nro_rsg,
                 fecha_rsg,
                 fecha_notificacion,
-                documento_RSGP:documento_path,
+                documento_RSGNP:documento_path,
                 id_descargo_RG,
                 id_rg
             });
         }
         return rsgnp || null
-       
-     
     } catch (error) {
+        if (documento_path) {
+            deleteFile(documento_path);
+        }
         console.error("Error updating RGSNP:", error);
         return false
 

@@ -7,7 +7,7 @@ const {
 const {
     updateinRsaController
 } = require('../controllers/rsaController');
-
+const fs = require('node:fs');
 const createRsgpHandler = async (req, res) => {
     const { nro_rsg, fecha_rsg } = req.body;
     const documento_RSGP = req.files && req.files["documento_RSGP"] ? req.files["documento_RSGP"][0] : null;
@@ -30,16 +30,21 @@ const createRsgpHandler = async (req, res) => {
     }
 
     // Validaciones de `documento_RSGP`
-    if (!documento_RSGP) {
-        errores.push('El documento_RSGP es requerido');
+    if (!documento_RSGP || documento_RSGP.length === 0) {
+        errores.push("El documento_RSGP es requerido.");
     } else {
-        if (documento_RSGP.mimetype !== 'application/pdf') {
-            errores.push('El documento_RSGP debe ser un archivo PDF');
+        if (documento_RSGP.length > 1) {
+            errores.push("Solo se permite un documento_RSGP.");
+        } else if (documento_RSGP.mimetype !== "application/pdf") {
+            errores.push("El documento_RSGP debe ser un archivo PDF.");
         }
     }
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento_RSGP) {
+            fs.unlinkSync(documento_RSGP.path);
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores
@@ -89,12 +94,21 @@ const updateRsgpHandler = async (req, res) => {
     }
 
     // Validaciones de `documento_RSGP`
-    if (documento_RSGP && documento_RSGP.mimetype !== 'application/pdf') {
-        errores.push('El documento_RSGP debe ser un archivo PDF');
+    if (!documento_RSGP || documento_RSGP.length === 0) {
+        errores.push("El documento_RSGP es requerido.");
+    } else {
+        if (documento_RSGP.length > 1) {
+            errores.push("Solo se permite un documento_RSGP.");
+        } else if (documento_RSGP.mimetype !== "application/pdf") {
+            errores.push("El documento_RSGP debe ser un archivo PDF.");
+        }
     }
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento_RSGP) {
+            fs.unlinkSync(documento_RSGP.path);
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores

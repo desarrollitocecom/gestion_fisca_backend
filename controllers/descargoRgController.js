@@ -3,23 +3,29 @@ const {saveImage,deleteFile}=require('../utils/fileUtils')
 
 // Crear un nuevo registro en la tabla DescargoRG
 const createDescargoRgController = async ({ nro_descargo, fecha_descargo, documento }) => {
+    let documento_path;
+   
     try {
-        const documento_path=saveImage(documento,'Descargo(RG)')  
+        documento_path=saveImage(documento,'Descargo(RG)')  
         const newDescargoRG = await DescargoRG.create({ nro_descargo, fecha_descargo, documento:documento_path });
         return newDescargoRG || null;
     } catch (error) {
-        console.error('Error al crear y asociar DescargoRG:', error);
-        
+        if (documento_path) {
+            deleteFile(documento_path);
+        }
+        console.error('Error al crear y asociar DescargoRG:', error);     
         return false
     }
 };
 
 const updateDescargoRgController = async ({ id, nro_descargo, fecha_descargo, documento }) => {
+    let documento_path;
+   
     try {
         const descargoRG = await getDescargoRgController(id);
 
-        let documento_path = descargoRG.documento;
-
+         documento_path = descargoRG.documento;
+ 
         if (documento) {
             // Guardar nuevo archivo y eliminar el anterior
             documento_path = saveImage(documento, 'Descargo(RG)');
@@ -31,6 +37,9 @@ const updateDescargoRgController = async ({ id, nro_descargo, fecha_descargo, do
         await descargoRG.update({ nro_descargo, fecha_descargo, documento: documento_path });
         return descargoRG || null;
     } catch (error) {
+        if (documento_path) {
+            deleteFile(documento_path);
+        }
         console.error('Error al actualizar DescargoRG:', error.message);
         return false;
     }

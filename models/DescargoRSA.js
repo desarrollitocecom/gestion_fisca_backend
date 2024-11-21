@@ -18,6 +18,15 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        id_nc:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'NCs',
+                key: 'id',
+            },
+            allowNull: true,
+            unique:true
+        }
    
         //  id_AR3:{
         //      type: DataTypes.UUID,
@@ -32,5 +41,10 @@ module.exports = (sequelize) => {
         tableName: 'DescargoRSAs',
         timestamps: true
     });
+    DescargoRSA.associate = (db) => {
+        // Relación con NC
+        DescargoRSA.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
+
+    };
     return DescargoRSA;
 };

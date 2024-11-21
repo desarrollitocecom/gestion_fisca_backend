@@ -2,10 +2,10 @@ const {
     createDescargoAndAssociate,
     updateDescargoAndAssociate
 } = require('../controllers/descargoInformeFinalController');
-
+const fs = require('node:fs');
 const createDescargoHandler = async (req, res) => {
     const { nro_descargo, fecha_descargo } = req.body;
-    const documento_DIFI = req.files["documento_DIFI"][0]
+    const documento_DIFI = req.files && req.files["documento_DIFI"] ? req.files["documento_DIFI"][0] : null;
     const errores = [];
 
     // Validaciones de `nro_descargo`
@@ -36,6 +36,9 @@ const createDescargoHandler = async (req, res) => {
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento_DIFI) {
+            fs.unlinkSync(documento_DIFI.path); 
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores
@@ -67,7 +70,7 @@ const createDescargoHandler = async (req, res) => {
 const updateDescargoHandler = async (req, res) => {
     const { id } = req.params;
     const { nro_descargo, fecha_descargo } = req.body;
-    const documento_DIFI = req.files["documento_DIFI"][0]
+    const documento_DIFI = req.files && req.files["documento_DIFI"] ? req.files["documento_DIFI"][0] : null;
     const errores = [];
 
     // Validaciones de `nro_descargo`
@@ -93,6 +96,9 @@ const updateDescargoHandler = async (req, res) => {
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento_DIFI) {
+            fs.unlinkSync(documento_DIFI.path); 
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores
@@ -100,7 +106,7 @@ const updateDescargoHandler = async (req, res) => {
     }
 
     try {
-        const response = await updateDescargoAndAssociate(id, nro_descargo, fecha_descargo, documento_DIFI);
+        const response = await updateDescargoAndAssociate({id, nro_descargo, fecha_descargo, documento_DIFI});
 
         if (!response) {
             return res.status(400).json({

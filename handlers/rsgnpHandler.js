@@ -8,6 +8,7 @@ const {
 const {
     updateinRsaController
 } = require('../controllers/rsaController')
+const fs = require('node:fs');
 
 function isValidUUID(uuid) {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -50,7 +51,6 @@ const createRsgnpHandler = async (req, res) => {
     const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RG, id_rg } = req.body;
     const errores = [];
     const documento_RSGNP = req.files && req.files["documento_RSGNP"] ? req.files["documento_RSGNP"][0] : null;
-
     // Validaciones de `nro_rsg`
     if (!nro_rsg) errores.push('El campo nro_rsg es requerido');
     if (typeof nro_rsg !== 'string') errores.push('El nro_rsg debe ser una cadena de texto');
@@ -72,22 +72,31 @@ const createRsgnpHandler = async (req, res) => {
     if (!fechaRegex.test(fecha_notificacion)) {
         errores.push('El formato de la fecha debe ser YYYY-MM-DD para fecha_notificacion');
     } else {
-        const parsedFecha = new Date(fecha_notificacion);
-        if (isNaN(parsedFecha.getTime())) {
+        const parsedFecha1 = new Date(fecha_notificacion);
+        if (isNaN(parsedFecha1.getTime())) {
             errores.push('Debe ser una fecha válida para fecha_notificacion');
         }
     }
 
     // Validaciones de `documento_RSGNP`
-    if (!documento_RSGNP) errores.push('El campo documento_RSGNP es requerido');
-    else if (documento_RSGNP.mimetype !== 'application/pdf') errores.push('El documento_RSGNP debe ser un archivo PDF');
-
+    if (!documento_RSGNP || documento_RSGNP.length === 0) {
+        errores.push("El documento_RSGNP es requerido.");
+    } else {
+        if (documento_RSGNP.length > 1) {
+            errores.push("Solo se permite un documento_RSGNP.");
+        } else if (documento_RSGNP.mimetype !== "application/pdf") {
+            errores.push("El documento_RSGNP debe ser un archivo PDF.");
+        }
+    }
     // Validaciones de `id_descargo_RSGNP` y `id_rg`
     if (id_descargo_RG  && typeof id_descargo_RG!=="string") errores.push('El campo id_descargo_RSGNP debe ser una cadena de texto');
     if (id_rg && typeof id_rg!=="string") errores.push('El campo id_rg debe ser una cadena de texto');
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento_RSGNP) {
+            fs.unlinkSync(documento_RSGNP.path);
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores
@@ -112,14 +121,13 @@ const updateRsgnpHandler = async (req, res) => {
     const documento_RSGNP = req.files && req.files["documento_RSGNP"] ? req.files["documento_RSGNP"][0] : null;
 
     const errores = [];
-
+    
     // Validaciones de `nro_rsg`
     if (!nro_rsg) errores.push('El campo nro_rsg es requerido');
     if (typeof nro_rsg !== 'string') errores.push('El nro_rsg debe ser una cadena de texto');
-
+    const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
     // Validaciones de `fecha_rsg`
     if (!fecha_rsg) errores.push('El campo fecha_rsg es requerido');
-    const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!fechaRegex.test(fecha_rsg)) {
         errores.push('El formato de la fecha debe ser YYYY-MM-DD');
     } else {
@@ -129,20 +137,27 @@ const updateRsgnpHandler = async (req, res) => {
         }
     }
 
+
     // Validaciones de `fecha_notificacion`
     if (!fecha_notificacion) errores.push('El campo fecha_notificacion es requerido');
     if (!fechaRegex.test(fecha_notificacion)) {
         errores.push('El formato de la fecha debe ser YYYY-MM-DD para fecha_notificacion');
     } else {
-        const parsedFecha = new Date(fecha_notificacion);
-        if (isNaN(parsedFecha.getTime())) {
+        const parsedFecha1 = new Date(fecha_notificacion);
+        if (isNaN(parsedFecha1.getTime())) {
             errores.push('Debe ser una fecha válida para fecha_notificacion');
         }
     }
 
     // Validaciones de `documento_RSGNP`
-    if (documento_RSGNP && documento_RSGNP.mimetype !== 'application/pdf') {
-        errores.push('El documento_RSGNP debe ser un archivo PDF');
+    if (!documento_RSGNP || documento_RSGNP.length === 0) {
+        errores.push("El documento_RSGNP es requerido.");
+    } else {
+        if (documento_RSGNP.length > 1) {
+            errores.push("Solo se permite un documento_RSGNP.");
+        } else if (documento_RSGNP.mimetype !== "application/pdf") {
+            errores.push("El documento_RSGNP debe ser un archivo PDF.");
+        }
     }
 
     // Validaciones de `id_descargo_RSGNP` y `id_rg`
@@ -151,6 +166,9 @@ const updateRsgnpHandler = async (req, res) => {
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento_RSGNP) {
+            fs.unlinkSync(documento_RSGNP.path);
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores

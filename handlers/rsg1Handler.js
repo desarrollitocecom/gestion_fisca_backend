@@ -6,10 +6,13 @@ const {
 const {
     updateinIfiController
 } = require('../controllers/informeFinalController');
+const fs = require('node:fs');
 
 const createRSG1Handler = async (req, res) => {
     const { nro_resolucion, fecha_resolucion } = req.body;
-    const documento = req.files["documento"][0];
+ 
+    const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
+
     const errores = [];
 
     // Validaciones de `nro_resolucion`
@@ -39,6 +42,9 @@ const createRSG1Handler = async (req, res) => {
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento) {
+            fs.unlinkSync(documento.path); 
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores
@@ -66,8 +72,8 @@ const createRSG1Handler = async (req, res) => {
 
 const updateRSG1Handler = async (req, res) => {
     const { id } = req.params;
-    const { nro_resolucion, fecha_resolucion } = req.body;
-    const documento = req.files["documento"][0]
+    const { nro_resolucion, fecha_resolucion } = req.body;  
+    const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
     const errores = [];
 
     // Validaciones de `nro_resolucion`
@@ -87,12 +93,21 @@ const updateRSG1Handler = async (req, res) => {
     }
 
     // Validaciones de `documento`
-    if (documento && documento.mimetype !== 'application/pdf') {
-        errores.push('El documento debe ser un archivo PDF');
+    if (!documento || documento.length === 0) {
+        errores.push("El documento es requerido.");
+    } else {
+        if (documento.length > 1) {
+            errores.push("Solo se permite un documento.");
+        } else if (documento.mimetype !== "application/pdf") {
+            errores.push("El documento debe ser un archivo PDF.");
+        }
     }
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
+        if (documento) {
+            fs.unlinkSync(documento.path); 
+        }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
             data: errores

@@ -59,8 +59,8 @@ const createInformeFinalHandler = async (req, res) => {
 const updateInformeFinalHandler = async (req, res) => {
     const { id } = req.params;
     const { nro_ifi, fecha, tipo, id_evaluar, id_descargo_ifi } = req.body;
-    const documento_ifi = req.files["documento_ifi"][0];
-    const errores = [];
+    const documento_ifi = req.files && req.files["documento_ifi"] ? req.files["documento_ifi"][0] : null;
+        const errores = [];
 
     // Validaciones de `nro_ifi`
     if (!nro_ifi) errores.push('El campo nro_ifi es requerido');
@@ -79,8 +79,14 @@ const updateInformeFinalHandler = async (req, res) => {
     }
 
     // Validaciones de `documento_ifi`
-    if (documento_ifi && documento_ifi.mimetype !== 'application/pdf') {
-        errores.push('El documento debe ser un archivo PDF.');
+    if (!documento_ifi || documento_ifi.length === 0) {
+        errores.push("El documento_ifi es requerido.");
+    } else {
+        if (documento_ifi.length > 1) {
+            errores.push("Solo se permite un documento_ifi.");
+        } else if (documento_ifi.mimetype !== "application/pdf") {
+            errores.push("El documento debe ser un archivo PDF.");
+        }
     }
 
     // Validaciones adicionales

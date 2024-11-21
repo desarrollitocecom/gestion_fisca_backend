@@ -11,9 +11,8 @@ const {
  = require('../handlers/informeFinalHandler');
 
 router.post('/', uploadIfi, createInformeFinalHandler);
-
-router.get('/ifis',getAllInformesFinalesHandler)
-router.get('/:id',getInformeFinalHandler)
-router.put('/updateifi/:id',uploadIfi,updateInformeFinalHandler)
+router.get('/ifis',getAllInformesFinalesHandler);
+router.get('/:id',getInformeFinalHandler);
+router.put('/:id',uploadIfi,updateInformeFinalHandler);
 
 module.exports = router;
