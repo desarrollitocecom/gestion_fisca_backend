@@ -18,5 +18,5 @@ module.exports = (sequelize) => {
         timestamps: true
     });
     
-    return EstadoMC;
+    return EstadoRSA;
 };
