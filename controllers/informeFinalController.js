@@ -91,8 +91,8 @@ const getAllInformeFinalController = async () => {
         { model: RSA,  as: "RSA" },
         { model: RSG1, as: "RSG1" },
         { model: RSG2, as: "RSG2" },
-        { model: NC,   as: "NC" },
-        { model: EstadoIFI,as:"Estado"}
+       { model: NC,   as: "NCs" },
+        { model: EstadoIFI,as:"estadoIFI"}
       ],
     });
     return response || null;

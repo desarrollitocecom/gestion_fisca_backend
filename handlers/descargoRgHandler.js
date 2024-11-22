@@ -6,7 +6,7 @@ const fs = require('node:fs');
 
 // Crear un descargo
 const createDescargoRgHandler = async (req, res) => {
-    const { nro_descargo, fecha_descargo } = req.body;
+    const { nro_descargo, fecha_descargo,id_nc } = req.body;
     const errores = [];
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
 
@@ -49,7 +49,7 @@ const createDescargoRgHandler = async (req, res) => {
     }
 
     try {
-        const newDescargo = await createDescargoRgController({ nro_descargo, fecha_descargo, documento });
+        const newDescargo = await createDescargoRgController({ nro_descargo, fecha_descargo, documento,id_nc });
         if (!newDescargo) {
             return res.status(400).json({ message: "Descargo no fue creado", data: [] });
         }
@@ -63,7 +63,7 @@ const createDescargoRgHandler = async (req, res) => {
 // Actualizar un descargo
 const updateDescargoRgHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_descargo, fecha_descargo} = req.body;
+    const { nro_descargo, fecha_descargo,id_nc} = req.body;
     const errores = [];
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
 
@@ -106,7 +106,7 @@ const updateDescargoRgHandler = async (req, res) => {
     }
 
     try {
-        const updatedDescargo = await updateDescargoRgController({ id, nro_descargo, fecha_descargo, documento});
+        const updatedDescargo = await updateDescargoRgController({ id, nro_descargo, fecha_descargo, documento,id_nc});
         if (!updatedDescargo) {
             return res.status(404).json({ message: "Descargo no encontrado" });
         }

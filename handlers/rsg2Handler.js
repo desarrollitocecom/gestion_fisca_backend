@@ -9,7 +9,7 @@ const {
 const fs = require('node:fs');
 
 const createRSG2Handler = async (req, res) => {
-    const { nro_resolucion2, fecha_resolucion } = req.body;
+    const { nro_resolucion2, fecha_resolucion,id_nc } = req.body;
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
         const errores = [];
 
@@ -51,7 +51,7 @@ const createRSG2Handler = async (req, res) => {
     }
 
     try {
-        const response = await createRSG2Controller({ nro_resolucion2, fecha_resolucion, documento });
+        const response = await createRSG2Controller({ nro_resolucion2, fecha_resolucion, documento,id_nc });
 
         if (!response) {
             return res.status(201).json({
@@ -71,7 +71,7 @@ const createRSG2Handler = async (req, res) => {
 
 const   updateRSG2Handler = async (req, res) => {
     const { id } = req.params;
-    const { nro_resolucion2, fecha_resolucion } = req.body;
+    const { nro_resolucion2, fecha_resolucion,id_nc } = req.body;
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
     const errores = [];
 
@@ -114,7 +114,7 @@ const   updateRSG2Handler = async (req, res) => {
     }
  
     try {
-        const response = await updateRSG2Controller({ id, nro_resolucion2, fecha_resolucion, documento });
+        const response = await updateRSG2Controller({ id, nro_resolucion2, fecha_resolucion, documento ,id_nc});
 
         if (!response) {
             return res.status(201).json({ message: 'Error al modificar el RSG2', data: [] });

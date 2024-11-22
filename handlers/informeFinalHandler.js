@@ -28,7 +28,7 @@ const createInformeFinalHandler = async (req, res) => {
         }
     }
     if (!id_estado_IFI) errores.push('El campo es requerido')
-    if(id_estado_IFI && !isNaN(id_estado_IFI)) errores.push("El id debe ser un numero")  
+    if(id_estado_IFI && isNaN(id_estado_IFI)) errores.push("El id debe ser un numero")  
     if(id_nc && typeof id_nc!=="string") errores.push("El id_nc debe ser un string")  
     if (errores.length > 0) {
         if (documento_ifi) {

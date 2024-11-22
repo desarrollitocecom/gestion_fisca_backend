@@ -5,7 +5,7 @@ const {
 const fs = require('node:fs');
 
 const createDescargoRsaHandler = async (req, res) => {
-    const { nro_descargo, fecha_descargo } = req.body;
+    const { nro_descargo, fecha_descargo,id_nc } = req.body;
     const documento_DRSA = req.files && req.files["documento_DRSA"] ? req.files["documento_DRSA"][0] : null;
 
     const errores = [];
@@ -50,7 +50,7 @@ const createDescargoRsaHandler = async (req, res) => {
     }
 
     try {
-        const response = await createDescargoRsaController({nro_descargo, fecha_descargo, documento_DRSA});
+        const response = await createDescargoRsaController({nro_descargo, fecha_descargo, documento_DRSA,id_nc});
 
         if (!response) {
             return res.status(201).json({
@@ -73,7 +73,7 @@ const createDescargoRsaHandler = async (req, res) => {
 
 const updateDescargoRsaHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_descargo, fecha_descargo } = req.body;
+    const { nro_descargo, fecha_descargo,id_nc } = req.body;
     const documento_DRSA = req.files && req.files["documento_DRSA"] ? req.files["documento_DRSA"][0] : null;
     const errores = [];
 
@@ -116,7 +116,7 @@ const updateDescargoRsaHandler = async (req, res) => {
     }
 
     try {
-        const response = await updateDescargoRsaController({id, nro_descargo, fecha_descargo, documento_DRSA});
+        const response = await updateDescargoRsaController({id, nro_descargo, fecha_descargo, documento_DRSA,id_nc});
 
         if (!response) {
             return res.status(400).json({

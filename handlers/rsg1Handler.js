@@ -9,7 +9,7 @@ const {
 const fs = require('node:fs');
 
 const createRSG1Handler = async (req, res) => {
-    const { nro_resolucion, fecha_resolucion } = req.body;
+    const { nro_resolucion, fecha_resolucion,id_nc } = req.body;
  
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
 
@@ -72,7 +72,7 @@ const createRSG1Handler = async (req, res) => {
 
 const updateRSG1Handler = async (req, res) => {
     const { id } = req.params;
-    const { nro_resolucion, fecha_resolucion } = req.body;  
+    const { nro_resolucion, fecha_resolucion ,id_nc} = req.body;  
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
     const errores = [];
 
