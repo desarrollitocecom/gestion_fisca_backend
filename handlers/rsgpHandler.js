@@ -9,7 +9,7 @@ const {
 } = require('../controllers/rsaController');
 const fs = require('node:fs');
 const createRsgpHandler = async (req, res) => {
-    const { nro_rsg, fecha_rsg } = req.body;
+    const { nro_rsg, fecha_rsg,id_nc } = req.body;
     const documento_RSGP = req.files && req.files["documento_RSGP"] ? req.files["documento_RSGP"][0] : null;
     const errores = [];
 
@@ -54,7 +54,7 @@ const createRsgpHandler = async (req, res) => {
     try {
         
         
-        const newRsgp = await createRsgpController({ nro_rsg, fecha_rsg, documento_RSGP });
+        const newRsgp = await createRsgpController({ nro_rsg, fecha_rsg, documento_RSGP ,id_nc});
         if (!newRsgp) {
             return res.status(201).json({
                 message: 'Error al Crear RSGP',
@@ -73,7 +73,7 @@ const createRsgpHandler = async (req, res) => {
 
 const updateRsgpHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_rsg, fecha_rsg } = req.body;
+    const { nro_rsg, fecha_rsg,id_nc } = req.body;
     const documento_RSGP = req.files && req.files["documento_RSGP"] ? req.files["documento_RSGP"][0] : null;
     const errores = [];
 
@@ -116,7 +116,7 @@ const updateRsgpHandler = async (req, res) => {
     }
 
     try {
-        const RSGP = await updateRsgpController({ id, nro_rsg, fecha_rsg, documento_RSGP });
+        const RSGP = await updateRsgpController({ id, nro_rsg, fecha_rsg, documento_RSGP,id_nc });
         
         if (!RSGP) 
             return res.status(201).json({ message: "Error al moficar", data: [] })

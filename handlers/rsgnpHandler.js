@@ -48,7 +48,7 @@ const updateinRsaHandler = async (req, res) => {
 }
 
 const createRsgnpHandler = async (req, res) => {
-    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RG, id_rg } = req.body;
+    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RG, id_rg ,id_nc} = req.body;
     const errores = [];
     const documento_RSGNP = req.files && req.files["documento_RSGNP"] ? req.files["documento_RSGNP"][0] : null;
     // Validaciones de `nro_rsg`
@@ -104,7 +104,7 @@ const createRsgnpHandler = async (req, res) => {
     }
 
     try {
-        const newRsgnp = await createRsgnpController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RG, id_rg });
+        const newRsgnp = await createRsgnpController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RG, id_rg,id_nc });
         if (!newRsgnp) {
             return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
         }
@@ -117,7 +117,7 @@ const createRsgnpHandler = async (req, res) => {
 
 const updateRsgnpHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RG, id_rg } = req.body;
+    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RG, id_rg ,id_nc} = req.body;
     const documento_RSGNP = req.files && req.files["documento_RSGNP"] ? req.files["documento_RSGNP"][0] : null;
 
     const errores = [];
@@ -176,7 +176,7 @@ const updateRsgnpHandler = async (req, res) => {
     }
 
     try {
-        const RSGNP = await updateRsgnpController({ id, nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RG, id_rg });
+        const RSGNP = await updateRsgnpController({ id, nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RG, id_rg,id_nc });
         if(!RSGNP){
             return res.status(201).json({message:"Error al Modificar el RSGNP",data:[]})
         }

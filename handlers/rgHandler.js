@@ -7,7 +7,7 @@ const {
 const fs = require('node:fs');
 // Crear un registro RG
 const createRGHandler = async (req, res) => {
-    const { nro_rg, fecha_rg, fecha_notificacion, estado } = req.body;
+    const { nro_rg, fecha_rg, fecha_notificacion, estado ,id_nc} = req.body;
     const errores = [];
     const documento_rg = req.files && req.files["documento_rg"] ? req.files["documento_rg"][0] : null;
     const documento_ac = req.files && req.files["documento_ac"] ? req.files["documento_ac"][0] : null;
@@ -76,7 +76,8 @@ const createRGHandler = async (req, res) => {
             fecha_notificacion, 
             estado, 
             documento_rg,
-            documento_ac
+            documento_ac,
+            id_nc
         });
         
         if (!newRG) {
@@ -92,7 +93,7 @@ const createRGHandler = async (req, res) => {
 // Actualizar un registro RG
 const updateRGHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_rg, fecha_rg, fecha_notificacion, estado } = req.body;
+    const { nro_rg, fecha_rg, fecha_notificacion, estado ,id_nc} = req.body;
     const errores = [];
     const documento_rg = req.files && req.files["documento_rg"] ? req.files["documento_rg"][0] : null;
     const documento_ac = req.files && req.files["documento_ac"] ? req.files["documento_ac"][0] : null;
@@ -163,7 +164,8 @@ const updateRGHandler = async (req, res) => {
             fecha_notificacion, 
             estado, 
             documento_rg, 
-            documento_ac
+            documento_ac,
+            id_nc
         });
         
         if (!updatedRG) {
