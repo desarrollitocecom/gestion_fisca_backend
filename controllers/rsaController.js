@@ -1,11 +1,16 @@
 const { RSA } = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
-const createRsaController = async (nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA) => {
+const {saveImage,deleteFile}=require('../utils/fileUtils')
+
+const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA}) => {
+    let documento_path;
     try {
+        documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
+
         const newRsa = await RSA.create({
             nro_rsa,
             fecha_rsa,
             fecha_notificacion,
-            documento_RSA,
+            documento_RSA:documento_path,
             tipo,
             id_evaluar_rsa,
             id_descargo_RSA
@@ -13,32 +18,44 @@ const createRsaController = async (nro_rsa, fecha_rsa, fecha_notificacion, docum
 
         return newRsa || null;
     } catch (error) {
+        if (documento_path) {
+            deleteFile(documento_path);
+        }
         console.error('Error al crear RSA:', error);
         return false
     }
 };
 // Función para actualizar una instancia existente de RSA
-const updateRsaController = async (id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA) => {
+const updateRsaController = async ({id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA}) => {
+    let documento_path;
+
     try {
-        const rsa = await RSA.findOne({ where: { id } });
+        // documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
 
-        if (!rsa) {
-            console.error('RSA no encontrada');
-            return { message: 'RSA no encontrada' };
+        const rsa = await RSA.findByPk(id);
+        documento_path=rsa.documento_RSA
+        if (documento_RSA) {
+            documento_path = saveImage(documento_RSA, 'Resolucion(RSA)');
+            if (rsa.documento_RSA) {
+                deleteFile(rsa.documento_RSA);
+            }
         }
-
+        if(rsa){
         await rsa.update({
             nro_rsa,
             fecha_rsa,
             fecha_notificacion,
-            documento_RSA,
+            documento_RSA:documento_path,
             tipo,
             id_evaluar_rsa,
             id_descargo_RSA
-        });
+        });}
 
         return rsa || null;
     } catch (error) {
+        if (documento_path) {
+            deleteFile(documento_path);
+        }
         console.error('Error al actualizar RSA:', error);
         return false
     }
@@ -63,9 +80,22 @@ const getAllRsaController = async () => {
         return false;
     }
 };
+const updateinRsaController = async (uuid, tipo, id_evaluar_rsa) => {
+    const Rsa = await RSA.findByPk(uuid);
+    if (!Rsa) {
+        throw new Error(`Registro con uuid ${uuid} no encontrado en Rsa.`);
+    }
+
+    // Actualizar los campos de Rsa y recargar el registro
+    await Rsa.update({ tipo:tipo, id_evaluar_rsa:id_evaluar_rsa });
+    const updatedRsa = await Rsa.reload();
+    return updatedRsa;
+};
+
 module.exports = {
     createRsaController,
     updateRsaController,
     getRsaController,
-    getAllRsaController
+    getAllRsaController,
+    updateinRsaController
 };

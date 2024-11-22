@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const {uploadIfi}=require('../middlewares/uploadMiddleware')
 
 const {
     createInformeFinalHandler,
@@ -9,9 +10,9 @@ const {
 }
  = require('../handlers/informeFinalHandler');
 
-router.post('/nuevoIfi',  createInformeFinalHandler);
-router.get('/',getAllInformesFinalesHandler)
-router.get('/:id',getInformeFinalHandler)
-router.patch('/:id',updateInformeFinalHandler)
+router.post('/', uploadIfi, createInformeFinalHandler);
+router.get('/ifis',getAllInformesFinalesHandler);
+router.get('/:id',getInformeFinalHandler);
+router.put('/:id',uploadIfi,updateInformeFinalHandler);
 
 module.exports = router;

@@ -39,8 +39,8 @@ const getAllEstadosMCHandler = async (req, res) => {
             data: response,
         });
     } catch (error) {
-        console.error("Error al obtener estados MC:", error);
-        res.status(500).json({ error: "Error interno del servidor al obtener los estados MC." });
+            console.error("Error al obtener estados MC:", error);
+            res.status(500).json({ error: "Error interno del servidor al obtener los estados MC." });
     }
 };
 

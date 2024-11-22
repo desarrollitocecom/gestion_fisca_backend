@@ -7,19 +7,19 @@ module.exports = (sequelize) => {
             primaryKey: true,
             defaultValue: DataTypes.UUIDV4
         },
-        nombre: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        domicilio: {
+        nombre_entidad: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        distrito: {
+        domicilio_entidad: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        giro_uso: { 
+        distrito_entidad: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        giro_entidad: { 
             type: DataTypes.STRING,
             allowNull: true
         }

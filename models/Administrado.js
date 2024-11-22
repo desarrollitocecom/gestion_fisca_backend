@@ -8,23 +8,23 @@ module.exports=(sequelize)=>{
         },
         nombres:{
           type:DataTypes.STRING,
-          allowNull: false
+          allowNull: true
         },
         apellidos:{
           type:DataTypes.STRING,
-          allowNull: false
+          allowNull: true
         },
         domicilio:{
             type:DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         distrito:{
             type:DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         giro:{
             type:DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },       
     }, {
         tableName: 'Administrados',

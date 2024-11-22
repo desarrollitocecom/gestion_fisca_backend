@@ -1,4 +1,6 @@
 const { MedidaComplementaria } = require("../db_connection");
+const { saveImage } = require('../utils/fileUtils');
+
 
 // Obtener todas las medidas complementarias con paginación
 const getAllMedidasComplementarias = async (page = 1, limit = 20) => {
@@ -40,9 +42,23 @@ const getMedidaComplementaria = async (id) => {
 };
 
 // Crear una nueva medida complementaria
-const createMedidaComplementaria = async ({ nro_acta_ejecucion, dc_levantamiento, id_documento, id_ejecucionMC, id_estado }) => {
+const createMedidaComplementaria = async ({ 
+    id_documento, 
+    nro_acta_ejecucion, 
+    documento_medida_complementaria, 
+    id_estado 
+    }) => {
+
     try {
-        const response = await MedidaComplementaria.create({ nro_acta_ejecucion, dc_levantamiento, id_documento, id_ejecucionMC, id_estado });
+        const documento_MCPath = saveImage(documento_medida_complementaria, 'Opcional');
+
+        const response = await MedidaComplementaria.create({ 
+            id_documento, 
+            nro_acta_ejecucion,
+            documento_medida_complementaria: documento_MCPath,
+            id_estado 
+            });
+            
         return response || null;
     } catch (error) {
         console.error("Error en el controlador al crear la Medida Complementaria:", error);

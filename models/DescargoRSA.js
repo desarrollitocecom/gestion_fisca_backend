@@ -14,10 +14,19 @@ module.exports = (sequelize) => {
             type: DataTypes.DATEONLY,
             allowNull: false
         },
-        documento_descargo: {
+        documento_DRSA: {
             type: DataTypes.STRING,
             allowNull: false
         },
+        id_nc:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'NCs',
+                key: 'id',
+            },
+            allowNull: true,
+            unique:true
+        }
    
         //  id_AR3:{
         //      type: DataTypes.UUID,
@@ -25,12 +34,17 @@ module.exports = (sequelize) => {
         //          model: 'Analista3',
         //          key: 'id',
         //      },
-        //      allowNull: false
+        //      allowNull3: false
         //  }
 
     }, {
         tableName: 'DescargoRSAs',
         timestamps: true
     });
+    DescargoRSA.associate = (db) => {
+        // Relación con NC
+        DescargoRSA.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
+
+    };
     return DescargoRSA;
 };

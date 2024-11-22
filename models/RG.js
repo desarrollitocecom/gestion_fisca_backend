@@ -14,23 +14,31 @@ module.exports = (sequelize) => {
             type: DataTypes.DATEONLY,
             allowNull: false
         },
+        fecha_notificacion: {
+            type: DataTypes.DATEONLY,
+            allowNull: false
+        },
         documento_rg: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        tipo: {
-            type: DataTypes.ENUM('RSG1', 'RSA', 'RSG2'),
-            allowNull: false
-        },
-        id_g: {
-            type: DataTypes.UUID,
-            allowNull: false,
+        estado:{
+            type: DataTypes.ENUM('NP', 'P'),
+            allowNull: true
         },
         documento_ac: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        
+        id_nc:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'NCs',
+                key: 'id',
+            },
+            allowNull: true,
+            unique:true
+        }
         //  id_AI1:{
         //      type: DataTypes.UUID,
         //      references: {
@@ -43,5 +51,11 @@ module.exports = (sequelize) => {
         tableName: 'RGs',
         timestamps: true
     });
+   RG.associate = (db) => {
+     
+       RG.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
+        
+    };
+    
        return RG;
 };

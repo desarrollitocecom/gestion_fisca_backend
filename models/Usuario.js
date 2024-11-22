@@ -1,12 +1,13 @@
 const { DataTypes } = require("sequelize");
+
 //const argon2 = require('argon2');
 
 module.exports = (sequelize) => {
     const Usuario = sequelize.define('Usuario', {
         id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
+            type: DataTypes.UUID,
+            primaryKey: true,
+            defaultValue: DataTypes.UUIDV4,
         },
         usuario: {
             type: DataTypes.STRING,
@@ -38,16 +39,16 @@ module.exports = (sequelize) => {
     }, {
         tableName: 'Usuarios',
         timestamps: true,
-        hooks: { // encripta la contraseña al guardarla y al cambiarla
-            beforeCreate: async (usuario) => {
-                usuario.contraseña = await argon2.hash(usuario.contraseña);
-            },
-            beforeUpdate: async (usuario) => {
-                if (usuario.changed('contraseña')) {
-                    usuario.contraseña = await argon2.hash(usuario.contraseña);
-                }
-            }
-        }
+        // hooks: { // encripta la contraseña al guardarla y al cambiarla
+        //     beforeCreate: async (usuario) => {
+        //         usuario.contraseña = await argon2.hash(usuario.contraseña);
+        //     },
+        //     beforeUpdate: async (usuario) => {
+        //         if (usuario.changed('contraseña')) {
+        //             usuario.contraseña = await argon2.hash(usuario.contraseña);
+        //         }
+        //     }
+        // }
     });
 
 
