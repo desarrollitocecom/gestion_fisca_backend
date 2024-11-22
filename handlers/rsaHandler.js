@@ -11,7 +11,7 @@ const {
 const fs = require('node:fs');
 // Handler para crear una nueva RSA
 const createRsaHandler = async (req, res) => {
-    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc } = req.body;
+    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA } = req.body;
     const documento_RSA = req.files && req.files["documento_RSA"] ? req.files["documento_RSA"][0] : null;
     const errores = [];
 
@@ -30,7 +30,8 @@ const createRsaHandler = async (req, res) => {
             errores.push('Debe ser una fecha válida');
         }
     }
-
+    if (!id_estado_RSA) errores.push('El campo es requerido')
+        if(id_estado_RSA && isNaN(id_estado_RSA)) errores.push("El id debe ser un numero") 
     // Validaciones de `fecha_notificacion`
     if (!fecha_notificacion) errores.push('El campo fecha_notificacion es requerido');
     if (!fechaRegex.test(fecha_notificacion)) {
@@ -67,7 +68,7 @@ const createRsaHandler = async (req, res) => {
     }
 
     try {
-        const response = await createRsaController({ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc });
+        const response = await createRsaController({ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc ,id_estado_RSA});
 
         if (!response) {
             return res.status(400).json({ message: "Error al crear una RSA", data: [] });
@@ -82,7 +83,7 @@ const createRsaHandler = async (req, res) => {
 // Handler para actualizar una RSA existente
 const updateRsaHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo, id_evaluar_rsa, id_descargo_RSA ,id_nc} = req.body;
+    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo, id_evaluar_rsa, id_descargo_RSA ,id_nc,id_estado_RSA} = req.body;
     const documento_RSA = req.files && req.files["documento_RSA"] ? req.files["documento_RSA"][0] : null;
 
     const errores = [];
@@ -102,7 +103,8 @@ const updateRsaHandler = async (req, res) => {
             errores.push('Debe ser una fecha válida');
         }
     }
-
+    if (!id_estado_RSA) errores.push('El campo es requerido')
+        if(id_estado_RSA && isNaN(id_estado_RSA)) errores.push("El id debe ser un numero") 
     // Validaciones de `fecha_notificacion`
     if (!fecha_notificacion) errores.push('El campo fecha_notificacion es requerido');
     if (!fechaRegex.test(fecha_notificacion)) {
@@ -143,7 +145,7 @@ const updateRsaHandler = async (req, res) => {
     }
 
     try {
-        const response = await updateRsaController({ id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc });
+        const response = await updateRsaController({ id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA });
 
         if (!response) {
             return res.status(400).json({ message: "Error al actualizar el RSA", data: [] });
