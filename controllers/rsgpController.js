@@ -1,7 +1,7 @@
 const { RSGP } = require('../db_connection');
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
-const createRsgpController = async ({ nro_rsg, fecha_rsg, documento_RSGP }) => {
+const createRsgpController = async ({ nro_rsg, fecha_rsg, documento_RSGP,id_nc }) => {
     let documento_path;
     try {
          documento_path=saveImage(documento_RSGP,'Resolucion(RSGP)')       
@@ -9,7 +9,8 @@ const createRsgpController = async ({ nro_rsg, fecha_rsg, documento_RSGP }) => {
         const newRsgp = await RSGP.create({
             nro_rsg,
             fecha_rsg,
-            documento_RSGP:documento_path
+            documento_RSGP:documento_path,
+            id_nc
         });
         return newRsgp || null;
     } catch (error) {
@@ -21,7 +22,7 @@ const createRsgpController = async ({ nro_rsg, fecha_rsg, documento_RSGP }) => {
     }
 };
 
-const updateRsgpController = async ({ id, nro_rsg, fecha_rsg, documento_RSGP }) => {
+const updateRsgpController = async ({ id, nro_rsg, fecha_rsg, documento_RSGP ,id_nc}) => {
     
     let documento_path;
     try {
@@ -38,7 +39,8 @@ const updateRsgpController = async ({ id, nro_rsg, fecha_rsg, documento_RSGP }) 
             await rsgp.update({
                 nro_rsg,
                 fecha_rsg,
-                documento_RSGP:documento_path
+                documento_RSGP:documento_path,
+                id_nc
             });
         }
         return rsgp || null

@@ -2,12 +2,12 @@ const { DescargoRG } = require('../db_connection');
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
 // Crear un nuevo registro en la tabla DescargoRG
-const createDescargoRgController = async ({ nro_descargo, fecha_descargo, documento }) => {
+const createDescargoRgController = async ({ nro_descargo, fecha_descargo, documento ,id_nc}) => {
     let documento_path;
    
     try {
         documento_path=saveImage(documento,'Descargo(RG)')  
-        const newDescargoRG = await DescargoRG.create({ nro_descargo, fecha_descargo, documento:documento_path });
+        const newDescargoRG = await DescargoRG.create({ nro_descargo, fecha_descargo, documento:documento_path,id_nc });
         return newDescargoRG || null;
     } catch (error) {
         if (documento_path) {
@@ -18,7 +18,7 @@ const createDescargoRgController = async ({ nro_descargo, fecha_descargo, docume
     }
 };
 
-const updateDescargoRgController = async ({ id, nro_descargo, fecha_descargo, documento }) => {
+const updateDescargoRgController = async ({ id, nro_descargo, fecha_descargo, documento ,id_nc}) => {
     let documento_path;
    
     try {
@@ -34,7 +34,7 @@ const updateDescargoRgController = async ({ id, nro_descargo, fecha_descargo, do
             }
         }
 
-        await descargoRG.update({ nro_descargo, fecha_descargo, documento: documento_path });
+        await descargoRG.update({ nro_descargo, fecha_descargo, documento: documento_path,id_nc });
         return descargoRG || null;
     } catch (error) {
         if (documento_path) {

@@ -1,13 +1,14 @@
 const { DescargoIFI } = require('../db_connection');
 const { saveImage, deleteFile } = require('../utils/fileUtils');
-const createDescargoAndAssociate = async ({ nro_descargo, fecha_descargo, documento_DIFI }) => {
+const createDescargoAndAssociate = async ({ nro_descargo, fecha_descargo, documento_DIFI,id_nc }) => {
     let documento_DIFI_path;
     try {
         documento_DIFI_path = saveImage(documento_DIFI, 'Descargos_IFIs')
         const newDescargo = await DescargoIFI.create({
             nro_descargo,
             fecha_descargo,
-            documento_DIFI: documento_DIFI_path
+            documento_DIFI: documento_DIFI_path,
+            id_nc
         });
 
         return newDescargo || null;
@@ -19,7 +20,7 @@ const createDescargoAndAssociate = async ({ nro_descargo, fecha_descargo, docume
         return false
     }
 };
-const updateDescargoAndAssociate = async ({ id, nro_descargo, fecha_descargo, documento_DIFI }) => {
+const updateDescargoAndAssociate = async ({ id, nro_descargo, fecha_descargo, documento_DIFI,id_nc }) => {
     let documento_DIFI_path;
     try {
 
@@ -35,7 +36,8 @@ const updateDescargoAndAssociate = async ({ id, nro_descargo, fecha_descargo, do
             await descargo.update({
                 nro_descargo,
                 fecha_descargo,
-                documento_DIFI: documento_DIFI_path
+                documento_DIFI: documento_DIFI_path,
+                id_nc
             });
         }
 

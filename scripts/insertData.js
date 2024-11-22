@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require("uuid");
 const argon2 = require("argon2");
 
 // Conexión a la base de datos
-const sequelize = new Sequelize("gestion_fiscalizacion", "postgres", "12345678", {
+const sequelize = new Sequelize("gestion_fiscalizacion", "postgres", "Vierielias123", {
   host: "localhost",
   dialect: "postgres",
 });
@@ -13,6 +13,9 @@ const TipoDocumentoComplementario = require("../models/TipoDocumentoComplementar
 const Infraccion = require("../models/Infraccion")(sequelize);
 const EstadoMC = require("../models/EstadoMC")(sequelize);
 const EstadoNC = require("../models/EstadoNC")(sequelize);
+const EstadoIFI = require("../models/EstadoIFI")(sequelize);
+const EstadoRSGNP = require("../models/EstadoRSGNP")(sequelize);
+const EstadoRSA = require("../models/EstadoRSA")(sequelize);
 const EjecucionMC = require("../models/EjecucionMC")(sequelize);
 const Usuario = require("../models/Usuario")(sequelize);
 const TipoDocumentoIdentidad = require("../models/TipoDocumentoIdentidad")(sequelize);
@@ -73,6 +76,21 @@ const insertData = async () => {
       { tipo: "Observado" },
       { tipo: "Validado" },
       { tipo: "Rechazado" },
+    ]);
+    await EstadoIFI.bulkCreate([
+      { nombre: "Pendiente" },
+      { nombre: "En Proceso" },
+      { nombre: "Finalizado" },
+    ]);
+    await EstadoRSA.bulkCreate([
+      { nombre: "Pendiente" },
+      { nombre: "En Proceso" },
+      { nombre: "Finalizado" },
+    ]);
+    await EstadoRSGNP.bulkCreate([
+      { nombre: "Pendiente" },
+      { nombre: "En Proceso" },
+      { nombre: "Finalizado" },
     ]);
 
     // Insertar datos ficticios en EjecucionMC

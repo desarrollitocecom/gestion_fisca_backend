@@ -2,7 +2,7 @@ const { RG } = require('../db_connection');
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
 // Crear un registro RG   
-const createRGController = async ({ nro_rg,fecha_rg,fecha_notificacion,documento_rg,estado,documento_ac}) => {
+const createRGController = async ({ nro_rg,fecha_rg,fecha_notificacion,documento_rg,estado,documento_ac,id_nc}) => {
     let documento_path_rg;
     let documento_path_ac;
 
@@ -10,7 +10,7 @@ const createRGController = async ({ nro_rg,fecha_rg,fecha_notificacion,documento
         documento_path_rg=saveImage(documento_rg,'Resolucion(RG)/DocumentoRG')       
         documento_path_ac=saveImage(documento_ac,'Resolucion(RG)/DocumentoAC')       
 
-        const newRG = await RG.create({ nro_rg,fecha_rg,fecha_notificacion,documento_rg:documento_path_rg,estado,documento_ac:documento_path_ac});
+        const newRG = await RG.create({ nro_rg,fecha_rg,fecha_notificacion,documento_rg:documento_path_rg,estado,documento_ac:documento_path_ac,id_nc});
 
         return newRG || null;
     } catch (error) {
@@ -26,7 +26,7 @@ const createRGController = async ({ nro_rg,fecha_rg,fecha_notificacion,documento
 };
 
 // Actualizar un registro RG
-const updateRGController = async ({id, nro_rg,fecha_rg,fecha_notificacion,documento_rg,estado,documento_ac}) => {
+const updateRGController = async ({id, nro_rg,fecha_rg,fecha_notificacion,documento_rg,estado,documento_ac,id_nc}) => {
     let documento_path_rg;
     let documento_path_ac;
     try {
@@ -47,7 +47,7 @@ const updateRGController = async ({id, nro_rg,fecha_rg,fecha_notificacion,docume
             }
         }
         
-        await rg.update({ nro_rg,fecha_rg,fecha_notificacion,documento_rg:documento_path_rg,estado,documento_ac:documento_path_ac});
+        await rg.update({ nro_rg,fecha_rg,fecha_notificacion,documento_rg:documento_path_rg,estado,documento_ac:documento_path_ac,id_nc});
         return rg || null;
     } catch (error) {
         if (documento_path_rg) {
