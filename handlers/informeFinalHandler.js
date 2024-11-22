@@ -10,7 +10,7 @@ function isValidUUID(uuid) {
     return uuidRegex.test(uuid);
   }
 const createInformeFinalHandler = async (req, res) => {
-    const { nro_ifi, fecha, tipo, id_evaluar, id_descargo_ifi } = req.body;
+    const { nro_ifi, fecha, tipo, id_evaluar, id_descargo_ifi,id_nc, id_estado_IFI} = req.body;
     const documento_ifi = req.files && req.files["documento_ifi"] ? req.files["documento_ifi"][0] : null;
 
     const errores = []
@@ -27,8 +27,9 @@ const createInformeFinalHandler = async (req, res) => {
             errores.push("El documento debe ser un archivo PDF.");
         }
     }
-
-   
+    if (!id_estado_IFI) errores.push('El campo es requerido')
+    if(id_estado_IFI && !isNaN(id_estado_IFI)) errores.push("El id debe ser un numero")  
+    if(id_nc && typeof id_nc!=="string") errores.push("El id_nc debe ser un string")  
     if (errores.length > 0) {
         if (documento_ifi) {
             fs.unlinkSync(documento_ifi.path); 
@@ -39,7 +40,7 @@ const createInformeFinalHandler = async (req, res) => {
     })}
     try {
 
-        const response = await createInformeFinalController({ nro_ifi, fecha, documento_ifi, tipo, id_evaluar, id_descargo_ifi });
+        const response = await createInformeFinalController({ nro_ifi, fecha, documento_ifi, tipo, id_evaluar, id_descargo_ifi,id_nc, id_estado_IFI });
         if (!response){
             
             return res.status(201).json({
@@ -58,7 +59,7 @@ const createInformeFinalHandler = async (req, res) => {
 
 const updateInformeFinalHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_ifi, fecha, tipo, id_evaluar, id_descargo_ifi } = req.body;
+    const { nro_ifi, fecha, tipo, id_evaluar, id_descargo_ifi,id_nc, id_estado_IFI } = req.body;
     const documento_ifi = req.files && req.files["documento_ifi"] ? req.files["documento_ifi"][0] : null;
         const errores = [];
 
@@ -104,7 +105,7 @@ const updateInformeFinalHandler = async (req, res) => {
     }
     try {
       
-        const response = await updateInformeFinalController({ id, nro_ifi, fecha, documento_ifi, tipo, id_evaluar, id_descargo_ifi });
+        const response = await updateInformeFinalController({ id, nro_ifi, fecha, documento_ifi, tipo, id_evaluar, id_descargo_ifi,id_nc, id_estado_IFI });
         if (!response){
              //deleteFile(documento_ifi);
             return res.status(201).json({
