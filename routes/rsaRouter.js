@@ -15,6 +15,6 @@ router.get("/",getAllRsaHandler);
 router.get('/:id',getRsaHandler)
 router.post("/",uploadRSA,createRsaHandler);
 router.patch("/:id",uploadRSA,updateRsaHandler);
-router.post("/modiIFI",uploadNone,updateinRSAHandler);
+router.post("/modiRSA",uploadNone,updateinRSAHandler);
 
 module.exports = router;

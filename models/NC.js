@@ -24,7 +24,7 @@ module.exports=(sequelize)=>{
             allowNull:true
         },
         nro_documento:{
-            type:DataTypes.UUID,
+            type:DataTypes.INTEGER,
             allowNull:true
         },
         

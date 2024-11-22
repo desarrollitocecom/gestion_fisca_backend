@@ -10,6 +10,6 @@ const {createRSG1Handler,
 
 router.post("/",uploadRSG1,createRSG1Handler);
 router.patch("/:id",uploadRSG1,updateRSG1Handler);
-router.post("/modiRGS1",updateinIfiHandler);
+router.post("/modRSG1", uploadNone, updateinIfiHandler);
 
 module.exports = router;

@@ -13,6 +13,10 @@ const uploadDocuments = upload.fields([
 const uploadDocumentsDescargoNC = upload.fields([
     { name: 'documento', maxCount: 1 },
 ]);
+
+const uploadDocumentsDigitador = upload.fields([
+]);
+
 const uploadIfi = upload.fields([
     { name: 'documento_ifi', maxCount: 1 },
 ])
@@ -61,5 +65,6 @@ module.exports = {
     uploadRSGNP,
     uploadDRG,
     uploadRG,
-    uploadNone
+    uploadNone,
+    uploadDocumentsDigitador
 };

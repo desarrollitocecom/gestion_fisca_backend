@@ -23,3 +23,7 @@ const createEntidad = async ({
         return false;
     }
  };
+
+ module.exports = {
+    createEntidad,
+};
