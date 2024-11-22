@@ -87,13 +87,13 @@ const getAllRsaController = async () => {
 const updateinRsaController = async (uuid, tipo, id_evaluar_rsa) => {
     const Rsa = await RSA.findByPk(uuid);
     if (!Rsa) {
-        throw new Error(`Registro con uuid ${uuid} no encontrado en Rsa.`);
+        throw new Error(`Registro con uuid  no encontrado en Rsa.`);
     }
 
     // Actualizar los campos de Rsa y recargar el registro
     await Rsa.update({ tipo:tipo, id_evaluar_rsa:id_evaluar_rsa });
     const updatedRsa = await Rsa.reload();
-    return updatedRsa;
+    return updatedRsa || null;
 };
 
 module.exports = {
