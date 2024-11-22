@@ -1,7 +1,7 @@
 const { RSGNP } = require("../db_connection");
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
-const createRsgnpController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RG, id_rg,id_nc,id_estado_RSGNP }) => {
+const createRsgnpController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg,id_nc,id_estado_RSGNP }) => {
     let documento_path;
     try {
         documento_path=saveImage(documento_RSGNP,'Resolucion(RSGNP)')       
@@ -11,7 +11,7 @@ const createRsgnpController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, d
             fecha_rsg,
             fecha_notificacion,
             documento_RSGNP:documento_path,
-            id_descargo_RG,
+            id_descargo_RSGNP,
             id_rg,
             id_nc,
             id_estado_RSGNP
@@ -26,7 +26,7 @@ const createRsgnpController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, d
     }
 };
 
-const updateRsgnpController = async ({ id, nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RG, id_rg ,id_nc,id_estado_RSGNP}) => {
+const updateRsgnpController = async ({ id, nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg ,id_nc,id_estado_RSGNP}) => {
     let documento_path;
     try {
            
@@ -45,7 +45,7 @@ const updateRsgnpController = async ({ id, nro_rsg, fecha_rsg, fecha_notificacio
                 fecha_rsg,
                 fecha_notificacion,
                 documento_RSGNP:documento_path,
-                id_descargo_RG,
+                id_descargo_RSGNP,
                 id_rg,
                 id_nc,
                 id_estado_RSGNP

@@ -18,7 +18,7 @@ const rsg2=require('./rsg2Router');
 const rsa=require('./rsaRouter');
 const descargoRsa=require('./descargoRsaRouter')
 const descargoIFI=require('./descargoInformeFinalRouter')
-const descargoRg=require('./descargoRgRouter');
+const descargoRsgnp=require('./descargoRsgnpRouter');
 const rsgp=require('./rsgpRouter')
 const rsgnp=require('./rsgnpRouter')
 const rg=require('./rgRouter');
@@ -44,7 +44,7 @@ router.use("/rsg2",rsg2);
 router.use('/rsa',rsa);
 router.use('/rsgp',rsgp);
 router.use('/rsgnp',rsgnp);
-router.use("/drg",descargoRg);
+router.use("/drsgnp",descargoRsgnp);
 router.use('/rg',rg);
 
 module.exports = router;

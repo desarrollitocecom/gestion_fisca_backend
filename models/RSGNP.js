@@ -22,10 +22,10 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        id_descargo_RG:{
+        id_descargo_RSGNP:{
             type:DataTypes.UUID,
             references: {
-                model: 'DescargoRGs',
+                model: 'DescargoRSGNPs',
                 key: 'id',
             },
             allowNull:true,
@@ -74,7 +74,7 @@ module.exports = (sequelize) => {
     RSGNP.associate = (db) => {
         // Relación con DescargoRG
         RSGNP.belongsTo(db.RG, { foreignKey: 'id_rg', as: 'RGs' });
-        RSGNP.belongsTo(db.DescargoRG, { foreignKey: 'id_descargo_RSGNP', as: 'DescargoRGs' });
+        RSGNP.belongsTo(db.DescargoRSGNP, { foreignKey: 'id_descargo_RSGNP', as: 'DescargoRSGNPs' });
         RSGNP.belongsTo(db.EstadoRSGNP, { foreignKey: 'id_estado_RSGNP', as: 'estadoIFI'})
         RSGNP.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
     };

@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize")
 module.exports = (sequelize) => {
-    const DescargoRG = sequelize.define('DescargoRG', {
+    const DescargoRSGNP = sequelize.define('DescargoRSGNP', {
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
@@ -37,13 +37,12 @@ module.exports = (sequelize) => {
         //  }
 
     }, {
-        tableName: 'DescargoRGs',
+        tableName: 'DescargoRSGNPs',
         timestamps: true
     });
-    DescargoRG.associate = (db) => {
-        // Relación de 1 a 1 entre DescargoRG y los tipos basados en 'tipo'
-
-        DescargoRG.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
+    DescargoRSGNP.associate = (db) => {
+        // Relación de 1 a 1 entre DescargoRSGNP y los tipos basados en 'tipo'
+        DescargoRSGNP.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
     };
-    return DescargoRG;
+    return DescargoRSGNP;
 };

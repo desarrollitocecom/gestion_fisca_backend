@@ -48,7 +48,7 @@ const updateinRsaHandler = async (req, res) => {
 }
 
 const createRsgnpHandler = async (req, res) => {
-    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RG, id_rg ,id_nc,id_estado_RSGNP} = req.body;
+    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RSGNP, id_rg ,id_nc,id_estado_RSGNP} = req.body;
     const errores = [];
     const documento_RSGNP = req.files && req.files["documento_RSGNP"] ? req.files["documento_RSGNP"][0] : null;
     // Validaciones de `nro_rsg`
@@ -90,7 +90,7 @@ const createRsgnpHandler = async (req, res) => {
         }
     }
     // Validaciones de `id_descargo_RSGNP` y `id_rg`
-    if (id_descargo_RG  && typeof id_descargo_RG!=="string") errores.push('El campo id_descargo_RSGNP debe ser una cadena de texto');
+    if (id_descargo_RSGNP  && typeof id_descargo_RSGNP!=="string") errores.push('El campo id_descargo_RSGNP debe ser una cadena de texto');
     if (id_rg && typeof id_rg!=="string") errores.push('El campo id_rg debe ser una cadena de texto');
 
     // Si hay errores, devolverlos
@@ -105,7 +105,7 @@ const createRsgnpHandler = async (req, res) => {
     }
 
     try {
-        const newRsgnp = await createRsgnpController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RG, id_rg,id_nc ,id_estado_RSGNP});
+        const newRsgnp = await createRsgnpController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg,id_nc ,id_estado_RSGNP});
         if (!newRsgnp) {
             return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
         }
@@ -118,7 +118,7 @@ const createRsgnpHandler = async (req, res) => {
 
 const updateRsgnpHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RG, id_rg ,id_nc,id_estado_RSGNP} = req.body;
+    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RSGNP, id_rg ,id_nc,id_estado_RSGNP} = req.body;
     const documento_RSGNP = req.files && req.files["documento_RSGNP"] ? req.files["documento_RSGNP"][0] : null;
 
     const errores = [];
@@ -163,7 +163,7 @@ const updateRsgnpHandler = async (req, res) => {
     }
 
     // Validaciones de `id_descargo_RSGNP` y `id_rg`
-    if (id_descargo_RG  && typeof id_descargo_RG!=="string") errores.push('El campo id_descargo_RSGNP debe ser una cadena de texto');
+    if (id_descargo_RSGNP  && typeof id_descargo_RSGNP!=="string") errores.push('El campo id_descargo_RSGNP debe ser una cadena de texto');
     if (id_rg && typeof id_rg!=="string") errores.push('El campo id_rg debe ser una cadena de texto');
 
     // Si hay errores, devolverlos
@@ -178,7 +178,7 @@ const updateRsgnpHandler = async (req, res) => {
     }
 
     try {
-        const RSGNP = await updateRsgnpController({ id, nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RG, id_rg,id_nc,id_estado_RSGNP });
+        const RSGNP = await updateRsgnpController({ id, nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg,id_nc,id_estado_RSGNP });
         if(!RSGNP){
             return res.status(201).json({message:"Error al Modificar el RSGNP",data:[]})
         }

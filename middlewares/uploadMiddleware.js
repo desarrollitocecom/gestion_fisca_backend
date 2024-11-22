@@ -43,7 +43,7 @@ const uploadRSGP = upload.fields([
 const uploadRSGNP = upload.fields([
     { name: 'documento_RSGNP', maxCount: 1 }
 ])
-const uploadDRG = upload.fields([
+const uploadDRSGNP = upload.fields([
     { name: 'documento', maxCount: 1 }
 ])
 const uploadRG = upload.fields([
@@ -63,7 +63,7 @@ module.exports = {
     uploadDRSA,
     uploadRSGP,
     uploadRSGNP,
-    uploadDRG,
+    uploadDRSGNP,
     uploadRG,
     uploadNone,
     uploadDocumentsDigitador
