@@ -3,7 +3,7 @@ const { v4: uuidv4 } = require("uuid");
 const argon2 = require("argon2");
 
 // Conexión a la base de datos
-const sequelize = new Sequelize("gestion_fiscalizacion", "postgres", "Nissangr34", {
+const sequelize = new Sequelize("gestion_fiscalizacion", "postgres", "123", {
   host: "localhost",
   dialect: "postgres",
 });

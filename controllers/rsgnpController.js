@@ -65,7 +65,7 @@ const updateRsgnpController = async ({ id, nro_rsg, fecha_rsg, fecha_notificacio
 const getRsgnpController = async (id) => {
     try {
         const rgsnp = await RSGNP.findByPk(id, {
-            include: ['RGs', 'DescargoRGs'], // Incluir asociaciones definidas
+            include: ['RGs', 'DescargoRSGNPs'], // Incluir asociaciones definidas
         });
         if (!rgsnp) throw new Error("RGSNP not found");
         return rgsnp;
@@ -78,7 +78,7 @@ const getRsgnpController = async (id) => {
 const getAllRsgnpController = async () => {
     try {
         const rgsnps = await RSGNP.findAll({
-            include: ['RGs', 'DescargoRGs'], // Incluir asociaciones definidas
+            include: ['RGs', 'DescargoRSGNPs'], // Incluir asociaciones definidas
         });
         return rgsnps;
     } catch (error) {
