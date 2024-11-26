@@ -8,6 +8,9 @@ const {
 const {
     updateinIfiController
 } = require('../controllers/informeFinalController');
+
+const { startJobForDocument } = require('../jobs/descargoJob');
+
 const fs = require('node:fs');
 // Handler para crear una nueva RSA
 const createRsaHandler = async (req, res) => {
@@ -68,11 +71,14 @@ const createRsaHandler = async (req, res) => {
     }
 
     try {
-        const response = await createRsaController({ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc ,id_estado_RSA});
+        const response = await createRsaController({ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA, id_nc, id_estado_RSA });
 
         if (!response) {
             return res.status(400).json({ message: "Error al crear una RSA", data: [] });
         }
+        const rsaId = response.id;
+        const startDate = new Date(); 
+        startJobForDocument(rsaId, startDate, 'rsa');
         return res.status(200).json({ message: "RSA creada con éxito", data: response });
     } catch (error) {
         console.error('Error en createRsaHandler:', error);
