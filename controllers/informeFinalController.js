@@ -18,6 +18,8 @@ const createInformeFinalController = async ({
 
     if (!checking) {
       documento_ifi_path = saveImage(documento_ifi, "ifi");
+      console.log(documento_ifi_path);
+      
       const response = await IFI.create({
         nro_ifi,
         fecha,
