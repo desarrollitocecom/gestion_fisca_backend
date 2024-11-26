@@ -5,6 +5,8 @@ const {
     getInformeFinalController
 } = require('../controllers/informeFinalController');
 const fs = require('node:fs');
+const { startJobForDocument } = require('../jobs/descargoJob');
+
 function isValidUUID(uuid) {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return uuidRegex.test(uuid);
@@ -40,13 +42,18 @@ const createInformeFinalHandler = async (req, res) => {
     })}
     try {
 
-        const response = await createInformeFinalController({ nro_ifi, fecha, documento_ifi, tipo, id_evaluar, id_descargo_ifi,id_nc, id_estado_IFI });
-        if (!response){
-            
+        const response = await createInformeFinalController({ nro_ifi, fecha, documento_ifi, tipo, id_evaluar, id_descargo_ifi, id_nc, id_estado_IFI });
+
+        if (!response) {
             return res.status(201).json({
-                message: 'Error al crear nuevo informe Final ',
+                message: 'Error al crear nuevo informe Final',
                 data: []
-            })}
+            });
+        }
+        const ifiId = response.id;
+
+        const startDate = new Date(); 
+        startJobForDocument(ifiId, startDate, 'ifi'); 
         return res.status(200).json({ message: 'Nuevo Informe Final Creado', data: response })
     } catch (error) {
         console.error('Error al crear el Informe final:', error);
