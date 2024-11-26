@@ -11,7 +11,7 @@ const getDurationByDocumentType = (documentType) => {
         case 'rsa':
             return 15; // 15 minutos para RSA
         case 'rsgnp':
-            return 15; // 15 minutos para RSGNP (Recursos de Apelación Sancionadora No Procedente)
+            return 15; // 15 minutos para RSGNP 
         case 'ifi':
             return 5;  // 5 minutos para IFI
         default:
@@ -63,13 +63,13 @@ const scheduleDocumentJob = (documentId, startDate, documentType) => {
                     descargoField = 'id_descargo_NC';
                     break;
                 case 'ifi':
-                    descargoField = 'id_descargo_ifi';
+                    descargoField = 'id_descargo_IFI';
                     break;
                 case 'rsa':
                     descargoField = 'id_descargo_RSA';
                     break;
                 case 'rsgnp':
-                    descargoField = 'id_descargo_RG';
+                    descargoField = 'id_descargo_RSGNP';
                     break;
                 default:
                     throw new Error(`Tipo de documento desconocido: ${documentType}`);
@@ -140,7 +140,7 @@ const updateDocumentState = async (documentId, newState, documentType) => {
                 break;
             case 'ifi':
                 model = IFI;
-                stateField = 'id_estado_ifi'; // Para IFI, el campo es 'id_estado_IFI'
+                stateField = 'id_estado_IFI'; // Para IFI, el campo es 'id_estado_IFI'
                 break;
             default:
                 throw new Error(`Tipo de documento desconocido: ${documentType}`);
