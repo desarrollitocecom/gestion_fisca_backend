@@ -34,7 +34,7 @@ const createInformeFinalHandler = async (req, res) => {
     if(id_nc && typeof id_nc!=="string") errores.push("El id_nc debe ser un string")  
     if (errores.length > 0) {
         if (documento_ifi) {
-            fs.unlinkSync(documento_ifi.path); 
+                fs.unlinkSync(documento_ifi.path); 
         }        
        return res.status(400).json({
         message: "Se encontraron los Siguientes Errores",
