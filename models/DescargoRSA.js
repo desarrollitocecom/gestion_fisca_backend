@@ -1,4 +1,4 @@
-const { DataTypes } = require("sequelize")
+    const { DataTypes } = require("sequelize")
 module.exports = (sequelize) => {
     const DescargoRSA = sequelize.define('DescargoRSA', {
         id: {
