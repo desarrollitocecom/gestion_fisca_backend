@@ -2,7 +2,7 @@ const { createTramiteInspector, getAllTramiteInspectorById } = require('../contr
 const { createMedidaComplementaria } = require('../controllers/medidaComplementariaController')
 const { createNC } = require('../controllers/ncController');
 const fs = require('fs');
-const { startJobForDocument } = require('../jobs/descargoJob');
+const { startJobForDocument } = require('../jobs/DescargoJob');
 
 const createTramiteHandler = async (req, res) => {
     const { 

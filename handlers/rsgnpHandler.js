@@ -9,7 +9,7 @@ const {
     updateinRsaController
 } = require('../controllers/rsaController')
 
-const { startJobForDocument } = require('../jobs/descargoJob');
+const { startJobForDocument } = require('../jobs/DescargoJob');
 
 const fs = require('node:fs');
 

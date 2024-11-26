@@ -9,7 +9,7 @@ const {
     updateinIfiController
 } = require('../controllers/informeFinalController');
 
-const { startJobForDocument } = require('../jobs/descargoJob');
+const { startJobForDocument } = require('../jobs/DescargoJob');
 
 const fs = require('node:fs');
 // Handler para crear una nueva RSA
