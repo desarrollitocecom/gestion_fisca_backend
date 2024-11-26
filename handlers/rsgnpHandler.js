@@ -8,6 +8,9 @@ const {
 const {
     updateinRsaController
 } = require('../controllers/rsaController')
+
+const { startJobForDocument } = require('../jobs/descargoJob');
+
 const fs = require('node:fs');
 
 function isValidUUID(uuid) {
@@ -105,10 +108,14 @@ const createRsgnpHandler = async (req, res) => {
     }
 
     try {
-        const newRsgnp = await createRsgnpController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg,id_nc ,id_estado_RSGNP});
+        const newRsgnp = await createRsgnpController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg, id_nc, id_estado_RSGNP });
+
         if (!newRsgnp) {
             return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
         }
+        const rsgnpId = newRsgnp.id;
+        const startDate = new Date(); 
+        startJobForDocument(rsgnpId, startDate, 'rsgnp');
         return res.status(201).json({ message: 'Creado con éxito', data: newRsgnp });
     } catch (error) {
         console.error("Error al crear RSGNP:", error);
