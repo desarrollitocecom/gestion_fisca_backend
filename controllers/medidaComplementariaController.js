@@ -49,8 +49,10 @@ const createMedidaComplementaria = async ({
     id_estado 
     }) => {
 
+    let documento_MCPath;
+
     try {
-        const documento_MCPath = saveImage(documento_medida_complementaria, 'Opcional');
+        documento_MCPath = saveImage(documento_medida_complementaria, "Opcional");
 
         const response = await MedidaComplementaria.create({ 
             id_documento, 
