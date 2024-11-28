@@ -1,7 +1,7 @@
 const { RSA } = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
-const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA}) => {
+const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA,id_AR2}) => {
     let documento_path;
     try {
         documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
@@ -15,7 +15,8 @@ const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, docu
             id_evaluar_rsa,
             id_descargo_RSA,
             id_nc,
-            id_estado_RSA
+            id_estado_RSA,
+            id_AR2
         });
 
         return newRsa || null;
@@ -28,7 +29,7 @@ const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, docu
     }
 };
 // Función para actualizar una instancia existente de RSA
-const updateRsaController = async ({id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA}) => {
+const updateRsaController = async ({id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA,id_AR2}) => {
     let documento_path;
 
     try {
@@ -52,7 +53,8 @@ const updateRsaController = async ({id, nro_rsa, fecha_rsa, fecha_notificacion, 
             id_evaluar_rsa,
             id_descargo_RSA,
             id_nc ,
-            id_estado_RSA
+            id_estado_RSA,
+            id_AR2
         });}
 
         return rsa || null;

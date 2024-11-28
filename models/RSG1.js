@@ -28,15 +28,15 @@ module.exports = (sequelize) => {
             },
             allowNull: true,
             unique:true
-        }
-        // //  id_AR1: {
-        // //      type: DataTypes.UUID,
-        // //      references: {
-        // //          model: 'AResolutiva1s',
-        // //          key: 'id',
-        // //      },
-        // //      allowNull: false
-        // //  }
+        },
+         id_AR1: {
+             type: DataTypes.UUID,
+             references: {
+                 model: 'Usuarios',
+                 key: 'id',
+             },
+             allowNull: false
+         }
 
     }, {
         tableName: 'RSG1s',

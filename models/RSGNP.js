@@ -57,14 +57,14 @@ module.exports = (sequelize) => {
             },
             allowNull:true
         },
-        //  id_AR3:{
-        //      type: DataTypes.UUID,
-        //      references: {
-        //          model: 'AResolutiva3',
-        //          key: 'id',
-        //      },
-        //      allowNull: false
-        //  }
+         id_AR3:{
+             type: DataTypes.UUID,
+             references: {
+                 model: 'Usuarios',
+                 key: 'id',
+             },
+             allowNull: false
+         }
 
     }, {
         tableName: 'RGSNPs',

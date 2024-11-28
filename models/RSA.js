@@ -56,14 +56,14 @@ module.exports = (sequelize) => {
             },
             allowNull:true
         },
-        //  id_AR2:{
-        //      type: DataTypes.UUID,
-        //      references: {
-        //          model: 'AResolutiva2s',
-        //          key: 'id',
-        //      },
-        //      allowNull: false
-        //  }
+         id_AR2:{
+             type: DataTypes.UUID,
+             references: {
+                 model: 'Usuarios',
+                 key: 'id',
+             },
+             allowNull: false
+         }
     }, {
         tableName: 'RSAs',
         timestamps: true

@@ -34,13 +34,19 @@ function saveImage(file, folder) {
 
 const deleteFile = (filePath) => {
     if (filePath) {
-        try {
-            fs.unlinkSync(path.resolve(filePath));
-            console.log(`Archivo ${filePath} eliminado`);
-        } catch (error) {
-            console.error(`Error eliminando archivo ${filePath}:`, error);
+        // Si la ruta es relativa, la combinamos con PDF_RUTA
+        const fullPath = path.resolve(PDF_RUTA, filePath);
+        
+        if (fs.existsSync(fullPath)) {
+            try {
+                fs.unlinkSync(fullPath);
+                console.log(`Archivo ${fullPath} eliminado`);
+            } catch (error) {
+                console.error(`Error eliminando archivo ${fullPath}:`, error);
+            }
+        } else {
+            console.log(`Archivo no encontrado: ${fullPath}`);
         }
     }
 };
-
 module.exports = { saveImage, deleteFile };

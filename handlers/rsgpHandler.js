@@ -8,14 +8,27 @@ const {
     updateinRsaController
 } = require('../controllers/rsaController');
 const fs = require('node:fs');
+
+function isValidUUID(uuid) {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
+}
 const createRsgpHandler = async (req, res) => {
-    const { nro_rsg, fecha_rsg,id_nc } = req.body;
+
+    const { nro_rsg, fecha_rsg, id_nc, id_AR3 } = req.body;
     const documento_RSGP = req.files && req.files["documento_RSGP"] ? req.files["documento_RSGP"][0] : null;
     const errores = [];
 
     // Validaciones de `nro_rsg`
     if (!nro_rsg) errores.push('El campo nro_rsg es requerido');
     if (typeof nro_rsg !== 'string') errores.push('El nro_rsg debe ser una cadena de texto');
+ // Validaciones de `id_nc`
+ if (!id_nc) errores.push('El campo id_nc es requerido');
+ if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
+    // Validaciones de `id_AR3`
+    if (!id_AR3) errores.push('El campo id_AR3 es requerido');
+    if (!isValidUUID(id_AR3)) errores.push('El id_AR3 debe ser una UUID');
+
 
     // Validaciones de `fecha_rsg`
     if (!fecha_rsg) errores.push('El campo fecha_rsg es requerido');
@@ -52,9 +65,9 @@ const createRsgpHandler = async (req, res) => {
     }
 
     try {
-        
-        
-        const newRsgp = await createRsgpController({ nro_rsg, fecha_rsg, documento_RSGP ,id_nc});
+
+
+        const newRsgp = await createRsgpController({ nro_rsg, fecha_rsg, documento_RSGP, id_nc, id_AR3 });
         if (!newRsgp) {
             return res.status(201).json({
                 message: 'Error al Crear RSGP',
@@ -73,13 +86,16 @@ const createRsgpHandler = async (req, res) => {
 
 const updateRsgpHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_rsg, fecha_rsg,id_nc } = req.body;
+    const { nro_rsg, fecha_rsg, id_nc, id_AR3 } = req.body;
     const documento_RSGP = req.files && req.files["documento_RSGP"] ? req.files["documento_RSGP"][0] : null;
     const errores = [];
 
     // Validaciones de `nro_rsg`
     if (!nro_rsg) errores.push('El campo nro_rsg es requerido');
     if (typeof nro_rsg !== 'string') errores.push('El nro_rsg debe ser una cadena de texto');
+    // Validaciones de `id_AR3`
+    if (!id_AR3) errores.push('El campo id_AR3 es requerido');
+    if (!isValidUUID(id_AR3)) errores.push('El id_AR3 debe ser una UUID');
 
     // Validaciones de `fecha_rsg`
     if (!fecha_rsg) errores.push('El campo fecha_rsg es requerido');
@@ -116,9 +132,9 @@ const updateRsgpHandler = async (req, res) => {
     }
 
     try {
-        const RSGP = await updateRsgpController({ id, nro_rsg, fecha_rsg, documento_RSGP,id_nc });
-        
-        if (!RSGP) 
+        const RSGP = await updateRsgpController({ id, nro_rsg, fecha_rsg, documento_RSGP, id_nc,id_AR3 });
+
+        if (!RSGP)
             return res.status(201).json({ message: "Error al moficar", data: [] })
 
         return res.status(200).json({
@@ -127,7 +143,7 @@ const updateRsgpHandler = async (req, res) => {
         });
     } catch (error) {
         console.error("Error al modificar RSGP:", error);
-        return res.status(500).json({ message:"Error al Modificar" ,data:error });
+        return res.status(500).json({ message: "Error al Modificar", data: error });
     }
 };
 
@@ -159,10 +175,7 @@ const getAllRsgpHandler = async (req, res) => {
     }
 };
 
-function isValidUUID(uuid) {
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(uuid);
-}
+
 
 const updateinRsaHandler = async (req, res) => {
     const { uuid, id } = req.body;

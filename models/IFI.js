@@ -50,16 +50,16 @@ module.exports = (sequelize) => {
                 model: 'EstadoIFIs',
                 key: 'id',
             },
-            allowNull:true
+            allowNull:false
         },
-        // id_AI1:{
-        //     type: DataTypes.UUID,
-        //     references: {
-        //         model: 'Analista1s',
-        //         key: 'id',
-        //     },
-        //     allowNull: false
-        // }
+        id_AI1:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'Usuarios',
+                key: 'id',
+            },
+            allowNull: false
+        }
     }, {
         tableName: 'IFIs',
         timestamps: true
@@ -69,7 +69,6 @@ module.exports = (sequelize) => {
         IFI.belongsTo(db.RSA, { foreignKey: 'id_evaluar', as: 'RSA', constraints: false });
         IFI.belongsTo(db.RSG1, { foreignKey: 'id_evaluar', as: 'RSG1', constraints: false });
         IFI.belongsTo(db.RSG2, { foreignKey: 'id_evaluar', as: 'RSG2', constraints: false });
-
         // Relación con DescargoIFI
         IFI.belongsTo(db.DescargoIFI, { foreignKey: 'id_descargo_ifi', as: 'DescargoIFIs' });
         IFI.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});

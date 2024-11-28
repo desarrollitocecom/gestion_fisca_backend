@@ -1,7 +1,7 @@
-const { RSG1 } = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
+const { RSG1 } = require('../db_connection'); 
 const {saveImage,deleteFile}=require('../utils/fileUtils')
-// Función para crear una nueva instancia de RSG1
-const createRSG1Controller = async ({nro_resolucion, fecha_resolucion, documento,id_nc}) => {
+
+const createRSG1Controller = async ({nro_resolucion, fecha_resolucion, documento,id_nc,id_AR1}) => {
     let documento_path;
 
     try {
@@ -10,7 +10,8 @@ const createRSG1Controller = async ({nro_resolucion, fecha_resolucion, documento
             nro_resolucion,
             fecha_resolucion,
             documento:documento_path,
-            id_nc
+            id_nc,
+            id_AR1
         });
 
         return newRSG1 || null;
@@ -32,7 +33,7 @@ const getRSG1Controller=async (id) => {
     }
 }
 
-const updateRSG1Controller = async ({id, nro_resolucion, fecha_resolucion, documento,id_nc}) => {
+const updateRSG1Controller = async ({id, nro_resolucion, fecha_resolucion, documento,id_nc,id_AR1}) => {
     let documento_path;
     try {
           
@@ -49,7 +50,8 @@ const updateRSG1Controller = async ({id, nro_resolucion, fecha_resolucion, docum
             nro_resolucion,
             fecha_resolucion,
             documento:documento_path,
-            id_nc
+            id_nc,
+            id_AR1
         });}
 
         return rsg1 || null;

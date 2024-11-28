@@ -3,9 +3,12 @@ const {
     updateDescargoRsaController
 } = require('../controllers/descargoRsaController');
 const fs = require('node:fs');
-
+function isValidUUID(uuid) {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
+}
 const createDescargoRsaHandler = async (req, res) => {
-    const { nro_descargo, fecha_descargo,id_nc } = req.body;
+    const { nro_descargo, fecha_descargo, id_nc, id_analista_3 } = req.body;
     const documento_DRSA = req.files && req.files["documento_DRSA"] ? req.files["documento_DRSA"][0] : null;
 
     const errores = [];
@@ -26,7 +29,12 @@ const createDescargoRsaHandler = async (req, res) => {
             errores.push('Debe ser una fecha válida');
         }
     }
-
+    // Validaciones de `id_analista_3`
+    if (!id_analista_3) errores.push('El campo id_analista_3 es requerido');
+    if (!isValidUUID(id_analista_3)) errores.push('El id_analista_3 debe ser una UUID');
+    // Validaciones de `id_nc`
+    if (!id_nc) errores.push('El campo id_nc es requerido');
+    if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
     // Validaciones de `documento_DRSA`
     if (!documento_DRSA || documento_DRSA.length === 0) {
         errores.push("El documento_DRSA es requerido.");
@@ -50,7 +58,7 @@ const createDescargoRsaHandler = async (req, res) => {
     }
 
     try {
-        const response = await createDescargoRsaController({nro_descargo, fecha_descargo, documento_DRSA,id_nc});
+        const response = await createDescargoRsaController({ nro_descargo, fecha_descargo, documento_DRSA, id_nc, id_analista_3 });
 
         if (!response) {
             return res.status(201).json({
@@ -73,7 +81,7 @@ const createDescargoRsaHandler = async (req, res) => {
 
 const updateDescargoRsaHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_descargo, fecha_descargo,id_nc } = req.body;
+    const { nro_descargo, fecha_descargo, id_nc, id_analista_3 } = req.body;
     const documento_DRSA = req.files && req.files["documento_DRSA"] ? req.files["documento_DRSA"][0] : null;
     const errores = [];
 
@@ -116,7 +124,7 @@ const updateDescargoRsaHandler = async (req, res) => {
     }
 
     try {
-        const response = await updateDescargoRsaController({id, nro_descargo, fecha_descargo, documento_DRSA,id_nc});
+        const response = await updateDescargoRsaController({ id, nro_descargo, fecha_descargo, documento_DRSA, id_nc, id_analista_3 });
 
         if (!response) {
             return res.status(400).json({
