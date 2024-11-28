@@ -44,9 +44,8 @@ const getMedidaComplementaria = async (id) => {
 // Crear una nueva medida complementaria
 const createMedidaComplementaria = async ({ 
     id_documento, 
-    nro_acta_ejecucion, 
+    nro_medida_complementaria, 
     documento_medida_complementaria, 
-    id_estado 
     }) => {
 
     let documento_MCPath;
@@ -56,9 +55,9 @@ const createMedidaComplementaria = async ({
 
         const response = await MedidaComplementaria.create({ 
             id_documento, 
-            nro_acta_ejecucion,
+            nro_medida_complementaria,
             documento_medida_complementaria: documento_MCPath,
-            id_estado 
+            id_estado: 1 
             });
             
         return response || null;

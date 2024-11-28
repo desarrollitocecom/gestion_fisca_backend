@@ -15,22 +15,28 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
        },
+       nro_medida_complementaria: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        documento_medida_complementaria: {
+            type: DataTypes.STRING,
+            allowNull: true
+       },
+       id_ejecucionMC: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'EjecucionMCs',
+            key: 'id',
+        },       
+    },
+    
        nro_acta_ejecucion: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-       documento_medida_complementaria: {
-            type: DataTypes.STRING,
-            allowNull: true
-       },
-        id_ejecucionMC: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            references: {
-                model: 'EjecucionMCs',
-                key: 'id',
-            },       
-        },
+       
         
         dc_levantamiento: {
             type: DataTypes.STRING,
