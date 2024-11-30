@@ -6,7 +6,7 @@ const sequelize = new Sequelize("gestion_fiscalizacion", "postgres", "12345678",
 });
 
 
-const Permiso = require("../models/Permisos")(sequelize);
+const Permiso = require("../models/Permiso")(sequelize);
 
 
 const permisos = [
