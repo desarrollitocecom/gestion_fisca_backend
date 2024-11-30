@@ -8,8 +8,7 @@ const createTramiteHandler = async (req, res) => {
     const { 
 
             id_documento, 
-            nro_acta_ejecucion, 
-            id_estado,
+            nro_medida_complementaria,
 
             nro_nc, 
             nro_acta, 
@@ -31,16 +30,16 @@ const createTramiteHandler = async (req, res) => {
             errors.push('El documento_nc es obligatorio');
         }else{
            
-            if(req.files['documento_nc'][0].mimetype != 'application/pdf'){
-                errors.push('El documento_nc debe ser formato PDF');
+            if (!['image/jpeg', 'image/png'].includes(req.files['documento_nc'][0].mimetype)) {
+                errors.push('El documento_nc debe ser una imagen en formato JPEG, PNG o GIF');
             }
         }
 
         if(!req.files['documento_acta']){
             errors.push('El documento_acta es obligatorio');
         }else{
-            if(req.files['documento_acta'][0].mimetype != 'application/pdf'){
-                errors.push('El documento_acta debe ser formato PDF');
+            if (!['image/jpeg', 'image/png'].includes(req.files['documento_acta'][0].mimetype)) {
+                errors.push('El documento_acta debe ser una imagen en formato JPEG, PNG o GIF');
             }
         }
 
@@ -49,25 +48,22 @@ const createTramiteHandler = async (req, res) => {
         }
 
 
-        const relatedFields = [id_documento, nro_acta_ejecucion, req.files['documento_medida_complementaria'], id_estado];
+        const relatedFields = [id_documento, nro_medida_complementaria, req.files['documento_medida_complementaria']];
         const anyRelatedFieldFilled = relatedFields.some(field => field !== undefined && field !== null);
 
         if (anyRelatedFieldFilled) {
             if (!id_documento) {
                 errors.push('El campo id_documento es obligatorio cuando se proporciona alguno de los otros campos relacionados.');
             }
-            if (!nro_acta_ejecucion) {
-                errors.push('El campo nro_acta_ejecucion es obligatorio cuando se proporciona alguno de los otros campos relacionados.');
+            if (!nro_medida_complementaria) {
+                errors.push('El campo nro_medida_complementaria es obligatorio cuando se proporciona alguno de los otros campos relacionados.');
             }
             if(!req.files['documento_medida_complementaria']){
                 errors.push('El documento Medida Complementaria es obligatorio');
             }else{
-                if(req.files['documento_medida_complementaria'][0].mimetype != 'application/pdf'){
-                    errors.push('El documento Medida Complementaria debe ser formato PDF');
+                if (!['image/jpeg', 'image/png'].includes(req.files['documento_acta'][0].mimetype)) {
+                    errors.push('El documento_acta debe ser una imagen en formato JPEG, PNG o GIF');
                 }
-            }
-            if (!id_estado) {
-                errors.push('El campo id_estado es obligatorio cuando se proporciona alguno de los otros campos relacionados.');
             }
         }
 
@@ -93,14 +89,13 @@ const createTramiteHandler = async (req, res) => {
             let id_medida_complementaria = null;
             let newMedidaComplementaria = null;
     
-            const shouldCreateMedidaComplementaria = id_documento && nro_acta_ejecucion && req.files['documento_medida_complementaria'] && id_estado;
+            const shouldCreateMedidaComplementaria = id_documento && nro_medida_complementaria && req.files['documento_medida_complementaria'];
     
             if (shouldCreateMedidaComplementaria) {
                 newMedidaComplementaria = await createMedidaComplementaria({
                     id_documento,
-                    nro_acta_ejecucion,
+                    nro_medida_complementaria,
                     documento_medida_complementaria: req.files['documento_medida_complementaria'][0],
-                    id_estado
                 });
                 
                 if (newMedidaComplementaria) {
