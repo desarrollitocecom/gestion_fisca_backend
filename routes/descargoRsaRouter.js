@@ -6,8 +6,10 @@ const {
     createDescargoRsaHandler,
    updateDescargoRsaHandler
 }= require('../handlers/descargoRsaHandler');
+const permisoAutorizacion = require("../checkers/roleAuth");
 
-router.post('/',  uploadDRSA,createDescargoRsaHandler);
-router.patch('/:id', uploadDRSA,  updateDescargoRsaHandler)
+
+router.post('/',permisoAutorizacion(["all_system_access", "create_descargo_rsa"]),  uploadDRSA,createDescargoRsaHandler);
+router.patch('/:id',permisoAutorizacion(["all_system_access", "update_descargo_rsa"]), uploadDRSA,  updateDescargoRsaHandler)
 
 module.exports = router;

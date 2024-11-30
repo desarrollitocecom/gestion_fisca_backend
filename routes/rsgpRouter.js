@@ -9,10 +9,11 @@ const {
     getAllRsgpHandler,
     updateinRsaHandler 
 }=require('../handlers/rsgpHandler');
+const permisoAutorizacion = require("../checkers/roleAuth");
 
 
-router.post("/",uploadRSGP,createRsgpHandler);
-router.patch("/:id",uploadRSGP,updateRsgpHandler);
-router.post("/modiRGSP",uploadNone,updateinRsaHandler);
+router.post("/",permisoAutorizacion(["all_system_access", "create_rsgp"]),uploadRSGP,createRsgpHandler);
+router.patch("/:id",permisoAutorizacion(["all_system_access", "update_rsgp"]),uploadRSGP,updateRsgpHandler);
+router.post("/modiRGSP",permisoAutorizacion(["all_system_access", "update_rsgp"]),uploadNone,updateinRsaHandler);
 
 module.exports = router;

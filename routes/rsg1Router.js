@@ -6,10 +6,11 @@ const {createRSG1Handler,
     updateinIfiHandler,
     
 }=require('../handlers/rsg1Handler');
+const permisoAutorizacion = require("../checkers/roleAuth");
 
 
-router.post("/",uploadRSG1,createRSG1Handler);
-router.patch("/:id",uploadRSG1,updateRSG1Handler);
-router.post("/modRSG1", uploadNone, updateinIfiHandler);
+router.post("/",permisoAutorizacion(["all_system_access", "create_rsg1"]),uploadRSG1,createRSG1Handler);
+router.patch("/:id",permisoAutorizacion(["all_system_access", "update_rsg1"]),uploadRSG1,updateRSG1Handler);
+router.post("/modRSG1",permisoAutorizacion(["all_system_access", "update_rsg1"]), uploadNone, updateinIfiHandler);
 
 module.exports = router;
