@@ -3,10 +3,14 @@ const { saveImage, deleteFile } = require('../utils/fileUtils');
 
 const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, id_medida_complementaria, id_inspector }) => {
 
-    const documento_ncPath = saveImage(documento_nc, 'NC');
-    const documento_actaPath = saveImage(documento_acta, 'AF');
+
+    let documento_ncPath;
+    let documento_actaPath;
 
     try {
+        documento_ncPath = saveImage(documento_nc, "NC");
+        documento_actaPath = saveImage(documento_acta, 'AF');
+
         const newTramiteNC = await TramiteInspector.create({
             nro_nc,
             documento_nc: documento_ncPath,

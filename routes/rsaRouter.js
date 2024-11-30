@@ -10,11 +10,12 @@ const {
     updateinRSAHandler
     
 }=require('../handlers/rsaHandler');
+const permisoAutorizacion = require("../checkers/roleAuth");
 
-router.get("/",getAllRsaHandler);
-router.get('/:id',getRsaHandler)
-router.post("/",uploadRSA,createRsaHandler);
-router.patch("/:id",uploadRSA,updateRsaHandler);
-router.post("/modiRSA",uploadNone,updateinRSAHandler);
+router.get("/",permisoAutorizacion(["all_system_access", "read_rsa"]),getAllRsaHandler);
+router.get('/:id',permisoAutorizacion(["all_system_access", "read_rsa"]),getRsaHandler)
+router.post("/",permisoAutorizacion(["all_system_access", "create_rsa"]),uploadRSA,createRsaHandler);
+router.patch("/:id",permisoAutorizacion(["all_system_access", "update_rsa"]),uploadRSA,updateRsaHandler);
+router.post("/modiRSA",permisoAutorizacion(["all_system_access", "update_rsa"]),uploadNone,updateinRSAHandler);
 
 module.exports = router;

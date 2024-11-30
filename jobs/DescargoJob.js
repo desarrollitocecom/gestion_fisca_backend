@@ -1,19 +1,18 @@
 const schedule = require('node-schedule');
-const { NC, RSA, RSGNP, IFI } = require('../db_connection'); // Modelos para cada tipo de documento
+const { NC, RSA, RSGNP, IFI } = require('../db_connection'); 
 
-const jobCounters = {}; // Objeto global para manejar contadores por cada job
+const jobCounters = {}; 
 
-// Función para obtener los minutos de duración según el tipo de documento
-const getDurationByDocumentType = (documentType) => {
+const getBusinessDaysByDocumentType = (documentType) => {
     switch (documentType) {
         case 'nc':
-            return 5;  // 5 minutos para NC
+            return 5;  // 5 días hábiles para NC
         case 'rsa':
-            return 15; // 15 minutos para RSA
+            return 15; // 15 días hábiles para RSA
         case 'rsgnp':
-            return 15; // 15 minutos para RSGNP 
+            return 15; // 15 días hábiles para RSGNP 
         case 'ifi':
-            return 5;  // 5 minutos para IFI
+            return 5;  // 5 días hábiles para IFI
         default:
             throw new Error(`Tipo de documento desconocido: ${documentType}`);
     }
@@ -35,24 +34,41 @@ const getModelForDocumentType = (documentType) => {
     }
 };
 
-// Función que programa el job para contar minutos
+// Función para obtener el siguiente día hábil
+const getNextWeekday = (currentDate) => {
+    let day = currentDate.getDay(); 
+    if (day === 6) {
+        currentDate.setDate(currentDate.getDate() + 2); // Sábado + 2 días (Lunes)
+    } else if (day === 0) {
+        currentDate.setDate(currentDate.getDate() + 1); // Domingo + 1 día (Lunes)
+    } else {
+        currentDate.setDate(currentDate.getDate() + 1); // Avanza al siguiente día hábil
+    }
+    return currentDate;
+};
+
+// Función que programa el job para contar días hábiles (lunes a viernes)
 const scheduleDocumentJob = (documentId, startDate, documentType) => {
-    let currentDate = new Date(startDate); // Clonamos la fecha inicial
-    const durationInMinutes = getDurationByDocumentType(documentType); // Obtiene la duración en minutos según el tipo de documento
-    jobCounters[documentId] = { counter: 0 }; // Inicializamos el contador para este documento
+    let currentDate = new Date(startDate); 
+    const businessDays = getBusinessDaysByDocumentType(documentType); 
+    jobCounters[documentId] = { counter: 0 }; 
 
     console.log(`Programando el job para ${documentType.toUpperCase()} con ID: ${documentId}`);
+    console.log(`El contador comenzará a las 12:00 a.m. del día siguiente.`);
 
-    const job = schedule.scheduleJob(`${documentType}-job-${documentId}`, '*/1 * * * *', async () => {
+    // Avanzamos al siguiente día hábil si el documento se crea un lunes
+    currentDate = getNextWeekday(currentDate); 
+
+    const job = schedule.scheduleJob(`${documentType}-job-${documentId}`, '0 0 * * *', async () => {
         try {
             console.log(`Ejecutando el job para ${documentType.toUpperCase()} con ID ${documentId}.`);
-            const Model = getModelForDocumentType(documentType); // Obtener el modelo correspondiente
+            const Model = getModelForDocumentType(documentType);
             const document = await Model.findByPk(documentId);
 
             if (!document) {
                 console.error(`${documentType.toUpperCase()} con ID ${documentId} no encontrado. Cancelando job.`);
                 job.cancel();
-                delete jobCounters[documentId]; // Limpiar el contador
+                delete jobCounters[documentId]; 
                 return;
             }
 
@@ -75,32 +91,28 @@ const scheduleDocumentJob = (documentId, startDate, documentType) => {
                     throw new Error(`Tipo de documento desconocido: ${documentType}`);
             }
 
-            // Verificar si ya tiene un descargo asociado
             if (document[descargoField]) {
                 console.log(`${documentType.toUpperCase()} con ID ${documentId} tiene un descargo asociado. Cancelando job.`);
-                await updateDocumentState(documentId, 3, documentType); // Cambiar el estado a "resuelto" o el que corresponda
-                job.cancel(); // Detener el job
-                delete jobCounters[documentId]; // Limpiar el contador
+                await updateDocumentState(documentId, 3, documentType); 
+                job.cancel(); 
+                delete jobCounters[documentId];
                 return;
             }
 
-            console.log(`Contador actual de minutos: ${jobCounters[documentId].counter}`);
+            console.log(`Contador actual de días hábiles: ${jobCounters[documentId].counter}`);
 
-            // Incrementar el contador por cada minuto (se ejecuta cada minuto)
+            // Incrementar el contador solo por días hábiles
             jobCounters[documentId].counter += 1;
 
-            // Verificar si el contador ha alcanzado la duración en minutos
-            if (jobCounters[documentId].counter >= durationInMinutes) {
+            if (jobCounters[documentId].counter >= businessDays) {
                 console.log(`Duración alcanzada. Intentando actualizar estado del ${documentType.toUpperCase()}.`);
-                await updateDocumentState(documentId, 3, documentType); // Cambiar el estado del documento a "finalizado" (por ejemplo, estado 3)
+                await updateDocumentState(documentId, 3, documentType); 
                 console.log(`${documentType.toUpperCase()} con ID ${documentId} actualizado.`);
-                job.cancel(); // Detener el job
-                delete jobCounters[documentId]; // Limpiar el contador
-                return;
+                job.cancel();
+                delete jobCounters[documentId];
             }
 
-            // Avanzar al siguiente minuto
-            currentDate = new Date(currentDate.setMinutes(currentDate.getMinutes() + 1)); // Actualizar la fecha
+            currentDate = getNextWeekday(new Date(currentDate.setDate(currentDate.getDate() + 1))); 
             console.log(`Fecha actualizada a ${currentDate}`);
         } catch (error) {
             console.error(`Error en el job para ${documentType.toUpperCase()} con ID ${documentId}:`, error);
@@ -112,50 +124,46 @@ const scheduleDocumentJob = (documentId, startDate, documentType) => {
 
 // Función para iniciar el job para cualquier tipo de documento
 const startJobForDocument = (documentId, startDate, documentType) => {
-    scheduleDocumentJob(documentId, startDate, documentType); // Programar el job con la fecha de inicio
+    scheduleDocumentJob(documentId, startDate, documentType); 
 };
 
-// Exporta la función
 module.exports = { startJobForDocument, jobCounters };
 
 // Función para actualizar el estado de un documento (por ejemplo, 3 para "resuelto")
 const updateDocumentState = async (documentId, newState, documentType) => {
     try {
         let model;
-        let stateField;  // Variable para almacenar el nombre del campo de estado
+        let stateField; 
 
-        // Asignar el modelo y el campo de estado según el tipo de documento
         switch (documentType) {
             case 'nc':
                 model = NC;
-                stateField = 'id_estado_NC';  // Para NC, el campo es 'id_estado_NC'
+                stateField = 'id_estado_NC';
                 break;
             case 'rsa':
                 model = RSA;
-                stateField = 'id_estado_RSA'; // Para RSA, el campo es 'id_estado_RSA'
+                stateField = 'id_estado_RSA';
                 break;
             case 'rsgnp':
                 model = RSGNP;
-                stateField = 'id_estado_RSGNP'; // Para RSGNP, el campo es 'id_estado_RSGNP'
+                stateField = 'id_estado_RSGNP';
                 break;
             case 'ifi':
                 model = IFI;
-                stateField = 'id_estado_IFI'; // Para IFI, el campo es 'id_estado_IFI'
+                stateField = 'id_estado_IFI';
                 break;
             default:
                 throw new Error(`Tipo de documento desconocido: ${documentType}`);
         }
 
-        // Buscar el documento por su ID
         const document = await model.findByPk(documentId);
 
         if (!document) {
             throw new Error(`${documentType.toUpperCase()} con ID ${documentId} no encontrado.`);
         }
 
-        // Asignar el nuevo estado al campo correspondiente
-        document[stateField] = newState; // Asignamos el nuevo estado al campo correcto
-        await document.save(); // Guardamos los cambios en la base de datos
+        document[stateField] = newState;
+        await document.save();
 
         console.log(`${documentType.toUpperCase()} con ID ${documentId} ha sido actualizado al estado ${newState}.`);
     } catch (error) {

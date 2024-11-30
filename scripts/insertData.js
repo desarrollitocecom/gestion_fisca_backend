@@ -17,17 +17,15 @@ const EstadoIFI = require("../models/EstadoIFI")(sequelize);
 const EstadoRSGNP = require("../models/EstadoRSGNP")(sequelize);
 const EstadoRSA = require("../models/EstadoRSA")(sequelize);
 const EjecucionMC = require("../models/EjecucionMC")(sequelize);
-const Usuario = require("../models/Usuario")(sequelize);
 const TipoDocumentoIdentidad = require("../models/TipoDocumentoIdentidad")(sequelize);
 const EstadoDescargoNC = require("../models/EstadoDescargoNC")(sequelize);
-
 const insertData = async () => {
   try {
     await sequelize.authenticate();
     console.log("Conexión establecida correctamente.");
 
     // Sincronizar modelos
-    await sequelize.sync({ force: true }); // CUIDADO: Elimina y vuelve a crear tablas
+    //await sequelize.sync({ force: true }); // CUIDADO: Elimina y vuelve a crear tablas
 
     // Insertar datos ficticios en TipoDocumentoComplementario
     await TipoDocumentoComplementario.bulkCreate([
@@ -107,28 +105,6 @@ const insertData = async () => {
       { tipo: "Ejecución 3" },
     ]);
 
-    // Insertar datos ficticios en Usuario
-    const hashedPassword = await argon2.hash("password123");
-    await Usuario.bulkCreate([
-      {
-        usuario: "admin",
-        contraseña: hashedPassword,
-        correo: "admin@example.com",
-        id_rol: 1, // Asegúrate de tener un rol con ID 1
-      },
-      {
-        usuario: "user1",
-        contraseña: hashedPassword,
-        correo: "user1@example.com",
-        id_rol: 1, // Asegúrate de tener un rol con ID 1
-      },
-      {
-        usuario: "user2",
-        contraseña: hashedPassword,
-        correo: "user2@example.com",
-        id_rol: 1, // Asegúrate de tener un rol con ID 1
-      },
-    ]);
 
     // Insertar datos ficticios en TipoDocumentoIdentidad
     await TipoDocumentoIdentidad.bulkCreate([
@@ -136,6 +112,7 @@ const insertData = async () => {
       { documento: "Pasaporte" },
       { documento: "Carnet de Extranjería" },
     ]);
+
 
     console.log("Datos insertados correctamente.");
   } catch (error) {
