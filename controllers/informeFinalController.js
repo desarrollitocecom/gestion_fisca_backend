@@ -5,11 +5,10 @@ const createInformeFinalController = async ({
   nro_ifi,
   fecha,
   documento_ifi,
-  tipo,
-  id_evaluar,
+  // tipo,
+  // id_evaluar,
   id_descargo_ifi,
   id_nc,
-  id_estado_IFI,
   id_AI1
 }) => {
   let documento_ifi_path;
@@ -25,11 +24,11 @@ const createInformeFinalController = async ({
         nro_ifi,
         fecha,
         documento_ifi: documento_ifi_path,
-        tipo,
-        id_evaluar,
-        id_descargo_ifi,
+        // tipo,
+        // id_evaluar,
+        // id_descargo_ifi,
         id_nc,
-        id_estado_IFI,
+        id_estado_IFI:1,
         id_AI1
       });
       return response || null;
