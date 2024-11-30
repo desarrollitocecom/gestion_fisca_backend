@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const router = Router();
 
-const tramiteInspector = require('./tramiteInspectorRouter');
+//const tramiteInspector = require('./tramiteInspectorRouter');
 const digitadorNC = require('./digitadorRouter');
 const analista1 = require('./analista1Router');
 const informeFinal=require('./informeFinalRouter');
@@ -24,7 +24,7 @@ const rsgnp=require('./rsgnpRouter')
 const rg=require('./rgRouter');
 const rol_permisoRouter = require("./rol_permisoRouter");
 
-router.use('/inspector',tramiteInspector);
+//router.use('/inspector',tramiteInspector);
 router.use('/digitador',digitadorNC);
 router.use('/analista1',analista1);
 router.use('/tipodocumentoidentidad',TipoDocumentoIdentidad);
@@ -35,7 +35,7 @@ router.use('/estadorsa',estadorsa);
 router.use('/estadorsgnp',estadorsgnp);
 router.use('/medidacomplementaria',medidacomplementaria);
 router.use('/documentocomplementario',TipoDocumentoComplementario);
-router.use('/inspector', tramiteInspector);
+//router.use('/inspector', tramiteInspector);
 router.use('/ifi',informeFinal);
 router.use('/difi',descargoIFI);
 router.use('/drsa',descargoRsa);

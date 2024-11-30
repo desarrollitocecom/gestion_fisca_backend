@@ -5,6 +5,9 @@ const { sequelize } = require("./db_connection");
 const router = require("./routes/index");
 const { PORT_FISCA ,PDF_RUTA} = process.env;
 
+const tramiteInspector = require('../gestion_fisca_backend/routes/tramiteInspectorRouter');
+
+
 const { initializeSocket, userSockets } = require("./sockets");
 const loginMiddleware = require("./checkers/validateToken");
 const usuariosRouter = require("./routes/loginRouter");
@@ -14,7 +17,9 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 const multer = require('multer');
-app.use("/login", usuariosRouter); // no aplica authMiddleware para el manejo de usuarios
+app.use("/login", usuariosRouter);
+app.use('/inspector', tramiteInspector);
+ // no aplica authMiddleware para el manejo de usuarios
 app.use(loginMiddleware); // usa el middleware globalmente para validar todas las rutas a las que se va a acceder en el sistema solo estando logeado
 const server = http.createServer(app); // servidor http a partir de express
 
