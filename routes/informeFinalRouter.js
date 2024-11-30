@@ -9,10 +9,11 @@ const {
     getInformeFinalHandler
 }
  = require('../handlers/informeFinalHandler');
+ const permisoAutorizacion = require("../checkers/roleAuth");
 
-router.post('/', uploadIfi, createInformeFinalHandler);
-router.get('/ifis',getAllInformesFinalesHandler);
-router.get('/:id',getInformeFinalHandler);
-router.put('/:id',uploadIfi,updateInformeFinalHandler);
+router.post('/',permisoAutorizacion(["all_system_access", "create_ifi"]), uploadIfi, createInformeFinalHandler);
+router.get('/ifis',permisoAutorizacion(["all_system_access", "read_ifi"]),getAllInformesFinalesHandler);
+router.get('/:id',permisoAutorizacion(["all_system_access", "read_ifi"]),getInformeFinalHandler);
+router.put('/:id',permisoAutorizacion(["all_system_access", "update_ifi"]),uploadIfi,updateInformeFinalHandler);
 
 module.exports = router;

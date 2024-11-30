@@ -8,11 +8,12 @@ const {
     deleteEstadoDescargoNCHandler,
     updateEstadoDescargoNCHandler,
   } = require('../handlers/EstadoDescargoNCHandler');
-  
-  router.get('/:id', getEstadoDescargoNCByIdHandler); 
-  router.get('/', getAllEstadoDescargoNCHandler); 
-  router.post('/', createEstadoDescargoNCHandler); 
-  router.delete('/:id', deleteEstadoDescargoNCHandler);
-  router.patch('/:id', updateEstadoDescargoNCHandler); 
+  const permisoAutorizacion = require("../checkers/roleAuth");
+
+  router.get('/:id',permisoAutorizacion(["all_system_access", "read_estdescargonc"]), getEstadoDescargoNCByIdHandler); 
+  router.get('/',permisoAutorizacion(["all_system_access", "read_estdescargonc"]), getAllEstadoDescargoNCHandler); 
+  router.post('/',permisoAutorizacion(["all_system_access", "create_estdescargonc"]), createEstadoDescargoNCHandler); 
+  router.delete('/:id',permisoAutorizacion(["all_system_access", "delete_estdescargonc"]), deleteEstadoDescargoNCHandler);
+  router.patch('/:id',permisoAutorizacion(["all_system_access", "update_estdescargonc"]), updateEstadoDescargoNCHandler); 
   
   module.exports = router;

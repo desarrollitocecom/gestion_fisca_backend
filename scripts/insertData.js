@@ -20,7 +20,6 @@ const EjecucionMC = require("../models/EjecucionMC")(sequelize);
 const Usuario = require("../models/Usuario")(sequelize);
 const TipoDocumentoIdentidad = require("../models/TipoDocumentoIdentidad")(sequelize);
 const EstadoDescargoNC = require("../models/EstadoDescargoNC")(sequelize);
-
 const insertData = async () => {
   try {
     await sequelize.authenticate();
@@ -108,24 +107,24 @@ const insertData = async () => {
     ]);
 
     // Insertar datos ficticios en Usuario
-    const hashedPassword = await argon2.hash("password123");
+    const hashedPassword = await argon2.hash("cuenta123");
     await Usuario.bulkCreate([
       {
-        usuario: "admin",
+        usuario: "James",
         contraseña: hashedPassword,
-        correo: "admin@example.com",
+        correo: "james@gmail.com",
         id_rol: 1, // Asegúrate de tener un rol con ID 1
       },
       {
-        usuario: "user1",
+        usuario: "Vieri",
         contraseña: hashedPassword,
-        correo: "user1@example.com",
+        correo: "vieri@gmail.com",
         id_rol: 1, // Asegúrate de tener un rol con ID 1
       },
       {
-        usuario: "user2",
+        usuario: "Marco",
         contraseña: hashedPassword,
-        correo: "user2@example.com",
+        correo: "marco@gmail.com",
         id_rol: 1, // Asegúrate de tener un rol con ID 1
       },
     ]);
@@ -136,6 +135,7 @@ const insertData = async () => {
       { documento: "Pasaporte" },
       { documento: "Carnet de Extranjería" },
     ]);
+
 
     console.log("Datos insertados correctamente.");
   } catch (error) {
