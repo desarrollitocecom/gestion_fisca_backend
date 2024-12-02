@@ -7,8 +7,13 @@ const {
     updateInformeFinalController
 }=require('../controllers/informeFinalController');
 const fs = require('node:fs');
+
+function isValidUUID(uuid1) {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid1);
+}
 const createDescargoHandler = async (req, res) => {
-    const {id_IFI}=req.params;
+    const {id}=req.params;
     const { 
         nro_descargo, 
         fecha_descargo,
@@ -16,6 +21,7 @@ const createDescargoHandler = async (req, res) => {
         id_analista_2
     } = req.body;
 
+ 
     const documento_DIFI = req.files && req.files["documento_DIFI"] ? req.files["documento_DIFI"][0] : null;
 
     const errores = [];
@@ -75,10 +81,10 @@ if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
             documento_DIFI,
             id_nc,
             id_analista_2});
-
-        const get_idIFI=await getInformeFinalController(id_IFI);
-
-        if(!get_idIFI){
+        
+        const get_id=await getInformeFinalController(id);
+    
+        if(!get_id){
 
             return res.status(404).json({message:"No se encuentra id del IFI",data:[]})
         }
@@ -86,7 +92,7 @@ if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
 
         const id_estado_IFI=3;
 
-        const response=await updateInformeFinalController(get_idIFI,{id_descargo_ifi,id_estado_IFI})
+        const response=await updateInformeFinalController(id,{id_descargo_ifi,id_estado_IFI})
 
         if (!response) {
             return res.status(400).json({
@@ -179,87 +185,3 @@ module.exports = {
     createDescargoHandler,
     updateDescargoHandler
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const {
-//     createDescargoAndAssociate,
-//     updateDescargoAndAssociate
-// } = require('../controllers/descargoInformeFinalController');
-
-// const createDescargoHandler = async (req, res) => {
-//     const { nro_descargo, fecha_descargo,  documento_DIFI } = req.body;
-    
-//     try {
-        
-//         const response = await createDescargoAndAssociate({nro_descargo, fecha_descargo,  documento_DIFI});
-        
-//         if (!response) {
-//             return res.status(400).json({
-//                 message: 'Error al crear y asociar DescargoIFI',
-//                 data: []
-//             });
-//         }
-//         return res.status(200).json({
-//             message: 'DescargoIFI creado y asociado a IFI correctamente',
-//             data: response
-//         });
-//     } catch (error) {
-//         console.error('Error al crear y asociar DescargoIFI:', error);
-//         return res.status(500).json({
-//             message: 'Error al crear y asociar DescargoIFI',
-//             error
-//         });
-//     }
-// };
-
-
-
-// const updateDescargoHandler = async (req, res) => {
-//     const { id } = req.params;
-//     const { nro_descargo, fecha_descargo, documento_DIFI} = req.body;
-//     try {
-//         const response = await updateDescargoAndAssociate(id, nro_descargo, fecha_descargo, documento_DIFI);
-        
-//         if (!response) {
-//             return res.status(400).json({
-//                 message: `Error al modificar el DescargoIFI con el id: ${id}`,
-//                 data: []
-//             });
-//         }
-//         return res.status(200).json({
-//             message: 'DescargoIFI actualizado y asociado con IFI correctamente',
-//             data: response
-//         });
-//     } catch (error) {
-//         console.error('Error al actualizar DescargoIFI y asociarlo a IFI:', error);
-//         return res.status(500).json({
-//             message: 'Error al actualizar DescargoIFI y asociarlo a IFI',
-//             data:error
-//         });
-//     }
-// };
-
-// module.exports = {
-//     createDescargoHandler,
-//     updateDescargoHandler
-// };
-

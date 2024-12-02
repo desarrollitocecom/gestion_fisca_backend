@@ -43,8 +43,8 @@ const createInformeFinalController = async ({
   }
 };
 
-const updateInformeFinalController = async ({
-  id,
+const updateInformeFinalController = async (
+  id,{
   nro_ifi,
   fecha,
   documento_ifi,

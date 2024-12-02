@@ -47,7 +47,6 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: true,
-            unique:true
         },
         id_estado_RSGNP:{
             type: DataTypes.INTEGER,

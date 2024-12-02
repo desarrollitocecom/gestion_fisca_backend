@@ -4,7 +4,9 @@ const {
     getRSG2Controller
 } = require('../controllers/rsg2Controller');
 const {
-    updateinIfiController
+    updateInformeFinalController,
+    getInformeFinalController
+    
 } = require('../controllers/informeFinalController');
 const fs = require('node:fs');
 function isValidUUID(uuid) {
@@ -12,22 +14,30 @@ function isValidUUID(uuid) {
     return uuidRegex.test(uuid);
 }
 const createRSG2Handler = async (req, res) => {
+    const { id } = req.params;
+
     const { nro_resolucion2, fecha_resolucion, id_nc, id_AR2 } = req.body;
+
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
+
     const errores = [];
 
-    // Validaciones de `nro_resolucion2`
     if (!nro_resolucion2) errores.push('El campo nro_resolucion2 es requerido');
+
     if (typeof nro_resolucion2 !== 'string') errores.push('El nro_resolucion2 debe ser una cadena de texto');
-    // Validaciones de `id_AR2`
+
     if (!id_AR2) errores.push('El campo id_AR2 es requerido');
+
     if (!isValidUUID(id_AR2)) errores.push('El id_AR2 debe ser una UUID');
-    // Validaciones de `id_nc`
+
     if (!id_nc) errores.push('El campo id_nc es requerido');
+
     if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
-    // Validaciones de `fecha_resolucion`
+
     if (!fecha_resolucion) errores.push('El campo fecha_resolucion es requerido');
+
     const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
+
     if (!fechaRegex.test(fecha_resolucion)) {
         errores.push('El formato de la fecha debe ser YYYY-MM-DD');
     } else {
@@ -37,7 +47,6 @@ const createRSG2Handler = async (req, res) => {
         }
     }
 
-    // Validaciones de `documento`
     if (!documento || documento.length === 0) {
         errores.push("El documento es requerido.");
     } else {
@@ -47,7 +56,7 @@ const createRSG2Handler = async (req, res) => {
             errores.push("El documento debe ser un archivo PDF.");
         }
     }
-    // Si hay errores, devolverlos
+
     if (errores.length > 0) {
         if (documento) {
             fs.unlinkSync(documento.path);
@@ -59,16 +68,31 @@ const createRSG2Handler = async (req, res) => {
     }
 
     try {
-        const response = await createRSG2Controller({ nro_resolucion2, fecha_resolucion, documento, id_nc, id_AR2 });
+        const createRsg2 = await createRSG2Controller({ nro_resolucion2, fecha_resolucion, documento, id_nc, id_AR2 });
+        
+        if (!createRsg2) {
+            return res.status(404).json({ message: "Error al crear el RSG2", data: [] })
+        }
+        const get_id = await getInformeFinalController(id);
+
+        if (!get_id) {
+            return res.status(404).json({ message: "El id del IFI no se encuentra", data: [] })
+        }
+        
+        const id_evaluar = createRsg2.id;
+ 
+        const tipo = "RSG2";
+
+        const response = await updateInformeFinalController(id, { id_evaluar, tipo })
 
         if (!response) {
             return res.status(201).json({
-                message: 'Error al crear el RGS2',
+                message: 'Error al crear el RGS2 y al asociar',
                 data: []
             });
         }
         return res.status(200).json({
-            message: "RSG2 creado correctamente",
+            message: "RSG2 creado correctamente y asociado a IFI",
             data: response,
         });
     } catch (error) {
