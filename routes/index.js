@@ -22,6 +22,8 @@ const descargoRsgnp=require('./descargoRsgnpRouter');
 const rsgp=require('./rsgpRouter')
 const rsgnp=require('./rsgnpRouter')
 const rg=require('./rgRouter');
+const usuariosRouter = require("./usuarioRouter");
+
 const rol_permisoRouter = require("./rol_permisoRouter");
 
 //router.use('/inspector',tramiteInspector);
@@ -36,6 +38,7 @@ router.use('/estadorsgnp',estadorsgnp);
 router.use('/medidacomplementaria',medidacomplementaria);
 router.use('/documentocomplementario',TipoDocumentoComplementario);
 //router.use('/inspector', tramiteInspector);
+router.use('/users', usuariosRouter);
 router.use('/ifi',informeFinal);
 router.use('/difi',descargoIFI);
 router.use('/drsa',descargoRsa);
