@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const router = Router();
 
-const tramiteInspector = require('./tramiteInspectorRouter');
+//const tramiteInspector = require('./tramiteInspectorRouter');
 const digitadorNC = require('./digitadorRouter');
 const analista1 = require('./analista1Router');
 const informeFinal=require('./informeFinalRouter');
@@ -22,9 +22,11 @@ const descargoRsgnp=require('./descargoRsgnpRouter');
 const rsgp=require('./rsgpRouter')
 const rsgnp=require('./rsgnpRouter')
 const rg=require('./rgRouter');
+const usuariosRouter = require("./usuarioRouter");
 
+const rol_permisoRouter = require("./rol_permisoRouter");
 
-router.use('/inspector',tramiteInspector);
+//router.use('/inspector',tramiteInspector);
 router.use('/digitador',digitadorNC);
 router.use('/analista1',analista1);
 router.use('/tipodocumentoidentidad',TipoDocumentoIdentidad);
@@ -35,7 +37,8 @@ router.use('/estadorsa',estadorsa);
 router.use('/estadorsgnp',estadorsgnp);
 router.use('/medidacomplementaria',medidacomplementaria);
 router.use('/documentocomplementario',TipoDocumentoComplementario);
-router.use('/inspector', tramiteInspector);
+//router.use('/inspector', tramiteInspector);
+router.use('/users', usuariosRouter);
 router.use('/ifi',informeFinal);
 router.use('/difi',descargoIFI);
 router.use('/drsa',descargoRsa);
@@ -46,5 +49,6 @@ router.use('/rsgp',rsgp);
 router.use('/rsgnp',rsgnp);
 router.use("/drsgnp",descargoRsgnp);
 router.use('/rg',rg);
+router.use('/auth',rol_permisoRouter);
 
 module.exports = router;

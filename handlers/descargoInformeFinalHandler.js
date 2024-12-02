@@ -4,7 +4,7 @@ const {
 } = require('../controllers/descargoInformeFinalController');
 const fs = require('node:fs');
 const createDescargoHandler = async (req, res) => {
-    const { nro_descargo, fecha_descargo,id_nc } = req.body;
+    const { nro_descargo, fecha_descargo,id_nc ,id_analista_2} = req.body;
     const documento_DIFI = req.files && req.files["documento_DIFI"] ? req.files["documento_DIFI"][0] : null;
     const errores = [];
 
@@ -24,7 +24,12 @@ const createDescargoHandler = async (req, res) => {
             errores.push('Debe ser una fecha válida');
         }
     }
-
+// Validaciones de `id_analista_2`
+if (!id_analista_2) errores.push('El campo id_analista_2 es requerido');
+if (!isValidUUID(id_analista_2)) errores.push('El id_analista_2 debe ser una UUID');
+// Validaciones de `id_nc`
+if (!id_nc) errores.push('El campo id_nc es requerido');
+if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
     // Validaciones de `documento_DIFI`
     if (!documento_DIFI) {
         errores.push('El documento_DIFI es requerido');
@@ -46,7 +51,7 @@ const createDescargoHandler = async (req, res) => {
     }
 
     try {
-        const response = await createDescargoAndAssociate({nro_descargo, fecha_descargo, documento_DIFI,id_nc});
+        const response = await createDescargoAndAssociate({nro_descargo, fecha_descargo, documento_DIFI,id_nc,id_analista_2});
 
         if (!response) {
             return res.status(400).json({
@@ -69,7 +74,7 @@ const createDescargoHandler = async (req, res) => {
 
 const updateDescargoHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_descargo, fecha_descargo,id_nc } = req.body;
+    const { nro_descargo, fecha_descargo,id_nc,id_analista_2 } = req.body;
     const documento_DIFI = req.files && req.files["documento_DIFI"] ? req.files["documento_DIFI"][0] : null;
     const errores = [];
 
@@ -88,7 +93,12 @@ const updateDescargoHandler = async (req, res) => {
             errores.push('Debe ser una fecha válida');
         }
     }
-
+// Validaciones de `id_analista_2`
+if (!id_analista_2) errores.push('El campo id_analista_2 es requerido');
+if (!isValidUUID(id_analista_2)) errores.push('El id_analista_2 debe ser una UUID');
+// Validaciones de `id_nc`
+if (!id_nc) errores.push('El campo id_nc es requerido');
+if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
     // Validaciones de `documento_DIFI`
     if (documento_DIFI && documento_DIFI.mimetype !== 'application/pdf') {
         errores.push('El documento debe ser un archivo PDF');
@@ -106,7 +116,7 @@ const updateDescargoHandler = async (req, res) => {
     }
 
     try {
-        const response = await updateDescargoAndAssociate({id, nro_descargo, fecha_descargo, documento_DIFI,id_nc});
+        const response = await updateDescargoAndAssociate({id, nro_descargo, fecha_descargo, documento_DIFI,id_nc,id_analista_2});
 
         if (!response) {
             return res.status(400).json({

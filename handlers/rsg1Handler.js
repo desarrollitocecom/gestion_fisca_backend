@@ -7,10 +7,13 @@ const {
     updateinIfiController
 } = require('../controllers/informeFinalController');
 const fs = require('node:fs');
-
+function isValidUUID(uuid1) {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid1);
+}
 const createRSG1Handler = async (req, res) => {
-    const { nro_resolucion, fecha_resolucion,id_nc } = req.body;
- 
+    const { nro_resolucion, fecha_resolucion, id_nc, id_AR1 } = req.body;
+
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
 
     const errores = [];
@@ -19,6 +22,12 @@ const createRSG1Handler = async (req, res) => {
     if (!nro_resolucion) errores.push('El campo nro_resolucion es requerido');
     if (typeof nro_resolucion !== 'string') errores.push('El nro_resolucion debe ser una cadena de texto');
 
+    // Validaciones de `id_AR1`
+    if (!id_AR1) errores.push('El campo id_AR1 es requerido');
+    if (!isValidUUID(id_AR1)) errores.push('El id_AR1 debe ser una UUID');
+    // Validaciones de `id_nc`
+    if (!id_nc) errores.push('El campo id_nc es requerido');
+    if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
     // Validaciones de `fecha_resolucion`
     if (!fecha_resolucion) errores.push('El campo fecha_resolucion es requerido');
     const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -43,7 +52,7 @@ const createRSG1Handler = async (req, res) => {
     // Si hay errores, devolverlos
     if (errores.length > 0) {
         if (documento) {
-            fs.unlinkSync(documento.path); 
+            fs.unlinkSync(documento.path);
         }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
@@ -52,7 +61,7 @@ const createRSG1Handler = async (req, res) => {
     }
 
     try {
-        const response = await createRSG1Controller({ nro_resolucion, fecha_resolucion, documento });
+        const response = await createRSG1Controller({ nro_resolucion, fecha_resolucion, documento, id_nc, id_AR1 });
 
         if (!response) {
             return res.status(201).json({
@@ -72,14 +81,19 @@ const createRSG1Handler = async (req, res) => {
 
 const updateRSG1Handler = async (req, res) => {
     const { id } = req.params;
-    const { nro_resolucion, fecha_resolucion ,id_nc} = req.body;  
+    const { nro_resolucion, fecha_resolucion, id_nc,id_AR1 } = req.body;
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
     const errores = [];
 
     // Validaciones de `nro_resolucion`
     if (!nro_resolucion) errores.push('El campo nro_resolucion es requerido');
     if (typeof nro_resolucion !== 'string') errores.push('El nro_resolucion debe ser una cadena de texto');
-
+ // Validaciones de `id_AR1`
+ if (!id_AR1) errores.push('El campo id_AR1 es requerido');
+ if (!isValidUUID(id_AR1)) errores.push('El id_AR1 debe ser una UUID');
+ // Validaciones de `id_nc`
+ if (!id_nc) errores.push('El campo id_nc es requerido');
+ if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
     // Validaciones de `fecha_resolucion`
     if (!fecha_resolucion) errores.push('El campo fecha_resolucion es requerido');
     const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -106,7 +120,7 @@ const updateRSG1Handler = async (req, res) => {
     // Si hay errores, devolverlos
     if (errores.length > 0) {
         if (documento) {
-            fs.unlinkSync(documento.path); 
+            fs.unlinkSync(documento.path);
         }
         return res.status(400).json({
             message: 'Se encontraron los siguientes errores',
@@ -115,7 +129,7 @@ const updateRSG1Handler = async (req, res) => {
     }
 
     try {
-        const response = await updateRSG1Controller({ id, nro_resolucion, fecha_resolucion, documento });
+        const response = await updateRSG1Controller({ id, nro_resolucion, fecha_resolucion, documento,id_nc,id_AR1 });
 
         if (!response) {
             return res.status(400).json({ message: 'Error al modificar el RSG1', data: [] });
@@ -127,28 +141,25 @@ const updateRSG1Handler = async (req, res) => {
         return res.status(500).json({ error: "Error interno del servidor al modificar RSG1." });
     }
 };
-function isValidUUID(uuid1) {
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(uuid1);
-}
+
 const updateinIfiHandler = async (req, res) => {
     const { uuid, id } = req.body;
 
     const vRSG1 = "RSG1";
     const errores = []
-   // console.log(uuid,id);
-    
+    // console.log(uuid,id);
+
     if (!uuid) errores.push('El campo es requerido')
 
     if (!isValidUUID(uuid)) errores.push('Debe ser un tipo uuid')
 
-    if (!id &&id.trim() === '') errores.push('El campo es requerido')
+    if (!id && id.trim() === '') errores.push('El campo es requerido')
 
-    if ( !isValidUUID(id)) errores.push('Debe ser un tipo uuid')
-     
-    if (errores > 0) 
-    return res.status(400).json({message: 'Se Encontraron los siguientes Errores',data: errores})
-   
+    if (!isValidUUID(id)) errores.push('Debe ser un tipo uuid')
+
+    if (errores > 0)
+        return res.status(400).json({ message: 'Se Encontraron los siguientes Errores', data: errores })
+
 
     try {
         const rsg1 = await getRSG1Controller(id);

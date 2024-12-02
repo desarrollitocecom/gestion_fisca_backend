@@ -1,7 +1,7 @@
 const{DescargoRSA}=require('../db_connection');
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
-const createDescargoRsaController=async ({nro_descargo,fecha_descargo,documento_DRSA,id_nc}) => {
+const createDescargoRsaController=async ({nro_descargo,fecha_descargo,documento_DRSA,id_nc,id_analista_3}) => {
     let documento_path;
 
     try {
@@ -11,7 +11,8 @@ const createDescargoRsaController=async ({nro_descargo,fecha_descargo,documento_
             nro_descargo,
             fecha_descargo,
             documento_DRSA:documento_path,
-            id_nc      
+            id_nc,
+            id_analista_3
         });
 
         return newDescargo || null;
@@ -23,7 +24,7 @@ const createDescargoRsaController=async ({nro_descargo,fecha_descargo,documento_
         return false
     }
 }
-const updateDescargoRsaController=async ({id,nro_descargo,fecha_descargo,documento_DRSA,id_nc}) => {
+const updateDescargoRsaController=async ({id,nro_descargo,fecha_descargo,documento_DRSA,id_nc,id_analista_3}) => {
     let documento_path;
     try {
         const descargo = await DescargoRSA.findOne({ where: { id } });
@@ -39,8 +40,8 @@ const updateDescargoRsaController=async ({id,nro_descargo,fecha_descargo,documen
             nro_descargo,
             fecha_descargo,
             documento_DRSA:documento_path,
-            id_nc
-
+            id_nc,
+            id_analista_3
         });}
 
         return descargo|| null ;

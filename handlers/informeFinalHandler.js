@@ -10,9 +10,9 @@ const { startJobForDocument } = require('../jobs/DescargoJob');
 function isValidUUID(uuid) {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return uuidRegex.test(uuid);
-  }
+}
 const createInformeFinalHandler = async (req, res) => {
-    const { nro_ifi, fecha, tipo, id_evaluar, id_descargo_ifi,id_nc, id_estado_IFI} = req.body;
+    const { nro_ifi, fecha, tipo, id_evaluar, id_descargo_ifi, id_nc, id_estado_IFI, id_AI1 } = req.body;
     const documento_ifi = req.files && req.files["documento_ifi"] ? req.files["documento_ifi"][0] : null;
 
     const errores = []
@@ -30,19 +30,26 @@ const createInformeFinalHandler = async (req, res) => {
         }
     }
     if (!id_estado_IFI) errores.push('El campo es requerido')
-    if(id_estado_IFI && isNaN(id_estado_IFI)) errores.push("El id debe ser un numero")  
-    if(id_nc && typeof id_nc!=="string") errores.push("El id_nc debe ser un string")  
+    if (id_estado_IFI && isNaN(id_estado_IFI)) errores.push("El id debe ser un numero")
+    // Validaciones de `id_AI1`
+    if (!id_AI1) errores.push('El campo id_AI1 es requerido');
+    if (!isValidUUID(id_AI1)) errores.push('El id_AI1 debe ser una UUID');
+    // Validaciones de `id_nc`
+    if (!id_nc) errores.push('El campo id_nc es requerido');
+    if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
+
     if (errores.length > 0) {
         if (documento_ifi) {
-                fs.unlinkSync(documento_ifi.path); 
-        }        
-       return res.status(400).json({
-        message: "Se encontraron los Siguientes Errores",
-        data: errores
-    })}
+            fs.unlinkSync(documento_ifi.path);
+        }
+        return res.status(400).json({
+            message: "Se encontraron los Siguientes Errores",
+            data: errores
+        })
+    }
     try {
 
-        const response = await createInformeFinalController({ nro_ifi, fecha, documento_ifi, tipo, id_evaluar, id_descargo_ifi, id_nc, id_estado_IFI });
+        const response = await createInformeFinalController({ nro_ifi, fecha, documento_ifi, tipo, id_evaluar, id_descargo_ifi, id_nc, id_estado_IFI, id_AI1 });
 
         if (!response) {
             return res.status(201).json({
@@ -52,8 +59,8 @@ const createInformeFinalHandler = async (req, res) => {
         }
         const ifiId = response.id;
 
-        const startDate = new Date(); 
-        startJobForDocument(ifiId, startDate, 'ifi'); 
+        const startDate = new Date();
+        startJobForDocument(ifiId, startDate, 'ifi');
         return res.status(200).json({ message: 'Nuevo Informe Final Creado', data: response })
     } catch (error) {
         console.error('Error al crear el Informe final:', error);
@@ -66,9 +73,9 @@ const createInformeFinalHandler = async (req, res) => {
 
 const updateInformeFinalHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_ifi, fecha, tipo, id_evaluar, id_descargo_ifi,id_nc, id_estado_IFI } = req.body;
+    const { nro_ifi, fecha, tipo, id_evaluar, id_descargo_ifi, id_nc, id_estado_IFI, id_AI1 } = req.body;
     const documento_ifi = req.files && req.files["documento_ifi"] ? req.files["documento_ifi"][0] : null;
-        const errores = [];
+    const errores = [];
 
     // Validaciones de `nro_ifi`
     if (!nro_ifi) errores.push('El campo nro_ifi es requerido');
@@ -85,6 +92,12 @@ const updateInformeFinalHandler = async (req, res) => {
             errores.push('Debe ser una fecha válida');
         }
     }
+    // Validaciones de `id_AI1`
+    if (!id_AI1) errores.push('El campo id_AI1 es requerido');
+    if (!isValidUUID(id_AI1)) errores.push('El id_AI1 debe ser una UUID');
+    // Validaciones de `id_nc`
+    if (!id_nc) errores.push('El campo id_nc es requerido');
+    if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
 
     // Validaciones de `documento_ifi`
     if (!documento_ifi || documento_ifi.length === 0) {
@@ -103,22 +116,23 @@ const updateInformeFinalHandler = async (req, res) => {
     if (id_descargo_ifi && !isValidUUID(id_descargo_ifi)) errores.push('El id_descargo_ifi debe ser un uuid');
     if (errores.length > 0) {
         if (documento_ifi) {
-            fs.unlinkSync(documento_ifi.path); 
+            fs.unlinkSync(documento_ifi.path);
         }
-       return res.status(400).json({
+        return res.status(400).json({
             message: "Se encontraron los Siguientes Errores",
             data: errores
         })
     }
     try {
-      
-        const response = await updateInformeFinalController({ id, nro_ifi, fecha, documento_ifi, tipo, id_evaluar, id_descargo_ifi,id_nc, id_estado_IFI });
-        if (!response){
-             //deleteFile(documento_ifi);
+
+        const response = await updateInformeFinalController({ id, nro_ifi, fecha, documento_ifi, tipo, id_evaluar, id_descargo_ifi, id_nc, id_estado_IFI ,id_AI1});
+        if (!response) {
+            //deleteFile(documento_ifi);
             return res.status(201).json({
-            message: `Error al Modificar el IFI `,
-            data: []
-        })}
+                message: `Error al Modificar el IFI `,
+                data: []
+            })
+        }
         res.status(200).json({ message: 'Nuevo Informe Final Modificado', data: response })
     } catch (error) {
         console.error('Error al modificar el Informe final:', error);
@@ -143,7 +157,7 @@ const getAllInformesFinalesHandler = async (req, res) => {
 };
 const getInformeFinalHandler = async (req, res) => {
     const { id } = req.params;
-    if(!isValidUUID(id)){
+    if (!isValidUUID(id)) {
         res.status(404).json(
             "El id debe ser un uuid"
         )

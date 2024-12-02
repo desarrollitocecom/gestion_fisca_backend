@@ -51,14 +51,14 @@ const updateinRsaHandler = async (req, res) => {
 }
 
 const createRsgnpHandler = async (req, res) => {
-    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RSGNP, id_rg ,id_nc,id_estado_RSGNP} = req.body;
+    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RSGNP, id_rg, id_nc, id_estado_RSGNP, id_AR3 } = req.body;
     const errores = [];
     const documento_RSGNP = req.files && req.files["documento_RSGNP"] ? req.files["documento_RSGNP"][0] : null;
     // Validaciones de `nro_rsg`
     if (!nro_rsg) errores.push('El campo nro_rsg es requerido');
     if (typeof nro_rsg !== 'string') errores.push('El nro_rsg debe ser una cadena de texto');
     if (!id_estado_RSGNP) errores.push('El campo es requerido')
-        if(id_estado_RSGNP && isNaN(id_estado_RSGNP)) errores.push("El id debe ser un numero")
+    if (id_estado_RSGNP && isNaN(id_estado_RSGNP)) errores.push("El id debe ser un numero")
     // Validaciones de `fecha_rsg`
     if (!fecha_rsg) errores.push('El campo fecha_rsg es requerido');
     const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -70,7 +70,12 @@ const createRsgnpHandler = async (req, res) => {
             errores.push('Debe ser una fecha válida para fecha_rsg');
         }
     }
-
+    // Validaciones de `id_AR3`
+    if (!id_AR3) errores.push('El campo id_AR3 es requerido');
+    if (!isValidUUID(id_AR3)) errores.push('El id_AR3 debe ser una UUID');
+    // Validaciones de `id_nc`
+    if (!id_nc) errores.push('El campo id_nc es requerido');
+    if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
     // Validaciones de `fecha_notificacion`
     if (!fecha_notificacion) errores.push('El campo fecha_notificacion es requerido');
     if (!fechaRegex.test(fecha_notificacion)) {
@@ -93,8 +98,8 @@ const createRsgnpHandler = async (req, res) => {
         }
     }
     // Validaciones de `id_descargo_RSGNP` y `id_rg`
-    if (id_descargo_RSGNP  && typeof id_descargo_RSGNP!=="string") errores.push('El campo id_descargo_RSGNP debe ser una cadena de texto');
-    if (id_rg && typeof id_rg!=="string") errores.push('El campo id_rg debe ser una cadena de texto');
+    if (id_descargo_RSGNP && typeof id_descargo_RSGNP !== "string") errores.push('El campo id_descargo_RSGNP debe ser una cadena de texto');
+    if (id_rg && typeof id_rg !== "string") errores.push('El campo id_rg debe ser una cadena de texto');
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
@@ -108,13 +113,13 @@ const createRsgnpHandler = async (req, res) => {
     }
 
     try {
-        const newRsgnp = await createRsgnpController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg, id_nc, id_estado_RSGNP });
+        const newRsgnp = await createRsgnpController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg, id_nc, id_estado_RSGNP, id_AR3 });
 
         if (!newRsgnp) {
             return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
         }
         const rsgnpId = newRsgnp.id;
-        const startDate = new Date(); 
+        const startDate = new Date();
         startJobForDocument(rsgnpId, startDate, 'rsgnp');
         return res.status(201).json({ message: 'Creado con éxito', data: newRsgnp });
     } catch (error) {
@@ -125,11 +130,11 @@ const createRsgnpHandler = async (req, res) => {
 
 const updateRsgnpHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RSGNP, id_rg ,id_nc,id_estado_RSGNP} = req.body;
+    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RSGNP, id_rg, id_nc, id_estado_RSGNP, id_AR3 } = req.body;
     const documento_RSGNP = req.files && req.files["documento_RSGNP"] ? req.files["documento_RSGNP"][0] : null;
 
     const errores = [];
-    
+
     // Validaciones de `nro_rsg`
     if (!nro_rsg) errores.push('El campo nro_rsg es requerido');
     if (typeof nro_rsg !== 'string') errores.push('El nro_rsg debe ser una cadena de texto');
@@ -144,9 +149,14 @@ const updateRsgnpHandler = async (req, res) => {
             errores.push('Debe ser una fecha válida para fecha_rsg');
         }
     }
-
+    // Validaciones de `id_AR3`
+    if (!id_AR3) errores.push('El campo id_AR3 es requerido');
+    if (!isValidUUID(id_AR3)) errores.push('El id_AR3 debe ser una UUID');
+    // Validaciones de `id_nc`
+    if (!id_nc) errores.push('El campo id_nc es requerido');
+    if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
     if (!id_estado_RSGNP) errores.push('El campo es requerido')
-        if(id_estado_RSGNP && isNaN(id_estado_RSGNP)) errores.push("El id debe ser un numero")
+    if (id_estado_RSGNP && isNaN(id_estado_RSGNP)) errores.push("El id debe ser un numero")
     // Validaciones de `fecha_notificacion`
     if (!fecha_notificacion) errores.push('El campo fecha_notificacion es requerido');
     if (!fechaRegex.test(fecha_notificacion)) {
@@ -170,8 +180,8 @@ const updateRsgnpHandler = async (req, res) => {
     }
 
     // Validaciones de `id_descargo_RSGNP` y `id_rg`
-    if (id_descargo_RSGNP  && typeof id_descargo_RSGNP!=="string") errores.push('El campo id_descargo_RSGNP debe ser una cadena de texto');
-    if (id_rg && typeof id_rg!=="string") errores.push('El campo id_rg debe ser una cadena de texto');
+    if (id_descargo_RSGNP && typeof id_descargo_RSGNP !== "string") errores.push('El campo id_descargo_RSGNP debe ser una cadena de texto');
+    if (id_rg && typeof id_rg !== "string") errores.push('El campo id_rg debe ser una cadena de texto');
 
     // Si hay errores, devolverlos
     if (errores.length > 0) {
@@ -185,11 +195,11 @@ const updateRsgnpHandler = async (req, res) => {
     }
 
     try {
-        const RSGNP = await updateRsgnpController({ id, nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg,id_nc,id_estado_RSGNP });
-        if(!RSGNP){
-            return res.status(201).json({message:"Error al Modificar el RSGNP",data:[]})
+        const RSGNP = await updateRsgnpController({ id, nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg, id_nc, id_estado_RSGNP, id_AR3 });
+        if (!RSGNP) {
+            return res.status(201).json({ message: "Error al Modificar el RSGNP", data: [] })
         }
-        return res.status(200).json({message:" RSGNP Modificado",data:RSGNP});
+        return res.status(200).json({ message: " RSGNP Modificado", data: RSGNP });
     } catch (error) {
         console.error("Error al modificar RSGNP:", error);
         return res.status(500).json({ error: error.message });

@@ -9,7 +9,8 @@ const createInformeFinalController = async ({
   id_evaluar,
   id_descargo_ifi,
   id_nc,
-  id_estado_IFI
+  id_estado_IFI,
+  id_AI1
 }) => {
   let documento_ifi_path;
 
@@ -28,7 +29,8 @@ const createInformeFinalController = async ({
         id_evaluar,
         id_descargo_ifi,
         id_nc,
-        id_estado_IFI
+        id_estado_IFI,
+        id_AI1
       });
       return response || null;
     }
@@ -51,7 +53,8 @@ const updateInformeFinalController = async ({
   id_evaluar,
   id_descargo_ifi,
   id_nc,
-  id_estado_IFI
+  id_estado_IFI,
+  id_AI1
 }) => {
   let documento_ifi_path;
   try {
@@ -72,7 +75,8 @@ const updateInformeFinalController = async ({
         id_evaluar,
         id_descargo_ifi,
         id_nc,
-        id_estado_IFI
+        id_estado_IFI,
+        id_AI1
       });
     }
     return updateIfi || null;
@@ -93,7 +97,7 @@ const getAllInformeFinalController = async () => {
         { model: RSA,  as: "RSA" },
         { model: RSG1, as: "RSG1" },
         { model: RSG2, as: "RSG2" },
-       { model: NC,   as: "NCs" },
+         { model: NC,   as: "NCs" },
         { model: EstadoIFI,as:"estadoIFI"}
       ],
     });

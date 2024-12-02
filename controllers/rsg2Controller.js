@@ -1,7 +1,7 @@
 const { RSG2} = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 // Función para crear una nueva instancia de RSG2
-const createRSG2Controller = async ({nro_resolucion2, fecha_resolucion, documento,id_nc}) => {
+const createRSG2Controller = async ({nro_resolucion2, fecha_resolucion, documento,id_nc,id_AR2}) => {
     let documento_path;
     try {
         documento_path=saveImage(documento,'Resolucion(RSG2)')       
@@ -9,7 +9,8 @@ const createRSG2Controller = async ({nro_resolucion2, fecha_resolucion, document
             nro_resolucion2,
             fecha_resolucion,
             documento: documento_path,
-            id_nc
+            id_nc,
+            id_AR2
         });
 
         return newRSG2 || null;
@@ -31,7 +32,7 @@ const getRSG2Controller=async (id) => {
     }
 }
 
-const updateRSG2Controller = async ({id, nro_resolucion2, fecha_resolucion, documento,id_nc}) => {
+const updateRSG2Controller = async ({id, nro_resolucion2, fecha_resolucion, documento,id_nc,id_AR2}) => {
     let documento_path;
     try {
         // documento_path=saveImage(documento,'Resolucion(RSG2)')  ;
@@ -49,7 +50,8 @@ const updateRSG2Controller = async ({id, nro_resolucion2, fecha_resolucion, docu
                 nro_resolucion2,
                 fecha_resolucion,
                 documento:documento_path,
-                id_nc
+                id_nc,
+                id_AR2
             });
         }
 

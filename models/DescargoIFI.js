@@ -26,15 +26,15 @@ module.exports = (sequelize) => {
             },
             allowNull: true,
             unique:true
-        }
-        //id_analista2:{
-        //      type: DataTypes.UUID,
-        //      references: {
-        //          model: 'DescargoRSAs',
-        //          key: 'id',
-        //      },
-        //      allowNull: false
-        //  },
+        },
+        id_analista_2:{
+             type: DataTypes.UUID,
+             references: {
+                 model: 'Usuarios',
+                 key: 'id',
+             },
+             allowNull: false
+         }
 
     }, {
         tableName: 'DescargoIFIs',

@@ -4,11 +4,12 @@ const {getAllTipoDocumentoComplementariosHandler,getTipoDocumentoComplementarioH
     createTipoDocumentoComplementarioHandler,deleteTipoDocumentoComplementarioHandler,
     updateTipoDocumentoComplementarioHandler
 } = require('../handlers/tipoDCHandler');
+const permisoAutorizacion = require("../checkers/roleAuth");
 
-router.get("/",getAllTipoDocumentoComplementariosHandler);
-router.get("/:id",getTipoDocumentoComplementarioHandler);
-router.post("/",createTipoDocumentoComplementarioHandler);
-router.delete("/:id",deleteTipoDocumentoComplementarioHandler);
-router.patch("/:id",updateTipoDocumentoComplementarioHandler)
+router.get("/",permisoAutorizacion(["all_system_access", "read_dc"]),getAllTipoDocumentoComplementariosHandler);
+router.get("/:id",permisoAutorizacion(["all_system_access", "read_dc"]),getTipoDocumentoComplementarioHandler);
+router.post("/",permisoAutorizacion(["all_system_access", "create_dc"]),createTipoDocumentoComplementarioHandler);
+router.delete("/:id",permisoAutorizacion(["all_system_access", "delete_dc"]),deleteTipoDocumentoComplementarioHandler);
+router.patch("/:id",permisoAutorizacion(["all_system_access", "update_dc"]),updateTipoDocumentoComplementarioHandler)
 
 module.exports = router;

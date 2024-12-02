@@ -3,10 +3,13 @@ const {
     updateDescargoRSGNPController
 } = require('../controllers/descargoRsgnpController');
 const fs = require('node:fs');
-
+function isValidUUID(uuid) {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
+}
 // Crear un descargo
 const createDescargoRSGNPHandler = async (req, res) => {
-    const { nro_descargo, fecha_descargo,id_nc } = req.body;
+    const { nro_descargo, fecha_descargo, id_nc, id_analista_4 } = req.body;
     const errores = [];
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
 
@@ -25,7 +28,12 @@ const createDescargoRSGNPHandler = async (req, res) => {
             errores.push('Debe ser una fecha válida para fecha_descargo');
         }
     }
-
+    // Validaciones de `id_analista_4`
+    if (!id_analista_4) errores.push('El campo id_analista_4 es requerido');
+    if (!isValidUUID(id_analista_4)) errores.push('El id_analista_4 debe ser una UUID');
+    // Validaciones de `id_nc`
+    if (!id_nc) errores.push('El campo id_nc es requerido');
+    if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
     // Validación de documento_descargo
     if (!documento || documento.length === 0) {
         errores.push("El documento es requerido.");
@@ -49,7 +57,7 @@ const createDescargoRSGNPHandler = async (req, res) => {
     }
 
     try {
-        const newDescargo = await createDescargoRSGNPController({ nro_descargo, fecha_descargo, documento,id_nc });
+        const newDescargo = await createDescargoRSGNPController({ nro_descargo, fecha_descargo, documento, id_nc, id_analista_4 });
         if (!newDescargo) {
             return res.status(400).json({ message: "Descargo no fue creado", data: [] });
         }
@@ -63,7 +71,7 @@ const createDescargoRSGNPHandler = async (req, res) => {
 // Actualizar un descargo
 const updateDescargoRSGNPHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_descargo, fecha_descargo,id_nc} = req.body;
+    const { nro_descargo, fecha_descargo, id_nc, id_analista_4 } = req.body;
     const errores = [];
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
 
@@ -82,7 +90,12 @@ const updateDescargoRSGNPHandler = async (req, res) => {
             errores.push('Debe ser una fecha válida para fecha_descargo');
         }
     }
-
+    // Validaciones de `id_analista_4`
+    if (!id_analista_4) errores.push('El campo id_analista_4 es requerido');
+    if (!isValidUUID(id_analista_4)) errores.push('El id_analista_4 debe ser una UUID');
+    // Validaciones de `id_nc`
+    if (!id_nc) errores.push('El campo id_nc es requerido');
+    if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
     // Validación de documento_descargo
     if (!documento || documento.length === 0) {
         errores.push("El documento es requerido.");
@@ -106,7 +119,7 @@ const updateDescargoRSGNPHandler = async (req, res) => {
     }
 
     try {
-        const updatedDescargo = await updateDescargoRSGNPController({ id, nro_descargo, fecha_descargo, documento,id_nc});
+        const updatedDescargo = await updateDescargoRSGNPController({ id, nro_descargo, fecha_descargo, documento, id_nc, id_analista_4 });
         if (!updatedDescargo) {
             return res.status(404).json({ message: "Descargo no encontrado" });
         }

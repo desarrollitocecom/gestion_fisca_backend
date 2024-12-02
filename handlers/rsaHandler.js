@@ -12,9 +12,13 @@ const {
 const { startJobForDocument } = require('../jobs/DescargoJob');
 
 const fs = require('node:fs');
+function isValidUUID(uuid) {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
+}
 // Handler para crear una nueva RSA
 const createRsaHandler = async (req, res) => {
-    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA } = req.body;
+    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo, id_evaluar_rsa, id_descargo_RSA, id_nc, id_estado_RSA, id_AR2 } = req.body;
     const documento_RSA = req.files && req.files["documento_RSA"] ? req.files["documento_RSA"][0] : null;
     const errores = [];
 
@@ -22,6 +26,9 @@ const createRsaHandler = async (req, res) => {
     if (!nro_rsa) errores.push('El campo nro_rsa es requerido');
     if (typeof nro_rsa !== 'string') errores.push('El nro_rsa debe ser una cadena de texto');
 
+    // Validaciones de `id_AR2`
+    if (!id_AR2) errores.push('El campo id_AR2 es requerido');
+    if (!isValidUUID(id_AR2)) errores.push('El id_AR2 debe ser una UUID');
     // Validaciones de `fecha_rsa`
     if (!fecha_rsa) errores.push('El campo fecha_rsa es requerido');
     const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -34,7 +41,7 @@ const createRsaHandler = async (req, res) => {
         }
     }
     if (!id_estado_RSA) errores.push('El campo es requerido')
-        if(id_estado_RSA && isNaN(id_estado_RSA)) errores.push("El id debe ser un numero") 
+    if (id_estado_RSA && isNaN(id_estado_RSA)) errores.push("El id debe ser un numero")
     // Validaciones de `fecha_notificacion`
     if (!fecha_notificacion) errores.push('El campo fecha_notificacion es requerido');
     if (!fechaRegex.test(fecha_notificacion)) {
@@ -71,13 +78,13 @@ const createRsaHandler = async (req, res) => {
     }
 
     try {
-        const response = await createRsaController({ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA, id_nc, id_estado_RSA });
+        const response = await createRsaController({ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA, id_nc, id_estado_RSA, id_AR2 });
 
         if (!response) {
             return res.status(400).json({ message: "Error al crear una RSA", data: [] });
         }
         const rsaId = response.id;
-        const startDate = new Date(); 
+        const startDate = new Date();
         startJobForDocument(rsaId, startDate, 'rsa');
         return res.status(200).json({ message: "RSA creada con éxito", data: response });
     } catch (error) {
@@ -89,7 +96,7 @@ const createRsaHandler = async (req, res) => {
 // Handler para actualizar una RSA existente
 const updateRsaHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo, id_evaluar_rsa, id_descargo_RSA ,id_nc,id_estado_RSA} = req.body;
+    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo, id_evaluar_rsa, id_descargo_RSA, id_nc, id_estado_RSA, id_AR2 } = req.body;
     const documento_RSA = req.files && req.files["documento_RSA"] ? req.files["documento_RSA"][0] : null;
 
     const errores = [];
@@ -97,7 +104,9 @@ const updateRsaHandler = async (req, res) => {
     // Validaciones de `nro_rsa`
     if (!nro_rsa) errores.push('El campo nro_rsa es requerido');
     if (typeof nro_rsa !== 'string') errores.push('El nro_rsa debe ser una cadena de texto');
-
+    // Validaciones de `id_AR2`
+    if (!id_AR2) errores.push('El campo id_AR2 es requerido');
+    if (!isValidUUID(id_AR2)) errores.push('El id_AR2 debe ser una UUID');
     // Validaciones de `fecha_rsa`
     if (!fecha_rsa) errores.push('El campo fecha_rsa es requerido');
     const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -110,7 +119,7 @@ const updateRsaHandler = async (req, res) => {
         }
     }
     if (!id_estado_RSA) errores.push('El campo es requerido')
-        if(id_estado_RSA && isNaN(id_estado_RSA)) errores.push("El id debe ser un numero") 
+    if (id_estado_RSA && isNaN(id_estado_RSA)) errores.push("El id debe ser un numero")
     // Validaciones de `fecha_notificacion`
     if (!fecha_notificacion) errores.push('El campo fecha_notificacion es requerido');
     if (!fechaRegex.test(fecha_notificacion)) {
@@ -151,7 +160,7 @@ const updateRsaHandler = async (req, res) => {
     }
 
     try {
-        const response = await updateRsaController({ id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA });
+        const response = await updateRsaController({ id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA, id_nc, id_estado_RSA, id_AR2 });
 
         if (!response) {
             return res.status(400).json({ message: "Error al actualizar el RSA", data: [] });
@@ -192,10 +201,6 @@ const getAllRsaHandler = async (req, res) => {
         return res.status(500).json({ message: "Error en el handler", error });
     }
 };
-function isValidUUID(uuid) {
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(uuid);
-}
 
 const updateinRSAHandler = async (req, res) => {
     const { uuid, id } = req.body;
