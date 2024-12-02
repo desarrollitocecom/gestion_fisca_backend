@@ -1,7 +1,7 @@
-const { RSA } = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
+const { RSA , EstadoRSA} = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
-const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo1, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA,id_AR2}) => {
+const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo1, id_evaluar_rsa, id_descargo_RSA,id_nc,id_AR2}) => {
     let documento_path;
     try {
         documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
@@ -15,7 +15,7 @@ const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, docu
             id_evaluar_rsa,
             id_descargo_RSA,
             id_nc,
-            id_estado_RSA,
+            id_estado_RSA:1,
             id_AR2
         });
 
@@ -28,14 +28,14 @@ const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, docu
         return false
     }
 };
-// Función para actualizar una instancia existente de RSA
-const updateRsaController = async ({id, nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA,id_AR2}) => {
+
+const updateRsaController = async (id,{ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA,id_AR2}) => {
+   
     let documento_path;
 
     try {
-        // documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
 
-        const rsa = await RSA.findByPk(id);
+        const rsa = await getRsaController(id);
         documento_path=rsa.documento_RSA
         if (documento_RSA) {
             documento_path = saveImage(documento_RSA, 'Resolucion(RSA)');
@@ -79,7 +79,12 @@ const getRsaController = async (id) => {
 // Función para obtener todas las instancias de RSA
 const getAllRsaController = async () => {
     try {
-        const rsas = await RSA.findAll();
+        const rsas = await RSA.findAll(
+           { include: [
+                
+                { model: EstadoRSA , as:"estadoRSA"}
+              ],}
+        );
         return rsas || null;
     } catch (error) {
         console.error('Error al obtener todas las RSAs:', error);

@@ -14,7 +14,7 @@ module.exports = (sequelize) => {
             type: DataTypes.DATEONLY,
             allowNull: false
         },
-        documento: {
+        documento_DRSGNP: {
             type: DataTypes.STRING,
             allowNull: false
         },

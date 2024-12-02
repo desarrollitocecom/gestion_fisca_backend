@@ -7,7 +7,7 @@ const {
     updateRsaHandler,
     getRsaHandler,
     getAllRsaHandler,
-    updateinRSAHandler
+   
     
 }=require('../handlers/rsaHandler');
 const permisoAutorizacion = require("../checkers/roleAuth");

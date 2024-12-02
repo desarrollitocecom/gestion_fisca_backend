@@ -22,6 +22,7 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        
         estado:{
             type: DataTypes.ENUM('NP', 'P'),
             allowNull: true

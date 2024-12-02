@@ -19,6 +19,8 @@ const EstadoRSA = require("../models/EstadoRSA")(sequelize);
 const EjecucionMC = require("../models/EjecucionMC")(sequelize);
 const TipoDocumentoIdentidad = require("../models/TipoDocumentoIdentidad")(sequelize);
 const EstadoDescargoNC = require("../models/EstadoDescargoNC")(sequelize);
+const EstadoRG = require("../models/EstadoRG")(sequelize);
+
 const insertData = async () => {
   try {
     await sequelize.authenticate();
@@ -84,11 +86,16 @@ const insertData = async () => {
       { nombre: "Pendiente" },
       { nombre: "En Proceso" },
       { nombre: "Finalizado" },
+      { nombre: "Archivado" },
     ]);
     await EstadoRSGNP.bulkCreate([
       { nombre: "Pendiente" },
       { nombre: "En Proceso" },
       { nombre: "Finalizado" },
+    ]);
+    await EstadoRG.bulkCreate([
+      { nombre: "No Procedente" },
+      { nombre: "Archivado" },
     ]);
 
     // Insertar datos ficticios en EjecucionMC

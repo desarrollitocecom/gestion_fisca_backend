@@ -67,16 +67,18 @@ const createRSG1Handler = async (req, res) => {
     }
 
     try {
-        const createRsg1 = await createRSG1Controller({ nro_resolucion, fecha_resolucion, documento, id_nc, id_AR1 });
-
-        if (!createRsg1) {
-            return res.status(404).json({ message: "Error al crear el RSG1", data: [] })
-        }
         const get_id = await getInformeFinalController(id);
         
         if (!get_id) {
             return res.status(404).json({ message: "El id del IFI no se encuentra", data: [] })
         }
+        
+        const createRsg1 = await createRSG1Controller({ nro_resolucion, fecha_resolucion, documento, id_nc, id_AR1 });
+
+        if (!createRsg1) {
+            return res.status(404).json({ message: "Error al crear el RSG1", data: [] })
+        }
+       
         const id_evaluar = createRsg1.id;
 
         const tipo = "RSG1";

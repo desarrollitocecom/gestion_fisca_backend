@@ -23,7 +23,7 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         tipo:{
-            type:DataTypes.ENUM('RSGP','RSGNP'),
+            type:DataTypes.ENUM('RSGP','RSGNP','ACTA'),
             allowNull:true
         },
         id_evaluar_rsa:{
@@ -71,7 +71,7 @@ module.exports = (sequelize) => {
         // Relación con DescargoRSA
         RSA.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
         RSA.belongsTo(db.DescargoRSA, { foreignKey: 'id_descargo_RSA', as: 'DescargoRSAs' });
-        RSA.belongsTo(db.EstadoRSA, { foreignKey: 'id_estado_RSA', as: 'estadoIFI'})
+        RSA.belongsTo(db.EstadoRSA, { foreignKey: 'id_estado_RSA', as: 'estadoRSA'})
    
     };
     return RSA;

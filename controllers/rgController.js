@@ -2,7 +2,16 @@ const { RG } = require('../db_connection');
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
 // Crear un registro RG   
-const createRGController = async ({ nro_rg,fecha_rg,fecha_notificacion,documento_rg,estado,documento_ac,id_nc,id_analista_5}) => {
+const createRGController = async ({
+     nro_rg,
+     fecha_rg,
+     fecha_notificacion,
+     documento_rg,
+     estado,
+     documento_ac,
+     id_nc,
+     id_analista_5}) => {
+
     let documento_path_rg;
     let documento_path_ac;
 
@@ -10,7 +19,15 @@ const createRGController = async ({ nro_rg,fecha_rg,fecha_notificacion,documento
         documento_path_rg=saveImage(documento_rg,'Resolucion(RG)/DocumentoRG')       
         documento_path_ac=saveImage(documento_ac,'Resolucion(RG)/DocumentoAC')       
 
-        const newRG = await RG.create({ nro_rg,fecha_rg,fecha_notificacion,documento_rg:documento_path_rg,estado,documento_ac:documento_path_ac,id_nc,id_analista_5});
+        const newRG = await RG.create({ 
+            nro_rg,
+            fecha_rg,
+            fecha_notificacion,
+            documento_rg:documento_path_rg,
+            estado,
+            documento_ac:documento_path_ac,
+            id_nc,
+            id_analista_5});
 
         return newRG || null;
     } catch (error) {
