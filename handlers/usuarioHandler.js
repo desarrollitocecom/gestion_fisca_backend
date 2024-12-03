@@ -278,15 +278,15 @@ const getAllUsersHandler = async (req, res) => {
             });
         }
 
-        const historial = await createHistorial(
-            'read',
-            'Usuario',
-            'Read All Users',
-            null,
-            null,
-            token
-        );
-        if (!historial) console.warn('No se agregó al historial...');
+        // const historial = await createHistorial(
+        //     'read',
+        //     'Usuario',
+        //     'Read All Users',
+        //     null,
+        //     null,
+        //     token
+        // );
+        // if (!historial) console.warn('No se agregó al historial...');
 
         return res.status(200).json({
             message: "Usuarios obtenidos correctamente",
@@ -315,15 +315,15 @@ const getUserByIdHandler = async (req, res) => {
         const user = await getUserById(token);
         if (!user) return res.status(404).json({ message: "Usuario no encontrado", data: false });
 
-        const historial = await createHistorial(
-            'read',
-            'Usuario',
-            'Read User Id',
-            null,
-            null,
-            token
-        );
-        if (!historial) console.warn('No se agregó al historial...');
+        // const historial = await createHistorial(
+        //     'read',
+        //     'Usuario',
+        //     'Read User Id',  
+        //     null,
+        //     null,
+        //     token
+        // );
+        // if (!historial) console.warn('No se agregó al historial...');
 
         return res.status(200).json({ message: "Usuario encontrado", data: user });
     }
