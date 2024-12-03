@@ -5,11 +5,8 @@ const createInformeFinalController = async ({
   nro_ifi,
   fecha,
   documento_ifi,
-  tipo,
-  id_evaluar,
   id_descargo_ifi,
   id_nc,
-  id_estado_IFI,
   id_AI1
 }) => {
   let documento_ifi_path;
@@ -19,17 +16,15 @@ const createInformeFinalController = async ({
 
     if (!checking) {
       documento_ifi_path = saveImage(documento_ifi, "ifi");
+      
       console.log(documento_ifi_path);
       
       const response = await IFI.create({
         nro_ifi,
         fecha,
         documento_ifi: documento_ifi_path,
-        tipo,
-        id_evaluar,
-        id_descargo_ifi,
         id_nc,
-        id_estado_IFI,
+        id_estado_IFI:1,
         id_AI1
       });
       return response || null;
@@ -44,8 +39,8 @@ const createInformeFinalController = async ({
   }
 };
 
-const updateInformeFinalController = async ({
-  id,
+const updateInformeFinalController = async (
+  id,{
   nro_ifi,
   fecha,
   documento_ifi,

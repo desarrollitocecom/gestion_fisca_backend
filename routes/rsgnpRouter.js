@@ -13,8 +13,8 @@ const {
 const permisoAutorizacion = require("../checkers/roleAuth");
 
 
-router.post("/",permisoAutorizacion(["all_system_access", "create_rsgnp"]),uploadRSGNP,createRsgnpHandler);
-router.patch("/:id",permisoAutorizacion(["all_system_access", "update_rsgnp"]),uploadRSGNP, updateRsgnpHandler);
-router.post("/modiRSA",permisoAutorizacion(["all_system_access", "update_rsgnp"]),uploadNone,updateinRsaHandler);
+router.patch("/:id",permisoAutorizacion(["all_system_access", "create_rsgnp"]),uploadRSGNP,createRsgnpHandler);
+// router.patch("/:id",permisoAutorizacion(["all_system_access", "update_rsgnp"]),uploadRSGNP, updateRsgnpHandler);
+// router.post("/modiRSA",permisoAutorizacion(["all_system_access", "update_rsgnp"]),uploadNone,updateinRsaHandler);
 
 module.exports = router;

@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 
 // Configuración de la conexión a la base de datos
-const sequelize = new Sequelize("gestion_fiscalizacion", "postgres", "12345678", {
+const sequelize = new Sequelize("gestion_fiscalizacion", "postgres", "Nissangr34", {
   host: "localhost",
   dialect: "postgres",
 });

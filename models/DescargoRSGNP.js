@@ -14,7 +14,7 @@ module.exports = (sequelize) => {
             type: DataTypes.DATEONLY,
             allowNull: false
         },
-        documento: {
+        documento_DRSGNP: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -25,7 +25,6 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: true,
-            unique:true
         },
          id_analista_4:{
              type: DataTypes.UUID,

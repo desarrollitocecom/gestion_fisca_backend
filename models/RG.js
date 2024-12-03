@@ -22,10 +22,15 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        estado:{
-            type: DataTypes.ENUM('NP', 'P'),
+        
+        tipo:{
+            type: DataTypes.ENUM('ACTA'),
             allowNull: true
         },
+        id_evaluar_rg:{
+            type:DataTypes.UUID,
+            allowNull:true,
+         },
         documento_ac: {
             type: DataTypes.STRING,
             allowNull: false
@@ -37,9 +42,16 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: true,
-            unique:true
         },
-         id_analista_5:{
+        id_estado_RG:{
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'EstadoRGs',
+                key: 'id',
+            },
+            allowNull:true
+        },
+         id_gerente:{
              type: DataTypes.UUID,
              references: {
                  model: 'Usuarios',
@@ -54,6 +66,7 @@ module.exports = (sequelize) => {
    RG.associate = (db) => {
      
        RG.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
+       RG.belongsTo(db.EstadoRG, { foreignKey: 'id_estado_RG', as: 'estadoRG'})
         
     };
     
