@@ -92,6 +92,7 @@ const insertData = async () => {
       { nombre: "Pendiente" },
       { nombre: "En Proceso" },
       { nombre: "Finalizado" },
+      { nombre: "Archivado" },
     ]);
     await EstadoRG.bulkCreate([
       { nombre: "No Procedente" },
