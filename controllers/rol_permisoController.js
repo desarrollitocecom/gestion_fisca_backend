@@ -112,8 +112,8 @@ const getAllPermisos = async (page = 1, pageSize = 20) => {
 const getPermisoById = async (id) => {
 
     try {
-        const permiso = await Permiso.findByPk({
-            where: { state: true },
+        const permiso = await Permiso.findOne({
+            where: { id,state: true },
         });
         return permiso || null;
     } catch (error) {
