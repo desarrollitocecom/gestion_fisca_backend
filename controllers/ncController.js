@@ -3,7 +3,8 @@ const { NC, TramiteInspector, MedidaComplementaria, TipoDocumentoComplementario,
 const createNC = async ({ id_tramiteInspector }) => {
     try {
         const newNC = await NC.create({
-            id_tramiteInspector
+            id_tramiteInspector,
+            id_estado_NC: 1
         });
 
         console.log('NC creado con éxito');
@@ -44,8 +45,8 @@ const updateNC = async (id, {
     
     id_descargo_NC,
     id_const_noti,
-    id_digitador
-
+    id_digitador,
+    id_estado_NC
  }) => {
 
     try {
@@ -68,7 +69,9 @@ const updateNC = async (id, {
 
                 id_descargo_NC,
                 id_const_noti,
-                id_digitador
+                id_digitador,
+
+                id_estado_NC
             });
         }
         console.log(findNC);

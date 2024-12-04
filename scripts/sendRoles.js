@@ -1,10 +1,16 @@
-const { Sequelize, DataTypes } = require("sequelize");
+require('dotenv').config();
+const { Sequelize } = require("sequelize");
 
-// Configuración de la conexión a la base de datos
-const sequelize = new Sequelize("gestion_fiscalizacion", "postgres", "12345678", {
-  host: "localhost",
+
+const { DB_DATABASE, DB_HOST, DB_USERNAME, DB_PASSWORD } = process.env;
+
+
+// Conexión a la base de datos
+const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
+  host: DB_HOST,
   dialect: "postgres",
 });
+
 
 const Rol = require("../models/Rol")(sequelize);
 const Permiso = require("../models/Permiso")(sequelize);
