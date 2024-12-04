@@ -3,7 +3,6 @@ const { saveImage } = require('../utils/fileUtils');
 
 const createDescargoNC = async ({ 
         nro_descargo,
-        id_estado,
         fecha_descargo,
         documento,
         id_analista1
@@ -14,7 +13,7 @@ const createDescargoNC = async ({
 
         const newDescargoNC = await DescargoNC.create({
             nro_descargo,
-            id_estado,
+            id_estado: 1,
             fecha_descargo,
             documento: documento_descargoNCPath,
             id_analista1

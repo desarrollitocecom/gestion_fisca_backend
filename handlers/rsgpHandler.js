@@ -8,6 +8,7 @@ const {
     updateRsaController,
     getRsaController
 } = require('../controllers/rsaController');
+const { updateDocumento } = require('../controllers/documentoController');
 const fs = require('node:fs');
 
 function isValidUUID(uuid) {
@@ -115,6 +116,11 @@ const createRsgpHandler = async (req, res) => {
                 data: []
             });
         }
+        const total_documentos = newRsgp.documento_RSGP;
+
+        const nuevoModulo = "RSGP"
+
+            await updateDocumento({ id_nc, total_documentos, nuevoModulo });
         return res.status(200).json({
             message: 'RSGP creado correctamente y  asociado con RSA ',
             data: response

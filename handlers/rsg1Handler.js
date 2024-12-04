@@ -8,6 +8,7 @@ const {
     updateInformeFinalController,
     getInformeFinalController
 } = require('../controllers/informeFinalController');
+const { updateDocumento } = require('../controllers/documentoController');
 const fs = require('node:fs');
 function isValidUUID(uuid1) {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -84,6 +85,12 @@ const createRSG1Handler = async (req, res) => {
         const tipo = "RSG1";
 
         const response = await updateInformeFinalController(id, { id_evaluar, tipo })
+
+        const total_documentos = createRsg1.documento;
+
+        const nuevoModulo = "RSG1"
+
+        await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 
         if (!response) {
             return res.status(201).json({

@@ -9,7 +9,7 @@ const {
     updateRsaController,
     getRsaController
 } = require('../controllers/rsaController');
-
+const { updateDocumento } = require('../controllers/documentoController');
 const { startJobForDocument } = require('../jobs/DescargoJob');
 
 const fs = require('node:fs');
@@ -148,6 +148,12 @@ const createRsgnpHandler = async (req, res) => {
                 data: []
             });
         }
+
+        const total_documentos = newRsgnp.documento_RSGNP;
+
+        const nuevoModulo = "RSGNP"
+
+            await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 
         const startDate = new Date();
 

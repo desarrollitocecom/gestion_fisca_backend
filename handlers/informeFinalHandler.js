@@ -6,16 +6,19 @@ const {
 } = require('../controllers/informeFinalController');
 const fs = require('node:fs');
 const { startJobForDocument } = require('../jobs/DescargoJob');
+const { updateDocumento }=require('../controllers/documentoController');
+
 
 function isValidUUID(uuid) {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return uuidRegex.test(uuid);
 }
 const createInformeFinalHandler = async (req, res) => {
-    const { nro_ifi, fecha, /*tipo, id_evaluar,*/ id_descargo_ifi, id_nc/*, id_estado_IFI*/, id_AI1 } = req.body;
+    const { nro_ifi, fecha, id_descargo_ifi,  id_nc, id_AI1 } = req.body;
     const documento_ifi = req.files && req.files["documento_ifi"] ? req.files["documento_ifi"][0] : null;
 
     const errores = []
+
     if (!nro_ifi) errores.push('El campo es requerido')
     if (typeof nro_ifi != 'string') errores.push('El nro debe ser una cadena de texto')
     if (!fecha) errores.push("El campo es requerido")
@@ -29,13 +32,9 @@ const createInformeFinalHandler = async (req, res) => {
             errores.push("El documento debe ser un archivo PDF.");
         }
     }
-    // if (!id_estado_IFI) errores.push('El campo es requerido')
-    // if (id_estado_IFI && isNaN(id_estado_IFI)) errores.push("El id debe ser un numero")
-    // Validaciones de `id_AI1`
-    if (!id_AI1) errores.push('El campo id_AI1 es requerido');
+   if (!id_AI1) errores.push('El campo id_AI1 es requerido');
 
     if (!isValidUUID(id_AI1)) errores.push('El id_AI1 debe ser una UUID');
-    // Validaciones de `id_nc`
     if (!id_nc) errores.push('El campo id_nc es requerido');
 
     if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
@@ -49,19 +48,28 @@ const createInformeFinalHandler = async (req, res) => {
             data: errores
         })
     }
+ 
+
     try {
 
-        const response = await createInformeFinalController({ nro_ifi, fecha, documento_ifi, /*tipo, id_evaluar,*/ id_descargo_ifi, id_nc/*, id_estado_IFI*/, id_AI1 });
-
+        const response = await createInformeFinalController({ nro_ifi, fecha, documento_ifi, id_descargo_ifi, id_nc, id_AI1 });
+       
         if (!response) {
             return res.status(201).json({
                 message: 'Error al crear nuevo informe Final',
                 data: []
             });
         }
+        const total_documentos=response.documento_ifi
+
+        const nuevoModulo="IFI"
+
+        await updateDocumento({id_nc, total_documentos, nuevoModulo});
+
         const ifiId = response.id;
 
         const startDate = new Date();
+
         startJobForDocument(ifiId, startDate, 'ifi');
         return res.status(200).json({ message: 'Nuevo Informe Final Creado', data: response })
     } catch (error) {

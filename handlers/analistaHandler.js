@@ -1,5 +1,6 @@
 const { createDescargoNC } = require('../controllers/ncDescargoController');
 const { updateNC, getNC } = require('../controllers/ncController');
+const {updateDocumento}=require('../controllers/documentoController');
 const fs = require('fs');
 
 const createDescargoNCHandler = async (req, res) => {
@@ -7,7 +8,6 @@ const createDescargoNCHandler = async (req, res) => {
 
     const { 
             nro_descargo,
-            id_estado,
             fecha_descargo,
             id_analista1
         } = req.body;
@@ -16,10 +16,6 @@ const createDescargoNCHandler = async (req, res) => {
 
     if (!nro_descargo) {
         errors.push('Ingrese nro_descargo obligatorio');
-    }
-
-    if (!id_estado) {
-        errors.push('Ingrese id_estado obligatorio');
     }
 
     if (!fecha_descargo) {
@@ -56,7 +52,6 @@ const createDescargoNCHandler = async (req, res) => {
 
         const newDescargoNC = await createDescargoNC({ 
             nro_descargo,
-            id_estado,
             fecha_descargo,
             documento: req.files['documento'][0],
             id_analista1
@@ -65,6 +60,13 @@ const createDescargoNCHandler = async (req, res) => {
         if (!newDescargoNC) {
             return res.status(400).json({ error: 'Error al crear el Descargo NC' });
         }
+        const id_nc=existingNC.id;
+        const total_documentos=newDescargoNC.documento;
+        const nuevoModulo='DescargoNC';
+
+        
+        
+     await updateDocumento({id_nc, total_documentos, nuevoModulo});
 
         const id_descargo_NC = newDescargoNC.id;
 
@@ -72,16 +74,21 @@ const createDescargoNCHandler = async (req, res) => {
             id_descargo_NC
         });
 
+       
+         
+         
         if (response) {
-            res.status(201).json({
+          res.status(201).json({
                 message: 'Descargo NC creado con exito',
                 data: response,
             });
         } else {
-            res.status(400).json({
+           res.status(400).json({
                 message: 'Error al crear Descargo NC',
             });
         }
+
+
     } catch (error) {
         console.error('Error al crear el NC:', error);
         return res.status(500).json({ message: 'Error interno del servidor al crear el Descargo NC' });

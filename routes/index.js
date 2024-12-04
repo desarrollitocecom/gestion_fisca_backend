@@ -24,7 +24,7 @@ const rsgnp=require('./rsgnpRouter')
 const rg=require('./rgRouter');
 const rol_permisoRouter = require("./rol_permisoRouter");
 const actaRouter=require('./actaRouter');
-
+const docs=require('./documentoRouter');
 
 router.use('/inspector',tramiteInspector);
 router.use('/digitador',digitadorNC);
@@ -50,4 +50,5 @@ router.use("/drsgnp",descargoRsgnp);
 router.use('/rg',rg);
 router.use('/auth',rol_permisoRouter);
 router.use('/acta',actaRouter);
-module.exports = router;
+router.use('/docs',docs)
+module.exports = router;    
