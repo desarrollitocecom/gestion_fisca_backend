@@ -138,7 +138,8 @@ const updateNCHandler = async (req, res) => {
             observaciones,
 
             id_const_noti,
-            id_digitador
+            id_digitador,
+            id_estado_NC: 2
         });
 
         if (!response) {
