@@ -309,10 +309,10 @@ const deleteRolHandler = async (req, res) => {
 };
 const getPermisoByIdHandler = async (req, res) => {
 
-    const { token } = req.params;
+    const { id } = req.params;
 
     try {
-        const permiso = await getPermisoById(token);
+        const permiso = await getPermisoById(id);
         if (permiso)
             return res.status(200).json({ message: "Permiso obtenido correctamente", data: permiso });
         return res.status(404).json({ message: "Permiso no encontrado", data: null });

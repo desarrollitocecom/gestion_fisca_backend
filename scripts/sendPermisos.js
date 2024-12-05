@@ -1,7 +1,13 @@
+require('dotenv').config();
 const { Sequelize } = require("sequelize");
 
-const sequelize = new Sequelize("gestion_fiscalizacion", "postgres", "Nissangr34", {
-  host: "localhost",
+
+const { DB_DATABASE, DB_HOST, DB_USERNAME, DB_PASSWORD } = process.env;
+
+
+// Conexión a la base de datos
+const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
+  host: DB_HOST,
   dialect: "postgres",
 });
 
