@@ -7,35 +7,27 @@ const createRGController = async ({
      fecha_rg,
      fecha_notificacion,
      documento_rg,
-     estado,
-     documento_ac,
      id_nc,
-     id_analista_5}) => {
+     id_gerente}) => {
 
     let documento_path_rg;
-    let documento_path_ac;
 
     try {
-        documento_path_rg=saveImage(documento_rg,'Resolucion(RG)/DocumentoRG')       
-        documento_path_ac=saveImage(documento_ac,'Resolucion(RG)/DocumentoAC')       
+        documento_path_rg=saveImage(documento_rg,'Resolucion(RG)')            
 
         const newRG = await RG.create({ 
             nro_rg,
             fecha_rg,
             fecha_notificacion,
             documento_rg:documento_path_rg,
-            estado,
-            documento_ac:documento_path_ac,
+            estado:1,
             id_nc,
-            id_analista_5});
+            id_gerente});
 
         return newRG || null;
     } catch (error) {
         if (documento_path_rg) {
             deleteFile(documento_path_rg);
-        }
-        if (documento_path_ac) {
-            deleteFile(documento_path_ac);
         }
         console.error("Error al crear RG:", error);
         return false
@@ -43,36 +35,16 @@ const createRGController = async ({
 };
 
 // Actualizar un registro RG
-const updateRGController = async (id,{ nro_rg,fecha_rg,fecha_notificacion,documento_rg,estado,documento_ac,id_nc,id_analista_5}) => {
-    let documento_path_rg;
-    let documento_path_ac;
+const updateRGController = async (id,{ tipo,id_evaluar_rg,id_estado_RG}) => {
+   
     try {
         const rg = await getRGController(id);
-        documento_path_rg=rg.documento_rg;
-        documento_path_ac=rg.documento_ac;
-        if (documento_path_rg) {
-            // Guardar nuevo archivo y eliminar el anterior
-            documento_path_rg = saveImage(documento_rg, 'Resolucion(RG)/DocumentoRG');
-            if (rg.documento_path_rg) {
-                deleteFile(rg.documento_path_rg);
-            }
-        }if (documento_path_ac) {
-            // Guardar nuevo archivo y eliminar el anterior
-            documento_path_ac = saveImage(documento_ac, 'Resolucion(RG)/DocumentoAC');
-            if (rg.documento_path_ac) {
-                deleteFile(rg.documento_path_ac);
-            }
-        }
-        
-        await rg.update({ nro_rg,fecha_rg,fecha_notificacion,documento_rg:documento_path_rg,estado,documento_ac:documento_path_ac,id_nc,id_analista_5});
+
+        await rg.update({tipo,id_evaluar_rg,id_estado_RG});
+
         return rg || null;
+
     } catch (error) {
-        if (documento_path_rg) {
-            deleteFile(documento_path_rg);
-        }
-        if (documento_path_ac) {
-            deleteFile(documento_path_ac);
-        }
         console.error("Error al actualizar RG:", error);
         return false
     }

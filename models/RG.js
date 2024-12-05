@@ -31,10 +31,7 @@ module.exports = (sequelize) => {
             type:DataTypes.UUID,
             allowNull:true,
          },
-        documento_ac: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
+       
         id_nc:{
             type: DataTypes.UUID,
             references: {
