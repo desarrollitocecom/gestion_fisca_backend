@@ -82,7 +82,7 @@ const createActaHandler=async (req,res) => {
 
         const tipo="ACTA"
         
-        const id_estado_RSA=3;
+        const id_estado_RSA=4;
 
         const response=await updateRsaController(id,{id_evaluar_rsa,id_estado_RSA,tipo})
 
