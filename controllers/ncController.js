@@ -46,6 +46,7 @@ const updateNC = async (id, {
     id_descargo_NC,
     id_const_noti,
     id_digitador,
+    id_nro_IFI,
     id_estado_NC
  }) => {
 
@@ -70,6 +71,7 @@ const updateNC = async (id, {
                 id_descargo_NC,
                 id_const_noti,
                 id_digitador,
+                id_nro_IFI,
 
                 id_estado_NC
             });

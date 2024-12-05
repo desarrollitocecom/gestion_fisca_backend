@@ -7,6 +7,8 @@ const {
 const fs = require('node:fs');
 const { startJobForDocument } = require('../jobs/DescargoJob');
 const { updateDocumento }=require('../controllers/documentoController');
+const { updateNC } = require('../controllers/ncController');
+
 
 
 function isValidUUID(uuid) {
@@ -66,11 +68,13 @@ const createInformeFinalHandler = async (req, res) => {
 
         await updateDocumento({id_nc, total_documentos, nuevoModulo});
 
-        const ifiId = response.id;
-
+        const ifiId = response.id;  
         const startDate = new Date();
 
         startJobForDocument(ifiId, startDate, 'ifi');
+
+        await updateNC( id_nc, { id_nro_IFI: ifiId });
+
         return res.status(200).json({ message: 'Nuevo Informe Final Creado', data: response })
     } catch (error) {
         console.error('Error al crear el Informe final:', error);
