@@ -5,9 +5,10 @@ const {
     getDocumentoHandler
 } = require('../handlers/documentoHandler');
 
+const permisoAutorizacion = require("../checkers/roleAuth");
 
 
-router.get('/:id', getDocumentoHandler);
+router.get('/:id', permisoAutorizacion(["all_system_access", "read_documentos"]), getDocumentoHandler);
 
 
 module.exports = router;
