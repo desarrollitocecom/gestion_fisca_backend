@@ -1,14 +1,17 @@
 const { Router } = require('express');
 const router = Router();
-const {uploadDRSGNP}=require('../middlewares/uploadMiddleware')
+const {uploadDRSGNP,uploadNone}=require('../middlewares/uploadMiddleware')
 
 const {
-    createDescargoRSGNPHandler,  
+    createDescargoRSGNPHandler,
+    updateDescargoRSGNPHandler
+    
 }= require('../handlers/descargoRsgnpHandler');
 const permisoAutorizacion = require("../checkers/roleAuth");
 
 
-
 router.patch('/:id',permisoAutorizacion(["all_system_access", "create_descargo_rsgnp"]),  uploadDRSGNP,createDescargoRSGNPHandler);
+
+//router.patch('/:id',permisoAutorizacion(["all_system_access", "update_descargo_rsgnp"]),  uploadDRSGNP, updateDescargoRSGNPHandler)
 
 module.exports = router;
