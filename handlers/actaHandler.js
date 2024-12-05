@@ -14,6 +14,8 @@ const {
     getRGController,
     updateRGController   
 }=require('../controllers/rgController');
+
+const { updateDocumento } = require('../controllers/documentoController');
 const fs = require('node:fs');
 function isValidUUID(uuid) {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -79,7 +81,8 @@ const createActainRGHandler=async (req,res) => {
 
             return res.status(404).json({message:"No se encuentra id del RSA",data:[]})
         }
-        const newActa = await createActaController({ id_nc,documento_Acta ,id_Analista_5 });
+        const ruta="ACTA/ACTA-RG";
+        const newActa = await createActaController({ id_nc,documento_Acta ,id_Analista_5 },ruta);
        
         if (!newActa) {
             return res.status(201).json({
@@ -91,9 +94,9 @@ const createActainRGHandler=async (req,res) => {
 
         const tipo="ACTA"
         
-        const id_estado_RSA=2;
+        const id_estado_RG=2;
 
-        const response=await updateRGController(id,{id_evaluar_rg,id_estado_RSA,tipo})
+        const response=await updateRGController(id,{id_evaluar_rg,id_estado_RG,tipo})
 
         if (!response) {
             return res.status(400).json({
@@ -101,6 +104,12 @@ const createActainRGHandler=async (req,res) => {
                 data: []
             });
         }
+        const total_documentos = newActa.documento_Acta;
+
+        const nuevoModulo = "ACTA-RG"
+
+        await updateDocumento({ id_nc, total_documentos, nuevoModulo });
+        
         return res.status(200).json({
             message: 'Acta creado y asociado a RG correctamente',
             data: response
@@ -136,7 +145,8 @@ const createActainRsgnpHandler=async (req,res) => {
 
             return res.status(404).json({message:"No se encuentra id del RSA",data:[]})
         }
-        const newActa = await createActaController({ id_nc,documento_Acta ,id_Analista_5 });
+        const ruta="ACTA/ACTA-RSGNP";
+        const newActa = await createActaController({ id_nc,documento_Acta ,id_Analista_5 },ruta);
        
         if (!newActa) {
             return res.status(201).json({
@@ -149,7 +159,7 @@ const createActainRsgnpHandler=async (req,res) => {
         const tipo="ACTA"
         
         const id_estado_RSGNP=4;
-
+       
         const response=await updateRsgnpController(id,{id_evaluar_rsgnp,id_estado_RSGNP,tipo})
 
         if (!response) {
@@ -158,6 +168,12 @@ const createActainRsgnpHandler=async (req,res) => {
                 data: []
             });
         }
+        const total_documentos = newActa.documento_Acta;
+
+        const nuevoModulo = "ACTA-RSGNP"
+
+        await updateDocumento({ id_nc, total_documentos, nuevoModulo });
+
         return res.status(200).json({
             message: 'Acta creado y asociado a RSGNP correctamente',
             data: response
@@ -194,7 +210,9 @@ const createActainRSAHandler=async (req,res) => {
 
             return res.status(404).json({message:"No se encuentra id del RSA",data:[]})
         }
-        const newActa = await createActaController({ id_nc,documento_Acta ,id_Analista_5 });
+        const ruta="ACTA/ACTA-RSA";
+
+        const newActa = await createActaController({ id_nc,documento_Acta ,id_Analista_5 },ruta);
        
         if (!newActa) {
             return res.status(201).json({
@@ -216,6 +234,12 @@ const createActainRSAHandler=async (req,res) => {
                 data: []
             });
         }
+        const total_documentos = newActa.documento_Acta;
+
+        const nuevoModulo = "ACTA-RSA"
+
+        await updateDocumento({ id_nc, total_documentos, nuevoModulo });
+        
         return res.status(200).json({
             message: 'Acta creado y asociado a RSA correctamente',
             data: response

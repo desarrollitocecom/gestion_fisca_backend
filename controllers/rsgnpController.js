@@ -28,7 +28,7 @@ const createRsgnpController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, d
     }
 };
 
-const updateRsgnpController = async (id, {nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg ,id_nc,id_estado_RSGNP,id_AR3}) => {
+const updateRsgnpController = async (id, {nro_rsg,id_evaluar_rsgnp,tipo, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg ,id_nc,id_estado_RSGNP,id_AR3}) => {
     let documento_path;
     try {
            
@@ -48,7 +48,9 @@ const updateRsgnpController = async (id, {nro_rsg, fecha_rsg, fecha_notificacion
                 fecha_notificacion,
                 documento_RSGNP:documento_path,
                 id_descargo_RSGNP,
+                id_evaluar_rsgnp,
                 id_rg,
+                tipo,
                 id_nc,
                 id_estado_RSGNP,
                 id_AR3

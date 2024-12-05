@@ -95,8 +95,8 @@ const insertData = async () => {
       { nombre: "Archivado" },
     ]);
     await EstadoRG.bulkCreate([
-      { nombre: "No Procedente" },
-      { nombre: "Archivado" },
+      { tipo: "No Procedente" },
+      { tipo: "Archivado" },
     ]);
 
     // Insertar datos ficticios en EjecucionMC

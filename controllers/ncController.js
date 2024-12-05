@@ -71,7 +71,6 @@ const updateNC = async (id, {
                 id_digitador
             });
         }
-        console.log(findNC);
         
         return findNC || null;
         

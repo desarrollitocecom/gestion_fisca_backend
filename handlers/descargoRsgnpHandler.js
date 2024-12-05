@@ -6,6 +6,8 @@ const {
     updateRsgnpController,
     getRsgnpController
 } = require('../controllers/rsgnpController');
+const { updateDocumento }=require('../controllers/documentoController');
+
 const fs = require('node:fs');
 function isValidUUID(uuid) {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -107,6 +109,11 @@ const createDescargoRSGNPHandler = async (req, res) => {
                 data: []
             });
         }
+        const total_documentos = newDescargo.documento_DRSGNP;
+
+        const nuevoModulo = "DRSGNP"
+
+        await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 
         return res.status(200).json({ message: "DescargoRSGNP creado con éxito y asociado a RSGNP correctamente", data: newDescargo });
 

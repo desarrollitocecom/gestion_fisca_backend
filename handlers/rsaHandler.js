@@ -10,6 +10,8 @@ const {
     updateInformeFinalController
 } = require('../controllers/informeFinalController');
 
+const { updateDocumento } = require('../controllers/documentoController');
+
 const { startJobForDocument } = require('../jobs/DescargoJob');
 
 const fs = require('node:fs');
@@ -19,7 +21,7 @@ function isValidUUID(uuid) {
 }
 // Handler para crear una nueva RSA
 const createRsaHandler = async (req, res) => {
-    const {id}=req.params;
+    const { id } = req.params;
 
     const { nro_rsa, fecha_rsa, fecha_notificacion, tipo1, id_evaluar_rsa, id_descargo_RSA, id_nc, id_AR2 } = req.body;
 
@@ -34,13 +36,13 @@ const createRsaHandler = async (req, res) => {
     if (!id_AR2) errores.push('El campo id_AR2 es requerido');
 
     if (!isValidUUID(id_AR2)) errores.push('El id_AR2 debe ser una UUID');
-    
+
     if (!fecha_rsa) errores.push('El campo fecha_rsa es requerido');
 
     if (!id_nc) errores.push('El campo id_nc es requerido');
 
     if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
-    
+
     const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
 
     if (!fechaRegex.test(fecha_rsa)) {
@@ -65,7 +67,7 @@ const createRsaHandler = async (req, res) => {
         }
     }
 
-    
+
     if (tipo1 && typeof tipo1 !== "string") errores.push('El campo tipo1 debe ser una cadena de texto');
 
     if (id_evaluar_rsa && typeof id_evaluar_rsa !== "string") errores.push('El campo id_evaluar_rsa debe ser una cadena de texto');
@@ -113,7 +115,12 @@ const createRsaHandler = async (req, res) => {
         if (!createRsa) {
             return res.status(404).json({ message: "Error al crear un RSA", data: [] });
         }
-       
+        const total_documentos = createRsa.documento_RSA;
+
+        const nuevoModulo = "RSA"
+
+            await updateDocumento({ id_nc, total_documentos, nuevoModulo });
+
         const id_evaluar = createRsa.id;
 
         const tipo = "RSA";
@@ -129,7 +136,7 @@ const createRsaHandler = async (req, res) => {
                 message: 'Error al crear el RGA y al asociar',
                 data: []
             });
-        }        
+        }
         return res.status(200).json({ message: "RSA creada con éxito", data: response });
 
     } catch (error) {
@@ -256,5 +263,5 @@ module.exports = {
     updateRsaHandler,
     getRsaHandler,
     getAllRsaHandler,
-  
+
 };
