@@ -23,10 +23,10 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         tipo:{
-            type:DataTypes.ENUM('RSA'),
+            type:DataTypes.ENUM('ACTA'),
             allowNull:true
         },
-        id_evaluar_rsa:{
+        id_evaluar_rsgnp:{
             type:DataTypes.UUID,
             allowNull:true,
          },

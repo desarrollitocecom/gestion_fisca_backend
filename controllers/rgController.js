@@ -43,7 +43,7 @@ const createRGController = async ({
 };
 
 // Actualizar un registro RG
-const updateRGController = async ({id, nro_rg,fecha_rg,fecha_notificacion,documento_rg,estado,documento_ac,id_nc,id_analista_5}) => {
+const updateRGController = async (id,{ nro_rg,fecha_rg,fecha_notificacion,documento_rg,estado,documento_ac,id_nc,id_analista_5}) => {
     let documento_path_rg;
     let documento_path_ac;
     try {

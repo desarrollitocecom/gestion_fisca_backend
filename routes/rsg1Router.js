@@ -1,9 +1,8 @@
 const {Router}=require ('express');
 const router = Router();
-const {uploadRSG1,uploadNone}=require('../middlewares/uploadMiddleware')
+const {uploadRSG1}=require('../middlewares/uploadMiddleware')
 const {createRSG1Handler,
-    updateRSG1Handler,
-    updateinIfiHandler,
+   
     
 }=require('../handlers/rsg1Handler');
 const permisoAutorizacion = require("../checkers/roleAuth");

@@ -6,6 +6,7 @@ const {
     getInformeFinalController,
     updateInformeFinalController
 }=require('../controllers/informeFinalController');
+const { updateDocumento }=require('../controllers/documentoController');
 const fs = require('node:fs');
 
 function isValidUUID(uuid1) {
@@ -100,6 +101,12 @@ if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
                 data: []
             });
         }
+        const total_documentos=newDescargoIFI.documento_DIFI
+
+        const nuevoModulo="DIFI"
+
+        await updateDocumento({id_nc, total_documentos, nuevoModulo});
+
         return res.status(200).json({
 
             message: 'DescargoIFI creado y Asociado a IFI ',
