@@ -103,7 +103,7 @@ if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
         }
         const total_documentos=newDescargoIFI.documento_DIFI
 
-        const nuevoModulo="DIFI"
+        const nuevoModulo="DESCARGO INFORME FINAL INSTRUCTIVO"
 
         await updateDocumento({id_nc, total_documentos, nuevoModulo});
 

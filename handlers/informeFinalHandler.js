@@ -64,7 +64,7 @@ const createInformeFinalHandler = async (req, res) => {
         }
         const total_documentos=response.documento_ifi
 
-        const nuevoModulo="IFI"
+        const nuevoModulo="INFORME FINAL INSTRUCTIVO"
 
         await updateDocumento({id_nc, total_documentos, nuevoModulo});
 

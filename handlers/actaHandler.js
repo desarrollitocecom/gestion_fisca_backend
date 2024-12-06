@@ -92,7 +92,7 @@ const createActainRGHandler=async (req,res) => {
         }
         const id_evaluar_rg=newActa.id;
 
-        const tipo="ACTA"
+        const tipo="ACTA DE CONSENTIMIENTO"
         
         const id_estado_RG=2;
 

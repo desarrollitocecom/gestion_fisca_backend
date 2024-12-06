@@ -1,4 +1,4 @@
-const { Usuario, Rol, Empleado } = require("../db_connection");
+const { Usuario, Rol, Empleado,Permiso } = require("../db_connection");
 const { updateRol, deleteRol } = require("./rol_permisoController");
 
 const createUser = async ({ usuario, contraseña, correo, id_rol /*, id_empleado */ }) => {

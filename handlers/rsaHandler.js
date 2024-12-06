@@ -117,7 +117,7 @@ const createRsaHandler = async (req, res) => {
         }
         const total_documentos = createRsa.documento_RSA;
 
-        const nuevoModulo = "RSA"
+        const nuevoModulo = "RESOLUCION SANCIONADORA ADMINISTRATIVA"
 
             await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 
