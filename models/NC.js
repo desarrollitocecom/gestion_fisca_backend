@@ -29,7 +29,11 @@ module.exports=(sequelize)=>{
         },
         
         id_digitador:{
-            type:DataTypes.STRING,
+            type: DataTypes.UUID,
+            references: {
+                model: 'Usuarios',
+                key: 'id',
+            },
             allowNull:true
         },
         
@@ -129,6 +133,7 @@ module.exports=(sequelize)=>{
         NC.belongsTo(db.EstadoNC, { foreignKey: 'id_estado_NC', as: 'estadoNC'})
         NC.belongsTo(db.IFI, { foreignKey: 'id_nro_IFI', as: 'IFI'})
         NC.belongsTo(db.DescargoNC, { foreignKey: 'id_descargo_NC', as: 'descargoNC'})
+        NC.belongsTo(db.Usuario, { foreignKey: 'id_digitador', as: 'digitadorUsuario' })
     }
 
     return NC;

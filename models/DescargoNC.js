@@ -42,6 +42,7 @@ module.exports=(sequelize)=>{
 
     DescargoNC.associate = (db) => {
         DescargoNC.belongsTo(db.EstadoDescargoNC, { foreignKey: 'id_estado', as: 'estadoDescargoNC' });
+        DescargoNC.belongsTo(db.Usuario, { foreignKey: 'id_analista1', as: 'analistaUsuario' })
     };
 
     

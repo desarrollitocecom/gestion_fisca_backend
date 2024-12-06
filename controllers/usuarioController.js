@@ -151,13 +151,13 @@ const getUserById = async (token) => {
                     model: Rol,
                     as: 'rol',
                     attributes: ['nombre'],
-                    include: [
-                        {
-                            model: Permiso,
-                            as: 'permisos',
-                            attributes: ['nombre', ''] 
-                        }
-                    ]
+                    // include: [
+                    //     {
+                    //         model: Permiso,
+                    //         as: 'permisos',
+                    //         attributes: ['nombre', ''] 
+                    //     }
+                    // ]
                 }
                 // { model: Empleado, as: 'empleado', attributes: ['nombres', 'apellidos'] } // Comentado porque no se usará
             ]
