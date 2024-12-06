@@ -138,7 +138,7 @@ const createRsgnpHandler = async (req, res) => {
         }
         const id_evaluar_rsa = newRsgnp.id;
 
-        const tipo = "RSGNP";
+        const tipo = "RESOLUCION SUBGERENCIAL NO PROCEDENTE";
 
         const response = await updateRsaController(id, { id_evaluar_rsa, tipo })
 

@@ -117,7 +117,7 @@ const createDescargoRsaHandler = async (req, res) => {
         }
         const total_documentos = newDescargoRSA.documento_DRSA;
 
-        const nuevoModulo = "DRSA"
+        const nuevoModulo = "DESCARGO RESOLUCION SANCIONADORA ADMINISTRATIVA"
 
         await updateDocumento({ id_nc, total_documentos, nuevoModulo });
         return res.status(200).json({

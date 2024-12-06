@@ -111,7 +111,7 @@ const createDescargoRSGNPHandler = async (req, res) => {
         }
         const total_documentos = newDescargo.documento_DRSGNP;
 
-        const nuevoModulo = "DRSGNP"
+        const nuevoModulo = "DESCARGO RESOLUCION SUBGERENCIAL NO PROCEDENTE"
 
         await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 

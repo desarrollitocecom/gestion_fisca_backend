@@ -132,7 +132,7 @@ const createRGHandler = async (req, res) => {
         }  
         const total_documentos = newRG.documento_rg;
 
-        const nuevoModulo = "RG"
+        const nuevoModulo = "RESOLUCION GERENCIAL"
 
         await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 

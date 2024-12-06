@@ -82,7 +82,7 @@ const createRSG1Handler = async (req, res) => {
        
         const id_evaluar = createRsg1.id;
 
-        const tipo = "RSG1";
+        const tipo = "RESOLUCION SUBGERENCIAL 1";
 
         const response = await updateInformeFinalController(id, { id_evaluar, tipo })
 

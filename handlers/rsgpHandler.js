@@ -118,7 +118,7 @@ const createRsgpHandler = async (req, res) => {
         }
         const total_documentos = newRsgp.documento_RSGP;
 
-        const nuevoModulo = "RSGP"
+        const nuevoModulo = "RESOLUCION SUBGERENCIAL PROCEDENTE"
 
             await updateDocumento({ id_nc, total_documentos, nuevoModulo });
         return res.status(200).json({
