@@ -88,7 +88,7 @@ const updateInformeFinalController = async (
 const getAllInformeFinalController = async () => {
   try {
     const response = await IFI.findAll({
-      attributes:['id_AI1','documento_ifi'],
+      attributes:['id','id_AI1','documento_ifi'],
       include: [
          { model: NC, as:'NCs',  attributes: ['id'] },
          { model:Usuario,as:'Usuarios',attributes:['usuario']}
