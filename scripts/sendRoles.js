@@ -30,13 +30,11 @@ const rolesPermisos = [
   { nombre: "Tramite Inspector", permisos: ["read_mc"] },
   { nombre: "Digitador", permisos: ["read_nc", "update_nc"] },
   { nombre: "Analista 1", permisos: ["create_descargo_nc", "update_nc"] },
+  { nombre: "Administrador", permisos: ["all_system_access"] },
 ];
 
-/**
- * Función para crear roles y asignar permisos.
- */
 async function createRolesAndAssignPermissions() {
-  const transaction = await sequelize.transaction(); // Inicia una transacción
+  const transaction = await sequelize.transaction(); 
   try {
     for (const { nombre, permisos } of rolesPermisos) {
       // Crear el rol
