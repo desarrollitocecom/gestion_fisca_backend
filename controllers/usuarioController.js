@@ -1,4 +1,4 @@
-const { Usuario, Rol, Empleado } = require("../db_connection");
+const { Usuario, Rol, Empleado,Permiso } = require("../db_connection");
 const { updateRol, deleteRol } = require("./rol_permisoController");
 
 const createUser = async ({ usuario, contraseña, correo, id_rol /*, id_empleado */ }) => {
@@ -155,9 +155,11 @@ const getUserById = async (token) => {
                         {
                             model: Permiso,
                             as: 'permisos',
-                            attributes: ['nombre', ''] 
+                            attributes: ['nombre'],
+                            through: { attributes: [] } // Trae el nombre de cada permiso
                         }
                     ]
+            
                 }
                 // { model: Empleado, as: 'empleado', attributes: ['nombres', 'apellidos'] } // Comentado porque no se usará
             ]
