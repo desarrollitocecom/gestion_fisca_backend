@@ -87,13 +87,9 @@ const updateInformeFinalController = async (
 const getAllInformeFinalController = async () => {
   try {
     const response = await IFI.findAll({
+      attributes:['id_AI1','documento_ifi'],
       include: [
-        { model: DescargoIFI, as: "DescargoIFIs" },
-        { model: RSA,  as: "RSA" },
-        { model: RSG1, as: "RSG1" },
-        { model: RSG2, as: "RSG2" },
-         { model: NC,   as: "NCs" },
-        { model: EstadoIFI,as:"estadoIFI"}
+         { model: NC, as:'NCs',  attributes: ['id'] }
       ],
     });
     return response || null;
