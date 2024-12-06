@@ -1,4 +1,5 @@
-const { IFI, DescargoIFI, RSA, RSG1, RSG2, NC ,EstadoIFI} = require("../db_connection");
+const { IFI, DescargoIFI,Usuario,  NC ,} = require("../db_connection");
+
 const { saveImage, deleteFile } = require("../utils/fileUtils");
 
 const createInformeFinalController = async ({
@@ -89,7 +90,8 @@ const getAllInformeFinalController = async () => {
     const response = await IFI.findAll({
       attributes:['id_AI1','documento_ifi'],
       include: [
-         { model: NC, as:'NCs',  attributes: ['id'] }
+         { model: NC, as:'NCs',  attributes: ['id'] },
+         { model:Usuario,as:'Usuarios',attributes:['usuario']}
       ],
     });
     return response || null;
