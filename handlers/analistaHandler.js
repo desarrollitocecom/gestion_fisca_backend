@@ -1,5 +1,5 @@
 const { createDescargoNC } = require('../controllers/ncDescargoController');
-const { updateNC, getNC } = require('../controllers/ncController');
+const { updateNC, getNC, getAllNCforAnalista } = require('../controllers/ncController');
 const {updateDocumento}=require('../controllers/documentoController');
 const fs = require('fs');
 
@@ -62,7 +62,7 @@ const createDescargoNCHandler = async (req, res) => {
         }
         const id_nc=existingNC.id;
         const total_documentos=newDescargoNC.documento;
-        const nuevoModulo='DescargoNC';
+        const nuevoModulo='DESCARGO - NOTIFICACION DE CARGO';
 
         
         
@@ -96,5 +96,41 @@ const createDescargoNCHandler = async (req, res) => {
     }
 };
 
+const getAllNCforAnalistaHandler = async (req, res) => {  
+    const { page = 1, limit = 20 } = req.query;
+    const errores = [];
 
-module.exports = { createDescargoNCHandler };
+    if (isNaN(page)) errores.push("El page debe ser un número");
+    if (page <= 0) errores.push("El page debe ser mayor a 0");
+    if (isNaN(limit)) errores.push("El limit debe ser un número");
+    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
+
+    if (errores.length > 0) {
+        return res.status(400).json({ errores });
+    }
+
+    try {
+        const response = await getAllNCforAnalista(Number(page), Number(limit));
+
+        if (response.data.length === 0) {
+            return res.status(200).json({
+                message: 'Ya no hay más tramites',
+                data: {
+                    data: [],
+                    totalPage: response.currentPage,
+                    totalCount: response.totalCount
+                }
+            });
+        }
+
+        return res.status(200).json({
+            message: "Tramites obtenidos correctamente",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener tipos de documentos de identidad:", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener los tramites." });
+    }
+};
+
+module.exports = { createDescargoNCHandler, getAllNCforAnalistaHandler };

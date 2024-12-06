@@ -123,7 +123,7 @@ const createTramiteHandler = async (req, res) => {
 
             const newNC = await createNC({ id_tramiteInspector: newTramiteInspector.id });
             
-            const modelNC = 'Notificacion de Cargo';
+            const modelNC = 'NOTIFICACIÓN DE CARGO';
             
             const nuevo_doc=newTramiteInspector.documento_nc
 
@@ -132,7 +132,7 @@ const createTramiteHandler = async (req, res) => {
 
             const total_documentos = newTramiteInspector.documento_acta;
             
-            const nuevoModulo = 'Acta de Fiscalizacion';
+            const nuevoModulo = 'ACTA DE FISCALIZACIÓN';
            
 
                 await createDocumento(modelNC, id_nc, nuevo_doc);

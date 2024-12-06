@@ -171,6 +171,41 @@ const getAllNCforInstructiva = async (page = 1, limit = 20) => {
     }
 };
 
+const getAllNCforAnalista = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
+    try {
+        const response = await NC.findAndCountAll({ 
+            limit,
+            offset,
+            where: { id_estado_NC: 2 }, 
+            order: [['id', 'ASC']],
+            attributes: [
+                'id',
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('digitadorUsuario.usuario'), 'digitador'],
+                [Sequelize.col('id_estado_NC'), 'estado']
+            ],
+            include: [
+                {
+                    model: Usuario, 
+                    as: 'digitadorUsuario',
+                    attributes: []
+                },
+                {
+                    model: TramiteInspector, 
+                    as: 'tramiteInspector', 
+                    attributes: [], 
+                },
+            ],
+        });
+        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+    } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los Tipos de NC", data: error });
+        return false;
+    }
+};
+
+
 
 const updateNCState = async (id, newState) => {
     try {
@@ -190,4 +225,4 @@ const updateNCState = async (id, newState) => {
 };
 
 
-module.exports = { createNC, updateNC, getNC, getAllNC , updateNCState, getAllNCforInstructiva};
+module.exports = { createNC, updateNC, getNC, getAllNC , updateNCState, getAllNCforInstructiva, getAllNCforAnalista};
