@@ -90,38 +90,31 @@ const getAllNC = async (page = 1, limit = 20) => {
     const offset = (page - 1) * limit;
     try {
         const response = await NC.findAndCountAll({ 
-            attributes: { exclude: ['id_tramiteInspector'] },
+            limit,
+            offset,
+            where: { id_estado_NC: 1 }, 
+            order: [['id', 'ASC']],
+            attributes: [
+                'id',
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'inspector'],
+                [Sequelize.col('id_estado_NC'), 'estado'],
+            ],
             include: [
                 {
                     model: TramiteInspector,
                     as: 'tramiteInspector',
                     include: [
                         {
-                            model: MedidaComplementaria, 
-                            as: 'medidaComplementaria',
-                            attributes: { exclude: ['id_estado', 'id_documento', 'id_ejecucionMC'] },
-                            include: [
-                                {
-                                    model: TipoDocumentoComplementario,
-                                    as: 'tipoDocumento', 
-                                },
-                                {
-                                    model: EjecucionMC,
-                                    as: 'ejecucion'
-                                },
-                                {
-                                    model: EstadoMC,
-                                    as: 'estado', 
-                                }
-                                
-                            ],
+                            model: Usuario, 
+                            as: 'inspectorUsuario',
+                            attributes: []
                         },
                     ],
+                    attributes: []
                 }
             ],
-            limit,
-            offset,
-            order: [['id', 'ASC']]
+            
         });
         return { totalCount: response.count, data: response.rows, currentPage: page } || null;
     } catch (error) {

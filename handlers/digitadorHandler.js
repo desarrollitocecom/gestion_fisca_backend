@@ -5,16 +5,17 @@ const { createConstNotifi } = require('../controllers/constanciaNotificacionCont
 
 const updateNCHandler = async (req, res) => {
     const id = req.params.id;
+    
+    const existingNC = await getNC(id); 
+    
+        if (!existingNC) {
+            return res.status(404).json({ message: "NC no encontrada para actualizar" });
+        }
 
     const { 
             id_tipoDocumento, 
             nro_documento, 
-
-            nombres,
-            apellidos,
-            domicilio,
-            distrito,
-            giro,
+            nro_licencia_funcionamiento,
 
             nombre_entidad,
             domicilio_entidad,
@@ -22,58 +23,125 @@ const updateNCHandler = async (req, res) => {
             giro_entidad,
 
             id_infraccion,
-            nro_licencia_funcionamiento,
+            lugar_infraccion,
             placa_rodaje,
-            fecha_detencion,
-            fecha_notificacion,
-            observaciones,
-            id_digitador,
 
-            fecha,
+            fecha_detencion,
+            hora_detencion,
+            fecha_notificacion,
+            hora_notificacion,
+            
+            nombres_infractor,
+            dni_infractor,
+            relacion_infractor,
+
+            nro_nc,
             hora,
+            dia,
+            mes,
+            anio,
             lugar,
             caracteristicas,
-            nro_nc,
+
             nombre_test1,
-            doc_test1,
+            dni_test1,
             nombre_test2,
-            doc_test2,
+            dni_test2,
             puerta,
             nro_pisos,
             nro_suministro,
-            observaciones_cn
+            observaciones,
+
+            id_digitador,
 
         } = req.body;
 
-        const errores = [];
+        const errors = [];
 
-    try {
-
-        const existingNC = await getNC(id); 
-
-        if (!existingNC) {
-            return res.status(404).json({ message: "NC no encontrada para actualizar" });
+        if (id_tipoDocumento !== undefined && id_tipoDocumento !== null && (isNaN(id_tipoDocumento))) {
+            errors.push('El Tipo de Documento debe ser un número válido');
         }
 
-        let id_administrado = null;
+        if (nro_documento !== undefined && nro_documento !== null && (isNaN(nro_documento))) {
+            errors.push('El numero de documento debe ser un número válido');
+        }
 
-        const shouldCreateAdministrado = nombres || apellidos || domicilio || distrito || giro;
+        if (nro_licencia_funcionamiento !== undefined && nro_licencia_funcionamiento !== null && (isNaN(nro_licencia_funcionamiento))) {
+            errors.push('El Numero de licencia debe ser un número válido');
+        }
 
-        if(shouldCreateAdministrado) {
-            const shouldCreateAdministrado = await createAdministrado({
-                nombres,
-                apellidos,
-                domicilio,
-                distrito,
-                giro,
-            });
+        if (id_infraccion !== undefined && id_infraccion !== null && (isNaN(id_infraccion))) {
+            errors.push('La infracción debe ser un número válido');
+        }
 
-            if (shouldCreateAdministrado) {
-                id_administrado = shouldCreateAdministrado.id;
+        if (placa_rodaje !== undefined && placa_rodaje !== null && (isNaN(placa_rodaje))) {
+            errors.push('La placa debe ser un número válido');
+        }
+
+        const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
+        const timeRegex = /^([0-1]\d|2[0-3]):([0-5]\d)$/;
+
+        if(fecha_detencion){
+            if (!fechaRegex.test(fecha_detencion)) {
+                errors.push('El formato de la fecha debe ser YYYY-MM-DD');
             } else {
-                return res.status(400).json({ error: 'Error al crear el Administrado' });
+        
+                const parsedFecha = new Date(fecha_detencion);
+        
+                if (isNaN(parsedFecha.getTime())) {
+        
+                    errors.push('Debe ser una fecha válida');
+        
+                }
             }
         }
+
+        if(fecha_notificacion){
+            if (!fechaRegex.test(fecha_notificacion)) {
+                errors.push('El formato de la fecha debe ser YYYY-MM-DD');
+            } else {
+        
+                const parsedFecha = new Date(fecha_notificacion);
+        
+                if (isNaN(parsedFecha.getTime())) {
+        
+                    errors.push('Debe ser una fecha válida');
+        
+                }
+            }
+        }
+
+
+        if (dni_infractor !== undefined && dni_infractor !== null && (isNaN(dni_infractor))) {
+            errors.push('El DNI del infractor debe ser un número válido');
+        }
+
+
+        if (dia !== undefined && dia !== null && (isNaN(dia))) {
+            errors.push('El DNI del infractor debe ser un número válido');
+        }
+
+        if (anio !== undefined && anio !== null && (isNaN(anio))) {
+            errors.push('El año debe ser un número válido');
+        }
+
+        if (dni_test1 !== undefined && dni_test1 !== null && (isNaN(dni_test1))) {
+            errors.push('El año debe ser un número válido');
+        }
+
+        if (dni_test2 !== undefined && dni_test2 !== null && (isNaN(dni_test2))) {
+            errors.push('El año debe ser un número válido');
+        }
+        
+        if (errors.length > 0) {
+            return res.status(400).json({
+                message: 'Se encontraron los siguientes errores',
+                data: errors
+            });
+        }
+        
+
+    try {
 
         let id_entidad = null;
 
@@ -81,10 +149,10 @@ const updateNCHandler = async (req, res) => {
 
         if(shouldCreateEntidad) {
             const shouldCreateEntidad = await createEntidad({
-                nombre_entidad,
-                domicilio_entidad,
-                distrito_entidad,
-                giro_entidad,
+                nombre_entidad,  
+                domicilio_entidad,  
+                distrito_entidad,  
+                giro_entidad,  
             });
 
             if (shouldCreateEntidad) {
@@ -96,23 +164,26 @@ const updateNCHandler = async (req, res) => {
 
         let id_const_noti = null;
 
-        const shouldCreateConstNofi = fecha || hora || lugar || caracteristicas || nro_nc || nombre_test1 || doc_test1 || nombre_test2 || doc_test2 || puerta || nro_pisos || nro_suministro || observaciones_cn;
+        const shouldCreateConstNofi = hora || dia || mes || anio || lugar || caracteristicas || nombre_test1 || dni_test1 || nombre_test2 || dni_test2 || puerta || nro_pisos || nro_suministro || observaciones;
 
         if(shouldCreateConstNofi) {
             const shouldCreateConstNofi = await createConstNotifi({
-                fecha,
-                hora,
-                lugar,
-                caracteristicas,
-                nro_nc,
-                nombre_test1,
-                doc_test1,
-                nombre_test2,
-                doc_test2,
-                puerta,
-                nro_pisos,
-                nro_suministro,
-                observaciones_cn
+                hora,   //time
+                dia,    //integer
+                mes,    //text
+                anio,   //integer
+                lugar,  //string
+                caracteristicas,  //string
+
+                nro_nc,  //string
+                nombre_test1,  //string  
+                dni_test1,  //integer
+                nombre_test2,  //string
+                dni_test2,  //integer
+                puerta,  //string
+                nro_pisos,  //string
+                nro_suministro,  //string
+                observaciones,  //string
             });
 
             if (shouldCreateConstNofi) {
@@ -122,20 +193,24 @@ const updateNCHandler = async (req, res) => {
             }
         }
 
-        // console.log(id);
         const response = await updateNC(id, { 
-            id_tipoDocumento: id_tipoDocumento, 
-            nro_documento, 
+            id_tipoDocumento, //integer
+            nro_documento,  //integer
+            nro_licencia_funcionamiento, //integer
 
-            id_administrado,
-            id_entidad,
-            id_infraccion: id_infraccion,
+            id_entidad,  //fk
+            id_infraccion,  //fk integer
+            lugar_infraccion, //string
+            placa_rodaje, //integer
+            
+            fecha_detencion,  //dateonly
+            hora_detencion,  //time
+            fecha_notificacion,  //dateonly
+            hora_notificacion,  //time
 
-            nro_licencia_funcionamiento,
-            placa_rodaje,
-            fecha_detencion,
-            fecha_notificacion,
-            observaciones,
+            nombres_infractor,  //string
+            dni_infractor,  //integer
+            relacion_infractor,  //string
 
             id_const_noti,
             id_digitador,
@@ -143,7 +218,7 @@ const updateNCHandler = async (req, res) => {
         });
 
         if (!response) {
-            return res.status(404).json({ message: "NC no encontrada para actualizar" });
+            return res.status(404).json({ message: "Error al actualizar" });
         }
 
         res.status(200).json({

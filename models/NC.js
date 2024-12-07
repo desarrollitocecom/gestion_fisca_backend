@@ -27,24 +27,12 @@ module.exports=(sequelize)=>{
             type:DataTypes.INTEGER,
             allowNull:true
         },
-        
-        id_digitador:{
-            type: DataTypes.UUID,
-            references: {
-                model: 'Usuarios',
-                key: 'id',
-            },
+
+        nro_licencia_funcionamiento:{
+            type:DataTypes.STRING,
             allowNull:true
         },
-        
-        id_administrado:{
-            type: DataTypes.UUID,
-            references: {
-                model: 'Administrados',
-                key: 'id',
-            },
-            allowNull:true
-        },
+
         id_entidad:{
             type: DataTypes.UUID,
             references: {
@@ -53,6 +41,7 @@ module.exports=(sequelize)=>{
             },
             allowNull:true
         },
+
         id_infraccion:{
             type: DataTypes.INTEGER,
             references: {
@@ -61,50 +50,52 @@ module.exports=(sequelize)=>{
             },
             allowNull:true
         },
-        nro_licencia_funcionamiento:{
+
+        lugar_infraccion:{
             type:DataTypes.STRING,
             allowNull:true
         },
+
         placa_rodaje:{
-            type:DataTypes.STRING,
+            type:DataTypes.INTEGER,
             allowNull:true
         },
+ 
         fecha_detencion:{
             type:DataTypes.DATE,
             allowNull:true
         },
+
+        hora_detencion:{
+            type:DataTypes.STRING,
+            allowNull:true
+        },
+
         fecha_notificacion:{
             type:DataTypes.DATE,
             allowNull:true
         },
-        observaciones:{
+
+        hora_notificacion:{
             type:DataTypes.STRING,
             allowNull:true
         },
-        id_descargo_NC:{
-            type: DataTypes.UUID,
-            references: {
-                model: 'DescargoNCs',
-                key: 'id',
-            },
+
+        nombres_infractor:{
+            type:DataTypes.STRING,
             allowNull:true
         },
-        id_nro_IFI:{
-            type: DataTypes.UUID,
-            references: {
-                model: 'IFIs',
-                key: 'id',
-            },
+
+        dni_infractor:{
+            type:DataTypes.INTEGER,
             allowNull:true
         },
-        id_estado_NC:{
-            type: DataTypes.INTEGER,
-            references: {
-                model: 'EstadoNCs',
-                key: 'id',
-            },
+
+        relacion_infractor:{
+            type:DataTypes.STRING,
             allowNull:true
         },
+
         id_const_noti:{
             type: DataTypes.UUID,
             references: {
@@ -114,6 +105,43 @@ module.exports=(sequelize)=>{
             allowNull:true
         },
 
+
+        id_digitador:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'Usuarios',
+                key: 'id',
+            },
+            allowNull:true
+        },
+
+        id_descargo_NC:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'DescargoNCs',
+                key: 'id',
+            },
+            allowNull:true
+        },
+
+        id_nro_IFI:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'IFIs',
+                key: 'id',
+            },
+            allowNull:true
+        },
+
+        id_estado_NC:{
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'EstadoNCs',
+                key: 'id',
+            },
+            allowNull:true
+        },
+        
     }, {
         tableName: 'NCs',
         timestamps: true

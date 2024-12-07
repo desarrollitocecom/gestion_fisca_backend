@@ -47,6 +47,7 @@ module.exports = (sequelize) => {
     TramiteInspector.associate = (db) => {
         TramiteInspector.hasMany(db.NC, { foreignKey: 'id_tramiteInspector', as: 'nc'})
         TramiteInspector.belongsTo(db.MedidaComplementaria, { foreignKey: 'id_medida_complementaria', as: 'medidaComplementaria' });
+        TramiteInspector.belongsTo(db.Usuario, { foreignKey: 'id_inspector', as: 'inspectorUsuario' })
     }
 
     return TramiteInspector;
