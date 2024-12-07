@@ -180,6 +180,7 @@ const getAllNCforAnalista = async (page = 1, limit = 20) => {
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('digitadorUsuario.usuario'), 'digitador'],
+                [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
                 [Sequelize.col('id_estado_NC'), 'estado']
             ],
             include: [

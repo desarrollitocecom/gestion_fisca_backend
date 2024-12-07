@@ -12,6 +12,10 @@ const updateNCHandler = async (req, res) => {
             return res.status(404).json({ message: "NC no encontrada para actualizar" });
         }
 
+        if (existingNC.id_digitador) {
+            return res.status(404).json({ message: "Este NC ya fue registrado" });
+        }
+
     const { 
             id_tipoDocumento, 
             nro_documento, 
@@ -76,6 +80,10 @@ const updateNCHandler = async (req, res) => {
 
         if (placa_rodaje !== undefined && placa_rodaje !== null && (isNaN(placa_rodaje))) {
             errors.push('La placa debe ser un número válido');
+        }
+
+        if(!id_digitador){
+            errors.push('El digitador es obligatorio');
         }
 
         const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
