@@ -26,10 +26,10 @@ const updateNCHandler = async (req, res) => {
             lugar_infraccion,
             placa_rodaje,
 
-            fecha_detencion,
-            hora_detencion,
-            fecha_notificacion,
-            hora_notificacion,
+            fecha_deteccion_inicio,
+            hora_deteccion_inicio,
+            fecha_deteccion_fin,
+            hora_deteccion_fin,
             
             nombres_infractor,
             dni_infractor,
@@ -79,14 +79,13 @@ const updateNCHandler = async (req, res) => {
         }
 
         const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
-        const timeRegex = /^([0-1]\d|2[0-3]):([0-5]\d)$/;
 
-        if(fecha_detencion){
-            if (!fechaRegex.test(fecha_detencion)) {
+        if(fecha_deteccion_inicio){
+            if (!fechaRegex.test(fecha_deteccion_inicio)) {
                 errors.push('El formato de la fecha debe ser YYYY-MM-DD');
             } else {
         
-                const parsedFecha = new Date(fecha_detencion);
+                const parsedFecha = new Date(fecha_deteccion_inicio);
         
                 if (isNaN(parsedFecha.getTime())) {
         
@@ -96,12 +95,12 @@ const updateNCHandler = async (req, res) => {
             }
         }
 
-        if(fecha_notificacion){
-            if (!fechaRegex.test(fecha_notificacion)) {
+        if(fecha_deteccion_fin){
+            if (!fechaRegex.test(fecha_deteccion_fin)) {
                 errors.push('El formato de la fecha debe ser YYYY-MM-DD');
             } else {
         
-                const parsedFecha = new Date(fecha_notificacion);
+                const parsedFecha = new Date(fecha_deteccion_fin);
         
                 if (isNaN(parsedFecha.getTime())) {
         
@@ -203,10 +202,10 @@ const updateNCHandler = async (req, res) => {
             lugar_infraccion, //string
             placa_rodaje, //integer
             
-            fecha_detencion,  //dateonly
-            hora_detencion,  //time
-            fecha_notificacion,  //dateonly
-            hora_notificacion,  //time
+            fecha_deteccion_inicio,  //dateonly
+            hora_deteccion_inicio,  //time
+            fecha_deteccion_fin,  //dateonly
+            hora_deteccion_fin,  //time
 
             nombres_infractor,  //string
             dni_infractor,  //integer
