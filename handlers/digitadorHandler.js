@@ -12,6 +12,10 @@ const updateNCHandler = async (req, res) => {
             return res.status(404).json({ message: "NC no encontrada para actualizar" });
         }
 
+        if (existingNC.id_digitador) {
+            return res.status(404).json({ message: "Este NC ya fue registrado" });
+        }
+
     const { 
             id_tipoDocumento, 
             nro_documento, 
@@ -26,10 +30,10 @@ const updateNCHandler = async (req, res) => {
             lugar_infraccion,
             placa_rodaje,
 
-            fecha_detencion,
-            hora_detencion,
-            fecha_notificacion,
-            hora_notificacion,
+            fecha_deteccion_inicio,
+            hora_deteccion_inicio,
+            fecha_deteccion_fin,
+            hora_deteccion_fin,
             
             nombres_infractor,
             dni_infractor,
@@ -78,15 +82,18 @@ const updateNCHandler = async (req, res) => {
             errors.push('La placa debe ser un número válido');
         }
 
-        const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
-        const timeRegex = /^([0-1]\d|2[0-3]):([0-5]\d)$/;
+        if(!id_digitador){
+            errors.push('El digitador es obligatorio');
+        }
 
-        if(fecha_detencion){
-            if (!fechaRegex.test(fecha_detencion)) {
+        const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
+
+        if(fecha_deteccion_inicio){
+            if (!fechaRegex.test(fecha_deteccion_inicio)) {
                 errors.push('El formato de la fecha debe ser YYYY-MM-DD');
             } else {
         
-                const parsedFecha = new Date(fecha_detencion);
+                const parsedFecha = new Date(fecha_deteccion_inicio);
         
                 if (isNaN(parsedFecha.getTime())) {
         
@@ -96,12 +103,12 @@ const updateNCHandler = async (req, res) => {
             }
         }
 
-        if(fecha_notificacion){
-            if (!fechaRegex.test(fecha_notificacion)) {
+        if(fecha_deteccion_fin){
+            if (!fechaRegex.test(fecha_deteccion_fin)) {
                 errors.push('El formato de la fecha debe ser YYYY-MM-DD');
             } else {
         
-                const parsedFecha = new Date(fecha_notificacion);
+                const parsedFecha = new Date(fecha_deteccion_fin);
         
                 if (isNaN(parsedFecha.getTime())) {
         
@@ -203,10 +210,10 @@ const updateNCHandler = async (req, res) => {
             lugar_infraccion, //string
             placa_rodaje, //integer
             
-            fecha_detencion,  //dateonly
-            hora_detencion,  //time
-            fecha_notificacion,  //dateonly
-            hora_notificacion,  //time
+            fecha_deteccion_inicio,  //dateonly
+            hora_deteccion_inicio,  //time
+            fecha_deteccion_fin,  //dateonly
+            hora_deteccion_fin,  //time
 
             nombres_infractor,  //string
             dni_infractor,  //integer

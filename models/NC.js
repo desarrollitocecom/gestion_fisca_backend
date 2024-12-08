@@ -61,22 +61,22 @@ module.exports=(sequelize)=>{
             allowNull:true
         },
  
-        fecha_detencion:{
+        fecha_deteccion_inicio:{
             type:DataTypes.DATE,
             allowNull:true
         },
 
-        hora_detencion:{
+        hora_deteccion_inicio:{
             type:DataTypes.STRING,
             allowNull:true
         },
 
-        fecha_notificacion:{
+        fecha_deteccion_fin:{
             type:DataTypes.DATE,
             allowNull:true
         },
 
-        hora_notificacion:{
+        hora_deteccion_fin:{
             type:DataTypes.STRING,
             allowNull:true
         },
