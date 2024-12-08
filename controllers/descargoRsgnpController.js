@@ -2,12 +2,16 @@ const { DescargoRSGNP } = require('../db_connection');
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
 // Crear un nuevo registro en la tabla DescargoRSGNP
-const createDescargoRSGNPController = async ({ nro_descargo, fecha_descargo, documento ,id_nc,id_analista_4}) => {
+const createDescargoRSGNPController = async ({ nro_descargo, fecha_descargo, documento_DRSGNP ,id_nc,id_analista_4}) => {
     let documento_path;
    
     try {
-        documento_path=saveImage(documento,'Descargo(RSGNP)')  
-        const newDescargoRSGNP = await DescargoRSGNP.create({ nro_descargo, fecha_descargo, documento:documento_path,id_nc,id_analista_4 });
+        documento_path=saveImage(documento_DRSGNP,'Descargo(RSGNP)')  
+        const newDescargoRSGNP = await DescargoRSGNP.create({ nro_descargo, 
+            fecha_descargo,
+             documento_DRSGNP:documento_path,
+             id_nc,
+             id_analista_4 });
         return newDescargoRSGNP || null;
     } catch (error) {
         if (documento_path) {
@@ -18,29 +22,31 @@ const createDescargoRSGNPController = async ({ nro_descargo, fecha_descargo, doc
     }
 };
 
-const updateDescargoRSGNPController = async ({ id, nro_descargo, fecha_descargo, documento ,id_nc}) => {
+const updateDescargoRSGNPController = async ( id,{ nro_descargo, fecha_descargo, documento_DRSGNP ,id_nc}) => {
+    
+    
     let documento_path;
    
     try {
         const descargoRSGNP = await getDescargoRSGNPController(id);
 
-         documento_path = descargoRSGNP.documento;
+         documento_path = descargoRSGNP.documento_DRSGNP;
  
-        if (documento) {
+        if (documento_DRSGNP) {
             // Guardar nuevo archivo y eliminar el anterior
-            documento_path = saveImage(documento, 'Descargo(RSGNP)');
-            if (descargoRSGNP.documento) {
-                deleteFile(descargoRSGNP.documento);
+            documento_path = saveImage(documento_DRSGNP, 'Descargo(RSGNP)');
+            if (descargoRSGNP.documento_DRSGNP) {
+                deleteFile(descargoRSGNP.documento_DRSGNP);
             }
         }
 
-        await descargoRSGNP.update({ nro_descargo, fecha_descargo, documento: documento_path,id_nc });
+        await descargoRSGNP.update({ nro_descargo, fecha_descargo, documento_DRSGNP: documento_path,id_nc });
         return descargoRSGNP || null;
     } catch (error) {
         if (documento_path) {
             deleteFile(documento_path);
         }
-        console.error('Error al actualizar DescargoRG:', error.message);
+        console.error('Error al actualizar DescargoRSGNP 11:', error.message);
         return false;
     }
 };

@@ -1,5 +1,6 @@
 const { createDescargoNC } = require('../controllers/ncDescargoController');
-const { updateNC, getNC } = require('../controllers/ncController');
+const { updateNC, getNC, getAllNCforAnalista } = require('../controllers/ncController');
+const {updateDocumento}=require('../controllers/documentoController');
 const fs = require('fs');
 
 const createDescargoNCHandler = async (req, res) => {
@@ -7,7 +8,6 @@ const createDescargoNCHandler = async (req, res) => {
 
     const { 
             nro_descargo,
-            id_estado,
             fecha_descargo,
             id_analista1
         } = req.body;
@@ -16,10 +16,6 @@ const createDescargoNCHandler = async (req, res) => {
 
     if (!nro_descargo) {
         errors.push('Ingrese nro_descargo obligatorio');
-    }
-
-    if (!id_estado) {
-        errors.push('Ingrese id_estado obligatorio');
     }
 
     if (!fecha_descargo) {
@@ -56,7 +52,6 @@ const createDescargoNCHandler = async (req, res) => {
 
         const newDescargoNC = await createDescargoNC({ 
             nro_descargo,
-            id_estado,
             fecha_descargo,
             documento: req.files['documento'][0],
             id_analista1
@@ -65,28 +60,77 @@ const createDescargoNCHandler = async (req, res) => {
         if (!newDescargoNC) {
             return res.status(400).json({ error: 'Error al crear el Descargo NC' });
         }
+        const id_nc=existingNC.id;
+        const total_documentos=newDescargoNC.documento;
+        const nuevoModulo='DESCARGO - NOTIFICACION DE CARGO';
+
+        
+        
+     await updateDocumento({id_nc, total_documentos, nuevoModulo});
 
         const id_descargo_NC = newDescargoNC.id;
 
         const response = await updateNC(id, { 
-            id_descargo_NC
+            id_descargo_NC,
+            id_estado_NC: 3
         });
 
+       
+         
+         
         if (response) {
-            res.status(201).json({
+          res.status(201).json({
                 message: 'Descargo NC creado con exito',
                 data: response,
             });
         } else {
-            res.status(400).json({
+           res.status(400).json({
                 message: 'Error al crear Descargo NC',
             });
         }
+
+
     } catch (error) {
         console.error('Error al crear el NC:', error);
         return res.status(500).json({ message: 'Error interno del servidor al crear el Descargo NC' });
     }
 };
 
+const getAllNCforAnalistaHandler = async (req, res) => {  
+    const { page = 1, limit = 20 } = req.query;
+    const errores = [];
 
-module.exports = { createDescargoNCHandler };
+    if (isNaN(page)) errores.push("El page debe ser un número");
+    if (page <= 0) errores.push("El page debe ser mayor a 0");
+    if (isNaN(limit)) errores.push("El limit debe ser un número");
+    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
+
+    if (errores.length > 0) {
+        return res.status(400).json({ errores });
+    }
+
+    try {
+        const response = await getAllNCforAnalista(Number(page), Number(limit));
+
+        if (response.data.length === 0) {
+            return res.status(200).json({
+                message: 'Ya no hay más tramites',
+                data: {
+                    data: [],
+                    totalPage: response.currentPage,
+                    totalCount: response.totalCount
+                }
+            });
+        }
+
+        return res.status(200).json({
+            message: "Tramites obtenidos correctamente",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener tipos de documentos de identidad:", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener los tramites." });
+    }
+};
+
+module.exports = { createDescargoNCHandler, getAllNCforAnalistaHandler };

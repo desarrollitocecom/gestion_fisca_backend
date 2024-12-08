@@ -6,12 +6,20 @@ module.exports=(sequelize)=>{
             primaryKey: true,
             defaultValue: DataTypes.UUIDV4,
         },
-        fecha: {
-            type: DataTypes.DATE,
+        hora: {
+            type: DataTypes.STRING,
             allowNull: true
         },
-        hora: {
-            type: DataTypes.TIME,
+        mes: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+        mes: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        anio: {
+            type: DataTypes.INTEGER,
             allowNull: true
         },
         lugar:{
@@ -30,7 +38,7 @@ module.exports=(sequelize)=>{
             type:DataTypes.STRING,
             allowNull: true
         },  
-        doc_test1:{
+        dni_test1:{
             type:DataTypes.INTEGER,
             allowNull: true
         }, 
@@ -38,7 +46,7 @@ module.exports=(sequelize)=>{
             type:DataTypes.STRING,
             allowNull: true
         },  
-        doc_test2:{
+        dni_test2:{
             type:DataTypes.INTEGER,
             allowNull: true
         }, 
@@ -47,14 +55,14 @@ module.exports=(sequelize)=>{
             allowNull: true
         },
         nro_pisos:{
-            type:DataTypes.INTEGER,
+            type:DataTypes.STRING,
             allowNull: true
         },
         nro_suministro:{
-            type:DataTypes.INTEGER,
+            type:DataTypes.STRING,
             allowNull: true
         },
-        observaciones_cn:{
+        observaciones:{
             type:DataTypes.STRING,
             allowNull: true
         },

@@ -17,6 +17,7 @@ function saveImage(file, folder) {
     const isImage = ['.jpg', '.jpeg', '.png', '.bmp', '.gif'].includes(fileExtension);
 
     const newFileName = `${uniqueFileName}.pdf`; // Siempre generamos un PDF
+    
     const newPath = path.join(uploadDir, newFileName);
 
     try {

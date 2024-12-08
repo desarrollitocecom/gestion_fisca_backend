@@ -1,4 +1,4 @@
-const { Usuario, Rol, Empleado } = require("../db_connection");
+const { Usuario, Rol, Empleado,Permiso } = require("../db_connection");
 const { updateRol, deleteRol } = require("./rol_permisoController");
 
 const createUser = async ({ usuario, contraseña, correo, id_rol /*, id_empleado */ }) => {
@@ -101,7 +101,7 @@ const getAllUsers = async (page = 1, pageSize = 20) => {
     try {
         const offset = (page - 1) * pageSize;
         const limit = pageSize;
-
+        
         const response = await Usuario.findAndCountAll({
             attributes: ['id', 'usuario', 'correo', 'state', 'id_rol' /*, 'id_empleado' */], // id_empleado comentado
             where: { state: true },
@@ -147,7 +147,20 @@ const getUserById = async (token) => {
             where: { token: token },
             attributes: ['id', 'usuario', 'correo', 'state', 'id_rol' /*, 'id_empleado' */], // id_empleado comentado
             include: [
-                { model: Rol, as: 'rol', attributes: ['nombre'] }
+                {
+                    model: Rol,
+                    as: 'rol',
+                    attributes: ['nombre'],
+                    include: [
+                        {
+                            model: Permiso,
+                            as: 'permisos',
+                            attributes: ['nombre'],
+                            through: { attributes: [] } // Trae el nombre de cada permiso
+                        }
+                    ]
+            
+                }
                 // { model: Empleado, as: 'empleado', attributes: ['nombres', 'apellidos'] } // Comentado porque no se usará
             ]
         });
@@ -182,7 +195,7 @@ const logoutUser = async (usuario) => {
         const user = await getUser(usuario);
         if (user) {
             await user.update({ token: null }); // Eliminar el token
-            return true;
+            return true;    
         }
         return false;
     } catch (error) {

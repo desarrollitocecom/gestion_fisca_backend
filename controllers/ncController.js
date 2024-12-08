@@ -1,9 +1,11 @@
-const { NC, TramiteInspector, MedidaComplementaria, TipoDocumentoComplementario, EjecucionMC, EstadoMC } = require('../db_connection');
+const { NC, TramiteInspector, MedidaComplementaria, TipoDocumentoComplementario, EjecucionMC, EstadoMC, DescargoNC, Usuario } = require('../db_connection');
+const { Sequelize } = require('sequelize');
 
 const createNC = async ({ id_tramiteInspector }) => {
     try {
         const newNC = await NC.create({
-            id_tramiteInspector
+            id_tramiteInspector,
+            id_estado_NC: 1
         });
 
         console.log('NC creado con éxito');
@@ -44,8 +46,9 @@ const updateNC = async (id, {
     
     id_descargo_NC,
     id_const_noti,
-    id_digitador
-
+    id_digitador,
+    id_nro_IFI,
+    id_estado_NC
  }) => {
 
     try {
@@ -68,10 +71,12 @@ const updateNC = async (id, {
 
                 id_descargo_NC,
                 id_const_noti,
-                id_digitador
+                id_digitador,
+                id_nro_IFI,
+
+                id_estado_NC
             });
         }
-        console.log(findNC);
         
         return findNC || null;
         
@@ -85,38 +90,31 @@ const getAllNC = async (page = 1, limit = 20) => {
     const offset = (page - 1) * limit;
     try {
         const response = await NC.findAndCountAll({ 
-            attributes: { exclude: ['id_tramiteInspector'] },
+            limit,
+            offset,
+            where: { id_estado_NC: 1 }, 
+            order: [['id', 'ASC']],
+            attributes: [
+                'id',
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'inspector'],
+                [Sequelize.col('id_estado_NC'), 'estado'],
+            ],
             include: [
                 {
                     model: TramiteInspector,
                     as: 'tramiteInspector',
                     include: [
                         {
-                            model: MedidaComplementaria, 
-                            as: 'medidaComplementaria',
-                            attributes: { exclude: ['id_estado', 'id_documento', 'id_ejecucionMC'] },
-                            include: [
-                                {
-                                    model: TipoDocumentoComplementario,
-                                    as: 'tipoDocumento', 
-                                },
-                                {
-                                    model: EjecucionMC,
-                                    as: 'ejecucion'
-                                },
-                                {
-                                    model: EstadoMC,
-                                    as: 'estado', 
-                                }
-                                
-                            ],
+                            model: Usuario, 
+                            as: 'inspectorUsuario',
+                            attributes: []
                         },
                     ],
+                    attributes: []
                 }
             ],
-            limit,
-            offset,
-            order: [['id', 'ASC']]
+            
         });
         return { totalCount: response.count, data: response.rows, currentPage: page } || null;
     } catch (error) {
@@ -124,6 +122,82 @@ const getAllNC = async (page = 1, limit = 20) => {
         return false;
     }
 };
+
+const getAllNCforInstructiva = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
+    try {
+        const response = await NC.findAndCountAll({ 
+            limit,
+            offset,
+            where: { id_estado_NC: 3 }, 
+            order: [['id', 'ASC']],
+            attributes: [
+                'id',
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('id_estado_NC'), 'estado'],
+                [Sequelize.col('descargoNC.analistaUsuario.usuario'), 'analista']
+            ],
+            include: [
+                {
+                    model: DescargoNC, 
+                    as: 'descargoNC',
+                    include: [
+                        {
+                            model: Usuario,
+                            as: 'analistaUsuario',
+                            attributes: []
+                        }
+                    ] ,
+                    attributes: []
+                },
+                {
+                    model: TramiteInspector, 
+                    as: 'tramiteInspector', 
+                    attributes: [], 
+                },
+            ],
+        });
+        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+    } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los Tipos de NC", data: error });
+        return false;
+    }
+};
+
+const getAllNCforAnalista = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
+    try {
+        const response = await NC.findAndCountAll({ 
+            limit,
+            offset,
+            where: { id_estado_NC: 2 }, 
+            order: [['id', 'ASC']],
+            attributes: [
+                'id',
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('digitadorUsuario.usuario'), 'digitador'],
+                [Sequelize.col('id_estado_NC'), 'estado']
+            ],
+            include: [
+                {
+                    model: Usuario, 
+                    as: 'digitadorUsuario',
+                    attributes: []
+                },
+                {
+                    model: TramiteInspector, 
+                    as: 'tramiteInspector', 
+                    attributes: [], 
+                },
+            ],
+        });
+        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+    } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los Tipos de NC", data: error });
+        return false;
+    }
+};
+
 
 
 const updateNCState = async (id, newState) => {
@@ -144,4 +218,4 @@ const updateNCState = async (id, newState) => {
 };
 
 
-module.exports = { createNC, updateNC, getNC, getAllNC , updateNCState};
+module.exports = { createNC, updateNC, getNC, getAllNC , updateNCState, getAllNCforInstructiva, getAllNCforAnalista};

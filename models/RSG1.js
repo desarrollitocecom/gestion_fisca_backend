@@ -27,7 +27,6 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: true,
-            unique:true
         },
          id_AR1: {
              type: DataTypes.UUID,

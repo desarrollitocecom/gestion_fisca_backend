@@ -22,6 +22,14 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        tipo:{
+            type:DataTypes.ENUM('ACTA'),
+            allowNull:true
+        },
+        id_evaluar_rsgnp:{
+            type:DataTypes.UUID,
+            allowNull:true,
+         },
         id_descargo_RSGNP:{
             type:DataTypes.UUID,
             references: {
@@ -47,7 +55,6 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: true,
-            unique:true
         },
         id_estado_RSGNP:{
             type: DataTypes.INTEGER,
@@ -75,7 +82,7 @@ module.exports = (sequelize) => {
         // Relación con DescargoRG
         RSGNP.belongsTo(db.RG, { foreignKey: 'id_rg', as: 'RGs' });
         RSGNP.belongsTo(db.DescargoRSGNP, { foreignKey: 'id_descargo_RSGNP', as: 'DescargoRSGNPs' });
-        RSGNP.belongsTo(db.EstadoRSGNP, { foreignKey: 'id_estado_RSGNP', as: 'estadoIFI'})
+        RSGNP.belongsTo(db.EstadoRSGNP, { foreignKey: 'id_estado_RSGNP', as: 'estadoRSGNP'})
         RSGNP.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
     };
     return RSGNP;

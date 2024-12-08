@@ -1,15 +1,13 @@
-const { IFI, DescargoIFI, RSA, RSG1, RSG2, NC ,EstadoIFI} = require("../db_connection");
+const { IFI, DescargoIFI,Usuario,  NC ,} = require("../db_connection");
+
 const { saveImage, deleteFile } = require("../utils/fileUtils");
 
 const createInformeFinalController = async ({
   nro_ifi,
   fecha,
   documento_ifi,
-  tipo,
-  id_evaluar,
   id_descargo_ifi,
   id_nc,
-  id_estado_IFI,
   id_AI1
 }) => {
   let documento_ifi_path;
@@ -19,17 +17,15 @@ const createInformeFinalController = async ({
 
     if (!checking) {
       documento_ifi_path = saveImage(documento_ifi, "ifi");
+      
       console.log(documento_ifi_path);
       
       const response = await IFI.create({
         nro_ifi,
         fecha,
         documento_ifi: documento_ifi_path,
-        tipo,
-        id_evaluar,
-        id_descargo_ifi,
         id_nc,
-        id_estado_IFI,
+        id_estado_IFI:1,
         id_AI1
       });
       return response || null;
@@ -44,8 +40,8 @@ const createInformeFinalController = async ({
   }
 };
 
-const updateInformeFinalController = async ({
-  id,
+const updateInformeFinalController = async (
+  id,{
   nro_ifi,
   fecha,
   documento_ifi,
@@ -92,13 +88,10 @@ const updateInformeFinalController = async ({
 const getAllInformeFinalController = async () => {
   try {
     const response = await IFI.findAll({
+      attributes:['id','id_AI1','documento_ifi'],
       include: [
-        { model: DescargoIFI, as: "DescargoIFIs" },
-        { model: RSA,  as: "RSA" },
-        { model: RSG1, as: "RSG1" },
-        { model: RSG2, as: "RSG2" },
-         { model: NC,   as: "NCs" },
-        { model: EstadoIFI,as:"estadoIFI"}
+         { model: NC, as:'NCs',  attributes: ['id'] },
+         { model:Usuario,as:'Usuarios',attributes:['usuario']}
       ],
     });
     return response || null;

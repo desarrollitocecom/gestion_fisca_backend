@@ -3,6 +3,7 @@ const { createMedidaComplementaria } = require('../controllers/medidaComplementa
 const { createNC } = require('../controllers/ncController');
 const fs = require('fs');
 const { startJobForDocument } = require('../jobs/DescargoJob');
+const { createDocumento, updateDocumento } = require('../controllers/documentoController');
 
 const createTramiteHandler = async (req, res) => {
     const { 
@@ -113,7 +114,7 @@ const createTramiteHandler = async (req, res) => {
                 id_medida_complementaria, 
                 id_inspector
             });
-           
+            
              if (!newTramiteInspector) {
                return res.status(400).json({ error: 'Error al crear el Trámite Inspector' });
              }
@@ -121,6 +122,29 @@ const createTramiteHandler = async (req, res) => {
             const id_tramiteInspector = newTramiteInspector.id;
 
             const newNC = await createNC({ id_tramiteInspector: newTramiteInspector.id });
+            
+            const modelNC = 'NOTIFICACIÓN DE CARGO';
+            
+            const nuevo_doc=newTramiteInspector.documento_nc
+
+            const id_nc = newNC.id;
+
+
+            const total_documentos = newTramiteInspector.documento_acta;
+            
+            const nuevoModulo = 'ACTA DE FISCALIZACIÓN';
+           
+
+                await createDocumento(modelNC, id_nc, nuevo_doc);
+
+                await updateDocumento({id_nc, total_documentos, nuevoModulo});
+
+                if(newMedidaComplementaria){
+                    const total_documentos = newMedidaComplementaria.documento_medida_complementaria;
+                    const nuevoModulo = 'Opcional';
+                    await updateDocumento({id_nc, total_documentos, nuevoModulo});
+                }
+
             if (newNC) {
                 const ncId = newNC.id; // Asegúrate de usar este ID
                 const startDate = new Date(); // Fecha actual
