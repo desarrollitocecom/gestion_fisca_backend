@@ -40,8 +40,8 @@ const updateNC = async (id, {
 
     nro_licencia_funcionamiento,
     placa_rodaje,
-    fecha_detencion,
-    fecha_notificacion,
+    fecha_deteccion_inicio,
+    fecha_deteccion_fin,
     observaciones,
     
     id_descargo_NC,
@@ -65,8 +65,8 @@ const updateNC = async (id, {
 
                 nro_licencia_funcionamiento,
                 placa_rodaje,
-                fecha_detencion,
-                fecha_notificacion,
+                fecha_deteccion_inicio,
+                fecha_deteccion_fin,
                 observaciones,
 
                 id_descargo_NC,
@@ -98,7 +98,10 @@ const getAllNC = async (page = 1, limit = 20) => {
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'inspector'],
+                [Sequelize.col('tramiteInspector.documento_nc'), 'documento_nc'],
+                [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
                 [Sequelize.col('id_estado_NC'), 'estado'],
+                
             ],
             include: [
                 {
@@ -116,6 +119,7 @@ const getAllNC = async (page = 1, limit = 20) => {
             ],
             
         });
+        
         return { totalCount: response.count, data: response.rows, currentPage: page } || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los Tipos de NC", data: error });
@@ -176,6 +180,7 @@ const getAllNCforAnalista = async (page = 1, limit = 20) => {
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('digitadorUsuario.usuario'), 'digitador'],
+                [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
                 [Sequelize.col('id_estado_NC'), 'estado']
             ],
             include: [
