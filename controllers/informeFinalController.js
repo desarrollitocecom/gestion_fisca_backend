@@ -1,4 +1,5 @@
-const { IFI, DescargoIFI,Usuario,  NC ,} = require("../db_connection");
+const { IFI, DescargoIFI,Usuario,  NC , TramiteInspector} = require("../db_connection");
+const { Sequelize } = require('sequelize');
 
 const { saveImage, deleteFile } = require("../utils/fileUtils");
 
@@ -88,10 +89,30 @@ const updateInformeFinalController = async (
 const getAllInformeFinalController = async () => {
   try {
     const response = await IFI.findAll({
-      attributes:['id','id_AI1','documento_ifi'],
+      attributes:['id','id_AI1',
+                  [Sequelize.col('NCs.id'), 'id_nc'],
+                  [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                  [Sequelize.col('Usuarios.usuario'), 'analista1'],
+      ],
+
       include: [
-         { model: NC, as:'NCs',  attributes: ['id'] },
-         { model:Usuario,as:'Usuarios',attributes:['usuario']}
+         { 
+          model: NC, 
+          as:'NCs',  
+          include: [
+            {
+              model: TramiteInspector,
+              as: 'tramiteInspector',
+              attributes: []
+            }
+          ],
+          attributes: [] 
+         },
+         { 
+          model:Usuario,
+          as:'Usuarios',
+          attributes:[]
+        },
       ],
     });
     return response || null;
