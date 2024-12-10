@@ -2,7 +2,9 @@ const {
     createInformeFinalController,
     updateInformeFinalController,
     getAllInformeFinalController,
-    getInformeFinalController
+    getInformeFinalController,
+    getAllIFIforAR1Controller,
+    getAllIFIforAnalista2Controller
 } = require('../controllers/informeFinalController');
 const fs = require('node:fs');
 const { startJobForDocument } = require('../jobs/DescargoJob');
@@ -16,7 +18,7 @@ function isValidUUID(uuid) {
     return uuidRegex.test(uuid);
 }
 const createInformeFinalHandler = async (req, res) => {
-    const { nro_ifi, fecha, id_descargo_ifi,  id_nc, id_AI1 } = req.body;
+    const { nro_ifi, fecha, id_nc, id_AI1, tipo } = req.body;
     const documento_ifi = req.files && req.files["documento_ifi"] ? req.files["documento_ifi"][0] : null;
 
     const errores = []
@@ -54,7 +56,7 @@ const createInformeFinalHandler = async (req, res) => {
 
     try {
 
-        const response = await createInformeFinalController({ nro_ifi, fecha, documento_ifi, id_descargo_ifi, id_nc, id_AI1 });
+        const response = await createInformeFinalController({ nro_ifi, fecha, documento_ifi, id_nc, id_AI1, tipo });
        
         if (!response) {
             return res.status(201).json({
@@ -226,11 +228,88 @@ const getAllNCforInstructivaHandler = async (req, res) => {
 };
 
 
+const getAllIFIforAR1Handler = async (req, res) => {  
+    const { page = 1, limit = 20 } = req.query;
+    const errores = [];
+  
+    if (isNaN(page)) errores.push("El page debe ser un número");
+    if (page <= 0) errores.push("El page debe ser mayor a 0");
+    if (isNaN(limit)) errores.push("El limit debe ser un número");
+    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
+  
+    if (errores.length > 0) {
+        return res.status(400).json({ errores });
+    }
+  
+    try {
+        const response = await getAllIFIforAR1Controller(Number(page), Number(limit));
+  
+        if (response.data.length === 0) {
+            return res.status(200).json({
+                message: 'Ya no hay más IFIs',
+                data: {
+                    data: [],
+                    totalPage: response.currentPage,
+                    totalCount: response.totalCount
+                }
+            });
+        }
+  
+        return res.status(200).json({
+            message: "IFIs obtenidos correctamente",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener IFIs para AR1:", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener los IFIs." });
+    }
+  };
+
+const getAllIFIforAnalista2Handler = async (req, res) => {  
+    const { page = 1, limit = 20 } = req.query;
+    const errores = [];
+  
+    if (isNaN(page)) errores.push("El page debe ser un número");
+    if (page <= 0) errores.push("El page debe ser mayor a 0");
+    if (isNaN(limit)) errores.push("El limit debe ser un número");
+    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
+  
+    if (errores.length > 0) {
+        return res.status(400).json({ errores });
+    }
+  
+    try {
+        const response = await getAllIFIforAnalista2Controller(Number(page), Number(limit));
+  
+        if (response.data.length === 0) {
+            return res.status(200).json({
+                message: 'Ya no hay más IFIs',
+                data: {
+                    data: [],
+                    totalPage: response.currentPage,
+                    totalCount: response.totalCount
+                }
+            });
+        }
+  
+        return res.status(200).json({
+            message: "IFIs obtenidos correctamente",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener IFIs para AR1:", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener los IFIs." });
+    }
+  };
+
+
 
 module.exports = {
     createInformeFinalHandler,
     updateInformeFinalHandler,
     getAllInformesFinalesHandler,
     getInformeFinalHandler,
-    getAllNCforInstructivaHandler
+    getAllNCforInstructivaHandler,
+    getAllIFIforAR1Handler,
+    getAllIFIforAnalista2Handler
 }
