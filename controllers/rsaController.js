@@ -41,7 +41,7 @@ const getAllRSAforAR3Controller = async (page = 1, limit = 20) => {
                 [Sequelize.col('NCs.id'), 'id_nc'],
                 [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                [Sequelize.col('Usuarios.usuario'), 'area_instructiva1'],
+                [Sequelize.col('Usuarios.usuario'), 'area_instructiva3'],
                 'tipo'
             ],
             include: [
