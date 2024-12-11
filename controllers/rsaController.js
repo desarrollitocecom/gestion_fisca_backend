@@ -82,7 +82,8 @@ const getAllRsaController = async () => {
     try {
       const response = await RSA.findAll({
         where: { tipo: null }, 
-        attributes:['id','id_AR2',
+        attributes: ['id', 'id_AR2', 'createdAt',
+
                     [Sequelize.col('NCs.id'), 'id_nc'],
                     [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
                     [Sequelize.col('Usuarios.usuario'), 'analista3'],
@@ -106,6 +107,7 @@ const getAllRsaController = async () => {
             as:'Usuarios',
             attributes:[]
           },
+          
         ],
       });
       return response || null;
