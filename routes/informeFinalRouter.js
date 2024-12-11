@@ -10,12 +10,14 @@ const {
     getAllIFIforAR1Handler,
     getAllIFIforAnalista2Handler,
     getAllIFIforAR2Handler,
-    getAllIFIforAR2ofRSAHandler
+    getAllIFIforAR2ofRSAHandler,
+    getAllIFIforAreaResolutiva2Handler
 }
  = require('../handlers/informeFinalHandler');
 
 const permisoAutorizacion = require("../checkers/roleAuth");
 
+router.get('/ifi_for_AreaResolutiva2',permisoAutorizacion(["all_system_access", "read_nc"]), getAllIFIforAreaResolutiva2Handler);
 router.get('/ifi_for_rsg2',permisoAutorizacion(["all_system_access", "read_nc"]), getAllIFIforAR2Handler);
 router.get('/ifi_for_rsa',permisoAutorizacion(["all_system_access", "read_nc"]), getAllIFIforAR2ofRSAHandler);
 router.get('/ifi_for_rsg1',permisoAutorizacion(["all_system_access", "read_nc"]), getAllIFIforAR1Handler);
