@@ -9,7 +9,7 @@ const {
     getAllNCforInstructivaHandler,
     getAllIFIforAR1Handler,
     getAllIFIforAnalista2Handler,
-    getAllIFIforAR2Handler,
+    // getAllIFIforAR2Handler,
     // getAllIFIforAR2ofRSAHandler,
     getAllIFIforAreaResolutiva2Handler
 }
