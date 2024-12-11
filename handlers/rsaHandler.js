@@ -23,7 +23,7 @@ function isValidUUID(uuid) {
 const createRsaHandler = async (req, res) => {
     const { id } = req.params;
 
-    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo1, id_evaluar_rsa, id_descargo_RSA, id_nc, id_AR2 } = req.body;
+    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo1, id_evaluar_rsa, id_descargo_RSA, id_nc, id_AR2,tipo } = req.body;
 
     const documento_RSA = req.files && req.files["documento_RSA"] ? req.files["documento_RSA"][0] : null;
 
@@ -123,7 +123,7 @@ const createRsaHandler = async (req, res) => {
 
         const id_evaluar = createRsa.id;
 
-        const response = await updateInformeFinalController(id, { id_evaluar})
+        const response = await updateInformeFinalController(id, { id_evaluar,tipo})
 
         const startDate = new Date();
 
