@@ -83,9 +83,7 @@ const createRSG2Handler = async (req, res) => {
        
         const id_evaluar = createRsg2.id;
  
-        const tipo = "RESOLUCION SUBGERENCIAL 2";
-
-        const response = await updateInformeFinalController(id, { id_evaluar, tipo })
+        const response = await updateInformeFinalController(id, { id_evaluar })
 
         if (!response) {
             return res.status(201).json({
@@ -95,7 +93,7 @@ const createRSG2Handler = async (req, res) => {
         }
         const total_documentos = createRsg2.documento;
 
-        const nuevoModulo = "RSG2"
+        const nuevoModulo = "RESOLUCION SUBGERENCIAL 2"
 
         await updateDocumento({ id_nc, total_documentos, nuevoModulo });
         return res.status(200).json({
