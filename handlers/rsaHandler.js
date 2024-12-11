@@ -123,9 +123,7 @@ const createRsaHandler = async (req, res) => {
 
         const id_evaluar = createRsa.id;
 
-        const tipo = "RSA";
-
-        const response = await updateInformeFinalController(id, { id_evaluar, tipo })
+        const response = await updateInformeFinalController(id, { id_evaluar})
 
         const startDate = new Date();
 
