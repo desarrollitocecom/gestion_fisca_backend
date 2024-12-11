@@ -37,6 +37,7 @@ const updateNC = async (id, {
     id_administrado,
     id_entidad,
     id_infraccion,
+    lugar_infraccion,
 
     nro_licencia_funcionamiento,
     placa_rodaje,
@@ -62,6 +63,7 @@ const updateNC = async (id, {
                 id_administrado,
                 id_entidad,
                 id_infraccion,
+                lugar_infraccion,
 
                 nro_licencia_funcionamiento,
                 placa_rodaje,

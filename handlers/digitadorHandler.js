@@ -51,6 +51,7 @@ const updateNCHandler = async (req, res) => {
             dni_test1,
             nombre_test2,
             dni_test2,
+
             puerta,
             nro_pisos,
             nro_suministro,
@@ -77,44 +78,81 @@ const updateNCHandler = async (req, res) => {
         if (nro_documento !== undefined && nro_documento !== null && (!/^(10|20)\d{9}$/.test(nro_documento))) {
             errors.push('El número de Documento debe ser un número válido de 11 dígitos y comenzar con 10 o 20');
         }
+
+        if(!nro_licencia_funcionamiento){
+            errors.push('El número de Documento debe ser obligatorio');
+        }
              
-        
-        if (nro_licencia_funcionamiento !== undefined && nro_licencia_funcionamiento !== null && (isNaN(nro_licencia_funcionamiento))) {
-            errors.push('El Numero de licencia debe ser un número válido');
+        if (nro_licencia_funcionamiento !== undefined && nro_licencia_funcionamiento !== null && (!/^\d{5}-\d{2}$/.test(nro_licencia_funcionamiento))) {
+            errors.push('El campo licencia debe tener el formato *****-**, 5 dígitos, guion, 2 dígitos');
         }
 
-        if (id_infraccion !== undefined && id_infraccion !== null && (isNaN(id_infraccion))) {
-            errors.push('La infracción debe ser un número válido');
+        if(!nombre_entidad){
+            errors.push('La entidad debe ser obligatorio');
         }
 
-        if (placa_rodaje !== undefined && placa_rodaje !== null && (isNaN(placa_rodaje))) {
-            errors.push('La placa debe ser un número válido');
+        if(!domicilio_entidad){
+            errors.push('El domicilio debe ser obligatorio');
         }
 
-        if(!id_digitador){
-            errors.push('El digitador es obligatorio');
+        if(!distrito_entidad){
+            errors.push('El distrito debe ser obligatorio');
+        }
+
+        if(!giro_entidad){
+            errors.push('El giro debe ser obligatorio');
+        }
+
+        if(!id_infraccion){
+            errors.push('La infracción debe ser obligatoria');
+        }
+
+        if(!lugar_infraccion){
+            errors.push('El lugar de infracción debe ser obligatorio');
+        }
+
+        if(placa_rodaje){
+            if (placa_rodaje !== undefined && placa_rodaje !== null && (!/^[a-zA-Z0-9]{3}-[a-zA-Z0-9]{3}$|^[a-zA-Z0-9]{4}-[a-zA-Z0-9]{2}$/.test(placa_rodaje))) {
+                errors.push('El campo placa debe tener el formato 123-456 o 1234-56, permitiendo letras y números');
+            }           
         }
 
         const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
 
+        if(!fecha_deteccion_inicio){
+            errors.push('La fecha de inicio debe ser obligatorio');
+        }
+
         if(fecha_deteccion_inicio){
             if (!fechaRegex.test(fecha_deteccion_inicio)) {
-                errors.push('El formato de la fecha debe ser YYYY-MM-DD');
+                errors.push('El formato de la fecha de inicio debe ser YYYY-MM-DD');
             } else {
         
                 const parsedFecha = new Date(fecha_deteccion_inicio);
         
                 if (isNaN(parsedFecha.getTime())) {
         
-                    errors.push('Debe ser una fecha válida');
+                    errors.push('Debe ser una fecha de inicio válida');
         
                 }
             }
         }
 
+        if(!hora_deteccion_inicio){
+            errors.push('La hora de inicio debe ser obligatorio');
+        }
+
+        if (hora_deteccion_inicio !== undefined && hora_deteccion_inicio !== null && (!/^([01]\d|2[0-3]):[0-5]\d$/.test(hora_deteccion_inicio))) {
+            errors.push('La hora de inicio debe estar en el formato HH:MM y ser una hora válida en formato 24 horas');
+        }
+
+        if(!fecha_deteccion_fin){
+            errors.push('La fecha de fin debe ser obligatorio');
+        }
+
         if(fecha_deteccion_fin){
             if (!fechaRegex.test(fecha_deteccion_fin)) {
-                errors.push('El formato de la fecha debe ser YYYY-MM-DD');
+                errors.push('El formato de la fecha fin debe ser YYYY-MM-DD');
             } else {
         
                 const parsedFecha = new Date(fecha_deteccion_fin);
@@ -127,32 +165,95 @@ const updateNCHandler = async (req, res) => {
             }
         }
 
-
-        if (dni_infractor !== undefined && dni_infractor !== null && (isNaN(dni_infractor))) {
-            errors.push('El DNI del infractor debe ser un número válido');
+        if(!hora_deteccion_fin){
+            errors.push('La hora de fin debe ser obligatorio');
         }
 
-        if (nro_documento !== undefined && nro_documento !== null && (!/^\d{11}$/.test(nro_documento))) {
-            errors.push('El número de documento debe ser un número válido de 11 dígitos');
-        }
-        
-
-
-        if (dia !== undefined && dia !== null && (isNaN(dia))) {
-            errors.push('El DNI del infractor debe ser un número válido');
+        if (hora_deteccion_fin !== undefined && hora_deteccion_fin !== null && (!/^([01]\d|2[0-3]):[0-5]\d$/.test(hora_deteccion_fin))) {
+            errors.push('La hora de fin debe estar en el formato HH:MM y ser una hora válida en formato 24 horas');
         }
 
-        if (anio !== undefined && anio !== null && (isNaN(anio))) {
-            errors.push('El año debe ser un número válido');
+        if(!nombres_infractor){
+            errors.push('El nombre del infractor es obligatorio');
         }
 
-        if (dni_test1 !== undefined && dni_test1 !== null && (isNaN(dni_test1))) {
-            errors.push('El año debe ser un número válido');
+        if(!dni_infractor){
+            errors.push('El dni del infractor es obligatorio');
         }
 
-        if (dni_test2 !== undefined && dni_test2 !== null && (isNaN(dni_test2))) {
-            errors.push('El año debe ser un número válido');
+        if(!relacion_infractor){
+            errors.push('La relacion del infractor es obligatorio');
         }
+
+        if(!nro_nc){
+            errors.push('El nro de NC de la CN es obligatorio');
+        }
+
+        if(!hora){
+            errors.push('La hora de la CN es obligatorio');
+        }
+
+        if(!dia){
+            errors.push('El dia de la CN es obligatorio');
+        }
+
+        if(!mes){
+            errors.push('El mes de la CN es obligatorio');
+        }
+
+        if(!anio){
+            errors.push('El año de la CN es obligatorio');
+        }
+
+        if(!lugar){
+            errors.push('El lugar de la CN es obligatorio');
+        }
+
+        if(!caracteristicas){
+            errors.push('Las caracteristicas de la CN son obligatorio');
+        }
+
+        if(!nombre_test1){
+            errors.push('El nombre del testigo 1 es obligatorio');
+        }
+
+        if(!dni_test1){
+            errors.push('El DNI del testigo 1 es obligatorio');
+        }
+
+        if (dni_test1 !== undefined && dni_test1 !== null && (!/^\d{8}$/.test(dni_test1))) {
+            errors.push('El DNI del testigo 1 debe tener 8 digitos');
+        }
+
+        if(!nombre_test2){
+            errors.push('El nombre del testigo 2 es obligatorio');
+        }
+
+        if(!dni_test2){
+            errors.push('El DNI del testigo 1 es obligatorio');
+        }
+
+        if (dni_test2 !== undefined && dni_test2 !== null && (!/^\d{8}$/.test(dni_test2))) {
+            errors.push('El DNI del testigo 1 debe tener 8 digitos');
+        }
+
+
+        if(!puerta){
+            errors.push('La puerta de la CN es obligatorio');
+        }
+
+        if(!nro_pisos){
+            errors.push('Los nro de pisos de la CN es obligatorio');
+        }
+
+        if(!observaciones){
+            errors.push('Las observaciones de la CN son obligatorias');
+        }
+
+        if(!id_digitador){
+            errors.push('El id del digitador es obligatorio');
+        }
+
         
         if (errors.length > 0) {
             return res.status(400).json({

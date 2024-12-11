@@ -57,7 +57,7 @@ module.exports=(sequelize)=>{
         },
 
         placa_rodaje:{
-            type:DataTypes.INTEGER,
+            type:DataTypes.STRING,
             allowNull:true
         },
  
