@@ -80,7 +80,7 @@ const getRsaController = async (id) => {
 
 const getAllRsaController = async () => {
     try {
-      const response = await IFI.findAll({
+      const response = await RSA.findAll({
         where: { tipo: null }, 
         attributes:['id','id_AI1',
                     [Sequelize.col('NCs.id'), 'id_nc'],
@@ -110,7 +110,7 @@ const getAllRsaController = async () => {
       });
       return response || null;
     } catch (error) {
-      console.error("Error al traer todos los Informes Finales", error);
+      console.error("Error al traer todos los RSA", error);
       return false;
     }
   };
