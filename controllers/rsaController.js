@@ -1,6 +1,6 @@
 const { RSA , Usuario,  NC , TramiteInspector} = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
 const {saveImage,deleteFile}=require('../utils/fileUtils')
-
+const { Sequelize } = require('sequelize');
 const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo1, id_evaluar_rsa, id_descargo_RSA,id_nc,id_AR2}) => {
     let documento_path;
     try {
@@ -82,7 +82,7 @@ const getAllRsaController = async () => {
     try {
       const response = await RSA.findAll({
         where: { tipo: null }, 
-        attributes:['id','id_AI1',
+        attributes:['id','id_AR2',
                     [Sequelize.col('NCs.id'), 'id_nc'],
                     [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
                     [Sequelize.col('Usuarios.usuario'), 'analista3'],
