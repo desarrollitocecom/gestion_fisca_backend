@@ -18,18 +18,18 @@ Permiso.belongsToMany(Rol, { through: "Roles_Permisos", foreignKey: "id_permiso"
 
 // Roles y permisos a crear
 const rolesPermisos = [
-  { nombre: "Area Instructiva", permisos: ["create_ifi"] },
-  { nombre: "Analista 2", permisos: ["create_descargo_ifi", "read_ifi"] },
-  { nombre: "Area Resolutiva 1", permisos: ["create_rsa", "read_ifi", "create_rsg2"] },
-  { nombre: "Area Resolutiva 2", permisos: ["create_rsa", "read_ifi", "create_rsg2"] },
-  { nombre: "Analista 3", permisos: ["create_descargo_rsa", "read_rsa"] },
-  { nombre: "Area Resolutiva 3", permisos: ["create_rsgp", "read_rsa", "create_rsgnp"] },
-  { nombre: "Analista 4", permisos: ["create_descargo_rsgnp", "read_rsgnp"] },
-  { nombre: "Gerente", permisos: ["create_rg", "read_rsgnp"] },
-  { nombre: "Analista 5", permisos: ["read_rsgnp", "read_rsa", "read_rg", "create_ARSA", "create_ARSGNP", "create_ARG"] },
+  { nombre: "Area Instructiva", permisos: ["create_AInstructiva"] },
+  { nombre: "Analista 2", permisos: ["create_Analista2", "read_Analista2"] },
+  { nombre: "Area Resolutiva 1", permisos: ["create_AResolutiva1", "read_AResolutiva1"] },
+  { nombre: "Area Resolutiva 2", permisos: ["create_AResolutiva2", "read_AResolutiva2"] },
+  { nombre: "Analista 3", permisos: ["create_Analista3", "read_Analista3"] },
+  { nombre: "Area Resolutiva 3", permisos: ["create_AResolutiva3", "read_AResolutiva3"] },
+  { nombre: "Analista 4", permisos: ["create_Analista4", "read_Analista4"] },
+  { nombre: "Gerente", permisos: ["create_Gerente", "read_Gerente"] },
+  { nombre: "Analista 5", permisos: ["read_Analista5", "create_Analista5"] },
   { nombre: "Tramite Inspector", permisos: ["read_mc"] },
-  { nombre: "Digitador", permisos: ["read_nc", "update_nc"] },
-  { nombre: "Analista 1", permisos: ["create_descargo_nc", "update_nc"] },
+  { nombre: "Digitador", permisos: ["read_Digitador", "update_Digitador"] },
+  { nombre: "Analista 1", permisos: ["create_Analista1", "update_Analista1","read_Analista1"] },
   { nombre: "Administrador", permisos: ["all_system_access"] },
 ];
 

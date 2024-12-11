@@ -8,7 +8,7 @@ const {
 const permisoAutorizacion = require("../checkers/roleAuth");
 
 
-router.patch('/:id',permisoAutorizacion(["all_system_access", "create_descargo_rsa"]),  uploadDRSA,createDescargoRsaHandler);
+router.patch('/:id',permisoAutorizacion(["all_system_access", "create_Analista3"]),  uploadDRSA,createDescargoRsaHandler);
 
 
 module.exports = router;

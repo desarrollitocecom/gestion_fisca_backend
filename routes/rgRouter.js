@@ -10,9 +10,9 @@ const {
 }=require('../handlers/rgHandler');
 const permisoAutorizacion = require("../checkers/roleAuth");
 
-router.get("/",permisoAutorizacion(["all_system_access", "read_rg"]),getAllRGHandler);
-router.get('/:id',permisoAutorizacion(["all_system_access", "read_rg"]),getRGHandler)
-router.patch("/:id",permisoAutorizacion(["all_system_access", "create_rg"]),uploadRG,createRGHandler);
+router.get("/",permisoAutorizacion(["all_system_access", "read_Analista5"]),getAllRGHandler);
+router.get('/:id',permisoAutorizacion(["all_system_access", "read_Analista5"]),getRGHandler)
+router.patch("/:id",permisoAutorizacion(["all_system_access", "create_Gerente"]),uploadRG,createRGHandler);
 
 
 module.exports = router;
