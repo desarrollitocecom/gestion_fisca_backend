@@ -15,7 +15,7 @@ function isValidUUID(uuid) {
 const createDescargoRsaHandler = async (req, res) => {
     const {id}=req.params;
     
-    const { nro_descargo, fecha_descargo, id_nc, id_analista_3 } = req.body;
+    const { nro_descargo, fecha_descargo, id_nc, id_analista_3 ,tipo} = req.body;
 
     const documento_DRSA = req.files && req.files["documento_DRSA"] ? req.files["documento_DRSA"][0] : null;
 
@@ -107,7 +107,7 @@ const createDescargoRsaHandler = async (req, res) => {
 
         const id_estado_RSA=3;
 
-        const response=await updateRsaController(id,{id_descargo_RSA,id_estado_RSA})
+        const response=await updateRsaController(id,{id_descargo_RSA,id_estado_RSA,tipo})
 
         if (!response) {
             return res.status(400).json({
