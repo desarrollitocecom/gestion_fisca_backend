@@ -66,9 +66,10 @@ const updateNCHandler = async (req, res) => {
             errors.push('El Tipo de Documento debe ser un número válido');
         }
 
-        if (nro_documento !== undefined && nro_documento !== null && (isNaN(nro_documento))) {
-            errors.push('El numero de documento debe ser un número válido');
+        if (nro_documento !== undefined && nro_documento !== null && (!/^(10|20)\d{9}$/.test(nro_documento))) {
+            errors.push('El número de documento debe ser un número válido de 11 dígitos y comenzar con 10 o 20');
         }
+             
 
         if (nro_licencia_funcionamiento !== undefined && nro_licencia_funcionamiento !== null && (isNaN(nro_licencia_funcionamiento))) {
             errors.push('El Numero de licencia debe ser un número válido');
