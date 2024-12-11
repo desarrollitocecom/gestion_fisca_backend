@@ -17,7 +17,7 @@ function isValidUUID(uuid) {
 const createRSG2Handler = async (req, res) => {
     const { id } = req.params;
 
-    const { nro_resolucion2, fecha_resolucion, id_nc, id_AR2 } = req.body;
+    const { nro_resolucion2, fecha_resolucion, id_nc, id_AR2 ,tipo} = req.body;
 
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
 
@@ -83,7 +83,7 @@ const createRSG2Handler = async (req, res) => {
        
         const id_evaluar = createRsg2.id;
  
-        const response = await updateInformeFinalController(id, { id_evaluar })
+        const response = await updateInformeFinalController(id, { id_evaluar,tipo })
 
         if (!response) {
             return res.status(201).json({
