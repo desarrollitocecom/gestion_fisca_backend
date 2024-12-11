@@ -1,4 +1,4 @@
-const { RSA , EstadoRSA} = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
+const { RSA , Usuario,  NC , TramiteInspector} = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
 const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo1, id_evaluar_rsa, id_descargo_RSA,id_nc,id_AR2}) => {
@@ -77,20 +77,43 @@ const getRsaController = async (id) => {
     }
 };
 // Función para obtener todas las instancias de RSA
+
 const getAllRsaController = async () => {
     try {
-        const rsas = await RSA.findAll(
-           { include: [
-                
-                { model: EstadoRSA , as:"estadoRSA"}
-              ],}
-        );
-        return rsas || null;
+      const response = await IFI.findAll({
+        where: { tipo: null }, 
+        attributes:['id','id_AI1',
+                    [Sequelize.col('NCs.id'), 'id_nc'],
+                    [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                    [Sequelize.col('Usuarios.usuario'), 'analista3'],
+        ],
+  
+        include: [
+           { 
+            model: NC, 
+            as:'NCs',  
+            include: [
+              {
+                model: TramiteInspector,
+                as: 'tramiteInspector',
+                attributes: []
+              }
+            ],
+            attributes: [] 
+           },
+           { 
+            model:Usuario,
+            as:'Usuarios',
+            attributes:[]
+          },
+        ],
+      });
+      return response || null;
     } catch (error) {
-        console.error('Error al obtener todas las RSAs:', error);
-        return false;
+      console.error("Error al traer todos los Informes Finales", error);
+      return false;
     }
-};
+  };
 const updateinRsaController = async (uuid, tipo, id_evaluar_rsa) => {
     const Rsa = await RSA.findByPk(uuid);
     if (!Rsa) {
