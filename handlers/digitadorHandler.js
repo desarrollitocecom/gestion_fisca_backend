@@ -62,15 +62,23 @@ const updateNCHandler = async (req, res) => {
 
         const errors = [];
 
+        if(!id_tipoDocumento){
+            errors.push('El Tipo de Documento debe ser obligatorio');
+        }
+
         if (id_tipoDocumento !== undefined && id_tipoDocumento !== null && (isNaN(id_tipoDocumento))) {
-            errors.push('El Tipo de Documento debe ser un número válido');
+            errors.push('El Tipo de Documento debe ser válido');
+        }
+
+        if(!nro_documento){
+            errors.push('El número de Documento debe ser obligatorio');
         }
 
         if (nro_documento !== undefined && nro_documento !== null && (!/^(10|20)\d{9}$/.test(nro_documento))) {
-            errors.push('El número de documento debe ser un número válido de 11 dígitos y comenzar con 10 o 20');
+            errors.push('El número de Documento debe ser un número válido de 11 dígitos y comenzar con 10 o 20');
         }
              
-
+        
         if (nro_licencia_funcionamiento !== undefined && nro_licencia_funcionamiento !== null && (isNaN(nro_licencia_funcionamiento))) {
             errors.push('El Numero de licencia debe ser un número válido');
         }
@@ -123,6 +131,11 @@ const updateNCHandler = async (req, res) => {
         if (dni_infractor !== undefined && dni_infractor !== null && (isNaN(dni_infractor))) {
             errors.push('El DNI del infractor debe ser un número válido');
         }
+
+        if (nro_documento !== undefined && nro_documento !== null && (!/^\d{11}$/.test(nro_documento))) {
+            errors.push('El número de documento debe ser un número válido de 11 dígitos');
+        }
+        
 
 
         if (dia !== undefined && dia !== null && (isNaN(dia))) {
