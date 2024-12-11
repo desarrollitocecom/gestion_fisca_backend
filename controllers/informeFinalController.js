@@ -196,7 +196,90 @@ const getAllIFIforAR1Controller = async (page = 1, limit = 20) => {
       return false;
   }
 };
-
+const getAllIFIforAR2ofRSAController = async (page = 1, limit = 20) => {
+  const offset = (page - 1) * limit;
+  try {
+      const response = await IFI.findAndCountAll({ 
+          limit,
+          offset,
+          where: { tipo: 'RSA' }, 
+          order: [['id', 'ASC']],
+          attributes: [
+              'id',
+              [Sequelize.col('NCs.id'), 'id_nc'],
+              [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+              [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+              [Sequelize.col('Usuarios.usuario'), 'area_instructiva1'],
+              'tipo'
+          ],
+          include: [
+              {
+                  model: NC, 
+                  as: 'NCs',
+                  include: [
+                    {
+                      model: TramiteInspector, 
+                      as: 'tramiteInspector', 
+                      attributes: [], 
+                    }
+                  ],
+                  attributes: []
+              },
+              {
+                model: Usuario, 
+                as: 'Usuarios',
+                attributes: []
+            },
+          ],
+      });
+      return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+  } catch (error) {
+      console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
+      return false;
+  }
+};
+const getAllIFIforAR2Controller = async (page = 1, limit = 20) => {
+  const offset = (page - 1) * limit;
+  try {
+      const response = await IFI.findAndCountAll({ 
+          limit,
+          offset,
+          where: { tipo: 'RSG2' }, 
+          order: [['id', 'ASC']],
+          attributes: [
+              'id',
+              [Sequelize.col('NCs.id'), 'id_nc'],
+              [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+              [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+              [Sequelize.col('Usuarios.usuario'), 'area_instructiva1'],
+              'tipo'
+          ],
+          include: [
+              {
+                  model: NC, 
+                  as: 'NCs',
+                  include: [
+                    {
+                      model: TramiteInspector, 
+                      as: 'tramiteInspector', 
+                      attributes: [], 
+                    }
+                  ],
+                  attributes: []
+              },
+              {
+                model: Usuario, 
+                as: 'Usuarios',
+                attributes: []
+            },
+          ],
+      });
+      return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+  } catch (error) {
+      console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
+      return false;
+  }
+};
 const getAllIFIforAnalista2Controller = async (page = 1, limit = 20) => {
   const offset = (page - 1) * limit;
   try {
@@ -249,5 +332,7 @@ module.exports = {
   getInformeFinalController,
   updateinIfiController,
   getAllIFIforAR1Controller,
-  getAllIFIforAnalista2Controller
+  getAllIFIforAnalista2Controller,
+  getAllIFIforAR2ofRSAController,
+  getAllIFIforAR2Controller
 };
