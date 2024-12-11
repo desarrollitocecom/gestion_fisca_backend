@@ -42,9 +42,14 @@ const updateNC = async (id, {
     nro_licencia_funcionamiento,
     placa_rodaje,
     fecha_deteccion_inicio,
+    hora_deteccion_inicio,
     fecha_deteccion_fin,
-    observaciones,
-    
+    hora_deteccion_fin,
+
+    nombres_infractor,
+    dni_infractor,
+    relacion_infractor,
+   
     id_descargo_NC,
     id_const_noti,
     id_digitador,
@@ -68,8 +73,13 @@ const updateNC = async (id, {
                 nro_licencia_funcionamiento,
                 placa_rodaje,
                 fecha_deteccion_inicio,
+                hora_deteccion_inicio,
                 fecha_deteccion_fin,
-                observaciones,
+                hora_deteccion_fin,
+
+                nombres_infractor,
+                dni_infractor,
+                relacion_infractor,
 
                 id_descargo_NC,
                 id_const_noti,
