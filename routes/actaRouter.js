@@ -8,7 +8,7 @@ const {
 }= require('../handlers/actaHandler');
 const permisoAutorizacion = require("../checkers/roleAuth");
 
-router.patch('/inRSA/:id',permisoAutorizacion(["all_system_access", "create_ARSA"]) ,uploadActa, createActainRSAHandler);
-router.patch('/inRSGNP/:id',permisoAutorizacion(["all_system_access", "create_ARSGNP"]), uploadActa, createActainRsgnpHandler);
-router.patch('/inRG/:id', permisoAutorizacion(["all_system_access", "create_ARG"]),uploadActa, createActainRGHandler);
+router.patch('/inRSA/:id',permisoAutorizacion(["all_system_access", "create_Analista5"]) ,uploadActa, createActainRSAHandler);
+router.patch('/inRSGNP/:id',permisoAutorizacion(["all_system_access", "create_Analista5"]), uploadActa, createActainRsgnpHandler);
+router.patch('/inRG/:id', permisoAutorizacion(["all_system_access", "create_Analista5"]),uploadActa, createActainRGHandler);
 module.exports = router;

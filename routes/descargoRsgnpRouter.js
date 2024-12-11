@@ -8,6 +8,6 @@ const {
 const permisoAutorizacion = require("../checkers/roleAuth");
 
 
-router.patch('/:id',permisoAutorizacion(["all_system_access", "create_descargo_rsgnp"]),  uploadDRSGNP,createDescargoRSGNPHandler);
+router.patch('/:id',permisoAutorizacion(["all_system_access", "create_Analista4"]),  uploadDRSGNP,createDescargoRSGNPHandler);
 
 module.exports = router;

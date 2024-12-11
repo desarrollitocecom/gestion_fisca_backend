@@ -8,6 +8,6 @@ const {createRSG1Handler,
 const permisoAutorizacion = require("../checkers/roleAuth");
 
 
-router.patch("/:id",permisoAutorizacion(["all_system_access", "create_rsg1"]),uploadRSG1,createRSG1Handler);
+router.patch("/:id",permisoAutorizacion(["all_system_access", "create_AResolutiva1"]),uploadRSG1,createRSG1Handler);
 
 module.exports = router;
