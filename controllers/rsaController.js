@@ -28,7 +28,48 @@ const createRsaController = async ({nro_rsa, fecha_rsa, fecha_notificacion, docu
         return false
     }
 };
-
+const getAllRSAforAR3Controller = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
+    try {
+        const response = await RSA.findAndCountAll({ 
+            limit,
+            offset,
+            where: { tipo: 'AR3' }, 
+            order: [['id', 'ASC']],
+            attributes: [
+                'id',
+                [Sequelize.col('NCs.id'), 'id_nc'],
+                [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('Usuarios.usuario'), 'area_instructiva1'],
+                'tipo'
+            ],
+            include: [
+                {
+                    model: NC, 
+                    as: 'NCs',
+                    include: [
+                      {
+                        model: TramiteInspector, 
+                        as: 'tramiteInspector', 
+                        attributes: [], 
+                      }
+                    ],
+                    attributes: []
+                },
+                {
+                  model: Usuario, 
+                  as: 'Usuarios',
+                  attributes: []
+              },
+            ],
+        });
+        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+    } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
+        return false;
+    }
+  };
 const updateRsaController = async (id,{ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA,id_AR2}) => {
    
     let documento_path;
@@ -133,5 +174,6 @@ module.exports = {
     updateRsaController,
     getRsaController,
     getAllRsaController,
+    getAllRSAforAR3Controller,
     updateinRsaController
 };
