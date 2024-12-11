@@ -91,7 +91,7 @@ const createRSG1Handler = async (req, res) => {
         await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 
         if (!response) {
-            return res.status(404).json({
+            return res.status(400).json({
                 message: 'Error al crear el RGS1 y al asociar',
                 data: []
             });
