@@ -16,7 +16,7 @@ const Permiso = require("../models/Permiso")(sequelize);
 
 
 const permisos = [
-  "create_Analista5",
+"create_Analista5",
 "create_Analista1",
 "create_Analista2",
 "create_Analista3",
@@ -52,7 +52,7 @@ const permisos = [
 "create_AInstructiva",
 "read_AResolutiva1",
 "read_AResolutiva2",
-"read_mc",
+"read_Inspector",
 "create_mc",
 "delete_mc",
 "update_mc",
