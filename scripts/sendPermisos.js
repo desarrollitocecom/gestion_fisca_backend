@@ -52,6 +52,7 @@ const permisos = [
 "create_AInstructiva",
 "read_AResolutiva1",
 "read_AResolutiva2",
+"create_AResolutiva2",
 "read_Inspector",
 "create_mc",
 "delete_mc",
@@ -77,6 +78,11 @@ const permisos = [
 "update_di",
 "read_usuarios",
 "delete_usuarios",
+"read_Analista2", 
+"create_AResolutiva1", 
+"read_Analista3", 
+"read_Analista4", 
+"read_Analista1",
 "all_system_access"
 
 
