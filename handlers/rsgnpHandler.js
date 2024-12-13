@@ -205,7 +205,7 @@ const getAllRsgnpHandler = async (req, res) => {
         const rsgnps = await getAllRsgnpController(Number(page), Number(limit));
         if (rsgnps.data.length === 0) {
             return res.status(200).json({
-                message: 'Ya no hay más IFIs',
+                message: 'Ya no hay más RSGNPs',
                 data: {
                     data: [],
                     totalPage: rsgnps.currentPage,
