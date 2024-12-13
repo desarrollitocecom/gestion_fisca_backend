@@ -82,7 +82,7 @@ const getAllRSGNPforAN5Controller = async () => {
                 'tipo',
                 [Sequelize.col('NCs.id'), 'id_nc'],
                 [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                [Sequelize.col('Usuarios.usuario'), 'analista3'],   
+                [Sequelize.col('Usuarios.usuario'), 'analista4'],   
             ],
             include: [
                 {

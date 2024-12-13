@@ -65,26 +65,26 @@ function validateActaData(req) {
 }
 const getAllRsaRgRsgnp = async (req, res) => {
     try {
-        // Ejecuta todas las promesas en paralelo
+        
         const [rsaData, rsgnpData, rgData] = await Promise.all([
             getAllRSAforAN5Controller(),
             getAllRSGNPforAN5Controller(),
             getAllRGforAN5Controller()
         ]);
 
-        // Combina los resultados en un solo objeto
+       
         const result = [
-            ...rsaData,      // Incluye los elementos de rsaData
-            ...rsgnpData,    // Incluye los elementos de rsgnpData
-            ...rgData        // Incluye los elementos de rgData
+            ...rsaData,     
+            ...rsgnpData,    
+            ...rgData        
         ];
        if(!result){
         return res.status(404).json({message:'Error al traere los AN5',data:[]});
        }
-        // Envía la respuesta con los datos combinados
+        
         return  res.status(200).json({messa:"Estas son las pertenecientes al ACTA",data:result});
     } catch (error) {
-        // Manejo de errores
+       
         console.error('Error al obtener los datos:', error);
        return res.status(500).json({ message: 'Error al obtener los datos', error: error.message });
     }
