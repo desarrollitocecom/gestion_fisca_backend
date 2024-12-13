@@ -82,18 +82,16 @@ const createRSG1Handler = async (req, res) => {
        
         const id_evaluar = createRsg1.id;
 
-        const tipo = "RESOLUCION SUBGERENCIAL 1";
-
-        const response = await updateInformeFinalController(id, { id_evaluar, tipo })
+        const response = await updateInformeFinalController(id, { id_evaluar })
 
         const total_documentos = createRsg1.documento;
 
-        const nuevoModulo = "RSG1"
+        const nuevoModulo = "RESOLUCION SUBGERENCIAL 1"
 
         await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 
         if (!response) {
-            return res.status(201).json({
+            return res.status(400).json({
                 message: 'Error al crear el RGS1 y al asociar',
                 data: []
             });

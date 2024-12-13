@@ -18,7 +18,7 @@ function isValidUUID(uuid) {
 const createRsgpHandler = async (req, res) => {
     const {id}=req.params;
  
-    const { nro_rsg, fecha_rsg, id_nc, id_AR3 } = req.body;
+    const { nro_rsg, fecha_rsg, id_nc, id_AR3 ,tipo} = req.body;
 
     const documento_RSGP = req.files && req.files["documento_RSGP"] ? req.files["documento_RSGP"][0] : null;
 
@@ -106,7 +106,7 @@ const createRsgpHandler = async (req, res) => {
 
         const id_evaluar_rsa = newRsgp.id;
 
-        const tipo = "RSGP";
+  
 
         const response = await updateRsaController(id, { id_evaluar_rsa, tipo })
 

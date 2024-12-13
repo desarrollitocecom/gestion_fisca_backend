@@ -1,5 +1,6 @@
-const { RSGNP } = require("../db_connection");
+const { RSGNP , Usuario,  NC , TramiteInspector } = require("../db_connection");
 const {saveImage,deleteFile}=require('../utils/fileUtils')
+const { Sequelize } = require('sequelize');
 
 const createRsgnpController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg,id_nc ,id_AR3}) => {
 
@@ -80,7 +81,36 @@ const getRsgnpController = async (id) => {
 
 const getAllRsgnpController = async () => {
     try {
-        const rgsnps = await RSGNP.findAll();
+        const rgsnps = await RSGNP.findAll({
+          where: { tipo: null }, 
+                 attributes: ['id', 'id_AR3', 'createdAt',
+         
+                             [Sequelize.col('NCs.id'), 'id_nc'],
+                             [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                             [Sequelize.col('Usuarios.usuario'), 'analista4'],
+                 ],
+           
+                 include: [
+                    { 
+                     model: NC, 
+                     as:'NCs',  
+                     include: [
+                       {
+                         model: TramiteInspector,
+                         as: 'tramiteInspector',
+                         attributes: []
+                       }
+                     ],
+                     attributes: [] 
+                    },
+                    { 
+                     model:Usuario,
+                     as:'Usuarios',
+                     attributes:[]
+                   },
+                   
+                 ],
+               });
         return rgsnps || null;
     } catch (error) {
         console.error("Error fetching all RSGNPs:", error);

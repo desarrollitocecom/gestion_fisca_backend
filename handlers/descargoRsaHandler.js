@@ -107,7 +107,7 @@ const createDescargoRsaHandler = async (req, res) => {
 
         const id_estado_RSA=3;
 
-        const response=await updateRsaController(id,{id_descargo_RSA,id_estado_RSA})
+        const response=await updateRsaController(id,{id_descargo_RSA,id_estado_RSA,tipo:'AR3'})
 
         if (!response) {
             return res.status(400).json({

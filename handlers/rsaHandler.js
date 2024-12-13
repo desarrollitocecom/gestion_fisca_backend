@@ -3,7 +3,8 @@ const {
     createRsaController,
     updateRsaController,
     getRsaController,
-    getAllRsaController
+    getAllRsaController,
+    getAllRSAforAR3Controller
 } = require('../controllers/rsaController');
 const {
     getInformeFinalController,
@@ -23,7 +24,7 @@ function isValidUUID(uuid) {
 const createRsaHandler = async (req, res) => {
     const { id } = req.params;
 
-    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo1, id_evaluar_rsa, id_descargo_RSA, id_nc, id_AR2 } = req.body;
+    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo1, id_evaluar_rsa, id_descargo_RSA, id_nc, id_AR2,tipo } = req.body;
 
     const documento_RSA = req.files && req.files["documento_RSA"] ? req.files["documento_RSA"][0] : null;
 
@@ -123,9 +124,7 @@ const createRsaHandler = async (req, res) => {
 
         const id_evaluar = createRsa.id;
 
-        const tipo = "RSA";
-
-        const response = await updateInformeFinalController(id, { id_evaluar, tipo })
+        const response = await updateInformeFinalController(id, { id_evaluar,tipo})
 
         const startDate = new Date();
 
@@ -256,6 +255,42 @@ const getAllRsaHandler = async (req, res) => {
         return res.status(500).json({ message: "Error en el handler", error });
     }
 };
+const getAllRSAforAR3Handler = async (req, res) => {  
+    const { page = 1, limit = 20 } = req.query;
+    const errores = [];
+  
+    if (isNaN(page)) errores.push("El page debe ser un número");
+    if (page <= 0) errores.push("El page debe ser mayor a 0");
+    if (isNaN(limit)) errores.push("El limit debe ser un número");
+    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
+  
+    if (errores.length > 0) {
+        return res.status(400).json({ errores });
+    }
+  
+    try {
+        const response = await getAllRSAforAR3Controller(Number(page), Number(limit));
+  
+        if (response.data.length === 0) {
+            return res.status(200).json({
+                message: 'Ya no hay más IFIs',
+                data: {
+                    data: [],
+                    totalPage: response.currentPage,
+                    totalCount: response.totalCount
+                }
+            });
+        }
+  
+        return res.status(200).json({
+            message: "IFIs obtenidos correctamente",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener IFIs para AR1:", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener los IFIs." });
+    }
+  };
 
 
 module.exports = {
@@ -263,5 +298,6 @@ module.exports = {
     updateRsaHandler,
     getRsaHandler,
     getAllRsaHandler,
+    getAllRSAforAR3Handler
 
 };

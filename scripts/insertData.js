@@ -79,6 +79,7 @@ const insertData = async () => {
       { tipo: "Observado" },
       { tipo: "Validado" },
       { tipo: "Rechazado" },
+      { tipo: "Terminado" },
     ]);
     await EstadoIFI.bulkCreate([
       { nombre: "Pendiente" },
