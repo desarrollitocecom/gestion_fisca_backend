@@ -22,17 +22,17 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        
-        tipo:{
-            type: DataTypes.ENUM('ACTA'),
+
+        tipo: {
+            type: DataTypes.ENUM('ACTA', 'AN5'),
             allowNull: true
         },
-        id_evaluar_rg:{
-            type:DataTypes.UUID,
-            allowNull:true,
-         },
-       
-        id_nc:{
+        id_evaluar_rg: {
+            type: DataTypes.UUID,
+            allowNull: true,
+        },
+
+        id_nc: {
             type: DataTypes.UUID,
             references: {
                 model: 'NCs',
@@ -40,32 +40,33 @@ module.exports = (sequelize) => {
             },
             allowNull: true,
         },
-        id_estado_RG:{
+        id_estado_RG: {
             type: DataTypes.INTEGER,
             references: {
                 model: 'EstadoRGs',
                 key: 'id',
             },
-            allowNull:true
+            allowNull: true
         },
-         id_gerente:{
-             type: DataTypes.UUID,
-             references: {
-                 model: 'Usuarios',
-                 key: 'id',
-             },
-             allowNull: false
-         }
+        id_gerente: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Usuarios',
+                key: 'id',
+            },
+            allowNull: false
+        }
     }, {
         tableName: 'RGs',
         timestamps: true
     });
-   RG.associate = (db) => {
-     
-       RG.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
-       RG.belongsTo(db.EstadoRG, { foreignKey: 'id_estado_RG', as: 'estadoRG'})
+    RG.associate = (db) => {
+
+        RG.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
+        RG.belongsTo(db.EstadoRG, { foreignKey: 'id_estado_RG', as: 'estadoRG' })
+        RG.belongsTo(db.Usuario, { foreignKey: 'id_gerente', as: 'Usuarios' });
         
     };
-    
-       return RG;
+
+    return RG;
 };
