@@ -3,6 +3,7 @@ const {
     createActaController
 } = require('../controllers/actaController');
 const {  
+    getAllRSAforAN5Controller,
     getRsaController,
     updateRsaController
 } = require('../controllers/rsaController');
@@ -58,6 +59,9 @@ function validateActaData(req) {
         id_Analista_5,
         documento_Acta
     };
+}
+const getAllRsaRgRsgnp=async (req,res) => {
+    
 }
 const createActainRGHandler=async (req,res) => {
     const { id } = req.params;
