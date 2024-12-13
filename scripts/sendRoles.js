@@ -28,8 +28,8 @@ const rolesPermisos = [
   { nombre: "Gerente", permisos: ["create_Gerente", "read_Gerente"] },
   { nombre: "Analista 5", permisos: ["read_Analista5", "create_Analista5"] },
   { nombre: "Tramite Inspector", permisos: ["read_Inspector"] },
-  { nombre: "Digitador", permisos: ["read_Digitador", "update_Digitador"] },
-  { nombre: "Analista 1", permisos: ["create_Analista1", "update_Analista1","read_Analista1"] },
+  { nombre: "Digitador", permisos: ["read_Digitador", "create_Digitador"] },
+  { nombre: "Analista 1", permisos: ["create_Analista1","read_Analista1"] },
   { nombre: "Administrador", permisos: ["all_system_access"] },
 ];
 
