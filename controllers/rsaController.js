@@ -71,10 +71,6 @@ const getAllRSAforAR3Controller = async (page = 1, limit = 20) => {
     }
   };
 const updateRsaController = async (id,{ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA,id_AR2}) => {
-
-   
-    let documento_path;
-
     try {
 
         const rsa = await getRsaController(id);   
@@ -94,9 +90,7 @@ const updateRsaController = async (id,{ nro_rsa, fecha_rsa, fecha_notificacion, 
 
         return rsa || null;
     } catch (error) {
-        if (documento_path) {
-            deleteFile(documento_path);
-        }
+     
         console.error('Error al actualizar RSA:', error);
         return false
     }

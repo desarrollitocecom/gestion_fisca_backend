@@ -30,18 +30,12 @@ const createRsgnpController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, d
 };
 
 const updateRsgnpController = async (id, {nro_rsg,id_evaluar_rsgnp,tipo, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg ,id_nc,id_estado_RSGNP,id_AR3}) => {
-    let documento_path;
+   
     try {
            
         
         const rsgnp = await getRsgnpController(id);
-        documento_path=rsgnp.documento_RSGNP
-        if (documento_RSGNP) {
-            documento_path = saveImage(documento_RSGNP, 'Resolucion(RSGNP)');
-            if (rsgnp.documento_RSGNP) {
-                deleteFile(rsgnp.documento_RSGNP);
-            }
-        }
+       
         if (rsgnp) {
             await rsgnp.update({
                 nro_rsg,
@@ -59,9 +53,7 @@ const updateRsgnpController = async (id, {nro_rsg,id_evaluar_rsgnp,tipo, fecha_r
         }
         return rsgnp || null
     } catch (error) {
-        if (documento_path) {
-            deleteFile(documento_path);
-        }
+       
         console.error("Error updating RGSNP:", error);
         return false
 

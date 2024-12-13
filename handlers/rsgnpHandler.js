@@ -170,72 +170,10 @@ const createRsgnpHandler = async (req, res) => {
 
 const updateRsgnpHandler = async (req, res) => {
     const { id } = req.params;
-    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RSGNP, id_rg, id_nc, id_estado_RSGNP, id_AR3 } = req.body;
-    const documento_RSGNP = req.files && req.files["documento_RSGNP"] ? req.files["documento_RSGNP"][0] : null;
-
-    const errores = [];
-
-    // Validaciones de `nro_rsg`
-    if (!nro_rsg) errores.push('El campo nro_rsg es requerido');
-    if (typeof nro_rsg !== 'string') errores.push('El nro_rsg debe ser una cadena de texto');
-    const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
-    // Validaciones de `fecha_rsg`
-    if (!fecha_rsg) errores.push('El campo fecha_rsg es requerido');
-    if (!fechaRegex.test(fecha_rsg)) {
-        errores.push('El formato de la fecha debe ser YYYY-MM-DD');
-    } else {
-        const parsedFecha = new Date(fecha_rsg);
-        if (isNaN(parsedFecha.getTime())) {
-            errores.push('Debe ser una fecha válida para fecha_rsg');
-        }
-    }
-    // Validaciones de `id_AR3`
-    if (!id_AR3) errores.push('El campo id_AR3 es requerido');
-    if (!isValidUUID(id_AR3)) errores.push('El id_AR3 debe ser una UUID');
-    // Validaciones de `id_nc`
-    if (!id_nc) errores.push('El campo id_nc es requerido');
-    if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
-    if (!id_estado_RSGNP) errores.push('El campo es requerido')
-    if (id_estado_RSGNP && isNaN(id_estado_RSGNP)) errores.push("El id debe ser un numero")
-    // Validaciones de `fecha_notificacion`
-    if (!fecha_notificacion) errores.push('El campo fecha_notificacion es requerido');
-    if (!fechaRegex.test(fecha_notificacion)) {
-        errores.push('El formato de la fecha debe ser YYYY-MM-DD para fecha_notificacion');
-    } else {
-        const parsedFecha1 = new Date(fecha_notificacion);
-        if (isNaN(parsedFecha1.getTime())) {
-            errores.push('Debe ser una fecha válida para fecha_notificacion');
-        }
-    }
-
-    // Validaciones de `documento_RSGNP`
-    if (!documento_RSGNP || documento_RSGNP.length === 0) {
-        errores.push("El documento_RSGNP es requerido.");
-    } else {
-        if (documento_RSGNP.length > 1) {
-            errores.push("Solo se permite un documento_RSGNP.");
-        } else if (documento_RSGNP.mimetype !== "application/pdf") {
-            errores.push("El documento_RSGNP debe ser un archivo PDF.");
-        }
-    }
-
-    // Validaciones de `id_descargo_RSGNP` y `id_rg`
-    if (id_descargo_RSGNP && typeof id_descargo_RSGNP !== "string") errores.push('El campo id_descargo_RSGNP debe ser una cadena de texto');
-    if (id_rg && typeof id_rg !== "string") errores.push('El campo id_rg debe ser una cadena de texto');
-
-    // Si hay errores, devolverlos
-    if (errores.length > 0) {
-        if (documento_RSGNP) {
-            fs.unlinkSync(documento_RSGNP.path);
-        }
-        return res.status(400).json({
-            message: 'Se encontraron los siguientes errores',
-            data: errores
-        });
-    }
-
+    const {tipo } = req.body;
+   
     try {
-        const RSGNP = await updateRsgnpController({ id, nro_rsg, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg, id_nc, id_estado_RSGNP, id_AR3 });
+        const RSGNP = await updateRsgnpController(id,{ tipo });
         if (!RSGNP) {
             return res.status(201).json({ message: "Error al Modificar el RSGNP", data: [] })
         }
