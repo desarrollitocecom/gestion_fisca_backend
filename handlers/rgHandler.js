@@ -152,15 +152,8 @@ const updateRGHandler = async (req, res) => {
     
     try {
         const updatedRG = await updateRGController(
-            id,{
-            nro_rg,
-            fecha_rg,
-            fecha_notificacion,
-            estado,
-            documento_rg,
-            tipo,
-            id_nc,
-            id_gerente
+            id,{     
+            tipo
         });
 
         if (!updatedRG) {

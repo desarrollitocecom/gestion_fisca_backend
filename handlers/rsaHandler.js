@@ -232,28 +232,17 @@ const getAllRsaHandler = async (req, res) => {
     }
 };
 const getAllRSAforAR3Handler = async (req, res) => {  
-    const { page = 1, limit = 20 } = req.query;
-    const errores = [];
-  
-    if (isNaN(page)) errores.push("El page debe ser un número");
-    if (page <= 0) errores.push("El page debe ser mayor a 0");
-    if (isNaN(limit)) errores.push("El limit debe ser un número");
-    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
-  
-    if (errores.length > 0) {
-        return res.status(400).json({ errores });
-    }
+
   
     try {
-        const response = await getAllRSAforAR3Controller(Number(page), Number(limit));
+        const response = await getAllRSAforAR3Controller();
   
         if (response.data.length === 0) {
             return res.status(200).json({
                 message: 'Ya no hay más IFIs',
                 data: {
-                    data: [],
-                    totalPage: response.currentPage,
-                    totalCount: response.totalCount
+                    data: []
+            
                 }
             });
         }

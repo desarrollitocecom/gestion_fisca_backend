@@ -70,46 +70,50 @@ const getRsgnpController = async (id) => {
         return false
     }
 };
-const getAllRSGNPforAN5Controller = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+const getAllRSGNPforAN5Controller = async () => {
     try {
-        const response = await RSGNP.findAndCountAll({ 
-            limit,
-            offset,
+        const response = await RSGNP.findAll({ 
             where: { tipo: 'AN5' }, 
             order: [['id', 'ASC']],
             attributes: [
-                'id','id_AR3', 'createdAt',
+                'id',
+                'id_AR3',
+                'createdAt',
+                'tipo',
                 [Sequelize.col('NCs.id'), 'id_nc'],
                 [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                [Sequelize.col('Usuarios.usuario'), 'analista3'],
+                [Sequelize.col('Usuarios.usuario'), 'analista3'],   
             ],
             include: [
                 {
                     model: NC, 
                     as: 'NCs',
                     include: [
-                      {
-                        model: TramiteInspector, 
-                        as: 'tramiteInspector', 
-                        attributes: [], 
-                      }
+                        {
+                            model: TramiteInspector, 
+                            as: 'tramiteInspector', 
+                            attributes: [], // Si no necesitas atributos, está bien dejarlo vacío.
+                        }
                     ],
                     attributes: []
                 },
                 {
-                  model: Usuario, 
-                  as: 'Usuarios',
-                  attributes: []
-              },
+                    model: Usuario, 
+                    as: 'Usuarios',
+                    attributes: [] // No se requieren atributos de Usuario.
+                },
             ],
         });
-        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+
+        // Asegúrate de devolver el resultado como un arreglo vacío si no hay datos
+        return response ? response : [];
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los RSGNP para AN5", data: error });
-        return false;
+        // Devuelve un arreglo vacío en caso de error para evitar problemas en el flujo
+        return [];
     }
-  };
+};
+
 
 const getAllRsgnpController = async (page = 1, limit = 20) => {
     const offset = (page - 1) * limit;
