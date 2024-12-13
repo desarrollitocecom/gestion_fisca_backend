@@ -17,7 +17,7 @@ function isValidUUID(uuid) {
 const createDescargoRSGNPHandler = async (req, res) => {
     const {id}=req.params;
 
-    const { nro_descargo, fecha_descargo, id_nc, id_analista_4,tipo } = req.body;
+    const { nro_descargo, fecha_descargo, id_nc, id_analista_4 } = req.body;
 
     const errores = [];
 
@@ -101,7 +101,7 @@ const createDescargoRSGNPHandler = async (req, res) => {
 
         const id_estado_RSGNP=3;
      
-        const response=await updateRsgnpController(id,{id_descargo_RSGNP,id_estado_RSGNP,tipo})
+        const response=await updateRsgnpController(id,{id_descargo_RSGNP,id_estado_RSGNP,tipo:'GERENTE'})
 
         if (!response) {
             return res.status(400).json({
