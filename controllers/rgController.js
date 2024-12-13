@@ -47,7 +47,7 @@ const getAllRGforAN5Controller = async () => {
                  'tipo',
                 [Sequelize.col('NCs.id'), 'id_nc'],
                 [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                [Sequelize.col('Usuarios.usuario'), 'analista5'],
+                [Sequelize.col('Usuarios.usuario'), 'gerente'],
             ],
             include: [
                 {
