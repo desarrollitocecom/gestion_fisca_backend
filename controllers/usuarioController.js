@@ -210,20 +210,20 @@ const createUserIfNotExists = async (dni) => {
       let user = await Usuario.findOne({ where: { usuario: dni } });
   
       if (!user) {
-        const rol = await Rol.findOne({ where: { nombre: 'Administrador' } });
-        if (!rol) throw new Error('El rol "Inspector" no existe');
+        const rol = await Rol.findOne({ where: { nombre: "Administrador" } });
+        if (!rol) throw new Error('El rol "Administrador" no existe');
   
         user = await Usuario.create({
           usuario: dni,
-          contraseña: await argon2.hash(dni),
-          correo: `${dni}@default.com`,
+          contraseña: await argon2.hash(dni), 
+          correo: `${dni}@default.com`, 
           id_rol: rol.id,
         });
       }
   
-      return user;
+      return user; 
     } catch (error) {
-      throw new Error('Error al crear o buscar el usuario: ' + error.message);
+      throw new Error("Error al crear o buscar el usuario: " + error.message);
     }
   };
   
