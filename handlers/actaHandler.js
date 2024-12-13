@@ -8,16 +8,19 @@ const {
     updateRsaController
 } = require('../controllers/rsaController');
 const {
+    getAllRSGNPforAN5Controller,
     getRsgnpController,
     updateRsgnpController    
 }=require('../controllers/rsgnpController');
 const {
+    getAllRGforAN5Controller,
     getRGController,
     updateRGController   
 }=require('../controllers/rgController');
 
 const { updateDocumento } = require('../controllers/documentoController');
 const fs = require('node:fs');
+const { response } = require('express');
 function isValidUUID(uuid) {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return uuidRegex.test(uuid);
@@ -60,9 +63,30 @@ function validateActaData(req) {
         documento_Acta
     };
 }
-const getAllRsaRgRsgnp=async (req,res) => {
-    
-}
+const getAllRsaRgRsgnp = async (req, res) => {
+    try {
+        // Ejecuta todas las promesas en paralelo
+        const [rsaData, rsgnpData, rgData] = await Promise.all([
+            getAllRSAforAN5Controller(),
+            getAllRSGNPforAN5Controller(),
+            getAllRGforAN5Controller()
+        ]);
+
+        // Combina los resultados en un solo objeto
+        const result = {
+            rsa: rsaData,
+            rsgnp: rsgnpData,
+            rg: rgData
+        };
+
+        // Envía la respuesta con los datos combinados
+        res.status(200).json(result);
+    } catch (error) {
+        // Manejo de errores
+        console.error('Error al obtener los datos:', error);
+        res.status(500).json({ message: 'Error al obtener los datos', error: error.message });
+    }
+};
 const createActainRGHandler=async (req,res) => {
     const { id } = req.params;
 
@@ -260,5 +284,6 @@ const createActainRSAHandler=async (req,res) => {
 module.exports={
     createActainRSAHandler,
     createActainRsgnpHandler,
-    createActainRGHandler
+    createActainRGHandler,
+    getAllRsaRgRsgnp
 }

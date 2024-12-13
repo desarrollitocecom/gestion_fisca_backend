@@ -147,92 +147,18 @@ const createRGHandler = async (req, res) => {
 const updateRGHandler = async (req, res) => {
     const { id } = req.params;
 
-    const { nro_rg, fecha_rg, fecha_notificacion, estado, id_nc, id_gerente } = req.body;
+    const { tipo } = req.body;
 
-    const errores = [];
-
-    const documento_rg = req.files && req.files["documento_rg"] ? req.files["documento_rg"][0] : null;
-
-    if (!nro_rg) errores.push('El campo nro_rg es obligatorio');
-
-    if (!fecha_rg) errores.push('El campo fecha_rg es obligatorio');
-
-
-    const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
-
-    if (!fechaRegex.test(fecha_rg)) {
-
-        errores.push('El formato de la fecha debe ser YYYY-MM-DD');
-
-    } else {
-
-        const parsedFecha = new Date(fecha_rg);
-
-        if (isNaN(parsedFecha.getTime())) {
-
-            errores.push('Debe ser una fecha válida');
-
-        }
-    }
-    if (!fecha_notificacion) errores.push('El campo fecha_notificacion es obligatorio');
-
-    if (!fechaRegex.test(fecha_notificacion)) {
-
-        errores.push('El formato de la fecha debe ser YYYY-MM-DD');
-
-    } else {
-
-        const parsedFecha = new Date(fecha_notificacion);
-
-        if (isNaN(parsedFecha.getTime())) {
-
-            errores.push('Debe ser una fecha válida');
-
-        }
-    }
-    if (estado && typeof estado !== "string") errores.push('El campo estado es obligatorio');
-
-    if (!id_gerente) errores.push('El campo id_gerente es requerido');
-
-    if (!isValidUUID(id_gerente)) errores.push('El id_gerente debe ser una UUID');
-
-    if (!id_nc) errores.push('El campo id_nc es requerido');
-
-    if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
-
-    if (!documento_rg || documento_rg.length === 0) {
-
-        errores.push("El documento_rg es requerido.");
-
-    } else {
-        if (documento_rg.length > 1) {
-
-            errores.push("Solo se permite un documento_rg.");
-
-        } else if (documento_rg.mimetype !== "application/pdf") {
-
-            errores.push("El documento_rg debe ser un archivo PDF.");
-        }
-    }
-   
-    if (errores.length > 0) {
-        if (documento_rg) {
-            fs.unlinkSync(documento_rg.path);
-        }
-        return res.status(400).json({
-            message: 'Se encontraron los siguientes errores',
-            data: errores
-        });
-    }
-
+    
     try {
-        const updatedRG = await updateRGController({
-            id,
+        const updatedRG = await updateRGController(
+            id,{
             nro_rg,
             fecha_rg,
             fecha_notificacion,
             estado,
             documento_rg,
+            tipo,
             id_nc,
             id_gerente
         });
