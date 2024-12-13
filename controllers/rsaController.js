@@ -105,6 +105,48 @@ const getRsaController = async (id) => {
         return false
     }
 };
+const getAllRSAforAN5Controller = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
+    try {
+        const response = await RSA.findAndCountAll({ 
+            limit,
+            offset,
+            where: { tipo: 'AN5' }, 
+            order: [['id', 'ASC']],
+            attributes: [
+                'id',
+                [Sequelize.col('NCs.id'), 'id_nc'],
+                [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('Usuarios.usuario'), 'analista3'],
+                'tipo'
+            ],
+            include: [
+                {
+                    model: NC, 
+                    as: 'NCs',
+                    include: [
+                      {
+                        model: TramiteInspector, 
+                        as: 'tramiteInspector', 
+                        attributes: [], 
+                      }
+                    ],
+                    attributes: []
+                },
+                {
+                  model: Usuario, 
+                  as: 'Usuarios',
+                  attributes: []
+              },
+            ],
+        });
+        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+    } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
+        return false;
+    }
+  };
 
 
 const getAllRsaController = async () => {
@@ -163,5 +205,6 @@ module.exports = {
     getRsaController,
     getAllRsaController,
     getAllRSAforAR3Controller,
-    updateinRsaController
+    updateinRsaController,
+    getAllRSAforAN5Controller
 };

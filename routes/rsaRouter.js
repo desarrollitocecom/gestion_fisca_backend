@@ -7,12 +7,13 @@ const {
     getAllRSAforAR3Handler,
     getRsaHandler,
     getAllRsaHandler,
-    updateRsasendAN5Handler
-    
+    updateRsasendAN5Handler,
+    getAllRSAforAN5Handler
 }=require('../handlers/rsaHandler');
 const permisoAutorizacion = require("../checkers/roleAuth");
 
 router.get("/ifi_for_AreaResolutiva3",permisoAutorizacion(["all_system_access", "read_rsa"]), getAllRSAforAR3Handler);
+router.get("/RSA_for_AN5",permisoAutorizacion(["all_system_access", "read_rsa"]), getAllRSAforAN5Handler);
 router.get("/",permisoAutorizacion(["all_system_access", "read_rsa"]),getAllRsaHandler);
 router.get('/:id',permisoAutorizacion(["all_system_access", "read_rsa"]),getRsaHandler);
 router.patch("/:id",permisoAutorizacion(["all_system_access", "create_rsa"]),uploadRSA,createRsaHandler);

@@ -4,7 +4,8 @@ const {
     updateRsaController,
     getRsaController,
     getAllRsaController,
-    getAllRSAforAR3Controller
+    getAllRSAforAR3Controller,
+    getAllRSAforAN5Controller
 } = require('../controllers/rsaController');
 const {
     getInformeFinalController,
@@ -165,7 +166,42 @@ const updateRsasendAN5Handler = async (req, res) => {
         return res.status(500).json({ message: "Error en el handler", error });
     }
 };
-
+const getAllRSAforAN5Handler=async (req,res) => {
+    const { page = 1, limit = 20 } = req.query;
+    const errores = [];
+  
+    if (isNaN(page)) errores.push("El page debe ser un número");
+    if (page <= 0) errores.push("El page debe ser mayor a 0");
+    if (isNaN(limit)) errores.push("El limit debe ser un número");
+    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
+  
+    if (errores.length > 0) {
+        return res.status(400).json({ errores });
+    }
+  
+    try {
+        const response = await getAllRSAforAN5Controller(Number(page), Number(limit));
+  
+        if (response.data.length === 0) {
+            return res.status(200).json({
+                message: 'Ya no hay más RSAs',
+                data: {
+                    data: [],
+                    totalPage: response.currentPage,
+                    totalCount: response.totalCount
+                }
+            });
+        }
+  
+        return res.status(200).json({
+            message: "RSAs obtenidos correctamente",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener RSAs para AR1:", error);
+      return  res.status(500).json({ error: "Error interno del servidor al obtener los RSAs." });
+    }
+}
 // Handler para obtener una RSA por ID
 const getRsaHandler = async (req, res) => {
     const { id } = req.params;
@@ -238,6 +274,7 @@ module.exports = {
     updateRsasendAN5Handler,
     getRsaHandler,
     getAllRsaHandler,
-    getAllRSAforAR3Handler
+    getAllRSAforAR3Handler,
+    getAllRSAforAN5Handler
 
 };
