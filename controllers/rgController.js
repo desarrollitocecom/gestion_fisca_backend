@@ -1,6 +1,6 @@
-const { RG } = require('../db_connection'); 
+const { RG, Usuario,  NC , TramiteInspector } = require('../db_connection'); 
 const {saveImage,deleteFile}=require('../utils/fileUtils')
-
+const { Sequelize } = require('sequelize');
 // Crear un registro RG   
 const createRGController = async ({
      nro_rg,
@@ -33,6 +33,46 @@ const createRGController = async ({
         return false
     }
 };
+const getAllRGforAN5Controller = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
+    try {
+        const response = await RG.findAndCountAll({ 
+            limit,
+            offset,
+            where: { tipo: 'AN5' }, 
+            order: [['id', 'ASC']],
+            attributes: [
+                'id','id_AR3', 'createdAt',
+                [Sequelize.col('NCs.id'), 'id_nc'],
+                [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('Usuarios.usuario'), 'analista3'],
+            ],
+            include: [
+                {
+                    model: NC, 
+                    as: 'NCs',
+                    include: [
+                      {
+                        model: TramiteInspector, 
+                        as: 'tramiteInspector', 
+                        attributes: [], 
+                      }
+                    ],
+                    attributes: []
+                },
+                {
+                  model: Usuario, 
+                  as: 'Usuarios',
+                  attributes: []
+              },
+            ],
+        });
+        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+    } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los RSGNP para AN5", data: error });
+        return false;
+    }
+  };
 
 // Actualizar un registro RG
 const updateRGController = async (id,{ tipo,id_evaluar_rg,id_estado_RG}) => {
@@ -77,4 +117,5 @@ module.exports = {
     updateRGController,
     getRGController,
     getAllRGController,
+    getAllRGforAN5Controller
 };
