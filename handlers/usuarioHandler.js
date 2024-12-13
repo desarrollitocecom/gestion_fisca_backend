@@ -424,7 +424,10 @@ const facialLoginHandler = async (req, res) => {
   
       await saveToken(dni, token);
   
-      return res.json({ success: true, token });
+      return res.json({ 
+        success: true, 
+        token,
+        uuid: user.id, });
     } catch (error) {
       console.error('Error en facialLoginHandler:', error.message);
       return res.status(500).json({ success: false, message: 'Error interno del servidor', error: error.message });
