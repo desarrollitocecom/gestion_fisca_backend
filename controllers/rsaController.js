@@ -71,19 +71,13 @@ const getAllRSAforAR3Controller = async (page = 1, limit = 20) => {
     }
   };
 const updateRsaController = async (id,{ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA,id_AR2}) => {
+   console.log("tipo",tipo);
    
     let documento_path;
 
     try {
 
-        const rsa = await getRsaController(id);
-        documento_path=rsa.documento_RSA
-        if (documento_RSA) {
-            documento_path = saveImage(documento_RSA, 'Resolucion(RSA)');
-            if (rsa.documento_RSA) {
-                deleteFile(rsa.documento_RSA);
-            }
-        }
+        const rsa = await getRsaController(id);   
         if(rsa){
         await rsa.update({
             nro_rsa,
@@ -107,7 +101,7 @@ const updateRsaController = async (id,{ nro_rsa, fecha_rsa, fecha_notificacion, 
         return false
     }
 };
-// Función para obtener una instancia de RSA por su ID
+
 const getRsaController = async (id) => {
     try {
         const rsa = await RSA.findOne({ where: { id } });
@@ -117,7 +111,7 @@ const getRsaController = async (id) => {
         return false
     }
 };
-// Función para obtener todas las instancias de RSA
+
 
 const getAllRsaController = async () => {
     try {
