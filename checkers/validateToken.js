@@ -1,7 +1,19 @@
 const jwt = require("jsonwebtoken");
 const { getToken } = require("../controllers/usuarioController");
 
+const excludedPaths = [
+    { path: "/logininspector/registro", method: "POST" }, // Ruta para autenticación inicial
+  ];
+
 const loginMiddleware = async (req, res, next) => {
+
+    const isExcluded = excludedPaths.some(
+        (route) => route.path === req.path && route.method === req.method
+      );
+    
+      if (isExcluded) {
+        return next(); // Saltar el middleware si la ruta es pública
+      }
     const token = req.headers.authorization?.split("___")[1]; // Obtener el token del header
 
     if (!token) {

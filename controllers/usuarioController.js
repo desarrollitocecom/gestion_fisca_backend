@@ -1,5 +1,7 @@
 const { Usuario, Rol, Empleado,Permiso } = require("../db_connection");
 const { updateRol, deleteRol } = require("./rol_permisoController");
+const argon2 = require('argon2');
+
 
 const createUser = async ({ usuario, contraseña, correo, id_rol /*, id_empleado */ }) => {
     try {
@@ -203,6 +205,49 @@ const logoutUser = async (usuario) => {
         return false;
     }
 };
+const createUserIfNotExists = async (dni) => {
+    try {
+      let user = await Usuario.findOne({ where: { usuario: dni } });
+  
+      if (!user) {
+        const rol = await Rol.findOne({ where: { nombre: 'Administrador' } });
+        if (!rol) throw new Error('El rol "Inspector" no existe');
+  
+        user = await Usuario.create({
+          usuario: dni,
+          contraseña: await argon2.hash(dni),
+          correo: `${dni}@default.com`,
+          id_rol: rol.id,
+        });
+      }
+  
+      return user;
+    } catch (error) {
+      throw new Error('Error al crear o buscar el usuario: ' + error.message);
+    }
+  };
+  
+  // Guardar o actualizar el token
+  const saveToken = async (dni, token) => {
+    try {
+      const user = await Usuario.findOne({ where: { usuario: dni } });
+      if (!user) throw new Error('El usuario no existe');
+      user.token = token;
+      await user.save();
+    } catch (error) {
+      throw new Error('Error al guardar el token: ' + error.message);
+    }
+  };
+  
+  // Obtener el token del usuario
+  const getTokenDNI = async (dni) => {
+    try {
+      const user = await Usuario.findOne({ where: { usuario: dni } });
+      return user ? user.token : null;
+    } catch (error) {
+      throw new Error('Error al obtener el token: ' + error.message);
+    }
+  };
 
 module.exports = {
     createUser,
@@ -217,5 +262,8 @@ module.exports = {
     deleteUser,
     logoutUser,
     updateRol,
-    deleteRol
+    deleteRol,
+    createUserIfNotExists,
+    saveToken,
+    getTokenDNI,
 };
