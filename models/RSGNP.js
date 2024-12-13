@@ -84,6 +84,8 @@ module.exports = (sequelize) => {
         RSGNP.belongsTo(db.DescargoRSGNP, { foreignKey: 'id_descargo_RSGNP', as: 'DescargoRSGNPs' });
         RSGNP.belongsTo(db.EstadoRSGNP, { foreignKey: 'id_estado_RSGNP', as: 'estadoRSGNP'})
         RSGNP.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
+        RSGNP.belongsTo(db.Usuario,{foreignKey:'id_AR3' , as:'Usuarios' });
+
     };
     return RSGNP;
 };
