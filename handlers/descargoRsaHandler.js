@@ -8,15 +8,15 @@ getRsaController
 } = require('../controllers/rsaController');
 const { updateDocumento } = require('../controllers/documentoController');
 const fs = require('node:fs');
-const { log } = require('node:console');
 function isValidUUID(uuid) {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return uuidRegex.test(uuid);
 }
+
 const createDescargoRsaHandler = async (req, res) => {
     const {id}=req.params;
     
-    const { nro_descargo, fecha_descargo, id_nc, id_analista_3 ,tipo} = req.body;
+    const { nro_descargo, fecha_descargo, id_nc, id_analista_3 } = req.body;
      const documento_DRSA = req.files && req.files["documento_DRSA"] ? req.files["documento_DRSA"][0] : null;
 
     const errores = [];
@@ -107,7 +107,7 @@ const createDescargoRsaHandler = async (req, res) => {
 
         const id_estado_RSA=3;
 
-        const response=await updateRsaController(id,{id_descargo_RSA,id_estado_RSA,tipo})
+        const response=await updateRsaController(id,{id_descargo_RSA,id_estado_RSA,tipo:'AR3'})
             console.log(response);
             
         if (!response) {
@@ -208,5 +208,6 @@ const updateDescargoRsaHandler = async (req, res) => {
 module.exports = {
     createDescargoRsaHandler,
     updateDescargoRsaHandler
+    
 };
 

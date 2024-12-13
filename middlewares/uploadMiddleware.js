@@ -48,8 +48,6 @@ const uploadDRSGNP = upload.fields([
 ])
 const uploadRG = upload.fields([
     { name: 'documento_rg', maxCount: 1 },
-  
-
 ])
 
 const uploadActa = upload.fields([

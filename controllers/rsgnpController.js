@@ -79,9 +79,12 @@ const getRsgnpController = async (id) => {
     }
 };
 
-const getAllRsgnpController = async () => {
+const getAllRsgnpController = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
     try {
-        const rgsnps = await RSGNP.findAll({
+        const rgsnps = await RSGNP.findAndCountAll({
+            limit,
+          offset,
           where: { tipo: null }, 
                  attributes: ['id', 'id_AR3', 'createdAt',
          
@@ -111,9 +114,10 @@ const getAllRsgnpController = async () => {
                    
                  ],
                });
-        return rgsnps || null;
+               return { totalCount: rgsnps.count, data: rgsnps.rows, currentPage: page } || null;
+
     } catch (error) {
-        console.error("Error fetching all RSGNPs:", error);
+        console.error("Error al traer los RSGNPs:", error);
         return false
     }
 };

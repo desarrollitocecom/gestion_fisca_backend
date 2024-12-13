@@ -71,7 +71,7 @@ const getAllRSAforAR3Controller = async (page = 1, limit = 20) => {
     }
   };
 const updateRsaController = async (id,{ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA,id_AR2}) => {
-   console.log("tipo",tipo);
+
    
     let documento_path;
 

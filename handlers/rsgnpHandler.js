@@ -262,9 +262,23 @@ const getRsgnpHandler = async (req, res) => {
 };
 
 const getAllRsgnpHandler = async (req, res) => {
+    const { page = 1, limit = 20 } = req.query;
     try {
-        const rsgnps = await getAllRsgnpController();
-        return res.status(200).json(rsgnps);
+        const rsgnps = await getAllRsgnpController(Number(page), Number(limit));
+        if (rsgnps.data.length === 0) {
+            return res.status(200).json({
+                message: 'Ya no hay más IFIs',
+                data: {
+                    data: [],
+                    totalPage: rsgnps.currentPage,
+                    totalCount: rsgnps.totalCount
+                }
+            });
+        }
+        return res.status(200).json({
+            message: "RSAs obtenidos correctamente",
+            data: rsgnps,
+        });
     } catch (error) {
         console.error("Error al obtener todos los RSGNP:", error);
         return res.status(500).json({ error: error.message });
