@@ -41,7 +41,7 @@ const updateRsgnpController = async (id, {nro_rsg,id_evaluar_rsgnp,tipo, fecha_r
                 nro_rsg,
                 fecha_rsg,
                 fecha_notificacion,
-                documento_RSGNP:documento_path,
+                documento_RSGNP,
                 id_descargo_RSGNP,
                 id_evaluar_rsgnp,
                 id_rg,
