@@ -404,35 +404,42 @@ const logoutHandler = async (req, res) => {
 const facialLoginHandler = async (req, res) => {
     const { dni } = req.body;
   
-    if (!dni) {
-      return res.status(400).json({ success: false, message: 'DNI no proporcionado' });
+    if (!dni || !/^\d{8}$/.test(dni)) {
+      return res.status(400).json({
+        success: false,
+        message: "DNI inválido. Debe contener exactamente 8 caracteres numéricos.",
+      });
     }
   
     try {
       const user = await createUserIfNotExists(dni);
-      const existingToken = await getTokenDNI(dni);
   
-      if (existingToken) {
-        return res.json({ success: true, token: existingToken });
+      let token = await getTokenDNI(dni);
+      if (!token) {
+        token = jwt.sign(
+          { usuario: user.usuario }, // Payload
+          process.env.JWT_SECRET,
+          { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
+        );
+  
+        await saveToken(dni, token);
       }
   
-      const token = jwt.sign(
-        { usuario: user.usuario },
-        process.env.JWT_SECRET,         
-        { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
-      );
-  
-      await saveToken(dni, token);
-  
-      return res.json({ 
-        success: true, 
+      return res.json({
+        success: true,
         token,
-        uuid: user.id, });
+        uuid: user.id, 
+      });
     } catch (error) {
-      console.error('Error en facialLoginHandler:', error.message);
-      return res.status(500).json({ success: false, message: 'Error interno del servidor', error: error.message });
+      console.error("Error en facialLoginHandler:", error.message);
+      return res.status(500).json({
+        success: false,
+        message: "Error interno del servidor.",
+        error: error.message,
+      });
     }
   };
+  
 
 module.exports = {
     createUserHandler,
