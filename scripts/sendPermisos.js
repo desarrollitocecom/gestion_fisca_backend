@@ -22,8 +22,6 @@ const permisos = [
 "create_Analista3",
 "create_Analista4",
 "read_Digitador",
-"update_Digitador",
-"update_Analista1",
 "read_documentos",
 "read_ejecucionmc",
 "create_ejecucionmc",
