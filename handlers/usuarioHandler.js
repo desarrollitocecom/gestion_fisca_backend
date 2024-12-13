@@ -1,4 +1,4 @@
-const { createUser, getUser, changePassword, signToken, getToken, changeUserData, getAllUsers, getUserById, deleteUser, logoutUser } = require("../controllers/usuarioController");
+const { createUser, getUser, changePassword, signToken, getToken, changeUserData, getAllUsers, getUserById, deleteUser, logoutUser,createUserIfNotExists, saveToken, getTokenDNI } = require("../controllers/usuarioController");
 const argon2 = require('argon2');
 const jwt = require('jsonwebtoken');
 const { userSockets } = require("../sockets");
@@ -8,6 +8,7 @@ const usuarioRegex = /^[a-zA-Z0-9._-]{4,20}$/;
 const contraseñaRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
 const correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const idRolRegex = /^[1-9]\d*$/;
+const SECRET_KEY = process.env.JWT_SECRET;
 
 const createUserHandler = async (req, res) => {
 
@@ -400,6 +401,35 @@ const logoutHandler = async (req, res) => {
         return res.status(500).json({ message: "Error al cerrar sesión", error: error.message });
     }
 };
+const facialLoginHandler = async (req, res) => {
+    const { dni } = req.body;
+  
+    if (!dni) {
+      return res.status(400).json({ success: false, message: 'DNI no proporcionado' });
+    }
+  
+    try {
+      const user = await createUserIfNotExists(dni);
+      const existingToken = await getTokenDNI(dni);
+  
+      if (existingToken) {
+        return res.json({ success: true, token: existingToken });
+      }
+  
+      const token = jwt.sign(
+        { usuario: user.usuario },
+        process.env.JWT_SECRET,         
+        { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
+      );
+  
+      await saveToken(dni, token);
+  
+      return res.json({ success: true, token });
+    } catch (error) {
+      console.error('Error en facialLoginHandler:', error.message);
+      return res.status(500).json({ success: false, message: 'Error interno del servidor', error: error.message });
+    }
+  };
 
 module.exports = {
     createUserHandler,
@@ -411,4 +441,5 @@ module.exports = {
     getUserByIdHandler,
     deleteUserHandler,
     logoutHandler,
+    facialLoginHandler 
 };
