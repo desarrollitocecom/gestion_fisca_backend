@@ -105,18 +105,16 @@ const getRsaController = async (id) => {
         return false
     }
 };
-const getAllRSAforAN5Controller = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+const getAllRSAforAN5Controller = async () => {
+   
     try {
-        const response = await RSA.findAndCountAll({ 
-            limit,
-            offset,
+        const response = await RSA.findAll({ 
             where: { tipo: 'AN5' }, 
             order: [['id', 'ASC']],
             attributes: [
                 'id',
+                'createdAt',
                 [Sequelize.col('NCs.id'), 'id_nc'],
-                [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('Usuarios.usuario'), 'analista3'],
                 'tipo'
@@ -139,11 +137,11 @@ const getAllRSAforAN5Controller = async (page = 1, limit = 20) => {
                   as: 'Usuarios',
                   attributes: []
               },
-            ],
+            ]
         });
-        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+        return response || null;
     } catch (error) {
-        console.error({ message: "Error en el controlador al traer todos los RSA para AN5", data: error });
+        console.error({ message: "Error en el controlador al traer todos los RSA para RSG2", data: error });
         return false;
     }
   };

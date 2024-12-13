@@ -73,16 +73,16 @@ const getAllRsaRgRsgnp = async (req, res) => {
         ]);
 
         // Combina los resultados en un solo objeto
-        const result = {
-            rsa: rsaData,
-            rsgnp: rsgnpData,
-            rg: rgData
-        };
+        const result = [
+            ...rsaData,      // Incluye los elementos de rsaData
+            ...rsgnpData,    // Incluye los elementos de rsgnpData
+            ...rgData        // Incluye los elementos de rgData
+        ];
        if(!result){
         return res.status(404).json({message:'Error al traere los AN5',data:[]});
        }
         // Envía la respuesta con los datos combinados
-      return  res.status(200).json(result);
+        return  res.status(200).json({messa:"Estas son las pertenecientes al ACTA",data:result});
     } catch (error) {
         // Manejo de errores
         console.error('Error al obtener los datos:', error);
