@@ -143,7 +143,7 @@ const getAllRSAforAN5Controller = async (page = 1, limit = 20) => {
         });
         return { totalCount: response.count, data: response.rows, currentPage: page } || null;
     } catch (error) {
-        console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
+        console.error({ message: "Error en el controlador al traer todos los RSA para AN5", data: error });
         return false;
     }
   };

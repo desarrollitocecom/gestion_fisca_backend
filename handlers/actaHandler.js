@@ -78,13 +78,15 @@ const getAllRsaRgRsgnp = async (req, res) => {
             rsgnp: rsgnpData,
             rg: rgData
         };
-
+       if(!result){
+        return res.status(404).json({message:'Error al traere los AN5',data:[]});
+       }
         // Envía la respuesta con los datos combinados
-        res.status(200).json(result);
+      return  res.status(200).json(result);
     } catch (error) {
         // Manejo de errores
         console.error('Error al obtener los datos:', error);
-        res.status(500).json({ message: 'Error al obtener los datos', error: error.message });
+       return res.status(500).json({ message: 'Error al obtener los datos', error: error.message });
     }
 };
 const createActainRGHandler=async (req,res) => {

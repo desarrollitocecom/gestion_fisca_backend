@@ -42,10 +42,10 @@ const getAllRGforAN5Controller = async (page = 1, limit = 20) => {
             where: { tipo: 'AN5' }, 
             order: [['id', 'ASC']],
             attributes: [
-                'id','id_AR3', 'createdAt',
+                'id','id_gerente', 'createdAt',
                 [Sequelize.col('NCs.id'), 'id_nc'],
                 [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                [Sequelize.col('Usuarios.usuario'), 'analista3'],
+                [Sequelize.col('Usuarios.usuario'), 'analista5'],
             ],
             include: [
                 {
