@@ -54,7 +54,7 @@ const updateinRsaHandler = async (req, res) => {
 const createRsgnpHandler = async (req, res) => {
     const { id } = req.params;
 
-    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RSGNP, id_rg, id_nc, id_AR3 } = req.body;
+    const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RSGNP, id_rg, id_nc, id_AR3 ,tipo} = req.body;
 
     const errores = [];
 
@@ -138,7 +138,6 @@ const createRsgnpHandler = async (req, res) => {
         }
         const id_evaluar_rsa = newRsgnp.id;
 
-        const tipo = "RESOLUCION SUBGERENCIAL NO PROCEDENTE";
 
         const response = await updateRsaController(id, { id_evaluar_rsa, tipo })
 
@@ -151,7 +150,7 @@ const createRsgnpHandler = async (req, res) => {
 
         const total_documentos = newRsgnp.documento_RSGNP;
 
-        const nuevoModulo = "RSGNP"
+        const nuevoModulo = "RESOLUCION SUBGERENCIAL NO PROCEDENTE"
 
             await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 
