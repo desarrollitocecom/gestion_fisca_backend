@@ -28,6 +28,17 @@ const rol_permisoRouter = require("./rol_permisoRouter");
 const actaRouter=require('./actaRouter');
 const docs=require('./documentoRouter');
 
+
+const areaInstructiva = require('./areaInstructivaRouter');
+const areaResolutiva1 = require('./areaResolutiva1Router');
+const analista2 = require('./analista2Router');
+const areaResolutiva2 = require('./areaResolutiva2Router');
+
+router.use('/area-instructiva',areaInstructiva);
+router.use('/area-resolutiva1',areaResolutiva1);
+router.use('/analista2',analista2);
+router.use('/area-resolutiva2',areaResolutiva2);
+
 //router.use('/inspector',tramiteInspector);
 router.use('/digitador',digitadorNC);
 router.use('/analista1',analista1);

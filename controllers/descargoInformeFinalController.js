@@ -52,7 +52,35 @@ const updateDescargoAndAssociate = async ({ id, nro_descargo, fecha_descargo, do
         return { message: 'Error al actualizar DescargoIFI y asociarlo a IFI', error };
     }
 };
+
+
+const createDescargoIFI = async ({ nro_descargo, fecha_descargo, documento_DIFI,id_nc, id_estado ,id_analista_2}) => {
+    let documento_DIFI_path;
+    try {
+        if(documento_DIFI){
+            documento_DIFI_path = saveImage(documento_DIFI, 'Descargos_IFIs')
+        }
+        const newDescargo = await DescargoIFI.create({
+            nro_descargo,
+            fecha_descargo,
+            documento_DIFI: documento_DIFI_path,
+            id_nc,
+            id_estado,
+            id_analista_2
+        });
+
+        return newDescargo || null;
+    } catch (error) {
+        if (documento_DIFI_path) {
+            deleteFile(documento_DIFI_path);
+        }
+        console.error('Error al crear y asociar DescargoIFI:', error);
+        return false
+    }
+};
+
 module.exports = {
     createDescargoAndAssociate,
-    updateDescargoAndAssociate
+    updateDescargoAndAssociate,
+    createDescargoIFI
 };

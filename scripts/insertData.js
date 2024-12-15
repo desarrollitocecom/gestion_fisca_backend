@@ -22,6 +22,7 @@ const EstadoRSA = require("../models/EstadoRSA")(sequelize);
 const EjecucionMC = require("../models/EjecucionMC")(sequelize);
 const TipoDocumentoIdentidad = require("../models/TipoDocumentoIdentidad")(sequelize);
 const EstadoDescargoNC = require("../models/EstadoDescargoNC")(sequelize);
+const EstadoDescargoIFI = require("../models/EstadoDescargoIFI")(sequelize);
 const EstadoRG = require("../models/EstadoRG")(sequelize);
 
 const insertData = async () => {
@@ -112,6 +113,13 @@ const insertData = async () => {
 
     // Insertar datos ficticios en EstadoDescargoNC
     await EstadoDescargoNC.bulkCreate([
+      { tipo: "CON DESCARGO" },
+      { tipo: "SIN DESCARGO" },
+      { tipo: "ANULADO" },
+    ]);
+
+    // Insertar datos ficticios en EstadoDescargoIFI
+    await EstadoDescargoIFI.bulkCreate([
       { tipo: "CON DESCARGO" },
       { tipo: "SIN DESCARGO" },
       { tipo: "ANULADO" },

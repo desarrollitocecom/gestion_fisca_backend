@@ -5,7 +5,8 @@ const createRSG1Controller = async ({nro_resolucion, fecha_resolucion, documento
     let documento_path;
 
     try {
-         documento_path=saveImage(documento,'Resolucion(RSG1)')  
+        documento_path=saveImage(documento,'Resolucion(RSG1)')  
+        
         const newRSG1 = await RSG1.create({
             nro_resolucion,
             fecha_resolucion,

@@ -30,7 +30,6 @@ const createInformeFinalController = async ({
       });
       return response || null;
 
-    throw new Error("El id de DescargoIFI ya existe");
   } catch (error) {
     if (documento_ifi_path) {
       deleteFile(documento_ifi_path);
@@ -238,7 +237,7 @@ const getAllIFIforAR2ofRSAController = async (page = 1, limit = 20) => {
       return false;
   }
 };
-const getAllIFIforAR2Controller = async (page = 1, limit = 20) => {
+const getAllIFIforRSG2Controller = async (page = 1, limit = 20) => {
   const offset = (page - 1) * limit;
   try {
       const response = await IFI.findAndCountAll({ 
@@ -286,7 +285,7 @@ const getAllIFIforAnalista2Controller = async (page = 1, limit = 20) => {
       const response = await IFI.findAndCountAll({ 
           limit,
           offset,
-          where: { tipo: 'NO_SUB' }, 
+          where: { tipo: 'ANALISTA_2' }, 
           order: [['id', 'ASC']],
           attributes: [
               'id',
@@ -323,7 +322,7 @@ const getAllIFIforAnalista2Controller = async (page = 1, limit = 20) => {
       return false;
   }
 };
-const getAllIFIforAreaResolutiva2Controller = async (page = 1, limit = 20) => {
+const getAllIFIforAR2Controller = async (page = 1, limit = 20) => {
   const offset = (page - 1) * limit;
   try {
       const response = await IFI.findAndCountAll({ 
@@ -378,5 +377,5 @@ module.exports = {
   getAllIFIforAnalista2Controller,
   getAllIFIforAR2ofRSAController,
   getAllIFIforAR2Controller,
-  getAllIFIforAreaResolutiva2Controller
+  getAllIFIforRSG2Controller
 };

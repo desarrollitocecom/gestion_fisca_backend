@@ -8,15 +8,15 @@ module.exports = (sequelize) => {
         },
         nro_descargo: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         fecha_descargo: {
             type: DataTypes.DATEONLY,
-            allowNull: false
+            allowNull: true
         },
         documento_DIFI: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         id_nc:{
             type: DataTypes.UUID,
@@ -27,13 +27,24 @@ module.exports = (sequelize) => {
             allowNull: true,
             
         },
+
+        id_estado:{
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'EstadoDescargoIFIs',
+                key: 'id',
+            },
+            allowNull: true
+        },
+
+
         id_analista_2:{
              type: DataTypes.UUID,
              references: {
                  model: 'Usuarios',
                  key: 'id',
              },
-             allowNull: false
+             allowNull: true
          }
 
     }, {
@@ -42,7 +53,7 @@ module.exports = (sequelize) => {
     });
     DescargoIFI.associate = (db) => {
         // Relación de 1 a 1 entre DescargoIFI y los tipos basados en 'tipo'
-
+        DescargoIFI.belongsTo(db.EstadoDescargoIFI, { foreignKey: 'id_estado', as: 'estadoDescargoIFI' });
         DescargoIFI.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
     };
  

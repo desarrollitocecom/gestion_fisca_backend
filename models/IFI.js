@@ -19,7 +19,7 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         tipo: {
-            type: DataTypes.ENUM('RSG1', 'RSA', 'RSG2', 'NO_SUB','AR2'),
+            type: DataTypes.ENUM('ANALISTA_2', 'RSG1', 'RSA', 'RSG2','AR2'),
             allowNull: true
         },
         id_evaluar: {
@@ -44,14 +44,14 @@ module.exports = (sequelize) => {
             allowNull: true,
            
         },
-        id_estado_IFI:{
-            type: DataTypes.INTEGER,
-            references: {
-                model: 'EstadoIFIs',
-                key: 'id',
-            },
-            allowNull:false
-        },
+        // id_estado_IFI:{
+        //     type: DataTypes.INTEGER,
+        //     references: {
+        //         model: 'EstadoIFIs',
+        //         key: 'id',
+        //     },
+        //     allowNull:false
+        // },
         id_AI1:{
             type: DataTypes.UUID,
             references: {
@@ -72,7 +72,7 @@ module.exports = (sequelize) => {
         // Relación con DescargoIFI
         IFI.belongsTo(db.DescargoIFI, { foreignKey: 'id_descargo_ifi', as: 'DescargoIFIs' });
         IFI.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
-        IFI.belongsTo(db.EstadoIFI, { foreignKey: 'id_estado_IFI', as: 'estadoIFI'});
+        // IFI.belongsTo(db.EstadoIFI, { foreignKey: 'id_estado_IFI', as: 'estadoIFI'});
         IFI.belongsTo(db.Usuario,{foreignKey:'id_AI1' , as:'Usuarios' });
 
    
