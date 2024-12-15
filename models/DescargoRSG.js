@@ -1,22 +1,22 @@
 const { DataTypes } = require("sequelize")
 module.exports = (sequelize) => {
-    const RSGP = sequelize.define('RSGP', {
+    const DescargoRSG = sequelize.define('DescargoRSG', {
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
             defaultValue: DataTypes.UUIDV4,
         },
-        nro_rsg: {
+        nro_descargo: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
-        fecha_rsg: {
+        fecha_descargo: {
             type: DataTypes.DATEONLY,
-            allowNull: false
+            allowNull: true
         },
-        documento_RSGP: {
+        documento_DRSG: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         id_nc:{
             type: DataTypes.UUID,
@@ -26,24 +26,21 @@ module.exports = (sequelize) => {
             },
             allowNull: true,
         },
-         id_AR3:{
+         id_analista_4:{
              type: DataTypes.UUID,
              references: {
                  model: 'Usuarios',
                  key: 'id',
              },
-             allowNull: false
+             allowNull: true
          }
 
     }, {
-        tableName: 'RGSPs',
+        tableName: 'DescargoRSGs',
         timestamps: true
     });
-
-    RSGP.associate = (db) => {
-        // Relación de 1 a 1 entre RSGP 
-
-        RSGP.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
+    DescargoRSG.associate = (db) => {
+        DescargoRSG.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
     };
-    return RSGP;
+    return DescargoRSG;
 };

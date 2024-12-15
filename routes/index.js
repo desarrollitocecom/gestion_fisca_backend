@@ -33,11 +33,17 @@ const areaInstructiva = require('./areaInstructivaRouter');
 const areaResolutiva1 = require('./areaResolutiva1Router');
 const analista2 = require('./analista2Router');
 const areaResolutiva2 = require('./areaResolutiva2Router');
+const analista3 = require('./analista3Router');
+const areaResolutiva3 = require('./areaResolutiva3Router');
+const analista4 = require('./analista4Router');
 
 router.use('/area-instructiva',areaInstructiva);
 router.use('/area-resolutiva1',areaResolutiva1);
 router.use('/analista2',analista2);
 router.use('/area-resolutiva2',areaResolutiva2);
+router.use('/analista3',analista3);
+router.use('/area-resolutiva3',areaResolutiva3);
+router.use('/analista4',analista4);
 
 //router.use('/inspector',tramiteInspector);
 router.use('/digitador',digitadorNC);

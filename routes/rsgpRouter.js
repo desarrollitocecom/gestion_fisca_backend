@@ -1,6 +1,6 @@
 const {Router}=require ('express');
 const router = Router();
-const {uploadRSGP}=require('../middlewares/uploadMiddleware')
+const {uploadRSG}=require('../middlewares/uploadMiddleware')
 
 const {
     createRsgpHandler,
@@ -8,7 +8,7 @@ const {
 const permisoAutorizacion = require("../checkers/roleAuth");
 
 
-router.patch("/:id",permisoAutorizacion(["all_system_access", "create_AResolutiva3"]),uploadRSGP,createRsgpHandler);
+router.patch("/:id",permisoAutorizacion(["all_system_access", "create_AResolutiva3"]),uploadRSG,createRsgpHandler);
 
 
 module.exports = router;

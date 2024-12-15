@@ -37,8 +37,8 @@ const uploadRSA = upload.fields([
 const uploadDRSA = upload.fields([
     { name: 'documento_DRSA', maxCount: 1 }
 ])
-const uploadRSGP = upload.fields([
-    { name: 'documento_RSGP', maxCount: 1 }
+const uploadRSG = upload.fields([
+    { name: 'documento_RSG', maxCount: 1 }
 ])
 const uploadRSGNP = upload.fields([
     { name: 'documento_RSGNP', maxCount: 1 }
@@ -63,7 +63,7 @@ module.exports = {
     uploadRSG2,
     uploadRSA,
     uploadDRSA,
-    uploadRSGP,
+    uploadRSG,
     uploadRSGNP,
     uploadDRSGNP,
     uploadRG,

@@ -8,15 +8,15 @@ module.exports = (sequelize) => {
         },
         nro_descargo: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         fecha_descargo: {
             type: DataTypes.DATEONLY,
-            allowNull: false
+            allowNull: true
         },
         documento_DRSA: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         id_nc:{
             type: DataTypes.UUID,
@@ -26,13 +26,23 @@ module.exports = (sequelize) => {
             },
             allowNull: true,
         },
-         id_analista_3:{
+        
+        id_estado:{
+            type: DataTypes.INTEGER,
+            references: {
+                model: 'EstadoDescargoRSAs',
+                key: 'id',
+            },
+            allowNull: true
+        },
+
+        id_analista_3:{
              type: DataTypes.UUID,
              references: {
                  model: 'Usuarios',
                  key: 'id',
              },
-             allowNull3: false
+             allowNull3: true
          }
 
     }, {
@@ -42,6 +52,7 @@ module.exports = (sequelize) => {
     DescargoRSA.associate = (db) => {
         // Relación con NC
         DescargoRSA.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
+        DescargoRSA.belongsTo(db.EstadoDescargoRSA, { foreignKey: 'id_estado', as: 'estadoDescargoRSA' });
 
     };
     return DescargoRSA;

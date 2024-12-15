@@ -1,6 +1,6 @@
 
 const {
-    createRsaController,
+    createRSAController,
     updateRsaController,
     getRsaController,
     getAllRsaController,

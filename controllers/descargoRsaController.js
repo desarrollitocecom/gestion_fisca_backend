@@ -1,17 +1,20 @@
 const{DescargoRSA}=require('../db_connection');
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
-const createDescargoRsaController=async ({nro_descargo,fecha_descargo,documento_DRSA,id_nc,id_analista_3}) => {
+const createDescargoRSAController=async ({nro_descargo,fecha_descargo,documento_DRSA,id_nc,id_estado,id_analista_3}) => {
     let documento_path;
 
     try {
-         documento_path=saveImage(documento_DRSA,'Descargo(RSA)')  
+        if(documento_DRSA){
+            documento_path=saveImage(documento_DRSA,'Descargo(RSA)')  
+        }
 
         const newDescargo = await DescargoRSA.create({
             nro_descargo,
             fecha_descargo,
             documento_DRSA:documento_path,
             id_nc,
+            id_estado,
             id_analista_3
         });
 
@@ -54,6 +57,6 @@ const updateDescargoRsaController=async ({id,nro_descargo,fecha_descargo,documen
     } 
 }
 module.exports={
-    createDescargoRsaController,
+    createDescargoRSAController,
     updateDescargoRsaController
 }
