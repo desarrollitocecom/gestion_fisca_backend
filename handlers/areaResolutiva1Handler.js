@@ -115,7 +115,7 @@ const createRSG1Handler = async (req, res) => {
        
         const id_evaluar = newRsg1.id;
 
-        const response = await updateInformeFinalController(id, { id_evaluar })
+        const response = await updateInformeFinalController(id, { tipo: 'TERMINADO', id_evaluar })
 
         const total_documentos = newRsg1.documento;
 

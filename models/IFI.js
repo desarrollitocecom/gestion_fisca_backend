@@ -19,7 +19,7 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         tipo: {
-            type: DataTypes.ENUM('ANALISTA_2', 'RSG1', 'RSA', 'RSG2','AR2'),
+            type: DataTypes.ENUM('ANALISTA_2', 'RSG1', 'RSA', 'RSG2','AR2', 'TERMINADO'),
             allowNull: true
         },
         id_evaluar: {
