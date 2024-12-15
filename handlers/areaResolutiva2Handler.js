@@ -50,7 +50,7 @@ const getAllIFIforAR2Handler = async (req, res) => {
   const createRSG2Handler = async (req, res) => {
     const { id } = req.params;
 
-    const { nro_resolucion2, fecha_resolucion, id_nc, id_AR2 ,tipo} = req.body;
+    const { nro_resolucion2, fecha_resolucion, id_nc, id_AR2} = req.body;
 
     const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
 
@@ -142,7 +142,7 @@ const getAllIFIforAR2Handler = async (req, res) => {
 const createRSAHandler = async (req, res) => {
     const { id } = req.params;
 
-    const { nro_rsa, fecha_rsa, fecha_notificacion, tipo1, id_evaluar_rsa, id_descargo_RSA, id_nc, id_AR2,tipo } = req.body;
+    const { nro_rsa, fecha_rsa, fecha_notificacion, id_nc, id_AR2 } = req.body;
 
     const documento_RSA = req.files && req.files["documento_RSA"] ? req.files["documento_RSA"][0] : null;
 
@@ -186,11 +186,6 @@ const createRSAHandler = async (req, res) => {
         }
     }
 
-
-    if (tipo1 && typeof tipo1 !== "string") errores.push('El campo tipo1 debe ser una cadena de texto');
-
-    if (id_evaluar_rsa && typeof id_evaluar_rsa !== "string") errores.push('El campo id_evaluar_rsa debe ser una cadena de texto');
-
     if (!documento_RSA || documento_RSA.length === 0) {
 
         errores.push("El documento_RSA es requerido.");
@@ -230,7 +225,7 @@ const createRSAHandler = async (req, res) => {
             return res.status(404).json({ message: "El id del IFI no se encuentra", data: [] })
         }
 
-        const newRSA = await createRSAController({ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo: 'ANALISTA_3', id_evaluar_rsa, id_descargo_RSA, id_nc, id_AR2 });
+        const newRSA = await createRSAController({ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo: 'ANALISTA_3', id_nc, id_AR2 });
 
         if (!newRSA) {
             return res.status(404).json({ message: "Error al crear un RSA", data: [] });
