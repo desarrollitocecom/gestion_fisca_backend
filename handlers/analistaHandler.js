@@ -73,7 +73,7 @@ const createDescargoNCHandler = async (req, res) => {
 
         const response = await updateNC(id, { 
             id_descargo_NC,
-            esatdo: 'A_I'
+            estado: 'A_I'
         });
 
        
