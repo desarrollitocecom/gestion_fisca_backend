@@ -5,15 +5,21 @@ const createDescargoNC = async ({
         nro_descargo,
         fecha_descargo,
         documento,
+        id_estado,
         id_analista1
     }) => {
 
     try {
-        const documento_descargoNCPath = saveImage(documento, 'DescargoNC');
 
+        let documento_descargoNCPath = null;
+
+        if(documento){
+            documento_descargoNCPath = saveImage(documento, 'DescargoNC');
+        }
+        
         const newDescargoNC = await DescargoNC.create({
             nro_descargo,
-            id_estado: 1,
+            id_estado,
             fecha_descargo,
             documento: documento_descargoNCPath,
             id_analista1

@@ -78,7 +78,7 @@ const createInformeFinalHandler = async (req, res) => {
 
         startJobForDocument(ifiId, startDate, 'ifi');
 
-        await updateNC( id_nc, { id_nro_IFI: ifiId, id_estado_NC: 4 });
+        await updateNC( id_nc, { id_nro_IFI: ifiId, estado: 'TERMINADO' });
         
         return res.status(200).json({ message: 'Nuevo Informe Final Creado', data: response })
     } catch (error) {

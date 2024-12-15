@@ -138,7 +138,7 @@ const updateDocumentState = async (documentId, newState, documentType) => {
         switch (documentType) {
             case 'nc':
                 model = NC;
-                stateField = 'id_estado_NC';
+                stateField = 'estado';
                 break;
             case 'rsa':
                 model = RSA;

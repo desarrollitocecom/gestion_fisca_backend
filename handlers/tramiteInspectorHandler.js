@@ -112,6 +112,7 @@ const createTramiteHandler = async (req, res) => {
                 nro_acta, 
                 documento_acta: req.files['documento_acta'][0], 
                 id_medida_complementaria, 
+                estado: 'DIGITADOR',
                 id_inspector
             });
             

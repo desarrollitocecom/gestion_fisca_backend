@@ -1,7 +1,7 @@
 const { TramiteInspector, MedidaComplementaria, EstadoMC, TipoDocumentoComplementario, EjecucionMC } = require('../db_connection');
 const { saveImage, deleteFile } = require('../utils/fileUtils');
 
-const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, id_medida_complementaria, id_inspector }) => {
+const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, id_medida_complementaria, estado, id_inspector }) => {
 
 
     let documento_ncPath;
@@ -17,6 +17,7 @@ const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, document
             nro_acta,
             documento_acta: documento_actaPath,
             id_medida_complementaria,
+            estado,
             id_inspector
         });
 

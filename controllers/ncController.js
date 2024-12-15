@@ -5,7 +5,7 @@ const createNC = async ({ id_tramiteInspector }) => {
     try {
         const newNC = await NC.create({
             id_tramiteInspector,
-            id_estado_NC: 1
+            estado: 'DIGITADOR'
         });
 
         console.log('NC creado con éxito');
@@ -54,8 +54,9 @@ const updateNC = async (id, {
    
     id_descargo_NC,
     id_digitador,
+    estado,
     id_nro_IFI,
-    id_estado_NC
+    
  }) => {
 
     try {
@@ -86,8 +87,8 @@ const updateNC = async (id, {
             
                 id_descargo_NC,
                 id_digitador,
+                estado,
                 id_nro_IFI,
-                id_estado_NC
             });
         }
         
@@ -105,7 +106,7 @@ const getAllNC = async (page = 1, limit = 20) => {
         const response = await NC.findAndCountAll({ 
             limit,
             offset,
-            where: { id_estado_NC: 1 }, 
+            where: { estado: 'DIGITADOR' }, 
             order: [['id', 'ASC']],
             attributes: [
                 'id',
@@ -113,7 +114,7 @@ const getAllNC = async (page = 1, limit = 20) => {
                 [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'inspector'],
                 [Sequelize.col('tramiteInspector.documento_nc'), 'documento_nc'],
                 [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
-                [Sequelize.col('id_estado_NC'), 'estado'],
+                [Sequelize.col('estado'), 'estado'],
                 
             ],
             include: [
@@ -146,12 +147,12 @@ const getAllNCforInstructiva = async (page = 1, limit = 20) => {
         const response = await NC.findAndCountAll({ 
             limit,
             offset,
-            where: { id_estado_NC: 3 }, 
+            where: { estado: 'A_I' }, 
             order: [['id', 'ASC']],
             attributes: [
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
-                [Sequelize.col('id_estado_NC'), 'estado'],
+                [Sequelize.col('estado'), 'estado'],
                 [Sequelize.col('descargoNC.analistaUsuario.usuario'), 'analista']
             ],
             include: [
@@ -187,14 +188,14 @@ const getAllNCforAnalista = async (page = 1, limit = 20) => {
         const response = await NC.findAndCountAll({ 
             limit,
             offset,
-            where: { id_estado_NC: 2 }, 
+            where: { estado: 'ANALISTA_1' }, 
             order: [['id', 'ASC']],
             attributes: [
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('digitadorUsuario.usuario'), 'digitador'],
                 [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
-                [Sequelize.col('id_estado_NC'), 'estado']
+                [Sequelize.col('estado'), 'estado']
             ],
             include: [
                 {
@@ -225,7 +226,7 @@ const updateNCState = async (id, newState) => {
             console.error(`No se encontró el NC con ID ${id}.`);
             return null;
         }
-        nc.id_estado_NC = newState; // Actualiza el estado del NC
+        nc.estado = newState; // Actualiza el estado del NC
         await nc.save(); // Guarda los cambios en la base de datos
         console.log(`Estado del NC con ID ${id} actualizado a ${newState}.`);
         return nc;

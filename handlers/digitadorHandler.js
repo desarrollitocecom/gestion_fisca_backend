@@ -188,8 +188,8 @@ const updateNCHandler = async (req, res) => {
 
             observaciones,
  
+            estado: 'ANALISTA_1',
             id_digitador,
-            id_estado_NC: 2
         });
 
         if (!response) {

@@ -123,13 +123,9 @@ module.exports=(sequelize)=>{
             allowNull:true
         },
 
-        id_estado_NC:{
-            type: DataTypes.INTEGER,
-            references: {
-                model: 'EstadoNCs',
-                key: 'id',
-            },
-            allowNull:true
+        estado: {
+            type: DataTypes.ENUM('DIGITADOR', 'ANALISTA_1', 'A_I', 'TERMINADO'),
+            allowNull: true
         },
         
     }, {
@@ -146,7 +142,7 @@ module.exports=(sequelize)=>{
         NC.belongsTo(db.Entidad, { foreignKey: 'id_entidad', as: 'entidad'})
         NC.belongsTo(db.Infraccion, { foreignKey: 'id_infraccion', as: 'infraccion'})
         // NC.belongsTo(db.MedidaComplementaria, { foreignKey: 'id_medida_complementaria', as: 'medidaComplementaria'})
-        NC.belongsTo(db.EstadoNC, { foreignKey: 'id_estado_NC', as: 'estadoNC'})
+        // NC.belongsTo(db.EstadoNC, { foreignKey: 'id_estado_NC', as: 'estadoNC'})
         NC.belongsTo(db.IFI, { foreignKey: 'id_nro_IFI', as: 'IFI'})
         NC.belongsTo(db.DescargoNC, { foreignKey: 'id_descargo_NC', as: 'descargoNC'})
         NC.belongsTo(db.Usuario, { foreignKey: 'id_digitador', as: 'digitadorUsuario' })

@@ -54,6 +54,7 @@ const createDescargoNCHandler = async (req, res) => {
             nro_descargo,
             fecha_descargo,
             documento: req.files['documento'][0],
+            id_estado: 1,
             id_analista1
         });
         
@@ -72,7 +73,7 @@ const createDescargoNCHandler = async (req, res) => {
 
         const response = await updateNC(id, { 
             id_descargo_NC,
-            id_estado_NC: 3
+            esatdo: 'A_I'
         });
 
        
@@ -133,4 +134,63 @@ const getAllNCforAnalistaHandler = async (req, res) => {
     }
 };
 
-module.exports = { createDescargoNCHandler, getAllNCforAnalistaHandler };
+const sendWithoutDescargoHandler = async (req, res) => {
+    const id = req.params.id;
+
+    const { 
+        id_analista1
+    } = req.body;
+
+    try {
+
+        const existingNC = await getNC(id); 
+
+        if (!existingNC) {
+            return res.status(404).json({ message: "NC no encontrada para actualizar" });
+        }
+
+        const newDescargoNC = await createDescargoNC({ 
+            id_analista1,
+            id_estado : 2
+        });
+        
+        if (!newDescargoNC) {
+            return res.status(400).json({ error: 'Error al crear el Descargo NC' });
+        }
+        const id_nc=existingNC.id;
+        const total_documentos = '';
+        const nuevoModulo='SIN DESCARGO NC';
+
+        
+        
+     await updateDocumento({id_nc, total_documentos, nuevoModulo});
+
+        const id_descargo_NC = newDescargoNC.id;
+
+        const response = await updateNC(id, { 
+            id_descargo_NC,
+            estado: 'A_I'
+        });
+
+       
+         
+         
+        if (response) {
+          res.status(201).json({
+                message: 'Descargo NC creado con exito',
+                data: response,
+            });
+        } else {
+           res.status(400).json({
+                message: 'Error al crear Descargo NC',
+            });
+        }
+
+
+    } catch (error) {
+        console.error('Error al crear el NC:', error);
+        return res.status(500).json({ message: 'Error interno del servidor al crear el Descargo NC' });
+    }
+}
+
+module.exports = { createDescargoNCHandler, getAllNCforAnalistaHandler, sendWithoutDescargoHandler };

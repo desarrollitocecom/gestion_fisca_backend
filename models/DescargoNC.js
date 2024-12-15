@@ -10,6 +10,17 @@ module.exports=(sequelize)=>{
           type:DataTypes.STRING,
           allowNull: true
         },
+        
+        fecha_descargo:{
+          type:DataTypes.DATE,
+          allowNull: true
+        },
+        
+        documento:{
+            type:DataTypes.STRING,
+            allowNull: true
+        },
+
         id_estado:{
             type: DataTypes.INTEGER,
             references: {
@@ -18,14 +29,7 @@ module.exports=(sequelize)=>{
             },
             allowNull: true
         },
-        fecha_descargo:{
-          type:DataTypes.DATE,
-          allowNull: true
-        },
-        documento:{
-            type:DataTypes.STRING,
-            allowNull: true
-        },
+
         id_analista1:{
             type: DataTypes.UUID,
             references: {

@@ -112,9 +112,9 @@ const insertData = async () => {
 
     // Insertar datos ficticios en EstadoDescargoNC
     await EstadoDescargoNC.bulkCreate([
-      { tipo: "Ejecución 1" },
-      { tipo: "Ejecución 2" },
-      { tipo: "Ejecución 3" },
+      { tipo: "CON DESCARGO" },
+      { tipo: "SIN DESCARGO" },
+      { tipo: "ANULADO" },
     ]);
 
 
