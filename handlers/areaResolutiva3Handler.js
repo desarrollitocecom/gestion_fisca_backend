@@ -47,7 +47,7 @@ const getAllRSAforAR3Handler = async (req, res) => {
 const createRSGHandler = async (req, res) => {
   const { id } = req.params;
 
-  const { nro_rsg, fecha_rsg, fecha_notificacion, id_descargo_RSGNP, id_nc, id_AR3, tipo} = req.body;
+  const { nro_rsg, fecha_rsg, fecha_notificacion, id_nc, id_AR3, tipo} = req.body;
 
   const errores = [];
 
