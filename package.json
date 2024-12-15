@@ -4,7 +4,11 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon server.js"
+    "start": "nodemon server.js",
+    "script1": "node scripts/sendPermisos.js",
+    "script2": "node scripts/sendRoles.js",
+    "script3": "node scripts/insertData.js",
+    "runAll": "npm run script1 && npm run script2 && npm run script3"
   },
   "keywords": [
     "ficalizacion",

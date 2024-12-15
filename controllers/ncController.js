@@ -33,25 +33,26 @@ const getNC = async (id) => {
 const updateNC = async (id, { 
     id_tipoDocumento, 
     nro_documento, 
-            
-    id_administrado,
+    ordenanza_municipal,
+    nro_licencia_funcionamiento,
+    
     id_entidad,
     id_infraccion,
     lugar_infraccion,
 
-    nro_licencia_funcionamiento,
+    
     placa_rodaje,
-    fecha_deteccion_inicio,
-    hora_deteccion_inicio,
-    fecha_deteccion_fin,
-    hora_deteccion_fin,
+
+    fecha_constancia_notificacion,
+
 
     nombres_infractor,
     dni_infractor,
     relacion_infractor,
+
+    observaciones,
    
     id_descargo_NC,
-    id_const_noti,
     id_digitador,
     id_nro_IFI,
     id_estado_NC
@@ -64,28 +65,28 @@ const updateNC = async (id, {
             await findNC.update({
                 id_tipoDocumento, 
                 nro_documento, 
-                        
-                id_administrado,
+                ordenanza_municipal,
+                nro_licencia_funcionamiento,
+                
                 id_entidad,
                 id_infraccion,
                 lugar_infraccion,
 
-                nro_licencia_funcionamiento,
+                
                 placa_rodaje,
-                fecha_deteccion_inicio,
-                hora_deteccion_inicio,
-                fecha_deteccion_fin,
-                hora_deteccion_fin,
+
+                fecha_constancia_notificacion,
+
 
                 nombres_infractor,
                 dni_infractor,
                 relacion_infractor,
 
+                observaciones,
+            
                 id_descargo_NC,
-                id_const_noti,
                 id_digitador,
                 id_nro_IFI,
-
                 id_estado_NC
             });
         }

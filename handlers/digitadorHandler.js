@@ -19,6 +19,7 @@ const updateNCHandler = async (req, res) => {
     const { 
             id_tipoDocumento, 
             nro_documento, 
+            ordenanza_municipal,
             nro_licencia_funcionamiento,
 
             nombre_entidad,
@@ -30,31 +31,12 @@ const updateNCHandler = async (req, res) => {
             lugar_infraccion,
             placa_rodaje,
 
-            fecha_deteccion_inicio,
-            hora_deteccion_inicio,
-            fecha_deteccion_fin,
-            hora_deteccion_fin,
+            fecha_constancia_notificacion,
             
             nombres_infractor,
             dni_infractor,
             relacion_infractor,
 
-            nro_nc,
-            hora,
-            dia,
-            mes,
-            anio,
-            lugar,
-            caracteristicas,
-
-            nombre_test1,
-            dni_test1,
-            nombre_test2,
-            dni_test2,
-
-            puerta,
-            nro_pisos,
-            nro_suministro,
             observaciones,
 
             id_digitador,
@@ -75,14 +57,10 @@ const updateNCHandler = async (req, res) => {
             errors.push('El número de Documento debe ser obligatorio');
         }
 
-        if (nro_documento !== undefined && nro_documento !== null && (!/^(10|20)\d{9}$/.test(nro_documento))) {
-            errors.push('El número de Documento debe ser un número válido de 11 dígitos y comenzar con 10 o 20');
+        if(!ordenanza_municipal){
+            errors.push('La Ordenanza Municipal debe ser obligatorio');
         }
 
-        if(!nro_licencia_funcionamiento){
-            errors.push('El número de Documento debe ser obligatorio');
-        }
-             
         if (nro_licencia_funcionamiento !== undefined && nro_licencia_funcionamiento !== null && (!/^\d{5}-\d{2}$/.test(nro_licencia_funcionamiento))) {
             errors.push('El campo licencia debe tener el formato *****-**, 5 dígitos, guion, 2 dígitos');
         }
@@ -119,16 +97,16 @@ const updateNCHandler = async (req, res) => {
 
         const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
 
-        if(!fecha_deteccion_inicio){
+        if(!fecha_constancia_notificacion){
             errors.push('La fecha de inicio debe ser obligatorio');
         }
 
-        if(fecha_deteccion_inicio){
-            if (!fechaRegex.test(fecha_deteccion_inicio)) {
+        if(fecha_constancia_notificacion){
+            if (!fechaRegex.test(fecha_constancia_notificacion)) {
                 errors.push('El formato de la fecha de inicio debe ser YYYY-MM-DD');
             } else {
         
-                const parsedFecha = new Date(fecha_deteccion_inicio);
+                const parsedFecha = new Date(fecha_constancia_notificacion);
         
                 if (isNaN(parsedFecha.getTime())) {
         
@@ -138,40 +116,6 @@ const updateNCHandler = async (req, res) => {
             }
         }
 
-        if(!hora_deteccion_inicio){
-            errors.push('La hora de inicio debe ser obligatorio');
-        }
-
-        if (hora_deteccion_inicio !== undefined && hora_deteccion_inicio !== null && (!/^([01]\d|2[0-3]):[0-5]\d$/.test(hora_deteccion_inicio))) {
-            errors.push('La hora de inicio debe estar en el formato HH:MM y ser una hora válida en formato 24 horas');
-        }
-
-        if(!fecha_deteccion_fin){
-            errors.push('La fecha de fin debe ser obligatorio');
-        }
-
-        if(fecha_deteccion_fin){
-            if (!fechaRegex.test(fecha_deteccion_fin)) {
-                errors.push('El formato de la fecha fin debe ser YYYY-MM-DD');
-            } else {
-        
-                const parsedFecha = new Date(fecha_deteccion_fin);
-        
-                if (isNaN(parsedFecha.getTime())) {
-        
-                    errors.push('Debe ser una fecha válida');
-        
-                }
-            }
-        }
-
-        if(!hora_deteccion_fin){
-            errors.push('La hora de fin debe ser obligatorio');
-        }
-
-        if (hora_deteccion_fin !== undefined && hora_deteccion_fin !== null && (!/^([01]\d|2[0-3]):[0-5]\d$/.test(hora_deteccion_fin))) {
-            errors.push('La hora de fin debe estar en el formato HH:MM y ser una hora válida en formato 24 horas');
-        }
 
         if(!nombres_infractor){
             errors.push('El nombre del infractor es obligatorio');
@@ -185,66 +129,6 @@ const updateNCHandler = async (req, res) => {
             errors.push('La relacion del infractor es obligatorio');
         }
 
-        if(!nro_nc){
-            errors.push('El nro de NC de la CN es obligatorio');
-        }
-
-        if(!hora){
-            errors.push('La hora de la CN es obligatorio');
-        }
-
-        if(!dia){
-            errors.push('El dia de la CN es obligatorio');
-        }
-
-        if(!mes){
-            errors.push('El mes de la CN es obligatorio');
-        }
-
-        if(!anio){
-            errors.push('El año de la CN es obligatorio');
-        }
-
-        if(!lugar){
-            errors.push('El lugar de la CN es obligatorio');
-        }
-
-        if(!caracteristicas){
-            errors.push('Las caracteristicas de la CN son obligatorio');
-        }
-
-        if(!nombre_test1){
-            errors.push('El nombre del testigo 1 es obligatorio');
-        }
-
-        if(!dni_test1){
-            errors.push('El DNI del testigo 1 es obligatorio');
-        }
-
-        if (dni_test1 !== undefined && dni_test1 !== null && (!/^\d{8}$/.test(dni_test1))) {
-            errors.push('El DNI del testigo 1 debe tener 8 digitos');
-        }
-
-        if(!nombre_test2){
-            errors.push('El nombre del testigo 2 es obligatorio');
-        }
-
-        if(!dni_test2){
-            errors.push('El DNI del testigo 1 es obligatorio');
-        }
-
-        if (dni_test2 !== undefined && dni_test2 !== null && (!/^\d{8}$/.test(dni_test2))) {
-            errors.push('El DNI del testigo 1 debe tener 8 digitos');
-        }
-
-
-        if(!puerta){
-            errors.push('La puerta de la CN es obligatorio');
-        }
-
-        if(!nro_pisos){
-            errors.push('Los nro de pisos de la CN es obligatorio');
-        }
 
         if(!observaciones){
             errors.push('Las observaciones de la CN son obligatorias');
@@ -284,57 +168,26 @@ const updateNCHandler = async (req, res) => {
             }
         }
 
-        let id_const_noti = null;
-
-        const shouldCreateConstNofi = hora || dia || mes || anio || lugar || caracteristicas || nombre_test1 || dni_test1 || nombre_test2 || dni_test2 || puerta || nro_pisos || nro_suministro || observaciones;
-
-        if(shouldCreateConstNofi) {
-            const shouldCreateConstNofi = await createConstNotifi({
-                hora,   //time
-                dia,    //integer
-                mes,    //text
-                anio,   //integer
-                lugar,  //string
-                caracteristicas,  //string
-
-                nro_nc,  //string
-                nombre_test1,  //string  
-                dni_test1,  //integer
-                nombre_test2,  //string
-                dni_test2,  //integer
-                puerta,  //string
-                nro_pisos,  //string
-                nro_suministro,  //string
-                observaciones,  //string
-            });
-
-            if (shouldCreateConstNofi) {
-                id_const_noti = shouldCreateConstNofi.id;
-            } else {
-                return res.status(400).json({ error: 'Error al crear la ConstanciaNotificacion' });
-            }
-        }
 
         const response = await updateNC(id, { 
-            id_tipoDocumento, //integer
-            nro_documento,  //integer
-            nro_licencia_funcionamiento, //integer
+            id_tipoDocumento, 
+            nro_documento,  
+            ordenanza_municipal,
+            nro_licencia_funcionamiento, 
 
-            id_entidad,  //fk
-            id_infraccion,  //fk integer
-            lugar_infraccion, //string
-            placa_rodaje, //integer
+            id_entidad,  
+            id_infraccion,  
+            lugar_infraccion, 
+            placa_rodaje, 
             
-            fecha_deteccion_inicio,  //dateonly
-            hora_deteccion_inicio,  //time
-            fecha_deteccion_fin,  //dateonly
-            hora_deteccion_fin,  //time
+            fecha_constancia_notificacion, 
 
-            nombres_infractor,  //string
-            dni_infractor,  //integer
-            relacion_infractor,  //string
+            nombres_infractor, 
+            dni_infractor,  
+            relacion_infractor, 
 
-            id_const_noti,
+            observaciones,
+ 
             id_digitador,
             id_estado_NC: 2
         });
