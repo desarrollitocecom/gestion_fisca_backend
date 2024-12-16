@@ -36,12 +36,12 @@ const createRGController = async ({
         return false
     }
 };
-const getAllRGforAN5Controller = async () => {
+const getAllRGforAnalista5Controller = async () => {
    
     try {
         const response = await RG.findAll({ 
            
-            where: { tipo: 'AN5' }, 
+            where: { tipo: 'ANALISTA_5' }, 
             order: [['id', 'ASC']],
             attributes: [
                 'id',
@@ -122,5 +122,5 @@ module.exports = {
     updateRGController,
     getRGController,
     getAllRGController,
-    getAllRGforAN5Controller
+    getAllRGforAnalista5Controller
 };

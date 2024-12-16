@@ -1,10 +1,12 @@
-const {getAllRSAforAnalista4Controller, getRsaController, updateRsaController} = require("../controllers/rsaController");
+const {getAllRSAforAnalista5Controller} = require("../controllers/rsaController");
 const {createDescargoRSAController} = require("../controllers/descargoRsaController");
 const { getRSGController, getAllRSGforAnalista4Controller } = require("../controllers/rsgController")
 const {
   createDescargoRSGNPController,
   updateDescargoRSGNPController,
 } = require('../controllers/descargoRsgnpController');
+
+const { getAllRGforAnalista5Controller } = require("../controllers/rgController")
 const { updateRSGNPController } = require('../controllers/rsgController')
 
 updateRSGNPController
@@ -28,7 +30,9 @@ function isValidUUID(uuid) {
 
 const getAllRSGforAnalista5Handler = async (req, res) => {
   try {
-    const response = await getAllRSGforAnalista5Controller();
+    // const response = await getAllRSGforAnalista5Controller();
+    // const response = await getAllRSAforAnalista5Controller();
+    const response = await getAllRGforAnalista5Controller();
 
     if (response.data.length === 0) {
       return res.status(200).json({

@@ -1,12 +1,11 @@
 const {getAllRSAforAnalista4Controller, getRsaController, updateRsaController} = require("../controllers/rsaController");
 const {createDescargoRSAController} = require("../controllers/descargoRsaController");
-const { getRSGController, getAllRSGforGerenciaController } = require("../controllers/rsgController")
+const { getRSGController, getAllRSGforGerenciaController, updateRSGNPController } = require("../controllers/rsgController")
 const { createRGController } = require("../controllers/rgController")
 const {
   createDescargoRSGNPController,
   updateDescargoRSGNPController,
 } = require('../controllers/descargoRsgnpController');
-const { updateRSGNPController } = require('../controllers/rsgController')
 
 
 const {
@@ -158,14 +157,14 @@ const createRGHandler = async (req, res) => {
       }
       const id_rg = newRG.id;
 
-      // const response = await updateRSGNPController(id, { id_rg })
+      const response = await updateRSGNPController(id, { tipo: 'TERMINADO' })
 
-      // if (!response) {
-      //     return res.status(201).json({
-      //         message: 'Error al crear el RG y al asociar con RSGNP',
-      //         data: []
-      //     });
-      // }  
+      if (!response) {
+          return res.status(201).json({
+              message: 'Error al crear el RG y al asociar con RSGNP',
+              data: []
+          });
+      }  
       const total_documentos = newRG.documento_rg;
 
       const nuevoModulo = "RESOLUCION GERENCIAL"
