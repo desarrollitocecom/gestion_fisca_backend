@@ -183,7 +183,7 @@ const getAllRSGforAnalista4Controller = async (page = 1, limit = 20) => {
          
                              [Sequelize.col('NCs.id'), 'id_nc'],
                              [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                             [Sequelize.col('Usuarios.usuario'), 'analista4'],
+                             [Sequelize.col('Usuarios.usuario'), 'area_resolutiva3'],
                  ],
            
                  include: [
@@ -286,6 +286,50 @@ const getAllRSGforGerenciaController = async (page = 1, limit = 20) => {
 
 
 
+const getAllRSGforAnalista5Controller = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
+    try {
+        const rgsnps = await RSG.findAndCountAll({
+            limit,
+          offset,
+          where: { tipo: 'ANALISTA_5' }, 
+                 attributes: ['id', 'id_AR3', 'createdAt',
+         
+                             [Sequelize.col('NCs.id'), 'id_nc'],
+                             [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                             [Sequelize.col('Usuarios.usuario'), 'analista4'],
+                 ],
+           
+                 include: [
+                    { 
+                     model: NC, 
+                     as:'NCs',  
+                     include: [
+                       {
+                         model: TramiteInspector,
+                         as: 'tramiteInspector',
+                         attributes: []
+                       }
+                     ],
+                     attributes: [] 
+                    },
+                    { 
+                     model:Usuario,
+                     as:'Usuarios',
+                     attributes:[]
+                   },
+                   
+                 ],
+               });
+               return { totalCount: rgsnps.count, data: rgsnps.rows, currentPage: page } || null;
+
+    } catch (error) {
+        console.error("Error al traer los RSGNPs:", error);
+        return false
+    }
+};
+
+
 
 module.exports = {
     createRSGController,
@@ -296,5 +340,6 @@ module.exports = {
     getRSGController,
     getAllRSGforAnalista4Controller,
     updateRSGNPController,
-    getAllRSGforGerenciaController
+    getAllRSGforGerenciaController,
+    getAllRSGforAnalista5Controller
 };
