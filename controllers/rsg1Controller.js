@@ -138,8 +138,10 @@ const getAllRSG1forAR1Controller = async (page = 1, limit = 20) => {
                 documento_acta: row.get('documento_acta'),
             },
             usuarioDigitador: row.get('usuarioDigitador'),
-            usuarioAnalista1: row.get('usuarioAnalista1'),
-            documento_descargoNC: row.get('documento_descargoNC'),
+            descargoNC: {
+                usuarioAnalista1: row.get('usuarioAnalista1'),
+                documento_descargoNC: row.get('documento_descargoNC'),
+            },
             usuarioAreaInstructiva1: row.get('usuarioAreaInstructiva1'),
             documento_ifi: row.get('documento_ifi'),
         }));
