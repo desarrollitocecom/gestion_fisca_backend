@@ -291,12 +291,16 @@ const getAllRSGforAnalista5Controller = async (page = 1, limit = 20) => {
     try {
         const rgsnps = await RSG.findAndCountAll({
             limit,
-          offset,
-          where: { tipo: 'ANALISTA_5' }, 
-                 attributes: ['id', 'id_AR3', 'createdAt',
-                             [Sequelize.col('NCs.id'), 'id_nc'],
-                             [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                             [Sequelize.col('Usuarios.usuario'), 'analista4'],
+            offset,
+            where: { tipo: 'ANALISTA_5' },    
+            order: [['createdAt', 'DESC']],
+            attributes: ['id', 'id_AR3', 'createdAt',
+                [Sequelize.col('NCs.id'), 'id_nc'],
+                // [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                // [Sequelize.col('DescargoRSAs.Usuarios.usuario'), 'usuario'],
+                [Sequelize.col('Usuarios.usuario'), 'usuario'],
+                [Sequelize.literal(`'Analista 4'`), 'area'],
+                'createdAt'
                  ],
            
                  include: [

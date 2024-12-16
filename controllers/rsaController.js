@@ -300,7 +300,7 @@ const getAllRSAforAnalista5Controller = async (page = 1, limit = 20) => {
               [Sequelize.col('NCs.id'), 'id_nc'],
               'nro_rsa',
               [Sequelize.col('DescargoRSAs.Usuarios.usuario'), 'usuario'],
-              [Sequelize.literal(`'Analista3'`), 'area'],
+              [Sequelize.literal(`'Analista 3'`), 'area'],
               'createdAt',
           ],
           include: [
@@ -327,11 +327,6 @@ const getAllRSAforAnalista5Controller = async (page = 1, limit = 20) => {
                 ],  
                 attributes: []
               },
-              // {
-              //   model: Usuario, 
-              //   as: 'Usuarios',
-              //   attributes: []
-              // },
           ],
       });
       return { totalCount: response.count, data: response.rows, currentPage: page } || null;
