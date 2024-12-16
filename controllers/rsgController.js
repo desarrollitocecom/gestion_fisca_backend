@@ -217,7 +217,7 @@ const getAllRSGforAnalista4Controller = async (page = 1, limit = 20) => {
 };
 
 
-const updateRSGNPController = async (id, {id_descargo_RSG, id_estado_RSGNP, tipo}) => {
+const updateRSGNPController = async (id, {id_descargo_RSG, id_estado_RSGNP, tipo, id_evaluar_rsg}) => {
    
     try {
            
@@ -228,7 +228,8 @@ const updateRSGNPController = async (id, {id_descargo_RSG, id_estado_RSGNP, tipo
             await rsgnp.update({
                 id_descargo_RSG,
                 id_estado_RSGNP,
-                tipo
+                tipo,
+                id_evaluar_rsg
             });
         }
         return rsgnp || null
@@ -341,7 +342,7 @@ const getAllRSG3forAR3Controller = async (page = 1, limit = 20) => {
         const response = await NC.findAndCountAll({ 
             limit,
             offset,
-            where: Sequelize.where(Sequelize.col('IFI.tipo'), 'TERMINADO_RSG2'),
+            where: Sequelize.where(Sequelize.col('IFI.RSA.tipo'), 'TERMINADO'),
             order: [['id', 'ASC']],
             attributes: [
                 'id',
@@ -380,8 +381,10 @@ const getAllRSG3forAR3Controller = async (page = 1, limit = 20) => {
                 [Sequelize.col('IFI.RSA.DescargoRSAs.documento_DRSA'), 'documento_DRSA'],
                 [Sequelize.col('IFI.RSA.DescargoRSAs.createdAt'), 'DRSA_createdAt'],
 
-
-                // [Sequelize.col('IFI.RSA.areaInstructiva2.usuario'), 'usuarioAreaInstructiva2'],
+                [Sequelize.col('IFI.RSA.RSGs.Usuarios.usuario'), 'usuarioAreaInstructiva3'],
+                [Sequelize.literal(`'RESOLUCION SUBGERENCIAL GENERAL 3'`), 'nombre_RSG3'],
+                [Sequelize.col('IFI.RSA.RSGs.documento_RSG'), 'documento_RSG'],
+                [Sequelize.col('IFI.RSA.RSGs.createdAt'), 'RSG3_createdAt'],
 
             ],
             include: [
@@ -449,8 +452,8 @@ const getAllRSG3forAR3Controller = async (page = 1, limit = 20) => {
                                     ]
                                 },
                                 {
-                                    model:  DescargoRSA,
-                                    as: 'DescargoRSAs',
+                                    model:  RSG,
+                                    as: 'RSGs',
                                     include: [
                                         {
                                             model: Usuario,
@@ -523,6 +526,14 @@ const getAllRSG3forAR3Controller = async (page = 1, limit = 20) => {
                     path: row.get('documento_DRSA'),
                 },
                 analista3_createdAt: row.get('DRSA_createdAt'),
+            },
+            etapaRSG: {
+                usuarioAreaInstructiva3: row.get('usuarioAreaInstructiva3'),
+                documento_RSA: {
+                    nombre: row.get('nombre_RSG3'),
+                    path: row.get('documento_RSG'),
+                },
+                AR3_createdAt: row.get('RSG3_createdAt'),
             }
         }));
 

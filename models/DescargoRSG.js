@@ -41,6 +41,8 @@ module.exports = (sequelize) => {
     });
     DescargoRSG.associate = (db) => {
         DescargoRSG.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
+        DescargoRSG.belongsTo(db.Usuario, { foreignKey: 'id_analista_4', as: 'Usuarios' })
+
     };
     return DescargoRSG;
 };

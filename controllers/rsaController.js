@@ -71,7 +71,7 @@ const getAllRSAforAR3Controller = async (page = 1, limit = 20) => {
         return false;
     }
   };
-const updateRsaController = async (id,{ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_estado_RSA,id_AR2}) => {
+const updateRsaController = async (id,{ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_RSG, id_descargo_RSA,id_nc,id_estado_RSA,id_AR2}) => {
     try {
 
         const rsa = await getRsaController(id);   
@@ -85,6 +85,7 @@ const updateRsaController = async (id,{ nro_rsa, fecha_rsa, fecha_notificacion, 
             id_evaluar_rsa,
             id_descargo_RSA,
             id_nc ,
+            id_RSG,
             id_estado_RSA,
             id_AR2
         });}

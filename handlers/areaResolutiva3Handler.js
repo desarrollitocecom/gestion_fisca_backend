@@ -115,8 +115,9 @@ const createRSGHandler = async (req, res) => {
           return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
       }
       const id_evaluar_rsa = newRSG.id;
+      const id_RSG = newRSG.id
 
-      const response = await updateRsaController(id, { id_evaluar_rsa, tipo: 'TERMINADO' })
+      const response = await updateRsaController(id, { id_evaluar_rsa, id_RSG, tipo: 'TERMINADO' })
       if (!response) {
           return res.status(201).json({
               message: 'Error al crear el RGSNP y al asociar con RSA',

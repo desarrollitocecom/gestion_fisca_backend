@@ -26,6 +26,18 @@ module.exports = (sequelize) => {
             type:DataTypes.ENUM('ANALISTA_3','RSGP','RSGNP','ACTA','AR3','ANALISTA_5', 'TERMINADO'),
             allowNull:true
         },
+        id_RSG:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'RSGs',
+                key: 'id',
+            },
+            allowNull: true,
+        }, 
+
+
+
+
         id_evaluar_rsa:{
             type:DataTypes.UUID,
             allowNull:true,
@@ -37,7 +49,6 @@ module.exports = (sequelize) => {
                  key: 'id',
              },
              allowNull: true,
-             unique:true
          }, 
          id_nc:{
             type: DataTypes.UUID,
@@ -75,7 +86,7 @@ module.exports = (sequelize) => {
         RSA.belongsTo(db.Usuario,{foreignKey:'id_AR2' , as:'Usuarios'});
         
         RSA.belongsTo(db.DescargoRSA, { foreignKey: 'id_evaluar_rsa', as: 'DRSA', constraints: false });
-
+        RSA.belongsTo(db.RSG, { foreignKey: 'id_RSG', as: 'RSGs' });
     };
     return RSA;
 };
