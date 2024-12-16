@@ -8,29 +8,30 @@ module.exports = (sequelize) => {
         },
         nro_rg: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         fecha_rg: {
             type: DataTypes.DATEONLY,
-            allowNull: false
+            allowNull: true
         },
         fecha_notificacion: {
             type: DataTypes.DATEONLY,
-            allowNull: false
+            allowNull: true
         },
         documento_rg: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
 
         tipo: {
-            type: DataTypes.ENUM('ACTA', 'AN5'),
+            type: DataTypes.ENUM('FUNDADO', 'ANALISTA_5'),
             allowNull: true
         },
-        id_evaluar_rg: {
-            type: DataTypes.UUID,
-            allowNull: true,
-        },
+        
+        // id_evaluar_rg: {
+        //     type: DataTypes.UUID,
+        //     allowNull: true,
+        // },
 
         id_nc: {
             type: DataTypes.UUID,
@@ -40,21 +41,21 @@ module.exports = (sequelize) => {
             },
             allowNull: true,
         },
-        id_estado_RG: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: 'EstadoRGs',
-                key: 'id',
-            },
-            allowNull: true
-        },
+        // id_estado_RG: {
+        //     type: DataTypes.INTEGER,
+        //     references: {
+        //         model: 'EstadoRGs',
+        //         key: 'id',
+        //     },
+        //     allowNull: true
+        // },
         id_gerente: {
             type: DataTypes.UUID,
             references: {
                 model: 'Usuarios',
                 key: 'id',
             },
-            allowNull: false
+            allowNull: true
         }
     }, {
         tableName: 'RGs',
@@ -63,7 +64,7 @@ module.exports = (sequelize) => {
     RG.associate = (db) => {
 
         RG.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
-        RG.belongsTo(db.EstadoRG, { foreignKey: 'id_estado_RG', as: 'estadoRG' })
+        // RG.belongsTo(db.EstadoRG, { foreignKey: 'id_estado_RG', as: 'estadoRG' })
         RG.belongsTo(db.Usuario, { foreignKey: 'id_gerente', as: 'Usuarios' });
         
     };

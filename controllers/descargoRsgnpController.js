@@ -1,4 +1,4 @@
-const { DescargoRSGNP } = require('../db_connection');
+const { DescargoRSG } = require('../db_connection');
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 
 // Crear un nuevo registro en la tabla DescargoRSGNP
@@ -6,10 +6,13 @@ const createDescargoRSGNPController = async ({ nro_descargo, fecha_descargo, doc
     let documento_path;
    
     try {
-        documento_path=saveImage(documento_DRSGNP,'Descargo(RSGNP)')  
-        const newDescargoRSGNP = await DescargoRSGNP.create({ nro_descargo, 
+        if(documento_DRSGNP){
+            documento_path=saveImage(documento_DRSGNP,'Descargo(RSGNP)')  
+        }
+        
+        const newDescargoRSGNP = await DescargoRSG.create({ nro_descargo, 
             fecha_descargo,
-             documento_DRSGNP:documento_path,
+            documento_DRSG:documento_path,
              id_nc,
              id_analista_4 });
         return newDescargoRSGNP || null;

@@ -108,31 +108,26 @@ const createRSGHandler = async (req, res) => {
       if (!existingRSA) {
           return res.status(404).json({ message: "El id del RSA no se encuentra", data: [] })
       }
-
-      const newRSG = await createRSGController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSG, id_nc, id_AR3 });
+      
+      const newRSG = await createRSGController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSG, id_nc, id_AR3, tipo });
 
       if (!newRSG) {
           return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
       }
       const id_evaluar_rsa = newRSG.id;
 
-
-      const response = await updateRsaController(id, { id_evaluar_rsa, tipo })
-
+      const response = await updateRsaController(id, { id_evaluar_rsa, tipo: 'TERMINADO' })
       if (!response) {
           return res.status(201).json({
               message: 'Error al crear el RGSNP y al asociar con RSA',
               data: []
           });
       }
-
-      const total_documentos = newRSG.documento_RSGNP;
+      const total_documentos = newRSG.documento_RSG;
 
       const nuevoModulo = "RESOLUCION SUBGERENCIAL NO PROCEDENTE"
-
-          await updateDocumento({ id_nc, total_documentos, nuevoModulo });
-
-      return res.status(200).json({ message: 'RGSNP creado  con éxito y asociado con RSA', data: response });
+      await updateDocumento({ id_nc, total_documentos, nuevoModulo });
+      return res.status(200).json({ message: 'RGSNP creado  con éxito y asociado con RSA', data: newRSG });
   
   } catch (error) {
       console.error("Error al crear RSGNP:", error);

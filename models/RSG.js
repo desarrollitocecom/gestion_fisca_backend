@@ -22,10 +22,10 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: true
         },
-        // tipo:{
-        //     type:DataTypes.ENUM('TERMINADO','ANALISTA_4'),
-        //     allowNull:true
-        // },
+        tipo:{
+            type:DataTypes.ENUM('RSGP','RSGNP','GERENCIA','TERMINADO', 'ANALISTA_5'),
+            allowNull:true
+        },
         // id_evaluar_rsgnp:{
         //     type:DataTypes.UUID,
         //     allowNull:true,

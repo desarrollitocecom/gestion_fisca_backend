@@ -12,9 +12,4 @@ router.get('/rsa_for_ar3',permisoAutorizacion(["all_system_access", "read_AResol
 
 router.patch('/newRSG/:id',permisoAutorizacion(["all_system_access", "create_AInstructiva"]), uploadRSG, createRSGHandler);
 
-// router.patch("/newRSG2/:id",permisoAutorizacion(["all_system_access", "create_AResolutiva1"]),uploadRSG1,createRSG2Handler);
-
-// router.patch("/newRSA/:id",permisoAutorizacion(["all_system_access", "create_rsa"]),uploadRSA,createRSAHandler);
-
-
 module.exports = router;    

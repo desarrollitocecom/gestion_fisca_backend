@@ -8,7 +8,9 @@ const createRGController = async ({
      fecha_notificacion,
      documento_rg,
      id_nc,
-     id_gerente}) => {
+     id_gerente,
+     tipo
+    }) => {
 
     let documento_path_rg;
 
@@ -20,9 +22,10 @@ const createRGController = async ({
             fecha_rg,
             fecha_notificacion,
             documento_rg:documento_path_rg,
-            estado:1,
             id_nc,
-            id_gerente});
+            id_gerente,
+            tipo
+        });
 
         return newRG || null;
     } catch (error) {

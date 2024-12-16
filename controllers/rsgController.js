@@ -2,7 +2,7 @@ const { RSG , Usuario,  NC , TramiteInspector } = require("../db_connection");
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 const { Sequelize } = require('sequelize');
 
-const createRSGController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSG,id_nc ,id_AR3}) => {
+const createRSGController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSG,id_nc ,id_AR3, tipo}) => {
 
     let documento_path;
     try {
@@ -16,7 +16,8 @@ const createRSGController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, doc
             fecha_notificacion,
             documento_RSG:documento_path,
             id_nc,
-            id_AR3
+            id_AR3,
+            tipo
         });
         return newRgsnp;
     } catch (error) {
@@ -61,7 +62,7 @@ const updateRsgnpController = async (id, {nro_rsg,id_evaluar_rsgnp,tipo, fecha_r
 
 const getRsgnpController = async (id) => {
     try {
-        const rgsnp = await RSGNP.findByPk(id)
+        const rgsnp = await RSG.findByPk(id)
         
         return rgsnp || null;
     } catch (error) {
@@ -158,10 +159,142 @@ const getAllRsgnpController = async (page = 1, limit = 20) => {
 };
 
 
+const getRSGController = async (id) => {
+    try {
+        console.log(id);
+        const rgsnp = await RSG.findByPk(id)
+        
+        return rgsnp || null;
+    } catch (error) {
+        console.error("Error fetching RGSNP:", error);
+        return false
+    }
+};
+
+
+const getAllRSGforAnalista4Controller = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
+    try {
+        const rgsnps = await RSG.findAndCountAll({
+            limit,
+          offset,
+          where: { tipo: 'RSGNP' }, 
+                 attributes: ['id', 'id_AR3', 'createdAt',
+         
+                             [Sequelize.col('NCs.id'), 'id_nc'],
+                             [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                             [Sequelize.col('Usuarios.usuario'), 'analista4'],
+                 ],
+           
+                 include: [
+                    { 
+                     model: NC, 
+                     as:'NCs',  
+                     include: [
+                       {
+                         model: TramiteInspector,
+                         as: 'tramiteInspector',
+                         attributes: []
+                       }
+                     ],
+                     attributes: [] 
+                    },
+                    { 
+                     model:Usuario,
+                     as:'Usuarios',
+                     attributes:[]
+                   },
+                   
+                 ],
+               });
+               return { totalCount: rgsnps.count, data: rgsnps.rows, currentPage: page } || null;
+
+    } catch (error) {
+        console.error("Error al traer los RSGNPs:", error);
+        return false
+    }
+};
+
+
+const updateRSGNPController = async (id, {id_descargo_RSG, id_estado_RSGNP, tipo}) => {
+   
+    try {
+           
+        
+        const rsgnp = await getRsgnpController(id);
+       
+        if (rsgnp) {
+            await rsgnp.update({
+                id_descargo_RSG,
+                id_estado_RSGNP,
+                tipo
+            });
+        }
+        return rsgnp || null
+    } catch (error) {
+       
+        console.error("Error updating RGSNP:", error);
+        return false
+
+    }
+};
+
+
+
+const getAllRSGforGerenciaController = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
+    try {
+        const rgsnps = await RSG.findAndCountAll({
+            limit,
+          offset,
+          where: { tipo: 'GERENCIA' }, 
+                 attributes: ['id', 'id_AR3', 'createdAt',
+         
+                             [Sequelize.col('NCs.id'), 'id_nc'],
+                             [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                             [Sequelize.col('Usuarios.usuario'), 'analista4'],
+                 ],
+           
+                 include: [
+                    { 
+                     model: NC, 
+                     as:'NCs',  
+                     include: [
+                       {
+                         model: TramiteInspector,
+                         as: 'tramiteInspector',
+                         attributes: []
+                       }
+                     ],
+                     attributes: [] 
+                    },
+                    { 
+                     model:Usuario,
+                     as:'Usuarios',
+                     attributes:[]
+                   },
+                   
+                 ],
+               });
+               return { totalCount: rgsnps.count, data: rgsnps.rows, currentPage: page } || null;
+
+    } catch (error) {
+        console.error("Error al traer los RSGNPs:", error);
+        return false
+    }
+};
+
+
+
+
 module.exports = {
     createRSGController,
     updateRsgnpController,
     getRsgnpController,
     getAllRsgnpController,
-    getAllRSGNPforAN5Controller
+    getAllRSGNPforAN5Controller,
+    getRSGController,
+    getAllRSGforAnalista4Controller,
+    updateRSGNPController,
+    getAllRSGforGerenciaController
 };
