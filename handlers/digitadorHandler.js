@@ -2,7 +2,7 @@ const { updateNC, getNC, getAllNC } = require('../controllers/ncController');
 const { createAdministrado } = require('../controllers/administradoController');
 const { createEntidad } = require('../controllers/entidadController');
 const { createConstNotifi } = require('../controllers/constanciaNotificacionController')
-
+const { getIo } = require("../sockets");
 const updateNCHandler = async (req, res) => {
     const id = req.params.id;
     
@@ -195,7 +195,12 @@ const updateNCHandler = async (req, res) => {
         if (!response) {
             return res.status(404).json({ message: "Error al actualizar" });
         }
-
+        //socket
+        const io = getIo();
+        io.emit("ncActualizada", {
+            message: 'NC actualizada correctamente',
+            data: response,
+        });
         res.status(200).json({
             message: "NC actualizada correctamente",
             data: response
@@ -236,6 +241,13 @@ const allNCHandler = async (req, res) => {
                 }
             });
         }
+
+        //listaallNCHandler
+        const io = getIo();
+        io.emit("listaallNCHandler", {
+            message: 'Tramites obtenidos correctamente',
+            data: response,
+        });
 
         return res.status(200).json({
             message: "Tramites obtenidos correctamente",
