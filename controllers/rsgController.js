@@ -1,6 +1,7 @@
 const { RSG , Usuario,  NC , TramiteInspector } = require("../db_connection");
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 const { Sequelize } = require('sequelize');
+const { RSG1, DescargoNC, IFI, DescargoIFI, RSG2, RSA, DescargoRSA } = require('../db_connection'); 
 
 const createRSGController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSG,id_nc ,id_AR3, tipo}) => {
 
@@ -334,6 +335,207 @@ const getAllRSGforAnalista5Controller = async (page = 1, limit = 20) => {
 
 
 
+const getAllRSG3forAR3Controller = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
+    try {
+        const response = await NC.findAndCountAll({ 
+            limit,
+            offset,
+            where: Sequelize.where(Sequelize.col('IFI.tipo'), 'TERMINADO_RSG2'),
+            order: [['id', 'ASC']],
+            attributes: [
+                'id',
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'usuarioInspector'],
+                [Sequelize.literal(`'NOTIFICACION DE CARGO'`), 'nombre_nc'],
+                [Sequelize.col('tramiteInspector.documento_nc'), 'documento_nc'],
+                [Sequelize.literal(`'ACTA DE FISCALIZACION'`), 'nombre_acta'],
+                [Sequelize.col('tramiteInspector.documento_acta'), 'documento_acta'],
+                [Sequelize.col('tramiteInspector.createdAt'), 'inspector_createdAt'],
+
+                [Sequelize.col('digitadorUsuario.usuario'), 'usuarioDigitador'],
+
+                [Sequelize.col('descargoNC.analistaUsuario.usuario'), 'usuarioAnalista1'],
+                [Sequelize.literal(`'DESCARGO NC'`), 'nombre_descargoNC'],
+                [Sequelize.col('descargoNC.documento'), 'documento_descargoNC'],
+                [Sequelize.col('descargoNC.createdAt'), 'analista_createdAt'],
+
+                [Sequelize.col('IFI.Usuarios.usuario'), 'usuarioAreaInstructiva1'],
+                [Sequelize.literal(`'INFORME FINAL'`), 'nombre_AI'],
+                [Sequelize.col('IFI.documento_ifi'), 'documento_AI'],
+                [Sequelize.col('IFI.createdAt'), 'AI_createdAt'],
+
+                [Sequelize.col('IFI.DescargoIFIs.analista2Usuario.usuario'), 'usuarioAnalista2'],
+                [Sequelize.literal(`'DESCARGO IFI'`), 'nombre_DIFI'],
+                [Sequelize.col('IFI.DescargoIFIs.documento_DIFI'), 'documento_DIFI'],
+                [Sequelize.col('IFI.DescargoIFIs.createdAt'), 'analista2_createdAt'],
+
+                [Sequelize.col('IFI.RSA.Usuarios.usuario'), 'usuarioAreaInstructiva2'],
+                [Sequelize.literal(`'RESOLUCION SANCIONADORA ADMINISTRATIVA'`), 'nombre_RSA'],
+                [Sequelize.col('IFI.RSA.documento_RSA'), 'documento_RSA'],
+                [Sequelize.col('IFI.RSA.createdAt'), 'RSA_createdAt'],
+
+                [Sequelize.col('IFI.RSA.DescargoRSAs.Usuarios.usuario'), 'usuarioAnalista3'],
+                [Sequelize.literal(`'DESCARGO RSA'`), 'nombre_DRSA'],
+                [Sequelize.col('IFI.RSA.DescargoRSAs.documento_DRSA'), 'documento_DRSA'],
+                [Sequelize.col('IFI.RSA.DescargoRSAs.createdAt'), 'DRSA_createdAt'],
+
+
+                // [Sequelize.col('IFI.RSA.areaInstructiva2.usuario'), 'usuarioAreaInstructiva2'],
+
+            ],
+            include: [
+                {
+                    model: TramiteInspector, 
+                    as: 'tramiteInspector', 
+                    include: [
+                        {
+                            model: Usuario,
+                            as: 'inspectorUsuario'
+                        }
+                    ],
+                    attributes: [], 
+                },
+                {
+                  model: Usuario, 
+                  as: 'digitadorUsuario',
+                  attributes: []
+                },
+                {
+                    model: DescargoNC, 
+                    as: 'descargoNC', 
+                    include: [
+                        {
+                            model: Usuario,
+                            as: 'analistaUsuario'
+                        }
+                    ],
+                    attributes: [], 
+                },
+                {
+                    model: IFI, 
+                    as: 'IFI', 
+                    include: [
+                        {
+                            model: Usuario,
+                            as: 'Usuarios',
+                        },
+                        {
+                            model: DescargoIFI,
+                            as: 'DescargoIFIs',
+                            include: [
+                                {
+                                    model: Usuario,
+                                    as: 'analista2Usuario',
+                                },
+                            ]
+                        },
+                        {
+                            model: RSA,
+                            as: 'RSA',
+                            include: [
+                                {
+                                    model: Usuario,
+                                    as: 'Usuarios',
+                                },
+                                {
+                                    model:  DescargoRSA,
+                                    as: 'DescargoRSAs',
+                                    include: [
+                                        {
+                                            model: Usuario,
+                                            as: 'Usuarios',
+                                        }
+                                    ]
+                                }
+                                {
+                                    model:  DescargoRSA,
+                                    as: 'DescargoRSAs',
+                                    include: [
+                                        {
+                                            model: Usuario,
+                                            as: 'Usuarios',
+                                        }
+                                    ]
+                                }
+                            ],
+                        },
+                    ],
+                    attributes: [], 
+                },
+            ]
+        });
+
+        const transformedData = response.rows.map(row => ({
+            nro_nc: row.get('nro_nc'),
+            etapaInspector: {
+                usuarioInspector: row.get('usuarioInspector'),
+                documento_nc: {
+                    nombre: row.get('nombre_nc'),
+                    path: row.get('documento_nc'),
+                },
+                documento_acta: {
+                    nombre: row.get('nombre_acta'),
+                    path: row.get('documento_acta'),
+                },
+                inspector_createdAt: row.get('inspector_createdAt'),
+            },
+            etapaDigitador: {
+                usuarioDigitador: row.get('usuarioDigitador'),
+                digitador_createdAt: row.get('inspector_createdAt'),
+            },
+            estapaDescargoNC: {
+                usuarioAnalista1: row.get('usuarioAnalista1'),
+                documento_descargoNC: {
+                    nombre: row.get('nombre_descargoNC'),
+                    path: row.get('documento_descargoNC')
+                },
+                analista_createdAt: row.get('analista_createdAt'),
+            },
+            etapaAreaInstructiva: {
+                usuarioAreaInstructiva1: row.get('usuarioAreaInstructiva1'),
+                documento_AI: {
+                    nombre: row.get('nombre_AI'),
+                    path: row.get('documento_AI'),
+                },
+                AI_createdAt: row.get('AI_createdAt'),
+            },
+            etapaDescargoIFI: {
+                usuarioAnalista2: row.get('usuarioAnalista2'),
+                documento_descargoIFI: {
+                    nombre: row.get('nombre_DIFI'),
+                    path: row.get('documento_DIFI'),
+                },
+                analista2_createdAt: row.get('analista2_createdAt'),
+            },
+            etapaRSA: {
+                usuarioAreaInstructiva2: row.get('usuarioAreaInstructiva2'),
+                documento_RSA: {
+                    nombre: row.get('nombre_RSA'),
+                    path: row.get('documento_RSA'),
+                },
+                AR2_createdAt: row.get('RSA_createdAt'),
+            },
+            etapaDescargoRSA: {
+                usuarioAnalista3: row.get('usuarioAnalista3'),
+                documento_RSA: {
+                    nombre: row.get('nombre_DRSA'),
+                    path: row.get('documento_DRSA'),
+                },
+                analista3_createdAt: row.get('DRSA_createdAt'),
+            }
+        }));
+
+
+        return { totalCount: response.count, data: transformedData, currentPage: page } || null;
+    } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los reportes de RSG1", data: error });
+        return false;
+    }
+};
+
+
+
 module.exports = {
     createRSGController,
     updateRsgnpController,
@@ -344,5 +546,6 @@ module.exports = {
     getAllRSGforAnalista4Controller,
     updateRSGNPController,
     getAllRSGforGerenciaController,
-    getAllRSGforAnalista5Controller
+    getAllRSGforAnalista5Controller,
+    getAllRSG3forAR3Controller
 };

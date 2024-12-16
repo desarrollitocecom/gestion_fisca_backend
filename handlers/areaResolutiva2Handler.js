@@ -116,7 +116,7 @@ const getAllIFIforAR2Handler = async (req, res) => {
        
         const id_evaluar = newRsg2.id;
  
-        const response = await updateInformeFinalController(id, { id_evaluar, tipo: 'TERMINADO' })
+        const response = await updateInformeFinalController(id, { id_evaluar, tipo: 'TERMINADO_RSG2' })
 
         if (!response) {
             return res.status(201).json({

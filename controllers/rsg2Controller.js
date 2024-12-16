@@ -75,33 +75,39 @@ const getAllRSG2forAR2Controller = async (page = 1, limit = 20) => {
         const response = await NC.findAndCountAll({ 
             limit,
             offset,
-            // where: Sequelize.where(Sequelize.col('IFI.tipo'), 'TERMINADO_RSG1'),
+            where: Sequelize.where(Sequelize.col('IFI.tipo'), 'TERMINADO_RSG2'),
             order: [['id', 'ASC']],
             attributes: [
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'usuarioInspector'],
+                [Sequelize.literal(`'NOTIFICACION DE CARGO'`), 'nombre_nc'],
                 [Sequelize.col('tramiteInspector.documento_nc'), 'documento_nc'],
+                [Sequelize.literal(`'ACTA DE FISCALIZACION'`), 'nombre_acta'],
                 [Sequelize.col('tramiteInspector.documento_acta'), 'documento_acta'],
                 [Sequelize.col('tramiteInspector.createdAt'), 'inspector_createdAt'],
 
                 [Sequelize.col('digitadorUsuario.usuario'), 'usuarioDigitador'],
 
                 [Sequelize.col('descargoNC.analistaUsuario.usuario'), 'usuarioAnalista1'],
+                [Sequelize.literal(`'DESCARGO NC'`), 'nombre_descargoNC'],
                 [Sequelize.col('descargoNC.documento'), 'documento_descargoNC'],
                 [Sequelize.col('descargoNC.createdAt'), 'analista_createdAt'],
 
                 [Sequelize.col('IFI.Usuarios.usuario'), 'usuarioAreaInstructiva1'],
+                [Sequelize.literal(`'INFORME FINAL'`), 'nombre_AI'],
                 [Sequelize.col('IFI.documento_ifi'), 'documento_AI'],
                 [Sequelize.col('IFI.createdAt'), 'AI_createdAt'],
 
                 [Sequelize.col('IFI.DescargoIFIs.analista2Usuario.usuario'), 'usuarioAnalista2'],
+                [Sequelize.literal(`'DESCARGO IFI'`), 'nombre_DIFI'],
                 [Sequelize.col('IFI.DescargoIFIs.documento_DIFI'), 'documento_DIFI'],
                 [Sequelize.col('IFI.DescargoIFIs.createdAt'), 'analista2_createdAt'],
 
                 [Sequelize.col('IFI.RSG2.Usuarios.usuario'), 'usuarioAreaInstructiva2'],
-                // [Sequelize.col('IFI.RSG2.documento_DIFI'), 'documento_DIFI'],
-                // [Sequelize.col('IFI.RSG2.createdAt'), 'analista2_createdAt'],
+                [Sequelize.literal(`'RESOLUCION SUBGERENCIAL 2'`), 'nombre_AR2'],
+                [Sequelize.col('IFI.RSG2.documento'), 'documento_AR2'],
+                [Sequelize.col('IFI.RSG2.createdAt'), 'AR2_createdAt'],
 
 
                 // [Sequelize.col('IFI.TERMINADO_RSG1.Usuarios.usuario'), 'usuarioRSG1'],
@@ -171,37 +177,54 @@ const getAllRSG2forAR2Controller = async (page = 1, limit = 20) => {
         });
 
         const transformedData = response.rows.map(row => ({
-            // id: row.id,
-            // nro_nc: row.nro_nc,
+            nro_nc: row.get('nro_nc'),
             etapaInspector: {
                 usuarioInspector: row.get('usuarioInspector'),
-                documento_nc: row.get('documento_nc'),
-                documento_acta: row.get('documento_acta'),
+                documento_nc: {
+                    nombre: row.get('nombre_nc'),
+                    path: row.get('documento_nc'),
+                },
+                documento_acta: {
+                    nombre: row.get('nombre_acta'),
+                    path: row.get('documento_acta'),
+                },
                 inspector_createdAt: row.get('inspector_createdAt'),
             },
             etapaDigitador: {
                 usuarioDigitador: row.get('usuarioDigitador'),
+                digitador_createdAt: row.get('inspector_createdAt'),
             },
             estapaDescargoNC: {
                 usuarioAnalista1: row.get('usuarioAnalista1'),
-                documento_descargoNC: row.get('documento_descargoNC'),
+                documento_descargoNC: {
+                    nombre: row.get('nombre_descargoNC'),
+                    path: row.get('documento_descargoNC')
+                },
                 analista_createdAt: row.get('analista_createdAt'),
             },
             etapaAreaInstructiva: {
                 usuarioAreaInstructiva1: row.get('usuarioAreaInstructiva1'),
-                documento_AI: row.get('documento_AI'),
+                documento_AI: {
+                    nombre: row.get('nombre_AI'),
+                    path: row.get('documento_AI'),
+                },
                 AI_createdAt: row.get('AI_createdAt'),
             },
             etapaDescargoIFI: {
                 usuarioAnalista2: row.get('usuarioAnalista2'),
-                documento_descargoIFI: row.get('documento_DIFI'),
+                documento_descargoIFI: {
+                    nombre: row.get('nombre_DIFI'),
+                    path: row.get('documento_DIFI'),
+                },
                 analista2_createdAt: row.get('analista2_createdAt'),
             },
-            
-            etapaRSG2: {
-                usuarioRSG1: row.get('usuarioRSG1'),
-                documento_RSG1: row.get('documento_RSG1'),
-                RSG1_createdAt: row.get('RSG1_createdAt'),
+            etapaAR2: {
+                usuarioAreaInstructiva2: row.get('usuarioAreaInstructiva2'),
+                documento_AR2: {
+                    nombre: row.get('nombre_AR2'),
+                    path: row.get('documento_AR2'),
+                },
+                AR2_createdAt: row.get('AR2_createdAt'),
             },
             // usuarioAreaInstructiva1: row.get('usuarioAreaInstructiva1'),
         }));
