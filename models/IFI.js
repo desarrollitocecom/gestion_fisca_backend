@@ -19,7 +19,7 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         tipo: {
-            type: DataTypes.ENUM('ANALISTA_2', 'RSG1', 'RSA', 'RSG2','AR2', 'TERMINADO'),
+            type: DataTypes.ENUM('ANALISTA_2', 'RSG1', 'RSA', 'RSG2','AR2', 'TERMINADO', 'TERMINADO_RSG1', 'TERMINADO_RSG2'),
             allowNull: true
         },
         id_evaluar: {
@@ -67,7 +67,7 @@ module.exports = (sequelize) => {
     IFI.associate = (db) => {
         // Relación de 1 a 1 entre IFI y los tipos basados en 'tipo'
         IFI.belongsTo(db.RSA, { foreignKey: 'id_evaluar', as: 'RSA', constraints: false });
-        IFI.belongsTo(db.RSG1, { foreignKey: 'id_evaluar', as: 'RSG1', constraints: false });
+        IFI.belongsTo(db.RSG1, { foreignKey: 'id_evaluar', as: 'TERMINADO_RSG1', constraints: false });
         IFI.belongsTo(db.RSG2, { foreignKey: 'id_evaluar', as: 'RSG2', constraints: false });
         // Relación con DescargoIFI
         IFI.belongsTo(db.DescargoIFI, { foreignKey: 'id_descargo_ifi', as: 'DescargoIFIs' });
