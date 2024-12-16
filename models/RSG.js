@@ -26,10 +26,10 @@ module.exports = (sequelize) => {
             type:DataTypes.ENUM('RSGP','RSGNP','GERENCIA','TERMINADO', 'ANALISTA_5'),
             allowNull:true
         },
-        // id_evaluar_rsgnp:{
-        //     type:DataTypes.UUID,
-        //     allowNull:true,
-        //  },
+        id_evaluar_rsg:{
+            type:DataTypes.UUID,
+            allowNull:true,
+         },
         id_descargo_RSG:{
             type:DataTypes.UUID,
             references: {

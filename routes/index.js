@@ -61,6 +61,8 @@ router.use('/estadorsgnp',estadorsgnp);
 router.use('/medidacomplementaria',medidacomplementaria);
 router.use('/documentocomplementario',TipoDocumentoComplementario);
 //router.use('/inspector', tramiteInspector);
+
+
 router.use('/users', usuariosRouter);
 router.use('/ifi',informeFinal);
 router.use('/difi',descargoIFI);

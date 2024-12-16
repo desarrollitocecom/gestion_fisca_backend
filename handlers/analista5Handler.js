@@ -28,10 +28,60 @@ function isValidUUID(uuid) {
   return uuidRegex.test(uuid);
 }
 
+const getAllRSAforAnalista5Handler = async (req, res) => {
+  try {
+    const response = await getAllRSAforAnalista5Controller();
+
+    if (response.data.length === 0) {
+      return res.status(200).json({
+        message: "Ya no hay más IFIs",
+        data: {
+          data: [],
+        },
+      });
+    }
+
+    return res.status(200).json({
+      message: "IFIs obtenidos correctamente",
+      data: response,
+    });
+  } catch (error) {
+    console.error("Error al obtener IFIs para AR1:", error);
+    res
+      .status(500)
+      .json({ error: "Error interno del servidor al obtener los IFIs." });
+  }
+};
+
+
 const getAllRSGforAnalista5Handler = async (req, res) => {
   try {
-    // const response = await getAllRSGforAnalista5Controller();
-    // const response = await getAllRSAforAnalista5Controller();
+    const response = await getAllRSGforAnalista5Controller();
+
+    if (response.data.length === 0) {
+      return res.status(200).json({
+        message: "Ya no hay más IFIs",
+        data: {
+          data: [],
+        },
+      });
+    }
+
+    return res.status(200).json({
+      message: "IFIs obtenidos correctamente",
+      data: response,
+    });
+  } catch (error) {
+    console.error("Error al obtener IFIs para AR1:", error);
+    res
+      .status(500)
+      .json({ error: "Error interno del servidor al obtener los IFIs." });
+  }
+};
+
+
+const getAllRGforAnalista5Handler = async (req, res) => {
+  try {
     const response = await getAllRGforAnalista5Controller();
 
     if (response.data.length === 0) {
@@ -59,9 +109,10 @@ const getAllRSGforAnalista5Handler = async (req, res) => {
 
 
 
-
 module.exports = {
-    getAllRSGforAnalista5Handler
+    getAllRSAforAnalista5Handler,
+    getAllRSGforAnalista5Handler,
+    getAllRGforAnalista5Handler
 };
 
 

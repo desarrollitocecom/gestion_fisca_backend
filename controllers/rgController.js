@@ -36,11 +36,12 @@ const createRGController = async ({
         return false
     }
 };
-const getAllRGforAnalista5Controller = async () => {
-   
+const getAllRGforAnalista5Controller = async (page = 1, limit = 20) => {
+    const offset = (page - 1) * limit;
     try {
-        const response = await RG.findAll({ 
-           
+        const response = await RG.findAndCountAll({ 
+            limit,
+            offset,
             where: { tipo: 'ANALISTA_5' }, 
             order: [['id', 'ASC']],
             attributes: [
@@ -72,12 +73,13 @@ const getAllRGforAnalista5Controller = async () => {
               },
             ]
         });
-        return response || null;
+        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los RSGNP para AN5", data: error });
         return false;
     }
   };
+
 
 // Actualizar un registro RG
 const updateRGController = async (id,{ tipo,id_evaluar_rg,id_estado_RG}) => {

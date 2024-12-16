@@ -28,10 +28,10 @@ module.exports = (sequelize) => {
             allowNull: true
         },
         
-        // id_evaluar_rg: {
-        //     type: DataTypes.UUID,
-        //     allowNull: true,
-        // },
+        id_evaluar_rg: {
+            type: DataTypes.UUID,
+            allowNull: true,
+        },
 
         id_nc: {
             type: DataTypes.UUID,
