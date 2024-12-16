@@ -447,7 +447,7 @@ const getAllRSG3forAR3Controller = async (page = 1, limit = 20) => {
                                             as: 'Usuarios',
                                         }
                                     ]
-                                }
+                                },
                                 {
                                     model:  DescargoRSA,
                                     as: 'DescargoRSAs',
