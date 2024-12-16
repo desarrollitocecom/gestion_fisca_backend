@@ -1,4 +1,4 @@
-const { RSA , Usuario,  NC , TramiteInspector} = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
+const { RSA , Usuario,  NC , TramiteInspector, DescargoRSA} = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 const { Sequelize } = require('sequelize');
 const createRSAController = async ({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_AR2}) => {
@@ -294,12 +294,13 @@ const getAllRSAforAnalista5Controller = async (page = 1, limit = 20) => {
           limit,
           offset,
           where: { tipo: 'ANALISTA_5' }, 
-          order: [['id', 'ASC']],
+          order: [['createdAt', 'DESC']],
           attributes: [
               'id',
               [Sequelize.col('NCs.id'), 'id_nc'],
-              // [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-              [Sequelize.col('Usuarios.usuario'), 'analista3'],
+              'nro_rsa',
+              [Sequelize.col('DescargoRSAs.Usuarios.usuario'), 'usuario'],
+              [Sequelize.literal(`'Analista3'`), 'area'],
               'createdAt',
           ],
           include: [
@@ -316,10 +317,21 @@ const getAllRSAforAnalista5Controller = async (page = 1, limit = 20) => {
                   attributes: []
               },
               {
-                model: Usuario, 
-                as: 'Usuarios',
+                model: DescargoRSA, 
+                as: 'DescargoRSAs',
+                include: [
+                  {
+                    model: Usuario,
+                    as: 'Usuarios'
+                  }
+                ],  
                 attributes: []
-            },
+              },
+              // {
+              //   model: Usuario, 
+              //   as: 'Usuarios',
+              //   attributes: []
+              // },
           ],
       });
       return { totalCount: response.count, data: response.rows, currentPage: page } || null;
