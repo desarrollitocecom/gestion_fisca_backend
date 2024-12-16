@@ -1,4 +1,4 @@
-const {getAllRSAforAnalista5Controller} = require("../controllers/rsaController");
+const {getAllRSAforAnalista5Controller, updateRsaController} = require("../controllers/rsaController");
 const {createDescargoRSAController} = require("../controllers/descargoRsaController");
 const { getRSGController, getAllRSGforAnalista4Controller } = require("../controllers/rsgController")
 const {
@@ -6,8 +6,10 @@ const {
   updateDescargoRSGNPController,
 } = require('../controllers/descargoRsgnpController');
 
-const { getAllRGforAnalista5Controller } = require("../controllers/rgController")
+const { getAllRGforAnalista5Controller, updateRGController } = require("../controllers/rgController")
 const { updateRSGNPController } = require('../controllers/rsgController')
+const { createActaController } = require('../controllers/actaController')
+
 
 updateRSGNPController
 const {
@@ -106,13 +108,141 @@ const getAllRGforAnalista5Handler = async (req, res) => {
 };
 
 
+const createActaHandler = async (req, res) => {
+  const {id}=req.params;
+  const { 
+      nro_acta, 
+      fecha_acta,
+      id_nc ,
+      id_analista_5,
+      tipo
+  } = req.body;
+
+
+  const documento_acta = req.files && req.files["documento_acta"] ? req.files["documento_acta"][0] : null;
+
+  const errores = [];
+
+  if (!nro_acta) errores.push('El campo nro_acta es requerido');
+
+  if (typeof nro_acta !== 'string') errores.push('El nro_acta debe ser una cadena de texto');
+
+  if (!fecha_acta) errores.push('El campo fecha_acta es requerido');
+
+  const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
+
+  if (!fechaRegex.test(fecha_acta)) {
+      errores.push('El formato de la fecha debe ser YYYY-MM-DD');
+  } else {
+
+      const parsedFecha = new Date(fecha_acta);
+
+      if (isNaN(parsedFecha.getTime())) {
+
+          errores.push('Debe ser una fecha válida');
+
+      }
+  }
+
+
+if (!id_analista_5) errores.push('El campo id_analista_5 es requerido');
+
+if (!isValidUUID(id_analista_5)) errores.push('El id_analista_5 debe ser una UUID');
+
+if (!id_nc) errores.push('El campo id_nc es requerido');
+
+if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
+
+  if (!documento_acta) {
+      errores.push('El documento_acta es requerido');
+  } else {
+      if (documento_acta.mimetype !== 'application/pdf') {
+          errores.push('El documento debe ser un archivo PDF');
+      }
+  }
+
+  if (errores.length > 0) {
+      if (documento_acta) {
+          fs.unlinkSync(documento_acta.path); 
+      }
+      return res.status(400).json({
+          message: 'Se encontraron los siguientes errores',
+          data: errores
+      });
+  }
+
+  try {
+      const newActa = await createActaController({
+          nro_acta, 
+          fecha_acta, 
+          documento_acta,
+          tipo,
+          id_nc,
+          id_analista_5
+        });
+      
+      // const get_id=await getInformeFinalController(id);
+  
+      // if(!get_id){
+
+      //     return res.status(404).json({message:"No se encuentra id del IFI",data:[]})
+      // }
+      const total_documentos=newActa.documento_acta
+
+      const nuevoModulo="DESCARGO INFORME FINAL INSTRUCTIVO"
+
+      await updateDocumento({id_nc, total_documentos, nuevoModulo});
+
+
+
+      const id_acta=newActa.id;
+      let response;
+
+      if(tipo == 'analista3') {
+        response=await updateRsaController(id,{tipo:'TERMINADO'})
+      }
+
+      if(tipo == 'analista4') {
+        response=await updateRSGNPController(id,{tipo:'TERMINADO'})
+      }
+
+      if(tipo == 'gerencia') {
+        response=await updateRGController(id,{tipo:'TERMINADO'})
+      }
+
+      // const response=await updateInformeFinalController(id,{id_descargo_ifi,id_estado_IFI,tipo:'AR2'})
+
+      if (!response) {
+          return res.status(400).json({
+              message: 'Error al crear y asociar DescargoIFI',
+              data: []
+          });
+      }
+      
+      return res.status(200).json({
+
+          message: 'Acta creada con exito',
+          
+          data: response
+      });
+
+  } catch (error) {
+      console.error('Error al crear y asociar DescargoIFI:', error);
+      return res.status(500).json({
+          message: 'Error al crear y asociar DescargoIFI',
+          error: error.message
+      });
+  }
+};
+
 
 
 
 module.exports = {
     getAllRSAforAnalista5Handler,
     getAllRSGforAnalista5Handler,
-    getAllRGforAnalista5Handler
+    getAllRGforAnalista5Handler,
+    createActaHandler
 };
 
 

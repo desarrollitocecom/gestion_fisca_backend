@@ -6,10 +6,25 @@ module.exports = (sequelize) => {
             primaryKey: true,
             defaultValue: DataTypes.UUIDV4,
         },
-      
-        documento_Acta: {
+
+        nro_acta: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
+        },
+
+        fecha_acta: {
+            type: DataTypes.DATEONLY,
+            allowNull: true
+        },
+      
+        documento_acta: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+
+        tipo: {
+            type: DataTypes.STRING,
+            allowNull: true
         },
         
         id_nc:{
@@ -20,13 +35,13 @@ module.exports = (sequelize) => {
             },
             allowNull: true, 
         },    
-        id_Analista_5:{
+        id_analista_5:{
             type: DataTypes.UUID,
             references: {
                 model: 'Usuarios',
                 key: 'id',
             },
-            allowNull: false
+            allowNull: true
         }
     }, {
         tableName: 'Actas',
@@ -35,8 +50,7 @@ module.exports = (sequelize) => {
     Acta.associate = (db) => {
         // Relación con DescargoActa
         Acta.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
-       
-   
+        Acta.belongsTo(db.Usuario, { foreignKey: 'id_analista_5', as: 'analista5Usuario' })  
     };
 
 

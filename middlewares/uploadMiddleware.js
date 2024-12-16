@@ -51,7 +51,7 @@ const uploadRG = upload.fields([
 ])
 
 const uploadActa = upload.fields([
-    { name: 'documento_Acta', maxCount: 1 },
+    { name: 'documento_acta', maxCount: 1 },
 ])
 
 module.exports = {
