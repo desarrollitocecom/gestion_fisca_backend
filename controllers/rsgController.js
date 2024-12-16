@@ -294,7 +294,7 @@ const getAllRSGforAnalista5Controller = async (page = 1, limit = 20) => {
             offset,
             where: { tipo: 'ANALISTA_5' },    
             order: [['createdAt', 'DESC']],
-            attributes: ['id', 'id_AR3', 'createdAt',
+            attributes: ['id', 'id_AR3',
                 [Sequelize.col('NCs.id'), 'id_nc'],
                 // [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
                 // [Sequelize.col('DescargoRSAs.Usuarios.usuario'), 'usuario'],

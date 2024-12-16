@@ -46,12 +46,11 @@ const getAllRGforAnalista5Controller = async (page = 1, limit = 20) => {
             order: [['id', 'ASC']],
             attributes: [
                 'id',
-                'id_gerente',
-                 'createdAt',
-                 'tipo',
+                // 'id_gerente',
                 [Sequelize.col('NCs.id'), 'id_nc'],
-                [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                [Sequelize.col('Usuarios.usuario'), 'gerente'],
+                [Sequelize.col('Usuarios.usuario'), 'usuario'],
+                [Sequelize.literal(`'Gerencia'`), 'area'],
+                'createdAt',
             ],
             include: [
                 {
