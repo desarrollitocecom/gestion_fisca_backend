@@ -43,7 +43,7 @@ module.exports = (sequelize) => {
     })
     RSG2.associate = (db) => {
         // Relación de 1 a 1 entre RSG2 y los tipos basados en 'tipo'
-
+        RSG2.belongsTo(db.Usuario,{foreignKey:'id_AR2' , as:'Usuarios' });
         RSG2.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
     };
     return RSG2;

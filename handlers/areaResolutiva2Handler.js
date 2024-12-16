@@ -1,6 +1,6 @@
 const {getAllIFIforAR2Controller, getInformeFinalController, updateInformeFinalController} = require('../controllers/informeFinalController');
 const {updateDocumento}=require('../controllers/documentoController');
-const {createRSG2Controller} = require('../controllers/rsg2Controller');
+const {createRSG2Controller, getAllRSG2forAR2Controller} = require('../controllers/rsg2Controller');
 const {createRSAController} = require('../controllers/rsaController');
 
 const fs = require('node:fs');
@@ -257,8 +257,47 @@ const createRSAHandler = async (req, res) => {
     }
 };
 
+const getAllRSG2forAR2Handler = async (req, res) => {  
+    const { page = 1, limit = 20 } = req.query;
+    const errores = [];
+  
+    if (isNaN(page)) errores.push("El page debe ser un número");
+    if (page <= 0) errores.push("El page debe ser mayor a 0");
+    if (isNaN(limit)) errores.push("El limit debe ser un número");
+    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
+  
+    if (errores.length > 0) {
+        return res.status(400).json({ errores });
+    }
+  
+    try {
+        const response = await getAllRSG2forAR2Controller(Number(page), Number(limit));
+  
+        if (response.data.length === 0) {
+            return res.status(200).json({
+                message: 'Ya no hay más IFIs',
+                data: {
+                    data: [],
+                    totalPage: response.currentPage,
+                    totalCount: response.totalCount
+                }
+            });
+        }
+  
+        return res.status(200).json({
+            message: "IFIs obtenidos correctamente",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener IFIs para AR1:", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener los IFIs." });
+    }
+};
+
+
 module.exports = {
     getAllIFIforAR2Handler,
     createRSG2Handler,
-    createRSAHandler
+    createRSAHandler,
+    getAllRSG2forAR2Handler
 }
