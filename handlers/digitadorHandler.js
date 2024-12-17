@@ -1,9 +1,8 @@
 const { updateNC, getNC, getAllNC } = require('../controllers/ncController');
-const { createAdministrado } = require('../controllers/administradoController');
 const { createEntidad } = require('../controllers/entidadController');
-const { createConstNotifi } = require('../controllers/constanciaNotificacionController')
 const { getIo } = require("../sockets");
 const updateNCHandler = async (req, res) => {
+    const io = getIo();
     const id = req.params.id;
     
     const existingNC = await getNC(id); 
@@ -196,7 +195,7 @@ const updateNCHandler = async (req, res) => {
             return res.status(404).json({ message: "Error al actualizar" });
         }
         //socket
-        const io = getIo();
+
         io.emit("ncActualizada", {
             message: 'NC actualizada correctamente',
             data: response,
