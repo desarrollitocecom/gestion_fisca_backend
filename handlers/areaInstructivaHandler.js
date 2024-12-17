@@ -1,6 +1,7 @@
 const { updateNC, getAllNCforInstructiva } = require('../controllers/ncController');
-const { createInformeFinalController } = require('../controllers/informeFinalController');
+const { createInformeFinalController, getIFIforAR1Controller, getIFIforAnalista2Controller } = require('../controllers/informeFinalController');
 const { updateDocumento }=require('../controllers/documentoController');
+const { getIo } = require('../sockets'); 
 
 
 function isValidUUID(uuid) {
@@ -9,29 +10,14 @@ function isValidUUID(uuid) {
 }
 
 const getAllNCforInstructivaHandler = async (req, res) => {  
-    const { page = 1, limit = 20 } = req.query;
-    const errores = [];
-
-    if (isNaN(page)) errores.push("El page debe ser un número");
-    if (page <= 0) errores.push("El page debe ser mayor a 0");
-    if (isNaN(limit)) errores.push("El limit debe ser un número");
-    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
-
-    if (errores.length > 0) {
-        return res.status(400).json({ errores });
-    }
 
     try {
-        const response = await getAllNCforInstructiva(Number(page), Number(limit));
+        const response = await getAllNCforInstructiva();
 
-        if (response.data.length === 0) {
+        if (response.length === 0) {
             return res.status(200).json({
                 message: 'Ya no hay más tramites',
-                data: {
-                    data: [],
-                    totalPage: response.currentPage,
-                    totalCount: response.totalCount
-                }
+                data: []
             });
         }
 
@@ -46,6 +32,8 @@ const getAllNCforInstructivaHandler = async (req, res) => {
 };
 
 const createInformeFinalHandler = async (req, res) => {
+    const io = getIo(); 
+
     const { nro_ifi, fecha, id_nc, id_AI1, tipo } = req.body;
     const documento_ifi = req.files && req.files["documento_ifi"] ? req.files["documento_ifi"][0] : null;
 
@@ -84,25 +72,49 @@ const createInformeFinalHandler = async (req, res) => {
 
     try {
 
-        const response = await createInformeFinalController({ nro_ifi, fecha, documento_ifi, id_nc, id_AI1, tipo });
+        const newIFI = await createInformeFinalController({ nro_ifi, fecha, documento_ifi, id_nc, id_AI1, tipo });
        
-        if (!response) {
-            return res.status(201).json({
-                message: 'Error al crear nuevo informe Final',
-                data: []
-            });
-        }
-        const total_documentos=response.documento_ifi
+
+        const total_documentos=newIFI.documento_ifi
 
         const nuevoModulo="INFORME FINAL INSTRUCTIVO"
 
         await updateDocumento({id_nc, total_documentos, nuevoModulo});
 
-        const ifiId = response.id;  
+        const ifiId = newIFI.id;  
 
-        await updateNC( id_nc, { id_nro_IFI: ifiId, estado: 'TERMINADO' });
+        const response = await updateNC( id_nc, { id_nro_IFI: ifiId, estado: 'TERMINADO' });
         
-        return res.status(200).json({ message: 'Nuevo Informe Final Creado', data: response })
+        // return res.status(200).json({ message: 'Nuevo Informe Final Creado', data: response })
+
+        if (response) {
+
+            let findNC;
+
+            if(tipo=='RSG1'){
+                findNC = await getIFIforAR1Controller(response.id);
+                const plainNC = findNC.toJSON();
+                io.emit("sendAR1", { data: [plainNC] });
+            }
+
+            if(tipo=='ANALISTA_2'){
+                findNC = await getIFIforAnalista2Controller(response.id);
+                const plainNC = findNC.toJSON();
+                io.emit("sendAnalista2", { data: [plainNC] });
+            }
+
+            
+
+            res.status(201).json({
+                message: 'Nuevo Informe Final Creado',
+                data: [findNC]
+            });
+        } else {
+           res.status(400).json({
+                message: 'Error al crear Descargo NC',
+            });
+        }
+
     } catch (error) {
         console.error('Error al crear el Informe final:', error);
         return res.status(500).json({

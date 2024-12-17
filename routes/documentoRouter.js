@@ -1,9 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { 
-    getDocumentoHandler
-} = require('../handlers/documentoHandler');
+const {getDocumentoHandler} = require('../handlers/documentoHandler');
 
 const permisoAutorizacion = require("../checkers/roleAuth");
 

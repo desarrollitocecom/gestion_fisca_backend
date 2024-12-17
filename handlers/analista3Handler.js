@@ -1,13 +1,15 @@
-const {getAllRSAforAnalista3Controller, getRsaController, updateRsaController} = require("../controllers/rsaController");
+const {getAllRSAforAnalista3Controller, getRsaController, updateRsaController, getRSAforAR3Controller, getRSAforAnalista5Controller} = require("../controllers/rsaController");
 const {createDescargoRSAController} = require("../controllers/descargoRsaController");
 const {
   getInformeFinalController,
   updateInformeFinalController,
 } = require("../controllers/informeFinalController");
+const { getIo } = require('../sockets'); 
+
 
 const { updateDocumento } = require("../controllers/documentoController");
 
-const { startJobForDocument } = require("../jobs/DescargoJob");
+
 
 const fs = require("node:fs");
 function isValidUUID(uuid) {
@@ -20,12 +22,10 @@ const getAllRSAforAnalista3Handler = async (req, res) => {
   try {
     const response = await getAllRSAforAnalista3Controller();
 
-    if (response.data.length === 0) {
+    if (response.length === 0) {
       return res.status(200).json({
         message: "Ya no hay más IFIs",
-        data: {
-          data: [],
-        },
+        data: []
       });
     }
 
@@ -42,6 +42,8 @@ const getAllRSAforAnalista3Handler = async (req, res) => {
 };
 
 const createDescargoRSAHandler = async (req, res) => {
+    const io = getIo(); 
+
     const {id}=req.params;
     
     const { nro_descargo, fecha_descargo, id_nc, id_analista_3 } = req.body;
@@ -137,21 +139,29 @@ const createDescargoRSAHandler = async (req, res) => {
 
         const response=await updateRsaController(id,{id_descargo_RSA,id_estado_RSA,tipo:'AR3'})
             
-        if (!response) {
-            return res.status(400).json({
-                message: 'Error al crear y asociar DescargoRSA',
-                data: []
-            });
-        }
         const total_documentos = newDescargoRSA.documento_DRSA;
 
         const nuevoModulo = "RECURSO DE RECONCIDERACION"
 
         await updateDocumento({ id_nc, total_documentos, nuevoModulo });
-        return res.status(200).json({
-            message: 'DescargoRSA creado y asociado a RSA correctamente',
-            data: response
-        });
+
+
+        if (response) {
+
+            const findNC = await getRSAforAR3Controller(response.id);
+            const plainNC = findNC.toJSON();
+
+            io.emit("sendAR3", { data: [plainNC] });
+
+            res.status(201).json({
+                message: 'Descargo NC creado con exito',
+                data: [findNC]
+            });
+        } else {
+           res.status(400).json({
+                message: 'Error al crear Descargo NC',
+            });
+        }
     } catch (error) {
         console.error('Error al crear DescargoRSA:', error);
 
@@ -163,6 +173,7 @@ const createDescargoRSAHandler = async (req, res) => {
 };
 
 const sendWithoutDescargoRSAHandler = async (req, res) => {
+    const io = getIo(); 
     const {id}=req.params;
     
     const { id_nc, id_analista_3 } = req.body;
@@ -209,22 +220,31 @@ const sendWithoutDescargoRSAHandler = async (req, res) => {
         const id_estado_RSA=3;
 
         const response=await updateRsaController(id,{id_descargo_RSA,id_estado_RSA,tipo:'ANALISTA_5'})
-            
-        if (!response) {
-            return res.status(400).json({
-                message: 'Error al crear y asociar DescargoRSA',
-                data: []
-            });
-        }
+  
         const total_documentos = '';
 
         const nuevoModulo = "RECURSO DE RECONCIDERACION"
 
         await updateDocumento({ id_nc, total_documentos, nuevoModulo });
-        return res.status(200).json({
-            message: 'DescargoRSA creado y asociado a RSA correctamente',
-            data: response
-        });
+
+        if (response) {
+
+            const findNC = await getRSAforAnalista5Controller(response.id);
+            const plainNC = findNC.toJSON();
+
+            io.emit("sendAnalita5fromAnalista3", { data: [plainNC] });
+
+            res.status(201).json({
+                message: 'Descargo NC creado con exito',
+                data: [findNC]
+            });
+        } else {
+           res.status(400).json({
+                message: 'Error al crear Descargo NC',
+            });
+        }
+
+
     } catch (error) {
         console.error('Error al crear DescargoRSA:', error);
 

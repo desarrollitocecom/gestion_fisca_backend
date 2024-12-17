@@ -1,186 +1,6 @@
-const { RG, Usuario,  NC , TramiteInspector } = require('../db_connection'); 
-const {saveImage,deleteFile}=require('../utils/fileUtils')
-const { Sequelize } = require('sequelize');
-const { RSG1, DescargoNC, DescargoRSG, IFI, DescargoIFI, RSG2, RSA, DescargoRSA, RSG } = require('../db_connection'); 
+const { TramiteInspector, NC, DescargoNC, IFI, RSG1, DescargoIFI, RSG2, RSA, DescargoRSA, RSG, DescargoRSG, RG, Usuario, } = require('../db_connection');
 
-// Crear un registro RG   
-const createRGController = async ({
-     nro_rg,
-     fecha_rg,
-     fecha_notificacion,
-     documento_rg,
-     id_nc,
-     id_gerente,
-     tipo
-    }) => {
-
-    let documento_path_rg;
-
-    try {
-        documento_path_rg=saveImage(documento_rg,'Resolucion(RG)')            
-
-        const newRG = await RG.create({ 
-            nro_rg,
-            fecha_rg,
-            fecha_notificacion,
-            documento_rg:documento_path_rg,
-            id_nc,
-            id_gerente,
-            tipo
-        });
-
-        return newRG || null;
-    } catch (error) {
-        if (documento_path_rg) {
-            deleteFile(documento_path_rg);
-        }
-        console.error("Error al crear RG:", error);
-        return false
-    }
-};
-const getAllRGforAnalista5Controller = async () => {
-    try {
-        const response = await RG.findAll({ 
-            where: { tipo: 'ANALISTA_5' }, 
-            order: [['id', 'ASC']],
-            attributes: [
-                'id',
-                // 'id_gerente',
-                [Sequelize.col('NCs.id'), 'id_nc'],
-                [Sequelize.col('Usuarios.usuario'), 'usuario'],
-                [Sequelize.literal(`'Gerencia'`), 'area'],
-                'createdAt',
-            ],
-            include: [
-                {
-                    model: NC, 
-                    as: 'NCs',
-                    include: [
-                      {
-                        model: TramiteInspector, 
-                        as: 'tramiteInspector', 
-                        attributes: [], 
-                      }
-                    ],
-                    attributes: []
-                },
-                {
-                  model: Usuario, 
-                  as: 'Usuarios',
-                  attributes: []
-              },
-            ]
-        });
-        return response || null;
-    } catch (error) {
-        console.error({ message: "Error en el controlador al traer todos los RSGNP para AN5", data: error });
-        return false;
-    }
-  };
-
-
-// Actualizar un registro RG
-const updateRGController = async (id,{ tipo,id_evaluar_rg,id_estado_RG}) => {
-   
-    try {
-        const rg = await getRGController(id);
-
-        await rg.update({tipo,id_evaluar_rg,id_estado_RG});
-
-        return rg || null;
-
-    } catch (error) {
-        console.error("Error al actualizar RG:", error);
-        return false
-    }
-};
-
-// Obtener un registro RG por ID
-const getRGController = async (id) => {
-    try {
-        const rg = await RG.findByPk(id);
-        return rg || null;
-    } catch (error) {
-        console.error("Error al obtener RG:", error);
-        return false
-    }
-};
-
-
-
-
-
-
-const getRGforAnalista5Controller = async (id) => {
-    try {
-        const response = await RG.findOne({ 
-            where: { id: id }, 
-            order: [['id', 'ASC']],
-            attributes: [
-                'id',
-                // 'id_gerente',
-                [Sequelize.col('NCs.id'), 'id_nc'],
-                [Sequelize.col('Usuarios.usuario'), 'usuario'],
-                [Sequelize.literal(`'Gerencia'`), 'area'],
-                'createdAt',
-            ],
-            include: [
-                {
-                    model: NC, 
-                    as: 'NCs',
-                    include: [
-                      {
-                        model: TramiteInspector, 
-                        as: 'tramiteInspector', 
-                        attributes: [], 
-                      }
-                    ],
-                    attributes: []
-                },
-                {
-                  model: Usuario, 
-                  as: 'Usuarios',
-                  attributes: []
-              },
-            ]
-        });
-        return response || null;
-    } catch (error) {
-        console.error({ message: "Error en el controlador al traer todos los RSGNP para AN5", data: error });
-        return false;
-    }
-  };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Obtener todos los registros RG
-const getAllRGController = async () => {
-    try {
-        const rgs = await RG.findAll();
-        return rgs;
-    } catch (error) {
-        console.error("Error al obtener RGs:", error);
-        return false
-    }
-};
-
-
-const getAllRGforGerenciaController = async () => {
+const getAllNCSeguimientoController = async () => {
     try {
         const response = await NC.findAll({ 
             where: Sequelize.where(Sequelize.col('IFI.RSA.RSGs.RGs.tipo'), 'FUNDADO'),
@@ -207,10 +27,22 @@ const getAllRGforGerenciaController = async () => {
                 [Sequelize.col('IFI.documento_ifi'), 'documento_AI'],
                 [Sequelize.col('IFI.createdAt'), 'AI_createdAt'],
 
+                //primera muerte
+                [Sequelize.col('IFI.TERMINADO_RSG1.Usuarios.usuario'), 'usuarioRSG1'],
+                [Sequelize.literal(`'RESOLUCION SUBGERENCIAL 1'`), 'nombre_RSG1'],
+                [Sequelize.col('IFI.TERMINADO_RSG1.documento'), 'documento_RSG1'],
+                [Sequelize.col('IFI.TERMINADO_RSG1.createdAt'), 'RSG1_createdAt'],
+
                 [Sequelize.col('IFI.DescargoIFIs.analista2Usuario.usuario'), 'usuarioAnalista2'],
                 [Sequelize.literal(`'DESCARGO IFI'`), 'nombre_DIFI'],
                 [Sequelize.col('IFI.DescargoIFIs.documento_DIFI'), 'documento_DIFI'],
                 [Sequelize.col('IFI.DescargoIFIs.createdAt'), 'analista2_createdAt'],
+
+                //primera muerte
+                [Sequelize.col('IFI.RSG2.Usuarios.usuario'), 'usuarioAreaInstructiva2'],
+                [Sequelize.literal(`'RESOLUCION SUBGERENCIAL 2'`), 'nombre_AR2'],
+                [Sequelize.col('IFI.RSG2.documento'), 'documento_AR2'],
+                [Sequelize.col('IFI.RSG2.createdAt'), 'AR2_createdAt'],
 
                 [Sequelize.col('IFI.RSA.Usuarios.usuario'), 'usuarioAreaInstructiva2'],
                 [Sequelize.literal(`'RESOLUCION SANCIONADORA ADMINISTRATIVA'`), 'nombre_RSA'],
@@ -236,6 +68,11 @@ const getAllRGforGerenciaController = async () => {
                 [Sequelize.literal(`'RESOLUCION GENERAL PROCEDENTE'`), 'nombre_RG'],
                 [Sequelize.col('IFI.RSA.RSGs.RGs.documento_rg'), 'documento_RG'],
                 [Sequelize.col('IFI.RSA.RSGs.RGs.createdAt'), 'RG_createdAt'],
+
+                [Sequelize.col('IFI.RSA.RSGs.Usuarios.usuario'), 'usuarioAreaInstructiva3'],
+                [Sequelize.literal(`'RESOLUCION SUBGERENCIAL GENERAL 3'`), 'nombre_RSG3'],
+                [Sequelize.col('IFI.RSA.RSGs.documento_RSG'), 'documento_RSG'],
+                [Sequelize.col('IFI.RSA.RSGs.createdAt'), 'RSG3_createdAt'],
 
             ],
             include: [
@@ -275,6 +112,26 @@ const getAllRGforGerenciaController = async () => {
                             as: 'Usuarios',
                         },
                         {
+                            model: RSG1,
+                            as: 'TERMINADO_RSG1',
+                            include: [
+                                {
+                                    model: Usuario,
+                                    as: 'Usuarios',
+                                },
+                            ]
+                        },
+                        {
+                            model: RSG2,
+                            as: 'RSG2',
+                            include: [
+                                {
+                                    model: Usuario,
+                                    as: 'Usuarios',
+                                },
+                            ]
+                        },
+                        {
                             model: DescargoIFI,
                             as: 'DescargoIFIs',
                             include: [
@@ -303,6 +160,16 @@ const getAllRGforGerenciaController = async () => {
                                     ]
                                 },
                                 {
+                                    model:  Acta,
+                                    as: 'ActaRsa',
+                                    include: [
+                                        {
+                                            model: Usuario,
+                                            as: 'analista5Usuario',
+                                        }
+                                    ]
+                                },
+                                {
                                     model:  RSG,
                                     as: 'RSGs',
                                     include: [
@@ -327,7 +194,17 @@ const getAllRGforGerenciaController = async () => {
                                                 {
                                                     model: Usuario,
                                                     as: 'Usuarios',
-                                                }
+                                                },
+                                                {
+                                                    model:  Acta,
+                                                    as: 'ActaGerente',
+                                                    include: [
+                                                        {
+                                                            model: Usuario,
+                                                            as: 'analista5Usuario',
+                                                        }
+                                                    ]
+                                                },
                                             ]
                                         }
                                     ]
@@ -432,13 +309,6 @@ const getAllRGforGerenciaController = async () => {
     }
 };
 
-
 module.exports = {
-    createRGController,
-    updateRGController,
-    getRGController,
-    getAllRGController,
-    getAllRGforGerenciaController,
-    getAllRGforAnalista5Controller,
-    getRGforAnalista5Controller
+    getAllNCSeguimientoController
 };

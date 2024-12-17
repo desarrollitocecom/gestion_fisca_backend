@@ -69,12 +69,9 @@ const updateRSG2Controller = async ({id, nro_resolucion2, fecha_resolucion, docu
     }
 };
 
-const getAllRSG2forAR2Controller = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+const getAllRSG2forAR2Controller = async () => {
     try {
-        const response = await NC.findAndCountAll({ 
-            limit,
-            offset,
+        const response = await NC.findAll({ 
             where: Sequelize.where(Sequelize.col('IFI.tipo'), 'TERMINADO_RSG2'),
             order: [['id', 'ASC']],
             attributes: [
@@ -108,11 +105,6 @@ const getAllRSG2forAR2Controller = async (page = 1, limit = 20) => {
                 [Sequelize.literal(`'RESOLUCION SUBGERENCIAL 2'`), 'nombre_AR2'],
                 [Sequelize.col('IFI.RSG2.documento'), 'documento_AR2'],
                 [Sequelize.col('IFI.RSG2.createdAt'), 'AR2_createdAt'],
-
-
-                // [Sequelize.col('IFI.TERMINADO_RSG1.Usuarios.usuario'), 'usuarioRSG1'],
-                // [Sequelize.col('IFI.TERMINADO_RSG1.documento'), 'documento_RSG1'],
-                // [Sequelize.col('IFI.TERMINADO_RSG1.createdAt'), 'RSG1_createdAt'],
             ],
             include: [
                 {
@@ -176,7 +168,7 @@ const getAllRSG2forAR2Controller = async (page = 1, limit = 20) => {
             ]
         });
 
-        const transformedData = response.rows.map(row => ({
+        const transformedData = response.map(row => ({
             nro_nc: row.get('nro_nc'),
             etapaInspector: {
                 usuarioInspector: row.get('usuarioInspector'),
@@ -230,7 +222,7 @@ const getAllRSG2forAR2Controller = async (page = 1, limit = 20) => {
         }));
 
 
-        return { totalCount: response.count, data: transformedData, currentPage: page } || null;
+        return transformedData || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los reportes de RSG1", data: error });
         return false;

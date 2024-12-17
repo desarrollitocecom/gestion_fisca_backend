@@ -1,21 +1,15 @@
 const {getAllRSAforAnalista4Controller, getRsaController, updateRsaController} = require("../controllers/rsaController");
 const {createDescargoRSAController} = require("../controllers/descargoRsaController");
-const { getRSGController, getAllRSGforAnalista4Controller } = require("../controllers/rsgController")
+const { getRSGController, getAllRSGforAnalista4Controller, getRSGforGerenciaController, getRSGforAnalista5Controller } = require("../controllers/rsgController")
 const {
   createDescargoRSGNPController,
   updateDescargoRSGNPController,
 } = require('../controllers/descargoRsgnpController');
 const { updateRSGNPController } = require('../controllers/rsgController')
 
-updateRSGNPController
-const {
-  getInformeFinalController,
-  updateInformeFinalController,
-} = require("../controllers/informeFinalController");
-
 const { updateDocumento } = require("../controllers/documentoController");
+const { getIo } = require('../sockets'); 
 
-const { startJobForDocument } = require("../jobs/DescargoJob");
 
 const fs = require("node:fs");
 function isValidUUID(uuid) {
@@ -28,12 +22,10 @@ const getAllRSGforAnalista4Handler = async (req, res) => {
   try {
     const response = await getAllRSGforAnalista4Controller();
 
-    if (response.data.length === 0) {
+    if (response.length === 0) {
       return res.status(200).json({
         message: "Ya no hay más IFIs",
-        data: {
-          data: [],
-        },
+        data: [],
       });
     }
 
@@ -52,6 +44,8 @@ const getAllRSGforAnalista4Handler = async (req, res) => {
 
 
 const createDescargoRSGNPHandler = async (req, res) => {
+  const io = getIo(); 
+
   const {id}=req.params;
 
   const { nro_descargo, fecha_descargo, id_nc, id_analista_4 } = req.body;
@@ -140,12 +134,6 @@ const createDescargoRSGNPHandler = async (req, res) => {
    
       const response=await updateRSGNPController(id,{id_descargo_RSG,id_estado_RSGNP,tipo:'GERENCIA'})
 
-      if (!response) {
-          return res.status(400).json({
-              message: 'Error al crear y asociar DescargoRSGNP',
-              data: []
-          });
-      }
       
       const total_documentos = newDescargo.documento_DRSG;
 
@@ -154,7 +142,27 @@ const createDescargoRSGNPHandler = async (req, res) => {
       
       await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 
-      return res.status(200).json({ message: "DescargoRSGNP creado con éxito y asociado a RSGNP correctamente", data: response });
+
+
+
+      if (response) {
+
+        const findNC = await getRSGforGerenciaController(response.id);
+        const plainNC = findNC.toJSON();
+
+        io.emit("sendGerencia", { data: [plainNC] });
+
+        res.status(201).json({
+            message: 'Descargo NC creado con exito',
+            data: [findNC]
+        });
+    } else {
+       res.status(400).json({
+            message: 'Error al crear Descargo NC',
+        });
+    }
+
+
 
   } catch (error) {
 
@@ -166,6 +174,8 @@ const createDescargoRSGNPHandler = async (req, res) => {
 
 
 const sendWithoutDescargoRSGNPHandler = async (req, res) => {
+    const io = getIo(); 
+
   const {id}=req.params;
 
   const { id_nc, id_analista_4 } = req.body;
@@ -210,22 +220,29 @@ const sendWithoutDescargoRSGNPHandler = async (req, res) => {
       const id_estado_RSGNP=3;
    
       const response=await updateRSGNPController(id,{id_descargo_RSG,id_estado_RSGNP,tipo:'ANALISTA_5'})
-
-      if (!response) {
-          return res.status(400).json({
-              message: 'Error al crear y asociar DescargoRSGNP',
-              data: []
-          });
-      }
-      
       const total_documentos = '';
 
       const nuevoModulo = "RECURSO DE APELACION"
-      console.log(id_nc, total_documentos, nuevoModulo);
       
       await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 
-      return res.status(200).json({ message: "DescargoRSGNP creado con éxito y asociado a RSGNP correctamente", data: response });
+
+        if (response) {
+
+            const findNC = await getRSGforAnalista5Controller(response.id);
+            const plainNC = findNC.toJSON();
+
+            io.emit("sendAnalita5fromAnalista4", { data: [plainNC] });
+
+            res.status(201).json({
+                message: 'Descargo NC creado con exito',
+                data: [findNC]
+            });
+        } else {
+        res.status(400).json({
+                message: 'Error al crear Descargo NC',
+            });
+        }
 
   } catch (error) {
 

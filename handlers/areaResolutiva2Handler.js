@@ -1,9 +1,12 @@
 const {getAllIFIforAR2Controller, getInformeFinalController, updateInformeFinalController} = require('../controllers/informeFinalController');
 const {updateDocumento}=require('../controllers/documentoController');
 const {createRSG2Controller, getAllRSG2forAR2Controller} = require('../controllers/rsg2Controller');
-const {createRSAController} = require('../controllers/rsaController');
+const {createRSAController, getRSAforAnalista3Controller} = require('../controllers/rsaController');
+const { getIo } = require('../sockets'); 
+
 
 const fs = require('node:fs');
+
 
 function isValidUUID(uuid) {
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -11,29 +14,14 @@ function isValidUUID(uuid) {
 }
 
 const getAllIFIforAR2Handler = async (req, res) => {  
-    const { page = 1, limit = 20 } = req.query;
-    const errores = [];
-  
-    if (isNaN(page)) errores.push("El page debe ser un número");
-    if (page <= 0) errores.push("El page debe ser mayor a 0");
-    if (isNaN(limit)) errores.push("El limit debe ser un número");
-    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
-  
-    if (errores.length > 0) {
-        return res.status(400).json({ errores });
-    }
-  
+
     try {
-        const response = await getAllIFIforAR2Controller(Number(page), Number(limit));
+        const response = await getAllIFIforAR2Controller();
   
-        if (response.data.length === 0) {
+        if (response.length === 0) {
             return res.status(200).json({
                 message: 'Ya no hay más IFIs',
-                data: {
-                    data: [],
-                    totalPage: response.currentPage,
-                    totalCount: response.totalCount
-                }
+                data: []
             });
         }
   
@@ -140,6 +128,8 @@ const getAllIFIforAR2Handler = async (req, res) => {
 };
 
 const createRSAHandler = async (req, res) => {
+    const io = getIo(); 
+
     const { id } = req.params;
 
     const { nro_rsa, fecha_rsa, fecha_notificacion, id_nc, id_AR2 } = req.body;
@@ -240,13 +230,31 @@ const createRSAHandler = async (req, res) => {
 
         const response = await updateInformeFinalController(id, { id_evaluar,tipo: 'TERMINADO'})
 
-        if (!response) {
-            return res.status(201).json({
-                message: 'Error al crear el RGA y al asociar',
-                data: []
+        // if (!response) {
+        //     return res.status(201).json({
+        //         message: 'Error al crear el RGA y al asociar',
+        //         data: []
+        //     });
+        // }
+        // return res.status(200).json({ message: "RSA creada con éxito", data: response });
+
+        if (response) {
+
+            const findNC = await getRSAforAnalista3Controller(response.id);
+            const plainNC = findNC.toJSON();
+
+            io.emit("sendAnalista3", { data: [plainNC] });
+
+            res.status(201).json({
+                message: 'Descargo NC creado con exito',
+                data: [findNC]
+            });
+        } else {
+           res.status(400).json({
+                message: 'Error al crear Descargo NC',
             });
         }
-        return res.status(200).json({ message: "RSA creada con éxito", data: response });
+
 
     } catch (error) {
 
@@ -258,29 +266,14 @@ const createRSAHandler = async (req, res) => {
 };
 
 const getAllRSG2forAR2Handler = async (req, res) => {  
-    const { page = 1, limit = 20 } = req.query;
-    const errores = [];
-  
-    if (isNaN(page)) errores.push("El page debe ser un número");
-    if (page <= 0) errores.push("El page debe ser mayor a 0");
-    if (isNaN(limit)) errores.push("El limit debe ser un número");
-    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
-  
-    if (errores.length > 0) {
-        return res.status(400).json({ errores });
-    }
-  
+
     try {
-        const response = await getAllRSG2forAR2Controller(Number(page), Number(limit));
+        const response = await getAllRSG2forAR2Controller();
   
-        if (response.data.length === 0) {
+        if (response.length === 0) {
             return res.status(200).json({
                 message: 'Ya no hay más IFIs',
-                data: {
-                    data: [],
-                    totalPage: response.currentPage,
-                    totalCount: response.totalCount
-                }
+                data: []
             });
         }
   
@@ -293,6 +286,8 @@ const getAllRSG2forAR2Handler = async (req, res) => {
         res.status(500).json({ error: "Error interno del servidor al obtener los IFIs." });
     }
 };
+
+
 
 
 module.exports = {

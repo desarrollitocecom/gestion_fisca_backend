@@ -1,11 +1,14 @@
 const { createTramiteInspector, getAllTramiteInspectorById } = require('../controllers/tramiteInspectorController');
 const { createMedidaComplementaria } = require('../controllers/medidaComplementariaController')
-const { createNC } = require('../controllers/ncController');
+const { createNC, getNCforDigitador } = require('../controllers/ncController');
 const fs = require('fs');
-const { startJobForDocument } = require('../jobs/DescargoJob');
 const { createDocumento, updateDocumento } = require('../controllers/documentoController');
+const { getIo } = require('../sockets'); 
 
 const createTramiteHandler = async (req, res) => {
+    const io = getIo(); 
+    
+
     const { 
 
             id_documento, 
@@ -106,6 +109,7 @@ const createTramiteHandler = async (req, res) => {
                 }
             }
     
+            //aqui creo el tramite inspector
             const newTramiteInspector = await createTramiteInspector({ 
                 nro_nc, 
                 documento_nc: req.files['documento_nc'][0], 
@@ -122,6 +126,7 @@ const createTramiteHandler = async (req, res) => {
 
             const id_tramiteInspector = newTramiteInspector.id;
 
+            //aqui creo el NC
             const newNC = await createNC({ id_tramiteInspector: newTramiteInspector.id });
             
             const modelNC = 'NOTIFICACIÓN DE CARGO';
@@ -151,11 +156,17 @@ const createTramiteHandler = async (req, res) => {
 
                     await updateDocumento({id_nc, total_documentos, nuevoModulo});
                 }
+
                 
             if (newNC) {
+                const findNC = await getNCforDigitador(newNC.id)
+               
+                const plainNC = findNC.toJSON();
+
+                io.emit("sendDigitador", { data: [plainNC] });
+
                 res.status(201).json({
-                    message: 'NC creado con éxito',
-                    data: { newMedidaComplementaria, newTramiteInspector, newNC }
+                    data: [findNC]
                 });
            } else {
                res.status(400).json({

@@ -86,6 +86,7 @@ module.exports = (sequelize) => {
         RSA.belongsTo(db.Usuario,{foreignKey:'id_AR2' , as:'Usuarios'});
         
         RSA.belongsTo(db.DescargoRSA, { foreignKey: 'id_evaluar_rsa', as: 'DRSA', constraints: false });
+        RSA.belongsTo(db.Acta, { foreignKey: 'id_evaluar_rsa', as: 'ActaRsa', constraints: false });
         RSA.belongsTo(db.RSG, { foreignKey: 'id_RSG', as: 'RSGs' });
     };
     return RSA;

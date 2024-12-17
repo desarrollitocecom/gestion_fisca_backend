@@ -173,12 +173,10 @@ const getRSGController = async (id) => {
 };
 
 
-const getAllRSGforAnalista4Controller = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+const getAllRSGforAnalista4Controller = async () => {
     try {
-        const rgsnps = await RSG.findAndCountAll({
-            limit,
-          offset,
+        const rgsnps = await RSG.findAll({
+
           where: { tipo: 'RSGNP' }, 
                  attributes: ['id', 'id_AR3', 'createdAt',
          
@@ -208,7 +206,7 @@ const getAllRSGforAnalista4Controller = async (page = 1, limit = 20) => {
                    
                  ],
                });
-               return { totalCount: rgsnps.count, data: rgsnps.rows, currentPage: page } || null;
+               return rgsnps || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);
@@ -243,12 +241,9 @@ const updateRSGNPController = async (id, {id_descargo_RSG, id_estado_RSGNP, tipo
 
 
 
-const getAllRSGforGerenciaController = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+const getAllRSGforGerenciaController = async () => {
     try {
-        const rgsnps = await RSG.findAndCountAll({
-            limit,
-          offset,
+        const rgsnps = await RSG.findAll({
           where: { tipo: 'GERENCIA' }, 
                  attributes: ['id', 'id_AR3', 'createdAt',
          
@@ -278,7 +273,7 @@ const getAllRSGforGerenciaController = async (page = 1, limit = 20) => {
                    
                  ],
                });
-               return { totalCount: rgsnps.count, data: rgsnps.rows, currentPage: page } || null;
+               return rgsnps || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);
@@ -288,12 +283,9 @@ const getAllRSGforGerenciaController = async (page = 1, limit = 20) => {
 
 
 
-const getAllRSGforAnalista5Controller = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+const getAllRSGforAnalista5Controller = async () => {
     try {
-        const rgsnps = await RSG.findAndCountAll({
-            limit,
-            offset,
+        const rgsnps = await RSG.findAll({
             where: { tipo: 'ANALISTA_5' },    
             order: [['createdAt', 'DESC']],
             attributes: ['id', 'id_AR3',
@@ -326,7 +318,7 @@ const getAllRSGforAnalista5Controller = async (page = 1, limit = 20) => {
                    
                  ],
                });
-               return { totalCount: rgsnps.count, data: rgsnps.rows, currentPage: page } || null;
+               return rgsnps || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);
@@ -336,12 +328,73 @@ const getAllRSGforAnalista5Controller = async (page = 1, limit = 20) => {
 
 
 
-const getAllRSG3forAR3Controller = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+
+
+
+const getRSGforAnalista5Controller = async (id) => {
     try {
-        const response = await NC.findAndCountAll({ 
-            limit,
-            offset,
+        const rgsnps = await RSG.findOne({
+            where: { id: id },    
+            order: [['createdAt', 'DESC']],
+            attributes: ['id', 'id_AR3',
+                [Sequelize.col('NCs.id'), 'id_nc'],
+                // [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                // [Sequelize.col('DescargoRSAs.Usuarios.usuario'), 'usuario'],
+                [Sequelize.col('Usuarios.usuario'), 'usuario'],
+                [Sequelize.literal(`'Analista 4'`), 'area'],
+                'createdAt'
+                 ],
+           
+                 include: [
+                    { 
+                     model: NC, 
+                     as:'NCs',  
+                     include: [
+                       {
+                         model: TramiteInspector,
+                         as: 'tramiteInspector',
+                         attributes: []
+                       }
+                     ],
+                     attributes: [] 
+                    },
+                    { 
+                     model:Usuario,
+                     as:'Usuarios',
+                     attributes:[]
+                   },
+                   
+                 ],
+               });
+               return rgsnps || null;
+
+    } catch (error) {
+        console.error("Error al traer los RSGNPs:", error);
+        return false
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const getAllRSG3forAR3Controller = async () => {
+    try {
+        const response = await NC.findAll({ 
             where: Sequelize.where(Sequelize.col('IFI.RSA.tipo'), 'TERMINADO'),
             order: [['id', 'ASC']],
             attributes: [
@@ -469,7 +522,7 @@ const getAllRSG3forAR3Controller = async (page = 1, limit = 20) => {
             ]
         });
 
-        const transformedData = response.rows.map(row => ({
+        const transformedData = response.map(row => ({
             nro_nc: row.get('nro_nc'),
             etapaInspector: {
                 usuarioInspector: row.get('usuarioInspector'),
@@ -538,7 +591,7 @@ const getAllRSG3forAR3Controller = async (page = 1, limit = 20) => {
         }));
 
 
-        return { totalCount: response.count, data: transformedData, currentPage: page } || null;
+        return transformedData || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los reportes de RSG1", data: error });
         return false;
@@ -547,7 +600,108 @@ const getAllRSG3forAR3Controller = async (page = 1, limit = 20) => {
 
 
 
+
+const getRSGforGerenciaController = async (id) => {
+    try {
+        const rgsnps = await RSG.findOne({
+          where: { id: id }, 
+                 attributes: ['id', 'id_AR3', 'createdAt',
+         
+                             [Sequelize.col('NCs.id'), 'id_nc'],
+                             [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                             [Sequelize.col('Usuarios.usuario'), 'analista4'],
+                 ],
+           
+                 include: [
+                    { 
+                     model: NC, 
+                     as:'NCs',  
+                     include: [
+                       {
+                         model: TramiteInspector,
+                         as: 'tramiteInspector',
+                         attributes: []
+                       }
+                     ],
+                     attributes: [] 
+                    },
+                    { 
+                     model:Usuario,
+                     as:'Usuarios',
+                     attributes:[]
+                   },
+                   
+                 ],
+               });
+               return rgsnps || null;
+
+    } catch (error) {
+        console.error("Error al traer los RSGNPs:", error);
+        return false
+    }
+};
+
+
+
+
+
+
+
+
+
+
+const getRSGforAnalista4Controller = async (id) => {
+    
+
+    try {
+        const rgsnps = await RSG.findOne({
+
+          where: { id: id }, 
+                 attributes: ['id', 'id_AR3', 'createdAt',
+         
+                             [Sequelize.col('NCs.id'), 'id_nc'],
+                             [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                             [Sequelize.col('Usuarios.usuario'), 'area_resolutiva3'],
+                 ],
+           
+                 include: [
+                    { 
+                     model: NC, 
+                     as:'NCs',  
+                     include: [
+                       {
+                         model: TramiteInspector,
+                         as: 'tramiteInspector',
+                         attributes: []
+                       }
+                     ],
+                     attributes: [] 
+                    },
+                    { 
+                     model:Usuario,
+                     as:'Usuarios',
+                     attributes:[]
+                   },
+                   
+                 ],
+               });
+               return rgsnps || null;
+
+    } catch (error) {
+        console.error("Error al traer los RSGNPs:", error);
+        return false
+    }
+};
+
+
+
+
+
+
+
+
 module.exports = {
+    getRSGforAnalista4Controller,
     createRSGController,
     updateRsgnpController,
     getRsgnpController,
@@ -558,5 +712,7 @@ module.exports = {
     updateRSGNPController,
     getAllRSGforGerenciaController,
     getAllRSGforAnalista5Controller,
-    getAllRSG3forAR3Controller
+    getAllRSG3forAR3Controller,
+    getRSGforGerenciaController,
+    getRSGforAnalista5Controller
 };

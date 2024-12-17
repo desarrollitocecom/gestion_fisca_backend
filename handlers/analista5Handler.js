@@ -34,12 +34,10 @@ const getAllRSAforAnalista5Handler = async (req, res) => {
   try {
     const response = await getAllRSAforAnalista5Controller();
 
-    if (response.data.length === 0) {
+    if (response.length === 0) {
       return res.status(200).json({
         message: "Ya no hay más IFIs",
-        data: {
-          data: [],
-        },
+        data: []
       });
     }
 
@@ -60,12 +58,10 @@ const getAllRSGforAnalista5Handler = async (req, res) => {
   try {
     const response = await getAllRSGforAnalista5Controller();
 
-    if (response.data.length === 0) {
+    if (response.length === 0) {
       return res.status(200).json({
         message: "Ya no hay más IFIs",
-        data: {
-          data: [],
-        },
+        data: []
       });
     }
 
@@ -74,10 +70,10 @@ const getAllRSGforAnalista5Handler = async (req, res) => {
       data: response,
     });
   } catch (error) {
-    console.error("Error al obtener IFIs para AR1:", error);
+    console.error("Error al obtener IFIs para AR1asdas:", error);
     res
       .status(500)
-      .json({ error: "Error interno del servidor al obtener los IFIs." });
+      .json({ error: "Error interno del servidor al obtener los IFIsss." });
   }
 };
 
@@ -86,12 +82,10 @@ const getAllRGforAnalista5Handler = async (req, res) => {
   try {
     const response = await getAllRGforAnalista5Controller();
 
-    if (response.data.length === 0) {
+    if (response.length === 0) {
       return res.status(200).json({
         message: "Ya no hay más IFIs",
-        data: {
-          data: [],
-        },
+        data: []
       });
     }
 

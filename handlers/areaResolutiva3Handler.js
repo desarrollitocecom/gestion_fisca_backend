@@ -1,12 +1,13 @@
 
 
 const {getAllRSAforAR3Controller, getRsaController,  updateRsaController} = require("../controllers/rsaController");
-const { createRSGController, getAllRSG3forAR3Controller } = require("../controllers/rsgController")
+const { createRSGController, getAllRSG3forAR3Controller, getRSGforAnalista4Controller } = require("../controllers/rsgController")
 const {createDescargoRSAController} = require("../controllers/descargoRsaController");
 const {
   getInformeFinalController,
   updateInformeFinalController,
 } = require("../controllers/informeFinalController");
+const { getIo } = require('../sockets'); 
 
 const { updateDocumento } = require("../controllers/documentoController");
 
@@ -22,12 +23,10 @@ const getAllRSAforAR3Handler = async (req, res) => {
   try {
     const response = await getAllRSAforAR3Controller();
 
-    if (response.data.length === 0) {
+    if (response.length === 0) {
       return res.status(200).json({
         message: "Ya no hay más IFIs",
-        data: {
-          data: [],
-        },
+        data: []
       });
     }
 
@@ -45,6 +44,8 @@ const getAllRSAforAR3Handler = async (req, res) => {
 
 
 const createRSGHandler = async (req, res) => {
+  const io = getIo(); 
+
   const { id } = req.params;
 
   const { nro_rsg, fecha_rsg, fecha_notificacion, id_nc, id_AR3, tipo} = req.body;
@@ -118,17 +119,33 @@ const createRSGHandler = async (req, res) => {
       const id_RSG = newRSG.id
 
       const response = await updateRsaController(id, { id_evaluar_rsa, id_RSG, tipo: 'TERMINADO' })
-      if (!response) {
-          return res.status(201).json({
-              message: 'Error al crear el RGSNP y al asociar con RSA',
-              data: []
-          });
-      }
+
       const total_documentos = newRSG.documento_RSG;
 
       const nuevoModulo = "RESOLUCION SUBGERENCIAL NO PROCEDENTE"
       await updateDocumento({ id_nc, total_documentos, nuevoModulo });
-      return res.status(200).json({ message: 'RGSNP creado  con éxito y asociado con RSA', data: newRSG });
+
+      if (response) {
+        // console.log(response.id);
+        
+        const findNC = await getRSGforAnalista4Controller(newRSG.id);
+        // console.log(findNC);
+        
+        const plainNC = findNC.toJSON();  
+
+        if(tipo == 'RSGNP'){
+          io.emit("sendAnalista4", { data: [plainNC] });
+        }
+
+        res.status(201).json({
+            message: 'Descargo NC creado con exito',
+            data: [findNC]
+        });
+    } else {
+       res.status(400).json({
+            message: 'Error al crear Descargo NC',
+        });
+    }
   
   } catch (error) {
       console.error("Error al crear RSGNP:", error);
@@ -139,29 +156,13 @@ const createRSGHandler = async (req, res) => {
 };
 
 const getAllRSG3forAR3Handler = async (req, res) => {  
-  const { page = 1, limit = 20 } = req.query;
-  const errores = [];
-
-  if (isNaN(page)) errores.push("El page debe ser un número");
-  if (page <= 0) errores.push("El page debe ser mayor a 0");
-  if (isNaN(limit)) errores.push("El limit debe ser un número");
-  if (limit <= 0) errores.push("El limit debe ser mayor a 0");
-
-  if (errores.length > 0) {
-      return res.status(400).json({ errores });
-  }
-
   try {
-      const response = await getAllRSG3forAR3Controller(Number(page), Number(limit));
+      const response = await getAllRSG3forAR3Controller();
 
-      if (response.data.length === 0) {
+      if (response.length === 0) {
           return res.status(200).json({
               message: 'Ya no hay más IFIs',
-              data: {
-                  data: [],
-                  totalPage: response.currentPage,
-                  totalCount: response.totalCount
-              }
+              data: []
           });
       }
 

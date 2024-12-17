@@ -28,12 +28,9 @@ const createRSAController = async ({nro_rsa, fecha_rsa, fecha_notificacion, docu
         return false
     }
 };
-const getAllRSAforAR3Controller = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+const getAllRSAforAR3Controller = async () => {
     try {
-        const response = await RSA.findAndCountAll({ 
-            limit,
-            offset,
+        const response = await RSA.findAll({ 
             where: { tipo: 'AR3' }, 
             order: [['id', 'ASC']],
             attributes: [
@@ -65,7 +62,7 @@ const getAllRSAforAR3Controller = async (page = 1, limit = 20) => {
               },
             ],
         });
-        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+        return response || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
         return false;
@@ -199,12 +196,10 @@ const updateinRsaController = async (uuid, tipo, id_evaluar_rsa) => {
     return updatedRsa || null;
 };
 
-const getAllRSAforAnalista3Controller = async (page = 1, limit = 20) => {
-  const offset = (page - 1) * limit;
+
+const getAllRSAforAnalista3Controller = async () => {
   try {
-      const response = await RSA.findAndCountAll({ 
-          limit,
-          offset,
+      const response = await RSA.findAll({ 
           where: { tipo: 'ANALISTA_3' }, 
           order: [['id', 'ASC']],
           attributes: [
@@ -236,7 +231,7 @@ const getAllRSAforAnalista3Controller = async (page = 1, limit = 20) => {
             },
           ],
       });
-      return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+      return response || null;
   } catch (error) {
       console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
       return false;
@@ -288,12 +283,9 @@ const getAllRSAforAnalista4Controller = async (page = 1, limit = 20) => {
   }
 };
 
-const getAllRSAforAnalista5Controller = async (page = 1, limit = 20) => {
-  const offset = (page - 1) * limit;
+const getAllRSAforAnalista5Controller = async () => {
   try {
-      const response = await RSA.findAndCountAll({ 
-          limit,
-          offset,
+      const response = await RSA.findAll({ 
           where: { tipo: 'ANALISTA_5' }, 
           order: [['createdAt', 'DESC']],
           attributes: [
@@ -330,12 +322,184 @@ const getAllRSAforAnalista5Controller = async (page = 1, limit = 20) => {
               },
           ],
       });
-      return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+      return response || null;
   } catch (error) {
       console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
       return false;
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+const getRSAforAnalista5Controller = async (id) => {
+  try {
+      const response = await RSA.findOne({ 
+          where: { id: id }, 
+          order: [['createdAt', 'DESC']],
+          attributes: [
+              'id',
+              [Sequelize.col('NCs.id'), 'id_nc'],
+              'nro_rsa',
+              [Sequelize.col('DescargoRSAs.Usuarios.usuario'), 'usuario'],
+              [Sequelize.literal(`'Analista 3'`), 'area'],
+              'createdAt',
+          ],
+          include: [
+              {
+                  model: NC, 
+                  as: 'NCs',
+                  include: [
+                    {
+                      model: TramiteInspector, 
+                      as: 'tramiteInspector', 
+                      attributes: [], 
+                    }
+                  ],
+                  attributes: []
+              },
+              {
+                model: DescargoRSA, 
+                as: 'DescargoRSAs',
+                include: [
+                  {
+                    model: Usuario,
+                    as: 'Usuarios'
+                  }
+                ],  
+                attributes: []
+              },
+          ],
+      });
+      return response || null;
+  } catch (error) {
+      console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
+      return false;
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const getRSAforAnalista3Controller = async () => {
+  try {
+      const response = await RSA.findOne({ 
+          where: { tipo: 'ANALISTA_3' }, 
+          order: [['id', 'ASC']],
+          attributes: [
+              'id',
+              'createdAt',
+              [Sequelize.col('NCs.id'), 'id_nc'],
+              [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+              [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+              [Sequelize.col('Usuarios.usuario'), 'area_resolutiva2'],
+              'tipo'
+          ],
+          include: [
+              {
+                  model: NC, 
+                  as: 'NCs',
+                  include: [
+                    {
+                      model: TramiteInspector, 
+                      as: 'tramiteInspector', 
+                      attributes: [], 
+                    }
+                  ],
+                  attributes: []
+              },
+              {
+                model: Usuario, 
+                as: 'Usuarios',
+                attributes: []
+            },
+          ],
+      });
+      return response || null;
+  } catch (error) {
+      console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
+      return false;
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+const getRSAforAR3Controller = async () => {
+  try {
+      const response = await RSA.findOne({ 
+          where: { tipo: 'AR3' }, 
+          order: [['id', 'ASC']],
+          attributes: [
+              'id',
+              'createdAt',
+              [Sequelize.col('NCs.id'), 'id_nc'],
+              [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+              [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+              [Sequelize.col('Usuarios.usuario'), 'area_instructiva3'],
+              'tipo'
+          ],
+          include: [
+              {
+                  model: NC, 
+                  as: 'NCs',
+                  include: [
+                    {
+                      model: TramiteInspector, 
+                      as: 'tramiteInspector', 
+                      attributes: [], 
+                    }
+                  ],
+                  attributes: []
+              },
+              {
+                model: Usuario, 
+                as: 'Usuarios',
+                attributes: []
+            },
+          ],
+      });
+      return response || null;
+  } catch (error) {
+      console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
+      return false;
+  }
+};
+
+
+
+
 
 
 
@@ -349,5 +513,8 @@ module.exports = {
     getAllRSAforAN5Controller,
     getAllRSAforAnalista3Controller,
     getAllRSAforAnalista4Controller,
-    getAllRSAforAnalista5Controller
+    getAllRSAforAnalista5Controller,
+    getRSAforAnalista3Controller,
+    getRSAforAR3Controller,
+    getRSAforAnalista5Controller
 };

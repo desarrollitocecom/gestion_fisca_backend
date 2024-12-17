@@ -17,12 +17,77 @@ const createNC = async ({ id_tramiteInspector }) => {
     }
 };
 
-const getNC = async (id) => {
+const getNCforDigitador = async (id) => {
+
     try {
         const findNC = await NC.findOne({ 
-            where: { id } 
+            where: { id } ,
+            attributes: [
+                'id',
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'inspector'],
+                [Sequelize.col('tramiteInspector.documento_nc'), 'documento_nc'],
+                [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
+                [Sequelize.col('estado'), 'estado'],
+                
+            ],
+            include: [
+                {
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
+                    include: [
+                        {
+                            model: Usuario, 
+                            as: 'inspectorUsuario',
+                            attributes: []
+                        },
+                    ],
+                    attributes: []
+                }
+            ],
         });
+        
+        return findNC || null;
+    } catch (error) {
+        console.error({ message: "Error al encontrar el NC", data: error });
+        return false;
+    }
+}
 
+const getNCforAnalista = async (id) => {
+    
+    try {
+        const findNC = await NC.findOne({ 
+            where: { id } ,
+            attributes: [
+                'id',
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('digitadorUsuario.usuario'), 'digitador'],
+                [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
+                [Sequelize.col('estado'), 'estado'],
+                
+            ],
+            include: [
+                {
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
+                    include: [
+                        {
+                            model: Usuario, 
+                            as: 'inspectorUsuario',
+                            attributes: []
+                        },
+                    ],
+                    attributes: []
+                },
+                {
+                    model: Usuario, 
+                    as: 'digitadorUsuario',
+                    attributes: []
+                },
+            ],
+        });
+        
         return findNC || null;
     } catch (error) {
         console.error({ message: "Error al encontrar el NC", data: error });
@@ -100,14 +165,11 @@ const updateNC = async (id, {
     }
 };
 
-const getAllNC = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+const getAllNC = async () => {
     try {
-        const response = await NC.findAndCountAll({ 
-            limit,
-            offset,
+        const response = await NC.findAll({
             where: { estado: 'DIGITADOR' }, 
-            order: [['id', 'ASC']],
+            // order: [['id', 'ASC']],
             attributes: [
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
@@ -115,7 +177,6 @@ const getAllNC = async (page = 1, limit = 20) => {
                 [Sequelize.col('tramiteInspector.documento_nc'), 'documento_nc'],
                 [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
                 [Sequelize.col('estado'), 'estado'],
-                
             ],
             include: [
                 {
@@ -131,22 +192,39 @@ const getAllNC = async (page = 1, limit = 20) => {
                     attributes: []
                 }
             ],
-            
         });
-        
-        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+
+        return  response  || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los Tipos de NC", data: error });
         return false;
     }
 };
 
-const getAllNCforInstructiva = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+
+const getNC = async (id) => {
     try {
-        const response = await NC.findAndCountAll({ 
-            limit,
-            offset,
+        const findNC = await NC.findOne({ 
+            where: { id } 
+        });
+
+        return findNC || null;
+    } catch (error) {
+        console.error({ message: "Error al encontrar el NC", data: error });
+        return false;
+    }
+}
+
+
+
+
+
+
+
+
+const getNCforInstructiva = async () => {
+    try {
+        const response = await NC.findOne({ 
             where: { estado: 'A_I' }, 
             order: [['id', 'ASC']],
             attributes: [
@@ -175,21 +253,76 @@ const getAllNCforInstructiva = async (page = 1, limit = 20) => {
                 },
             ],
         });
-        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+        return response || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los Tipos de NC", data: error });
         return false;
     }
 };
 
-const getAllNCforAnalista = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const getAllNCforInstructiva = async () => {
     try {
-        const response = await NC.findAndCountAll({ 
-            limit,
-            offset,
-            where: { estado: 'ANALISTA_1' }, 
+        const response = await NC.findAll({ 
+            where: { estado: 'A_I' }, 
             order: [['id', 'ASC']],
+            attributes: [
+                'id',
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('estado'), 'estado'],
+                [Sequelize.col('descargoNC.analistaUsuario.usuario'), 'analista']
+            ],
+            include: [
+                {
+                    model: DescargoNC, 
+                    as: 'descargoNC',
+                    include: [
+                        {
+                            model: Usuario,
+                            as: 'analistaUsuario',
+                            attributes: []
+                        }
+                    ] ,
+                    attributes: []
+                },
+                {
+                    model: TramiteInspector, 
+                    as: 'tramiteInspector', 
+                    attributes: [], 
+                },
+            ],
+        });
+        return response || null;
+    } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los Tipos de NC", data: error });
+        return false;
+    }
+};
+
+const getAllNCforAnalista = async () => {
+    try {
+        const response = await NC.findAll({ 
+            where: { estado: 'ANALISTA_1' }, 
+            // order: [['id', 'ASC']],
             attributes: [
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
@@ -210,7 +343,7 @@ const getAllNCforAnalista = async (page = 1, limit = 20) => {
                 },
             ],
         });
-        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+        return response || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los Tipos de NC", data: error });
         return false;
@@ -237,4 +370,4 @@ const updateNCState = async (id, newState) => {
 };
 
 
-module.exports = { createNC, updateNC, getNC, getAllNC , updateNCState, getAllNCforInstructiva, getAllNCforAnalista};
+module.exports = { createNC, getNCforInstructiva, updateNC, getAllNC , getNCforDigitador, getNCforAnalista, updateNCState, getAllNCforInstructiva, getNC, getAllNCforAnalista};

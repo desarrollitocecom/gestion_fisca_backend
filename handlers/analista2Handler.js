@@ -1,7 +1,8 @@
 const fs = require('fs');
-const { getAllIFIforAnalista2Controller, updateInformeFinalController, getInformeFinalController } = require('../controllers/informeFinalController');
+const { getAllIFIforAnalista2Controller, updateInformeFinalController, getInformeFinalController, getIFIforAR2Controller } = require('../controllers/informeFinalController');
 const { createDescargoIFI } = require('../controllers/descargoInformeFinalController');
 const {updateDocumento}=require('../controllers/documentoController');
+const { getIo } = require('../sockets'); 
 
 
 function isValidUUID(uuid1) {
@@ -10,29 +11,14 @@ function isValidUUID(uuid1) {
 }
 
 const getAllIFIforAnalista2Handler = async (req, res) => {  
-    const { page = 1, limit = 20 } = req.query;
-    const errores = [];
-  
-    if (isNaN(page)) errores.push("El page debe ser un número");
-    if (page <= 0) errores.push("El page debe ser mayor a 0");
-    if (isNaN(limit)) errores.push("El limit debe ser un número");
-    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
-  
-    if (errores.length > 0) {
-        return res.status(400).json({ errores });
-    }
-  
+
     try {
-        const response = await getAllIFIforAnalista2Controller(Number(page), Number(limit));
+        const response = await getAllIFIforAnalista2Controller();
   
-        if (response.data.length === 0) {
+        if (response.length === 0) {
             return res.status(200).json({
                 message: 'Ya no hay más IFIs',
-                data: {
-                    data: [],
-                    totalPage: response.currentPage,
-                    totalCount: response.totalCount
-                }
+                data: []
             });
         }
   
@@ -47,6 +33,8 @@ const getAllIFIforAnalista2Handler = async (req, res) => {
 };
 
 const createDescargoIFIHandler = async (req, res) => {
+    const io = getIo(); 
+
     const {id}=req.params;
     const { 
         nro_descargo, 
@@ -131,24 +119,36 @@ if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
 
         const response = await updateInformeFinalController(id,{id_descargo_ifi,tipo:'AR2'})
 
-        if (!response) {
-            return res.status(400).json({
-                message: 'Error al crear y asociar DescargoIFI',
-                data: []
-            });
-        }
         const total_documentos=newDescargoIFI.documento_DIFI
 
         const nuevoModulo="DESCARGO INFORME FINAL INSTRUCTIVO"
 
         await updateDocumento({id_nc, total_documentos, nuevoModulo});
 
-        return res.status(200).json({
 
-            message: 'DescargoIFI creado y Asociado a IFI ',
-            
-            data: response
-        });
+        if (response) {
+
+            const findNC = await getIFIforAR2Controller(response.id);
+            const plainNC = findNC.toJSON();
+
+            io.emit("sendAR2", { data: [plainNC] });
+
+            res.status(201).json({
+                message: 'Descargo NC creado con exito',
+                data: [findNC]
+            });
+        } else {
+           res.status(400).json({
+                message: 'Error al crear Descargo NC',
+            });
+        }
+
+
+
+
+
+
+
     } catch (error) {
         console.error('Error al crear y asociar DescargoIFI:', error);
         return res.status(500).json({
@@ -159,6 +159,8 @@ if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
 };
 
 const sendWithoutDescargoIFIHandler = async (req, res) => {
+    const io = getIo(); 
+
     const id = req.params.id;
 
     const { 
@@ -200,13 +202,19 @@ const sendWithoutDescargoIFIHandler = async (req, res) => {
          
          
         if (response) {
-          res.status(201).json({
-                message: 'Descargo IFI creado con exito',
-                data: response,
+
+            const findNC = await getIFIforAR2Controller(response.id);
+            const plainNC = findNC.toJSON();
+
+            io.emit("sendAR2", { data: [plainNC] });
+
+            res.status(201).json({
+                message: 'Descargo NC creado con exito',
+                data: [findNC]
             });
         } else {
            res.status(400).json({
-                message: 'Error al crear Descargo IFI',
+                message: 'Error al crear Descargo NC',
             });
         }
 

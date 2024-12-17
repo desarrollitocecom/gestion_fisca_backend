@@ -66,12 +66,10 @@ const updateRSG1Controller = async ({id, nro_resolucion, fecha_resolucion, docum
     }
 };
 
-const getAllRSG1forAR1Controller = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+const getAllRSG1forAR1Controller = async () => {
+    console.log('asd');
     try {
-        const response = await NC.findAndCountAll({ 
-            limit,
-            offset,
+        const response = await NC.findAll({ 
             where: Sequelize.where(Sequelize.col('IFI.tipo'), 'TERMINADO_RSG1'),
             order: [['id', 'ASC']],
             attributes: [
@@ -154,7 +152,7 @@ const getAllRSG1forAR1Controller = async (page = 1, limit = 20) => {
             ]
         });
 
-        const transformedData = response.rows.map(row => ({
+        const transformedData = response.map(row => ({
             nro_nc: row.get('nro_nc'),
             etapaInspector: {
                 usuarioInspector: row.get('usuarioInspector'),
@@ -200,13 +198,13 @@ const getAllRSG1forAR1Controller = async (page = 1, limit = 20) => {
             documento_ifi: row.get('documento_ifi'),
         }));
 
-
-        return { totalCount: response.count, data: transformedData, currentPage: page } || null;
+        return transformedData || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los reportes de RSG1", data: error });
         return false;
     }
 };
+
 
 
 module.exports = {

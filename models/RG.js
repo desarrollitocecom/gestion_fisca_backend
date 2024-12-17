@@ -64,7 +64,7 @@ module.exports = (sequelize) => {
     RG.associate = (db) => {
 
         RG.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
-        // RG.belongsTo(db.EstadoRG, { foreignKey: 'id_estado_RG', as: 'estadoRG' })
+        RG.belongsTo(db.Acta, { foreignKey: 'id_evaluar_rg', as: 'ActaGerente' })
         RG.belongsTo(db.Usuario, { foreignKey: 'id_gerente', as: 'Usuarios' });
         
     };

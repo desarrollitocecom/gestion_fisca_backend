@@ -1,9 +1,12 @@
 const { createDescargoNC } = require('../controllers/ncDescargoController');
-const { updateNC, getNC, getAllNCforAnalista } = require('../controllers/ncController');
+const { updateNC, getNC, getAllNCforAnalista, getNCforInstructiva } = require('../controllers/ncController');
 const {updateDocumento}=require('../controllers/documentoController');
 const fs = require('fs');
+const { getIo } = require('../sockets'); 
+
 
 const createDescargoNCHandler = async (req, res) => {
+    const io = getIo(); 
     const id = req.params.id;
 
     const { 
@@ -80,9 +83,15 @@ const createDescargoNCHandler = async (req, res) => {
          
          
         if (response) {
-          res.status(201).json({
+
+            const findNC = await getNCforInstructiva(response.id);
+            const plainNC = findNC.toJSON();
+
+            io.emit("sendAI1", { data: [plainNC] });
+
+            res.status(201).json({
                 message: 'Descargo NC creado con exito',
-                data: response,
+                data: [findNC]
             });
         } else {
            res.status(400).json({
@@ -98,29 +107,14 @@ const createDescargoNCHandler = async (req, res) => {
 };
 
 const getAllNCforAnalistaHandler = async (req, res) => {  
-    const { page = 1, limit = 20 } = req.query;
-    const errores = [];
-
-    if (isNaN(page)) errores.push("El page debe ser un número");
-    if (page <= 0) errores.push("El page debe ser mayor a 0");
-    if (isNaN(limit)) errores.push("El limit debe ser un número");
-    if (limit <= 0) errores.push("El limit debe ser mayor a 0");
-
-    if (errores.length > 0) {
-        return res.status(400).json({ errores });
-    }
 
     try {
-        const response = await getAllNCforAnalista(Number(page), Number(limit));
+        const response = await getAllNCforAnalista();
 
-        if (response.data.length === 0) {
+        if (response.length === 0) {
             return res.status(200).json({
                 message: 'Ya no hay más tramites',
-                data: {
-                    data: [],
-                    totalPage: response.currentPage,
-                    totalCount: response.totalCount
-                }
+                data: []
             });
         }
 
@@ -135,6 +129,7 @@ const getAllNCforAnalistaHandler = async (req, res) => {
 };
 
 const sendWithoutDescargoHandler = async (req, res) => {
+    const io = getIo(); 
     const id = req.params.id;
 
     const { 
@@ -176,9 +171,14 @@ const sendWithoutDescargoHandler = async (req, res) => {
          
          
         if (response) {
-          res.status(201).json({
+            const findNC = await getNCforInstructiva(response.id);
+            const plainNC = findNC.toJSON();
+
+            io.emit("sendAI1", { data: [plainNC] });
+
+            res.status(201).json({
                 message: 'Descargo NC creado con exito',
-                data: response,
+                data: [findNC]
             });
         } else {
            res.status(400).json({
