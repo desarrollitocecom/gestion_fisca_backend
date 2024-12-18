@@ -103,7 +103,7 @@ const createInformeFinalHandler = async (req, res) => {
                 io.emit("sendAnalista2", { data: [plainNC] });
             }
 
-            
+            io.emit("sendAI1", { id: id_nc, remove: true });
 
             res.status(201).json({
                 message: 'Nuevo Informe Final Creado',

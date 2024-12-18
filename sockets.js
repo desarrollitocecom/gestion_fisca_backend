@@ -1,4 +1,5 @@
 const socketIo = require("socket.io");
+const { getNCforInstructiva } = require('../gestion_fisca_backend/controllers/ncController');
 
 // Mapa para almacenar los sockets de los usuarios
 const userSockets = new Map();
@@ -31,13 +32,33 @@ function initializeSocket(server) {
             });
             console.log(`Cliente desconectado: ${socket.id}`);
         });
-        let id;
-        socket.on("modal", (a) => {
-            id = a;
-            console.log(id);
-            socket.emit("todos", id);
-            
+
+        socket.on("modal", async ({id, type}) => {
+            try {
+                // Busca datos relacionados al ID.}
+                console.log(type);
+                
+                const findNC = await getNCforInstructiva(id);
+                const plainNC = findNC.toJSON();
+        
+                // Añade la propiedad `disabled: true` al objeto.
+                if (type == 'open') {
+                    plainNC.disabled = true;
+                } else {
+                    plainNC.disabled = false;
+                }
+                
+        
+                // Emite los datos procesados a todos los clientes conectados.
+                io.emit("sendAI1", { data: [plainNC] });
+        
+                console.log("Datos emitidos con éxito:", plainNC);
+            } catch (error) {
+                console.error("Error en el evento 'modal':", error);
+            }
         });
+        
+        
     });
 }
 

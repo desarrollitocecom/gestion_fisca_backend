@@ -124,4 +124,15 @@ const allNCHandler = async (req, res) => {
     }
 };
 
-module.exports = { updateNCHandler, allNCHandler };
+const getCodigos = async (req, res) => {
+    try {
+
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
+
+
+module.exports = { updateNCHandler, allNCHandler, getCodigos };

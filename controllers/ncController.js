@@ -222,10 +222,10 @@ const getNC = async (id) => {
 
 
 
-const getNCforInstructiva = async () => {
+const getNCforInstructiva = async (id) => {
     try {
         const response = await NC.findOne({ 
-            where: { estado: 'A_I' }, 
+            where: { id: id }, 
             order: [['id', 'ASC']],
             attributes: [
                 'id',

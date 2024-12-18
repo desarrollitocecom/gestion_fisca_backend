@@ -1,9 +1,10 @@
-const { TramiteInspector, NC, DescargoNC, IFI, RSG1, DescargoIFI, RSG2, RSA, DescargoRSA, RSG, DescargoRSG, RG, Usuario, } = require('../db_connection');
+const { TramiteInspector, NC, DescargoNC, IFI, RSG1, DescargoIFI, RSG2, RSA, DescargoRSA, RSG, DescargoRSG, RG, Usuario, Acta } = require('../db_connection');
+const { Sequelize } = require('sequelize');
 
 const getAllNCSeguimientoController = async () => {
     try {
         const response = await NC.findAll({ 
-            where: Sequelize.where(Sequelize.col('IFI.RSA.RSGs.RGs.tipo'), 'FUNDADO'),
+            // where: Sequelize.where(Sequelize.col('IFI.RSA.RSGs.RGs.tipo'), 'FUNDADO'),
             order: [['id', 'ASC']],
             attributes: [
                 'id',
@@ -69,10 +70,10 @@ const getAllNCSeguimientoController = async () => {
                 [Sequelize.col('IFI.RSA.RSGs.RGs.documento_rg'), 'documento_RG'],
                 [Sequelize.col('IFI.RSA.RSGs.RGs.createdAt'), 'RG_createdAt'],
 
-                [Sequelize.col('IFI.RSA.RSGs.Usuarios.usuario'), 'usuarioAreaInstructiva3'],
-                [Sequelize.literal(`'RESOLUCION SUBGERENCIAL GENERAL 3'`), 'nombre_RSG3'],
-                [Sequelize.col('IFI.RSA.RSGs.documento_RSG'), 'documento_RSG'],
-                [Sequelize.col('IFI.RSA.RSGs.createdAt'), 'RSG3_createdAt'],
+                [Sequelize.col('IFI.RSA.RSGs.RGs.ActaGerente.analista5Usuario.usuario'), 'usuarioAnalista5'],
+                [Sequelize.literal(`'ACTA DE CONSENTIMIENTO'`), 'nombre_Acta'],
+                [Sequelize.col('IFI.RSA.RSGs.RGs.ActaGerente.documento_acta'), 'documento_Acta'],
+                [Sequelize.col('IFI.RSA.RSGs.RGs.ActaGerente.createdAt'), 'Acta_createdAt'],
 
             ],
             include: [
@@ -184,6 +185,16 @@ const getAllNCSeguimientoController = async () => {
                                             ]
                                         },
                                         {
+                                            model:  Acta,
+                                            as: 'ActaRSG',
+                                            include: [
+                                                {
+                                                    model: Usuario,
+                                                    as: 'analista5Usuario',
+                                                }
+                                            ]
+                                        },      
+                                        {
                                             model: Usuario,
                                             as: 'Usuarios',
                                         },
@@ -218,8 +229,9 @@ const getAllNCSeguimientoController = async () => {
         });
 
         const transformedData = response.map(row => ({
+            id: row.get('id'),
             nro_nc: row.get('nro_nc'),
-            etapaInspector: {
+            etapaInspector: row.get('usuarioInspector') ? {
                 usuarioInspector: row.get('usuarioInspector'),
                 documento_nc: {
                     nombre: row.get('nombre_nc'),
@@ -230,75 +242,84 @@ const getAllNCSeguimientoController = async () => {
                     path: row.get('documento_acta'),
                 },
                 inspector_createdAt: row.get('inspector_createdAt'),
-            },
-            etapaDigitador: {
+            } : undefined,
+            etapaDigitador: row.get('usuarioDigitador') ? {
                 usuarioDigitador: row.get('usuarioDigitador'),
                 digitador_createdAt: row.get('inspector_createdAt'),
-            },
-            estapaDescargoNC: {
+            } : undefined,
+            estapaDescargoNC: row.get('usuarioAnalista1') ? {
                 usuarioAnalista1: row.get('usuarioAnalista1'),
                 documento_descargoNC: {
                     nombre: row.get('nombre_descargoNC'),
                     path: row.get('documento_descargoNC')
                 },
                 analista_createdAt: row.get('analista_createdAt'),
-            },
-            etapaAreaInstructiva: {
+            } : undefined,
+            etapaAreaInstructiva: row.get('usuarioAreaInstructiva1') ? {
                 usuarioAreaInstructiva1: row.get('usuarioAreaInstructiva1'),
                 documento_AI: {
                     nombre: row.get('nombre_AI'),
                     path: row.get('documento_AI'),
                 },
                 AI_createdAt: row.get('AI_createdAt'),
-            },
-            etapaDescargoIFI: {
+            } : undefined,
+            etapaDescargoIFI: row.get('usuarioAnalista2') ? {
                 usuarioAnalista2: row.get('usuarioAnalista2'),
                 documento_descargoIFI: {
                     nombre: row.get('nombre_DIFI'),
                     path: row.get('documento_DIFI'),
                 },
                 analista2_createdAt: row.get('analista2_createdAt'),
-            },
-            etapaRSA: {
+            } : undefined,
+            etapaRSA: row.get('usuarioAreaInstructiva2') ? {
                 usuarioAreaInstructiva2: row.get('usuarioAreaInstructiva2'),
                 documento_RSA: {
                     nombre: row.get('nombre_RSA'),
                     path: row.get('documento_RSA'),
                 },
                 AR2_createdAt: row.get('RSA_createdAt'),
-            },
-            etapaDescargoRSA: {
+            } : undefined,
+            etapaDescargoRSA: row.get('usuarioAnalista3') ? {
                 usuarioAnalista3: row.get('usuarioAnalista3'),
-                documento_RSA: {
+                documento_DRSA: {
                     nombre: row.get('nombre_DRSA'),
                     path: row.get('documento_DRSA'),
                 },
                 analista3_createdAt: row.get('DRSA_createdAt'),
-            },
-            etapaRSG: {
+            } : undefined,
+            etapaRSG: row.get('usuarioAreaInstructiva3') ? {
                 usuarioAreaInstructiva3: row.get('usuarioAreaInstructiva3'),
-                documento_RSA: {
+                documento_RSG: {
                     nombre: row.get('nombre_RSG3'),
                     path: row.get('documento_RSG'),
                 },
                 AR3_createdAt: row.get('RSG3_createdAt'),
-            },
-            etapaDescargoRSG: {
+            } : undefined,
+            etapaDescargoRSG: row.get('usuarioAnalista4') ? {
                 usuarioAnalista4: row.get('usuarioAnalista4'),
-                documento_RSG: {
+                documento_DRSG: {
                     nombre: row.get('nombre_DRSG'),
                     path: row.get('documento_DRSG'),
                 },
                 analista4_createdAt: row.get('DRSG_createdAt'),
-            },
-            etapaRG: {
+            } : undefined,
+            etapaRG: row.get('usuarioGerencia') ? {
                 usuarioGerencia: row.get('usuarioGerencia'),
-                documento_RSG: {
+                documento_RG: {
                     nombre: row.get('nombre_RG'),
                     path: row.get('documento_RG'),
                 },
                 analista4_createdAt: row.get('RG_createdAt'),
-            }
+            } : undefined,
+            etapaConsentimiento: row.get('usuarioAnalista5') ? {
+                usuarioAnalista5: row.get('usuarioAnalista5'),
+                documento_Acta: {
+                    nombre: row.get('nombre_Acta'),
+                    path: row.get('documento_Acta'),
+                },
+                analista5_createdAt: row.get('Acta_createdAt'),
+            } : undefined
+            
         }));
 
 

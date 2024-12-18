@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getAllRSAforAnalista5Handler, getAllRSGforAnalista5Handler, getAllRGforAnalista5Handler, createActaHandler} = require('../handlers/analista5Handler');
+const { getAllRSAforAnalista5Handler, getAllRSGforAnalista5Handler, getAllRGforAnalista5Handler, createActaHandler, seguimientoHandler} = require('../handlers/analista5Handler');
 const permisoAutorizacion = require("../checkers/roleAuth");
 const { uploadActa } = require('../middlewares/uploadMiddleware');
 
@@ -13,4 +13,8 @@ router.get('/consentimiento_from_rg',permisoAutorizacion(["all_system_access"]),
 
 router.patch('/newActa/:id',permisoAutorizacion(["all_system_access"]), uploadActa, createActaHandler);
 
+router.get('/seguimiento',permisoAutorizacion(["all_system_access"]), seguimientoHandler);
+
 module.exports = router;    
+
+//trazabilidad

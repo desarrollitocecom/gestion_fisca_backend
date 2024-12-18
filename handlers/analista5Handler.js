@@ -1,27 +1,10 @@
 const {getAllRSAforAnalista5Controller, updateRsaController} = require("../controllers/rsaController");
-const {createDescargoRSAController} = require("../controllers/descargoRsaController");
-const { getRSGController, getAllRSGforAnalista4Controller } = require("../controllers/rsgController")
-const {
-  createDescargoRSGNPController,
-  updateDescargoRSGNPController,
-} = require('../controllers/descargoRsgnpController');
-
 const { getAllRGforAnalista5Controller, updateRGController } = require("../controllers/rgController")
-const { updateRSGNPController } = require('../controllers/rsgController')
+const { updateRSGNPController, getAllRSGforAnalista5Controller } = require('../controllers/rsgController')
 const { createActaController } = require('../controllers/actaController')
-
-
-updateRSGNPController
-const {
-  getInformeFinalController,
-  updateInformeFinalController,
-} = require("../controllers/informeFinalController");
-
-const { getAllRSGforAnalista5Controller } = require("../controllers/rsgController")
+const { getAllNCSeguimientoController } = require('../controllers/seguimientoController')
 
 const { updateDocumento } = require("../controllers/documentoController");
-
-const { startJobForDocument } = require("../jobs/DescargoJob");
 
 const fs = require("node:fs");
 function isValidUUID(uuid) {
@@ -201,7 +184,7 @@ if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
       }
 
       if(tipo == 'gerencia') {
-        response=await updateRGController(id,{tipo:'TERMINADO'})
+        response=await updateRGController(id,{tipo:'TERMINADO', id_evaluar_rg: id_acta})
       }
 
       // const response=await updateInformeFinalController(id,{id_descargo_ifi,id_estado_IFI,tipo:'AR2'})
@@ -231,12 +214,36 @@ if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
 
 
 
+const seguimientoHandler = async (req, res) => {
+  try {
+    const response = await getAllNCSeguimientoController();
+
+    if (response.length === 0) {
+      return res.status(200).json({
+        message: "Ya no hay más IFIs",
+        data: []
+      });
+    }
+
+    return res.status(200).json({
+      message: "IFIs obtenidos correctamente",
+      data: response,
+    });
+  } catch (error) {
+    console.error("Error al obtener IFIs para AR1:", error);
+    res
+      .status(500)
+      .json({ error: "Error interno del servidor al obtener los IFIs." });
+  }
+};
+
 
 module.exports = {
     getAllRSAforAnalista5Handler,
     getAllRSGforAnalista5Handler,
     getAllRGforAnalista5Handler,
-    createActaHandler
+    createActaHandler,
+    seguimientoHandler
 };
 
 
