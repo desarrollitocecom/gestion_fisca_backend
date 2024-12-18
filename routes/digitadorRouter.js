@@ -9,7 +9,8 @@ const permisoAutorizacion = require("../checkers/roleAuth");
 router.get('/allNC',permisoAutorizacion(["all_system_access", "read_Digitador","read_Analista1"]), allNCHandler);
 router.patch('/digitarNC/:id',permisoAutorizacion(["all_system_access", "create_Digitador", "create_Analista1"]), uploadDocumentsDigitador, updateNCHandler);
 
-router.get('/cuis',permisoAutorizacion(["all_system_access", "read_Digitador","read_Analista1"]), getCodigos);
-router.get('/cuis',permisoAutorizacion(["all_system_access", "read_Digitador","read_Analista1"]), sendDetalle);
+router.get('/get_cuis',permisoAutorizacion(["all_system_access", "read_Digitador","read_Analista1"]), getCodigos);
+router.get('/send_cuis/:id',permisoAutorizacion(["all_system_access", "read_Digitador","read_Analista1"]), sendDetalle);
+
 
 module.exports = router;
