@@ -1,22 +1,14 @@
-const {getAllRSAforAnalista4Controller, getRsaController, updateRsaController} = require("../controllers/rsaController");
-const {createDescargoRSAController} = require("../controllers/descargoRsaController");
 const { getRSGController, getAllRSGforGerenciaController, updateRSGNPController } = require("../controllers/rsgController")
 const { createRGController, getAllRGforGerenciaController, getRGforAnalista5Controller } = require("../controllers/rgController")
-const {
-  createDescargoRSGNPController,
-  updateDescargoRSGNPController,
-} = require('../controllers/descargoRsgnpController');
+
 const { getIo } = require('../sockets'); 
 
 
-const {
-  getInformeFinalController,
-  updateInformeFinalController,
-} = require("../controllers/informeFinalController");
+
 
 const { updateDocumento } = require("../controllers/documentoController");
 
-const { startJobForDocument } = require("../jobs/DescargoJob");
+
 
 const fs = require("node:fs");
 function isValidUUID(uuid) {

@@ -16,6 +16,7 @@ const path = require('path'); //traer path
 const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
+
 const multer = require('multer');
 app.use("/login", usuariosRouter);
 app.use('/inspector', tramiteInspector);

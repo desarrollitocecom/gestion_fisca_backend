@@ -34,52 +34,29 @@ const createInformeFinalController = async ({
     if (documento_ifi_path) {
       deleteFile(documento_ifi_path);
     }
-    console.error("Error al crear el Informe Final:", error);
+    console.error("Error al crear el Informe Final desde el Controlador:", error);
     return false;
   }
 };
 
-const updateInformeFinalController = async (
-  id,{
-  nro_ifi,
-  fecha,
-  documento_ifi,
-  tipo,
-  id_evaluar,
-  id_descargo_ifi,
-  id_nc,
-  id_estado_IFI,
-  id_AI1
-}) => {
-  let documento_ifi_path;
+const updateInformeFinalController = async (id,{
+    tipo,
+    id_evaluar,
+    id_descargo_ifi,
+  }) => {
   try {
     const updateIfi = await getInformeFinalController(id);
-    documento_ifi_path = updateIfi.documento_ifi;
-    if (documento_ifi) {
-      documento_ifi_path = saveImage(documento_ifi, "ifi");
-      if (updateIfi.documento_ifi) {
-        deleteFile(updateIfi.documento_ifi);
-      }
-    }
+
     if (updateIfi) {
       await updateIfi.update({
-        nro_ifi,
-        fecha,
-        documento_ifi: documento_ifi_path,
         tipo,
         id_evaluar,
         id_descargo_ifi,
-        id_nc,
-        id_estado_IFI,
-        id_AI1
       });
     }
     return updateIfi || null;
   } catch (error) {
-    if (documento_ifi_path) {
-      deleteFile(documento_ifi_path);
-    }
-    console.error("Error al modicar en Informe Final", error);
+    console.error("Error al actualizar Informe Final desde el controlador", error);
     return false;
   }
 };
@@ -88,11 +65,12 @@ const getAllInformeFinalController = async () => {
   try {
     const response = await IFI.findAll({
       where: { tipo: null }, 
+      order: [['createdAt', 'ASC']],
       attributes:['id','id_AI1',
                   [Sequelize.col('NCs.id'), 'id_nc'],
                   [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
                   [Sequelize.col('Usuarios.usuario'), 'analista1'],
-      ],
+                  ],
 
       include: [
          { 
@@ -116,7 +94,7 @@ const getAllInformeFinalController = async () => {
     });
     return response || null;
   } catch (error) {
-    console.error("Error al traer todos los Informes Finales", error);
+    console.error("Error al traer todos los IFIs desde el controlador", error);
     return false;
   }
 };
@@ -133,28 +111,10 @@ const getInformeFinalController = async (id) => {
     });
     return response || null;
   } catch (error) {
-    console.error("Error al traer un solo Informe Final", error);
+    console.error("Error al traer un solo IFI desde el controlador ", error);
     return false;
   }
 };
-const updateinIfiController = async (uuid, tipo, id_evaluar) => {
-  // Actualizar los campos de IFI y recargar el registro
-  try {
-    const ifi = await IFI.findByPk(uuid);
-
-    await ifi.update({ tipo: tipo, id_evaluar: id_evaluar });
-
-    const updatedIfi = await ifi.reload();
-
-    return updatedIfi || null;
-  } catch (error) {
-    console.error("Error al traer un solo Informe Final", error);
-    return false;
-  }
-};
-
-
-
 
 const getAllIFIforAR1Controller = async () => {
   try {

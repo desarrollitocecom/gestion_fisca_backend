@@ -1,0 +1,25 @@
+const { getIo } = require('../sockets'); 
+
+const responseSocket = async({id, method, socketSendName, res}) => {
+    const io = getIo();
+
+    if (!id || !method || !socketSendName || !res) {
+        throw new Error('Faltan paremetros en el socket');
+    }
+
+    try {
+        const dataResult = await method(id);
+    
+        const plainResult = dataResult.toJSON();
+    
+        io.emit(socketSendName, { data: [plainResult] });
+    
+        res.status(201).json({ data: [dataResult] });
+      } catch (error) {
+        console.error('Error en el socket:', error);
+        res.status(500).json({ message: 'Error en el socket', error });
+      }
+
+}
+
+module.exports = { responseSocket };

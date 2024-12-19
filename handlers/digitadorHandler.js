@@ -1,22 +1,20 @@
 const { updateNC, getNCforAnalista, getAllNC, getNC } = require('../controllers/ncController');
 const { createEntidad } = require('../controllers/entidadController');
-const { createConstNotifi } = require('../controllers/constanciaNotificacionController')
 const { validateNC } = require('../validations/digitadorValidation');
-const { getIo } = require('../sockets'); 
+const { responseSocket } = require('../utils/socketUtils')
 const sql = require("mssql");
 
 const updateNCHandler = async (req, res) => {
-    const io = getIo();
     const id = req.params.id;
 
     const existingNC = await getNC(id);
 
     if (!existingNC) {
-        return res.status(404).json({ message: 'NC no encontrada para actualizar' });
+        return res.status(404).json({ message: 'Este NC no existe' });
     }
 
     if (existingNC.id_digitador) {
-        return res.status(404).json({ message: 'Este NC ya fue registrado' });
+        return res.status(404).json({ message: 'Este NC ya fue digitado' });
     }
 
     const errors = validateNC(req.body);
@@ -87,14 +85,9 @@ const updateNCHandler = async (req, res) => {
         });
 
         if (response) {
-            const findNC = await getNCforAnalista(response.id);
-            const plainNC = findNC.toJSON();
-
-            io.emit('sendAnalista1', { data: [plainNC] });
-
-            res.status(201).json({ data: [findNC] });
+            await responseSocket({id, method: getNCforAnalista, socketSendName: 'sendAnalista1', res});
         } else {
-            return res.status(404).json({ message: 'Error al actualizar' });
+            return res.status(404).json({ message: 'Error al actualizar el NC' });
         }
     } catch (error) {
         console.error('Error al actualizar NC:', error);
@@ -110,7 +103,7 @@ const allNCHandler = async (req, res) => {
 
         if (response.length === 0) {
             return res.status(200).json({
-                message: 'Ya no hay más tramites NC',
+                message: 'No hay más tramites NC',
                 data: []
             });
         }

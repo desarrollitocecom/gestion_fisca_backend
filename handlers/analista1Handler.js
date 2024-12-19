@@ -2,12 +2,38 @@ const { createDescargoNC } = require('../controllers/ncDescargoController');
 const { updateNC, getNC, getAllNCforAnalista, getNCforInstructiva } = require('../controllers/ncController');
 const {updateDocumento}=require('../controllers/documentoController');
 const fs = require('fs');
-const { getIo } = require('../sockets'); 
+const { validateAnalista1 } = require('../validations/analista1Validation');
+const { responseSocket } = require('../utils/socketUtils')
 
+const getAllNCforAnalistaHandler = async (req, res) => {  
+    try {
+        const response = await getAllNCforAnalista();
+
+        if (response.length === 0) {
+            return res.status(200).json({
+                message: 'Lista para el Analista 1 obtenido correctamente',
+                data: []
+            });
+        }
+
+        return res.status(200).json({
+            message: "Error al traer la lista de Analista 1 desde el handler",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error del servidor al traer la lista para el Analista 1:", error);
+        res.status(500).json({ error: "Error del servidor al traer la lista para el Analista 1" });
+    }
+};
 
 const createDescargoNCHandler = async (req, res) => {
-    const io = getIo(); 
     const id = req.params.id;
+
+    const existingNC = await getNC(id); 
+
+    if (!existingNC) {
+        return res.status(404).json({ message: "Este NC no existe" });
+    }
 
     const { 
             nro_descargo,
@@ -15,15 +41,7 @@ const createDescargoNCHandler = async (req, res) => {
             id_analista1
         } = req.body;
 
-    const errors = [];
-
-    if (!nro_descargo) {
-        errors.push('Ingrese nro_descargo obligatorio');
-    }
-
-    if (!fecha_descargo) {
-        errors.push('Ingrese fecha_descargo obligatorio');
-    }
+    const errors = validateAnalista1(req.body);
 
     if(!req.files['documento']){
         errors.push('El documento es obligatorio');
@@ -34,10 +52,6 @@ const createDescargoNCHandler = async (req, res) => {
         }
     }
 
-    if (!id_analista1) {
-        errors.push('Ingrese id_analista1 obligatorio');
-    }
-
     if (errors.length > 0) {
         if (req.files['documento']) {
             fs.unlinkSync(req.files['documento'][0].path); 
@@ -46,12 +60,6 @@ const createDescargoNCHandler = async (req, res) => {
     }
 
     try {
-
-        const existingNC = await getNC(id); 
-
-        if (!existingNC) {
-            return res.status(404).json({ message: "NC no encontrada para actualizar" });
-        }
 
         const newDescargoNC = await createDescargoNC({ 
             nro_descargo,
@@ -64,73 +72,37 @@ const createDescargoNCHandler = async (req, res) => {
         if (!newDescargoNC) {
             return res.status(400).json({ error: 'Error al crear el Descargo NC' });
         }
-        const id_nc=existingNC.id;
-        const total_documentos=newDescargoNC.documento;
-        const nuevoModulo='DESCARGO - NOTIFICACION DE CARGO';
 
-        
-        
-     await updateDocumento({id_nc, total_documentos, nuevoModulo});
-
-        const id_descargo_NC = newDescargoNC.id;
+        await updateDocumento({id_nc: id, total_documentos: newDescargoNC.documento, nuevoModulo: 'DESCARGO - NOTIFICACION DE CARGO'});
 
         const response = await updateNC(id, { 
-            id_descargo_NC,
+            id_descargo_NC: newDescargoNC.id,
             estado: 'A_I'
         });
-
-       
-         
-         
+     
         if (response) {
-
-            const findNC = await getNCforInstructiva(response.id);
-            const plainNC = findNC.toJSON();
-
-            io.emit("sendAI1", { data: [plainNC] });
-
-            res.status(201).json({
-                message: 'Descargo NC creado con exito',
-                data: [findNC]
-            });
+            await responseSocket({id, method: getNCforInstructiva, socketSendName: 'sendAI1', res});
         } else {
            res.status(400).json({
-                message: 'Error al crear Descargo NC',
+                message: 'Error al actualizar el NC desde el Analista1',
             });
         }
 
 
     } catch (error) {
-        console.error('Error al crear el NC:', error);
-        return res.status(500).json({ message: 'Error interno del servidor al crear el Descargo NC' });
-    }
-};
-
-const getAllNCforAnalistaHandler = async (req, res) => {  
-
-    try {
-        const response = await getAllNCforAnalista();
-
-        if (response.length === 0) {
-            return res.status(200).json({
-                message: 'Ya no hay más tramites',
-                data: []
-            });
-        }
-
-        return res.status(200).json({
-            message: "Tramites obtenidos correctamente",
-            data: response,
-        });
-    } catch (error) {
-        console.error("Error al obtener tipos de documentos de identidad:", error);
-        res.status(500).json({ error: "Error interno del servidor al obtener los tramites." });
+        console.error('Error interno del servidor al actualizar el NC desde el Analista1:', error);
+        return res.status(500).json({ message: 'Error interno del servidor al actualizar el NC desde el Analista1' });
     }
 };
 
 const sendWithoutDescargoHandler = async (req, res) => {
-    const io = getIo(); 
     const id = req.params.id;
+
+    const existingNC = await getNC(id); 
+
+    if (!existingNC) {
+        return res.status(404).json({ message: "Este NC no existe" });
+    }
 
     const { 
         id_analista1
@@ -138,58 +110,34 @@ const sendWithoutDescargoHandler = async (req, res) => {
 
     try {
 
-        const existingNC = await getNC(id); 
-
-        if (!existingNC) {
-            return res.status(404).json({ message: "NC no encontrada para actualizar" });
-        }
-
         const newDescargoNC = await createDescargoNC({ 
             id_analista1,
             id_estado : 2
         });
         
         if (!newDescargoNC) {
-            return res.status(400).json({ error: 'Error al crear el Descargo NC' });
+            return res.status(400).json({ error: 'Error al crear el descargo NC desde el Handler' });
         }
-        const id_nc=existingNC.id;
-        const total_documentos = '';
-        const nuevoModulo='SIN DESCARGO NC';
-
-        
-        
-     await updateDocumento({id_nc, total_documentos, nuevoModulo});
-
-        const id_descargo_NC = newDescargoNC.id;
+   
+        await updateDocumento({id_nc: id, total_documentos: '', nuevoModulo: 'SIN DESCARGO NC'});
 
         const response = await updateNC(id, { 
-            id_descargo_NC,
+            id_descargo_NC: newDescargoNC.id,
             estado: 'A_I'
         });
 
-       
-         
-         
+  
         if (response) {
-            const findNC = await getNCforInstructiva(response.id);
-            const plainNC = findNC.toJSON();
-
-            io.emit("sendAI1", { data: [plainNC] });
-
-            res.status(201).json({
-                message: 'Descargo NC creado con exito',
-                data: [findNC]
-            });
+            await responseSocket({id, method: getNCforInstructiva, socketSendName: 'sendAI1', res});
         } else {
            res.status(400).json({
-                message: 'Error al crear Descargo NC',
+                message: 'Error interno del servidor al crear el sin Descargo NC desde el Handler Analista1',
             });
         }
 
-
     } catch (error) {
         console.error('Error al crear el NC:', error);
-        return res.status(500).json({ message: 'Error interno del servidor al crear el Descargo NC' });
+        return res.status(500).json({ message: 'Error interno del servidor al crear el sin Descargo NC desde el Handler Analista1' });
     }
 }
 

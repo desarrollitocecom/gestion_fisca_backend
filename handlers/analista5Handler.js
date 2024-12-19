@@ -187,7 +187,6 @@ if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
         response=await updateRGController(id,{tipo:'TERMINADO', id_evaluar_rg: id_acta})
       }
 
-      // const response=await updateInformeFinalController(id,{id_descargo_ifi,id_estado_IFI,tipo:'AR2'})
 
       if (!response) {
           return res.status(400).json({

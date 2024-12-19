@@ -10,7 +10,6 @@ const createDescargoNC = async ({
     }) => {
 
     try {
-
         let documento_descargoNCPath = null;
 
         if(documento){
@@ -25,11 +24,11 @@ const createDescargoNC = async ({
             id_analista1
         });
 
-        console.log('NC creado con éxito');
+        console.log('Descargo NC creado con éxito');
         return newDescargoNC || null;
 
     } catch (error) {
-        console.error('Error creando trámite:', error);
+        console.error('Error creando Descargo NC desde el controlador:', error);
         return false;
     }
 };

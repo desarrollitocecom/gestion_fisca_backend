@@ -2,11 +2,7 @@
 
 const {getAllRSAforAR3Controller, getRsaController,  updateRsaController} = require("../controllers/rsaController");
 const { createRSGController, getAllRSG3forAR3Controller, getRSGforAnalista4Controller } = require("../controllers/rsgController")
-const {createDescargoRSAController} = require("../controllers/descargoRsaController");
-const {
-  getInformeFinalController,
-  updateInformeFinalController,
-} = require("../controllers/informeFinalController");
+
 const { getIo } = require('../sockets'); 
 
 const { updateDocumento } = require("../controllers/documentoController");
