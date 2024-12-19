@@ -7,11 +7,6 @@ const { getAllNCSeguimientoController } = require('../controllers/seguimientoCon
 const { updateDocumento } = require("../controllers/documentoController");
 
 const fs = require("node:fs");
-function isValidUUID(uuid) {
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(uuid);
-}
 
 const getAllRSAforAnalista5Handler = async (req, res) => {
   try {
@@ -19,20 +14,21 @@ const getAllRSAforAnalista5Handler = async (req, res) => {
 
     if (response.length === 0) {
       return res.status(200).json({
-        message: "Ya no hay más IFIs",
+        message: "No hay más RSA para el Analista 5",
         data: []
       });
     }
 
     return res.status(200).json({
-      message: "IFIs obtenidos correctamente",
+      message: "RSAs obtenidos correctamente para el Analista 5",
       data: response,
     });
+
   } catch (error) {
-    console.error("Error al obtener IFIs para AR1:", error);
+    console.error("Error interno al obtener RSAs para Analista 5:", error);
     res
       .status(500)
-      .json({ error: "Error interno del servidor al obtener los IFIs." });
+      .json({ error: "Error interno del servidor al obtener los RSAs para el Analista 5." });
   }
 };
 
@@ -67,20 +63,20 @@ const getAllRGforAnalista5Handler = async (req, res) => {
 
     if (response.length === 0) {
       return res.status(200).json({
-        message: "Ya no hay más IFIs",
+        message: "No hay más RG para el Analista 5",
         data: []
       });
     }
 
     return res.status(200).json({
-      message: "IFIs obtenidos correctamente",
+      message: "RGs obtenidos correctamente para el Analista 5",
       data: response,
     });
   } catch (error) {
-    console.error("Error al obtener IFIs para AR1:", error);
+    console.error("Error interno al obtener RGs para Analista 5:", error);
     res
       .status(500)
-      .json({ error: "Error interno del servidor al obtener los IFIs." });
+      .json({ error: "Error interno del servidor al obtener los RGs para el Analista 5." });
   }
 };
 
@@ -124,11 +120,9 @@ const createActaHandler = async (req, res) => {
 
 if (!id_analista_5) errores.push('El campo id_analista_5 es requerido');
 
-if (!isValidUUID(id_analista_5)) errores.push('El id_analista_5 debe ser una UUID');
 
 if (!id_nc) errores.push('El campo id_nc es requerido');
 
-if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
 
   if (!documento_acta) {
       errores.push('El documento_acta es requerido');
@@ -219,20 +213,20 @@ const seguimientoHandler = async (req, res) => {
 
     if (response.length === 0) {
       return res.status(200).json({
-        message: "Ya no hay más IFIs",
+        message: "No exiten NCs para realizar su seguimiento",
         data: []
       });
     }
 
     return res.status(200).json({
-      message: "IFIs obtenidos correctamente",
+      message: "NCs obtenidos correctamente para su seguimiento",
       data: response,
     });
   } catch (error) {
-    console.error("Error al obtener IFIs para AR1:", error);
+    console.error("Error al obtener NCs para Seguimiento:", error);
     res
       .status(500)
-      .json({ error: "Error interno del servidor al obtener los IFIs." });
+      .json({ error: "Error interno del servidor al obtener los NCs para el seguimiento." });
   }
 };
 

@@ -404,11 +404,10 @@ const getRSAforAnalista5Controller = async (id) => {
 
 
 
-const getRSAforAnalista3Controller = async () => {
+const getRSAforAnalista3Controller = async (id) => {
   try {
       const response = await RSA.findOne({ 
-          where: { tipo: 'ANALISTA_3' }, 
-          order: [['id', 'ASC']],
+          where: { id: id }, 
           attributes: [
               'id',
               'createdAt',
@@ -456,11 +455,10 @@ const getRSAforAnalista3Controller = async () => {
 
 
 
-const getRSAforAR3Controller = async () => {
+const getRSAforAR3Controller = async (id) => {
   try {
       const response = await RSA.findOne({ 
-          where: { tipo: 'AR3' }, 
-          order: [['id', 'ASC']],
+          where: { id: id }, 
           attributes: [
               'id',
               'createdAt',

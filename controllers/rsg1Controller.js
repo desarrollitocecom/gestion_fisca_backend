@@ -21,7 +21,7 @@ const createRSG1Controller = async ({nro_resolucion, fecha_resolucion, documento
         if (documento_path) {
             deleteFile(documento_path);
         }
-        console.error('Error al crear RSG1:', error);
+        console.error('Error al crear RSG1 en el controlador:', error);
         return false;
     };   
 };
@@ -30,7 +30,7 @@ const getRSG1Controller=async (id) => {
         const response=await RSG1.findByPk(id)
         return response || null 
     } catch (error) {
-        console.error('Error  crear RSG1:', error);
+        console.error('Error al traer el RSG1 desde el controlador:', error);
         return false;
     }
 }
@@ -61,17 +61,16 @@ const updateRSG1Controller = async ({id, nro_resolucion, fecha_resolucion, docum
         if (documento_path) {
             deleteFile(documento_path);
         }
-        console.error('Error al actualizar RSG1:', error);
-        return { message: 'Error al actualizar RSG1', error };
+        console.error('Error al actualizar RSG1 desde el controlador:', error);
+        return { message: 'Error al actualizar RSG1 desde el controlador', error };
     }
 };
 
 const getAllRSG1forAR1Controller = async () => {
-    console.log('asd');
     try {
         const response = await NC.findAll({ 
             where: Sequelize.where(Sequelize.col('IFI.tipo'), 'TERMINADO_RSG1'),
-            order: [['id', 'ASC']],
+            order: [[Sequelize.col('IFI.createdAt'), 'ASC']],
             attributes: [
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],

@@ -72,7 +72,7 @@ const updateNCHandler = async (req, res) => {
             ordenanza_municipal,
             nro_licencia_funcionamiento,
             id_entidad,
-            id_infraccion,
+            id_infraccion: 1,
             lugar_infraccion,
             placa_rodaje,
             fecha_constancia_notificacion,
@@ -83,7 +83,7 @@ const updateNCHandler = async (req, res) => {
             estado: 'ANALISTA_1',
             id_digitador,
         });
-
+        console.log(response);
         if (response) {
             await responseSocket({id, method: getNCforAnalista, socketSendName: 'sendAnalista1', res});
         } else {
@@ -118,7 +118,16 @@ const allNCHandler = async (req, res) => {
     }
 };
 
-
+const config = {
+    user: 'jjhuaman', // Usuario de la base de datos
+    password: 'Asdfgh@2024', // Contraseña de la base de datos
+    server: '172.16.1.97', // Nombre o IP del servidor (ej. localhost o 192.168.x.x)
+    database: 'bd_cloud_10122024', // Nombre de tu base de datos
+    options: {
+        encrypt: false, // Usa true si estás usando Azure; false para una base de datos local
+        trustServerCertificate: true // Usa true si confías en el certificado del servidor
+    }
+};
 
 const getCodigos = async (req, res) => {
     try {

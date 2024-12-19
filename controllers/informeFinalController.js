@@ -174,11 +174,10 @@ const getAllIFIforAR1Controller = async () => {
 
 
 
-const getIFIforAR1Controller = async () => {
+const getIFIforAR1Controller = async (id) => {
   try {
       const response = await IFI.findOne({ 
-          where: { tipo: 'RSG1' }, 
-          order: [['id', 'ASC']],
+          where: { id: id }, 
           attributes: [
               'id',
               [Sequelize.col('NCs.id'), 'id_nc'],
@@ -409,11 +408,10 @@ const getAllIFIforAR2Controller = async () => {
 
 
 
-const getIFIforAR2Controller = async () => {
+const getIFIforAR2Controller = async (id) => {
   try {
       const response = await IFI.findOne({ 
-          where: { tipo: 'AR2' }, 
-          order: [['id', 'ASC']],
+          where: { id: id }, 
           attributes: [
               'id',
               [Sequelize.col('NCs.id'), 'id_nc'],
@@ -506,7 +504,7 @@ module.exports = {
   updateInformeFinalController,
   getAllInformeFinalController,
   getInformeFinalController,
-  updateinIfiController,
+  // updateinIfiController,
   getAllIFIforAR1Controller,
   getAllIFIforAnalista2Controller,
   getAllIFIforAR2ofRSAController,

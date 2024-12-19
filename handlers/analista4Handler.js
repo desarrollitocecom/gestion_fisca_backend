@@ -1,52 +1,42 @@
-const {getAllRSAforAnalista4Controller, getRsaController, updateRsaController} = require("../controllers/rsaController");
-const {createDescargoRSAController} = require("../controllers/descargoRsaController");
-const { getRSGController, getAllRSGforAnalista4Controller, getRSGforGerenciaController, getRSGforAnalista5Controller } = require("../controllers/rsgController")
-const {
-  createDescargoRSGNPController,
-  updateDescargoRSGNPController,
-} = require('../controllers/descargoRsgnpController');
-const { updateRSGNPController } = require('../controllers/rsgController')
-
+const { getRSGController, getAllRSGforAnalista4Controller, getRSGforGerenciaController, getRSGforAnalista5Controller, updateRSGNPController } = require("../controllers/rsgController")
+const {createDescargoRSGNPController} = require('../controllers/descargoRsgnpController');
 const { updateDocumento } = require("../controllers/documentoController");
-const { getIo } = require('../sockets'); 
-
-
+const { responseSocket } = require("../utils/socketUtils")
 const fs = require("node:fs");
-function isValidUUID(uuid) {
-  const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-  return uuidRegex.test(uuid);
-}
+
 
 const getAllRSGforAnalista4Handler = async (req, res) => {
-  try {
-    const response = await getAllRSGforAnalista4Controller();
+    try {
+        const response = await getAllRSGforAnalista4Controller();
 
-    if (response.length === 0) {
-      return res.status(200).json({
-        message: "Ya no hay más IFIs",
-        data: [],
-      });
+        if (response.length === 0) {
+        return res.status(200).json({
+            message: "Ya no hay más RSG para el Analista 4",
+            data: [],
+        });
+        }
+
+        return res.status(200).json({
+        message: "RSGs obtenidos correctamente para el Analista 4",
+        data: response,
+        });
+    } catch (error) {
+        console.error("Error en el servidor al obtener los RSGs para el Analista 4:", error);
+        res
+        .status(500)
+        .json({ error: "Error en el servidor al obtener los RSGs para el Analista 4." });
     }
-
-    return res.status(200).json({
-      message: "IFIs obtenidos correctamente",
-      data: response,
-    });
-  } catch (error) {
-    console.error("Error al obtener IFIs para AR1:", error);
-    res
-      .status(500)
-      .json({ error: "Error interno del servidor al obtener los IFIs." });
-  }
 };
 
 
 
 const createDescargoRSGNPHandler = async (req, res) => {
-  const io = getIo(); 
-
   const {id}=req.params;
+  const existingRSG=await getRSGController(id);
+
+  if(!existingRSG){
+      return res.status(404).json({message:"Este RSGNP no existe",data:[]})
+  }
 
   const { nro_descargo, fecha_descargo, id_nc, id_analista_4 } = req.body;
 
@@ -79,11 +69,9 @@ const createDescargoRSGNPHandler = async (req, res) => {
  
   if (!id_analista_4) errores.push('El campo id_analista_4 es requerido');
 
-  if (!isValidUUID(id_analista_4)) errores.push('El id_analista_4 debe ser una UUID');
 
   if (!id_nc) errores.push('El campo id_nc es requerido');
 
-  if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
 
   
   if (!documento_DRSGNP || documento_DRSGNP.length === 0) {
@@ -112,85 +100,48 @@ const createDescargoRSGNPHandler = async (req, res) => {
       });
   }
 
-  try {
-     
-      const existingRSG=await getRSGController(id);
+    try {
+        const newDescargo = await createDescargoRSGNPController({ nro_descargo, fecha_descargo, documento_DRSGNP, id_nc, id_analista_4 });
+        
+            if(!newDescargo) {
+                return res.status(400).json({ 
+                    message: "Error al crear el Descargo RSGNP",
+                    data: [] });
+            }
+    
+        const response=await updateRSGNPController(id,{id_descargo_RSG: newDescargo.id,id_estado_RSGNP: 3,tipo:'GERENCIA'})
 
-      if(!existingRSG){
+        await updateDocumento({ id_nc, total_documentos: newDescargo.documento_DRSG, nuevoModulo: "RECURSO DE APELACION" });
 
-          return res.status(404).json({message:"No se encuentra id del RSGNP",data:[]})
-      }
-      const newDescargo = await createDescargoRSGNPController({ nro_descargo, fecha_descargo, documento_DRSGNP, id_nc, id_analista_4 });
-     
-      if (!newDescargo) {
+        if (response) {
+            await responseSocket({id, method: getRSGforGerenciaController, socketSendName: 'sendGerencia', res});
+        } else {
+        res.status(400).json({
+                message: 'Error al crear Descargo RSGNP',
+            });
+        }
 
-          return res.status(400).json({ 
-              message: "Descargo no fue creado",
-              data: [] });
-      }
-      const id_descargo_RSG=newDescargo.id;
-
-      const id_estado_RSGNP=3;
-   
-      const response=await updateRSGNPController(id,{id_descargo_RSG,id_estado_RSGNP,tipo:'GERENCIA'})
-
-      
-      const total_documentos = newDescargo.documento_DRSG;
-
-      const nuevoModulo = "RECURSO DE APELACION"
-      console.log(id_nc, total_documentos, nuevoModulo);
-      
-      await updateDocumento({ id_nc, total_documentos, nuevoModulo });
-
-
-
-
-      if (response) {
-
-        const findNC = await getRSGforGerenciaController(response.id);
-        const plainNC = findNC.toJSON();
-
-        io.emit("sendGerencia", { data: [plainNC] });
-
-        res.status(201).json({
-            message: 'Descargo NC creado con exito',
-            data: [findNC]
-        });
-    } else {
-       res.status(400).json({
-            message: 'Error al crear Descargo NC',
-        });
+    } catch (error) {
+        console.error("Error interno al crear el descargo RSGNP:", error);
+        return res.status(500).json({ message: "Error interno al crear el descargo RSGNP", error: error.message });
     }
-
-
-
-  } catch (error) {
-
-      console.error("Error al crear el descargo:", error);
-
-      return res.status(500).json({ message: "Error al crear el descargo", error: error.message });
-  }
 };
 
 
 const sendWithoutDescargoRSGNPHandler = async (req, res) => {
-    const io = getIo(); 
-
   const {id}=req.params;
+  const existingRSG=await getRSGController(id);
+
+  if(!existingRSG){
+      return res.status(404).json({message:"No se encuentra id del RSGNP",data:[]})
+  }
 
   const { id_nc, id_analista_4 } = req.body;
 
   const errores = [];  
   
- 
   if (!id_analista_4) errores.push('El campo id_analista_4 es requerido');
-
-  if (!isValidUUID(id_analista_4)) errores.push('El id_analista_4 debe ser una UUID');
-
   if (!id_nc) errores.push('El campo id_nc es requerido');
-
-  if (!isValidUUID(id_nc)) errores.push('El id_nc debe ser una UUID');
-
 
   if (errores.length > 0) {
       return res.status(400).json({
@@ -200,61 +151,31 @@ const sendWithoutDescargoRSGNPHandler = async (req, res) => {
   }
 
   try {
-     
-      const existingRSG=await getRSGController(id);
-
-      if(!existingRSG){
-
-          return res.status(404).json({message:"No se encuentra id del RSGNP",data:[]})
-      }
       const newDescargo = await createDescargoRSGNPController({ id_nc, id_analista_4 });
      
       if (!newDescargo) {
-
           return res.status(400).json({ 
-              message: "Descargo no fue creado",
+              message: "Error al crear el sin Descargo RSGNP",
               data: [] });
       }
-      const id_descargo_RSG=newDescargo.id;
 
-      const id_estado_RSGNP=3;
-   
-      const response=await updateRSGNPController(id,{id_descargo_RSG,id_estado_RSGNP,tipo:'ANALISTA_5'})
-      const total_documentos = '';
+      const response=await updateRSGNPController(id,{id_descargo_RSG: newDescargo.id,id_estado_RSGNP: 3,tipo:'ANALISTA_5'})
 
-      const nuevoModulo = "RECURSO DE APELACION"
-      
-      await updateDocumento({ id_nc, total_documentos, nuevoModulo });
-
+      await updateDocumento({ id_nc, total_documentos: '', nuevoModulo: "RECURSO DE APELACION" });
 
         if (response) {
-
-            const findNC = await getRSGforAnalista5Controller(response.id);
-            const plainNC = findNC.toJSON();
-
-            io.emit("sendAnalita5fromAnalista4", { data: [plainNC] });
-
-            res.status(201).json({
-                message: 'Descargo NC creado con exito',
-                data: [findNC]
-            });
+            await responseSocket({id, method: getRSGforAnalista5Controller, socketSendName: 'sendAnalita5fromAnalista4', res});
         } else {
         res.status(400).json({
-                message: 'Error al crear Descargo NC',
+                message: 'Error al enviar al socket los datos',
             });
         }
 
   } catch (error) {
-
-      console.error("Error al crear el descargo:", error);
-
-      return res.status(500).json({ message: "Error al crear el descargo", error: error.message });
+      console.error("Error al crear el descargo RSGNP:", error);
+      return res.status(500).json({ message: "Error al crear el descargo RSNP", error: error.message });
   }
 };
-
-
-
-
 
 module.exports = {
     getAllRSGforAnalista4Handler,

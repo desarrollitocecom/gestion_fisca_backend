@@ -13,10 +13,10 @@ function initializeSocket(server) {
             methods: ["GET", "POST"],
         },
     });
-
+    let prueba;
     io.on("connection", (socket) => {
         console.log(`Nuevo cliente conectado: ${socket.id}`);
-
+        io.emit('prueba', prueba);
         // Evento de registro: asociamos el socket con el usuario
         socket.on("register", (userName) => {
             console.log("registro:", userName);
@@ -33,26 +33,26 @@ function initializeSocket(server) {
             console.log(`Cliente desconectado: ${socket.id}`);
         });
 
-        socket.on("modal", async ({id, type}) => {
+        socket.on("modal", async ({id, type, area}) => {
+            
             try {
-                // Busca datos relacionados al ID.}
-                console.log(type);
-                
-                const findNC = await getNCforInstructiva(id);
-                const plainNC = findNC.toJSON();
-        
-                // Añade la propiedad `disabled: true` al objeto.
-                if (type == 'open') {
-                    plainNC.disabled = true;
-                } else {
-                    plainNC.disabled = false;
+                console.log(type, area);
+
+                if(area == 'Ainstructiva'){
+                    const findNC = await getNCforInstructiva(id);
+                    const plainNC = findNC.toJSON();
+                    if (type == 'open') {
+                        prueba = 'esta abierto';
+                        plainNC.disabled = true;
+                    } else {
+                        prueba = 'esta cerrado';
+                        plainNC.disabled = false;
+                    }
+                    io.emit("sendAI1", { data: [plainNC] });
+
+                    console.log("Datos emitidos con éxito:", plainNC);
                 }
                 
-        
-                // Emite los datos procesados a todos los clientes conectados.
-                io.emit("sendAI1", { data: [plainNC] });
-        
-                console.log("Datos emitidos con éxito:", plainNC);
             } catch (error) {
                 console.error("Error en el evento 'modal':", error);
             }

@@ -3,6 +3,7 @@ const { createInformeFinalController, getIFIforAR1Controller, getIFIforAnalista2
 const { updateDocumento }=require('../controllers/documentoController');
 const { validateAreaInstructiva1 } = require('../validations/areaInstructiva1Validation');
 const { responseSocket } = require('../utils/socketUtils')
+const { getIo } = require('../sockets'); 
 
 const getAllNCforInstructivaHandler = async (req, res) => {  
 
@@ -27,7 +28,7 @@ const getAllNCforInstructivaHandler = async (req, res) => {
 };
 
 const createInformeFinalHandler = async (req, res) => {
-
+    const io = getIo();
     const { nro_ifi, fecha, id_nc, id_AI1, tipo } = req.body;
 
     const errors = validateAreaInstructiva1(req.body);
@@ -66,7 +67,7 @@ const createInformeFinalHandler = async (req, res) => {
         if (response) {
 
             if(tipo=='RSG1'){
-                await responseSocket({id: id_nc, method: getIFIforAR1Controller, socketSendName: 'sendAI1', res});
+                await responseSocket({id: newIFI.id, method: getIFIforAR1Controller, socketSendName: 'sendAR1', res});
             }
             if(tipo=='ANALISTA_2'){
                 await responseSocket({id: id_nc, method: getIFIforAnalista2Controller, socketSendName: 'sendAnalista2', res});
