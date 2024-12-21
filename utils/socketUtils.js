@@ -13,7 +13,7 @@ const responseSocket = async({id, method, socketSendName, res}) => {
         const plainResult = dataResult.toJSON();
     
         io.emit(socketSendName, { data: [plainResult] });
-        console.log('lo que envio e emmanuel:', plainResult);
+        // console.log('lo que envio e emmanuel:', plainResult);
         
         res.status(201).json({ message:'Enviado correctamente', data: [dataResult] });
       } catch (error) {

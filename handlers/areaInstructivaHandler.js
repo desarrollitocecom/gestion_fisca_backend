@@ -3,24 +3,59 @@ const { createInformeFinalController, getIFIforAR1Controller, getIFIforAnalista2
 const { updateDocumento }=require('../controllers/documentoController');
 const { validateAreaInstructiva1 } = require('../validations/areaInstructiva1Validation');
 const { responseSocket } = require('../utils/socketUtils')
-const { getIo } = require('../sockets'); 
+const { getIo, getValuesByPrefix } = require('../sockets');
+const jwt = require('jsonwebtoken');
 
 const getAllNCforInstructivaHandler = async (req, res) => {  
-
+const io = getIo();
     try {
+        const authHeader = req.headers.authorization; 
+        const token = authHeader.split(" ")[1];
+        
+        console.log('tokeeeeeeeeeeeeeen', token);
+        
+
         const response = await getAllNCforInstructiva();
 
-        if (response.length === 0) {
-            return res.status(200).json({
-                message: 'Ya no hay más tramites',
-                data: []
-            });
-        }
+        const prefixedData = getValuesByPrefix('Ainstructiva');
 
-        return res.status(200).json({
-            message: "Tramites obtenidos correctamente",
-            data: response,
+        prefixedData.forEach(({ key, value }) => {
+            console.log(`Cache Value - ${key} ->`, value);
         });
+
+        const ids = prefixedData.map(({ value }) => value.id);
+
+        const updatedResponse = response.map(item => {
+            if (ids.includes(item.dataValues.id)) {
+                return { 
+                    ...item, 
+                    dataValues: { 
+                        ...item.dataValues, 
+                        disabled: "true"
+                     
+                    } 
+                }; 
+            }
+            return item; 
+        });
+        console.log(updatedResponse);
+        
+        const updatedResponseCleaned = updatedResponse.map(item => {
+            const { dataValues } = item;
+            return { 
+                ...dataValues, 
+                disabled: dataValues.id && ids.includes(dataValues.id) ? "true" : undefined
+            };
+        });
+        // console.log('esto es lo que yo te envio al endpoint', updatedResponseCleaned);
+        // console.log('cache', prefixedData);
+        
+        
+return res.status(200).json({
+    message: "Tramites obtenidos correctamente",
+    data: updatedResponseCleaned,
+});
+
     } catch (error) {
         console.error("Error al obtener tipos de documentos de identidad:", error);
         res.status(500).json({ error: "Error interno del servidor al obtener los tramites." });

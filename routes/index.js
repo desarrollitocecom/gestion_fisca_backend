@@ -21,6 +21,7 @@ const areaResolutiva3 = require('./areaResolutiva3Router');
 const analista4 = require('./analista4Router');
 const gerencia = require('./gerenciaRouter');
 const analista5 = require('./analista5Router');
+const reporte = require('./reporteRouter');
 
 router.use('/digitador',digitadorNC);
 router.use('/analista1',analista1);
@@ -33,6 +34,7 @@ router.use('/area-resolutiva3',areaResolutiva3);
 router.use('/analista4',analista4);
 router.use('/gerencia',gerencia);
 router.use('/analista5',analista5);
+router.use('/reporte',reporte);
 
 
 router.use('/ejecucionmc',ejecucionmc);
