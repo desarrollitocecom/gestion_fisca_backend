@@ -10,6 +10,7 @@ const usuariosRouter = require("./usuarioRouter");
 const rol_permisoRouter = require("./rol_permisoRouter");
 const docs=require('./documentoRouter');
 
+const gestorActas = require('./gestorActasRouter');
 const digitadorNC = require('./digitadorRouter');
 const analista1 = require('./analista1Router');
 const areaInstructiva = require('./areaInstructivaRouter');
@@ -23,6 +24,7 @@ const gerencia = require('./gerenciaRouter');
 const analista5 = require('./analista5Router');
 const reporte = require('./reporteRouter');
 
+router.use('/gestor',gestorActas);
 router.use('/digitador',digitadorNC);
 router.use('/analista1',analista1);
 router.use('/area-instructiva',areaInstructiva);

@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
-    const ControlActa = sequelize.define('ControlActas', {
+    const ControlActa = sequelize.define('ControlActa', {
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
@@ -78,7 +78,7 @@ module.exports = (sequelize) => {
         timestamps: true
     });
     ControlActa.associate = (db) => {
-        ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_inspector', as: 'usuarioInspector' })  
+        ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_inspector', as: 'usuarioInspector' })   
         ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_encargadoInicio', as: 'usuarioEncargadoInicio' })  
         ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_encargadoFin', as: 'usuarioEncargadoFin' })  
     };

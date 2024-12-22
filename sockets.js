@@ -11,7 +11,7 @@ let io; // Declaramos io como variable global en este módulo
 function initializeSocket(server) {
   io = socketIo(server, {
     cors: {
-      origin: "", // Cambia "" por tu dominio permitido, por ejemplo, "http://localhost:3000"
+      origin: "*", // Cambia "" por tu dominio permitido, por ejemplo, "http://localhost:3000"
       methods: ["GET", "POST"],
     },
   });
@@ -45,8 +45,8 @@ function initializeSocket(server) {
           } else if (type === "close") {
             prueba = "está cerrado";
             plainNC.disabled = false;
-            cache.set(key, { disabled: false });
-          
+            cache.del(key);
+                      
           } else if (type === "refresh") {
 
             // Eliminar del cache
