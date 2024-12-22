@@ -4,58 +4,24 @@ const { updateDocumento }=require('../controllers/documentoController');
 const { validateAreaInstructiva1 } = require('../validations/areaInstructiva1Validation');
 const { responseSocket } = require('../utils/socketUtils')
 const { getIo, getValuesByPrefix } = require('../sockets');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 
 const getAllNCforInstructivaHandler = async (req, res) => {  
-const io = getIo();
-    try {
-        const authHeader = req.headers.authorization; 
-        const token = authHeader.split(" ")[1];
-        
-        console.log('tokeeeeeeeeeeeeeen', token);
-        
 
+    try {
         const response = await getAllNCforInstructiva();
 
-        const prefixedData = getValuesByPrefix('Ainstructiva');
+        if (response.length === 0) {
+            return res.status(200).json({
+                message: 'Ya no hay más tramites',
+                data: []
+            });
+        }
 
-        prefixedData.forEach(({ key, value }) => {
-            console.log(`Cache Value - ${key} ->`, value);
+        return res.status(200).json({
+            message: "Tramites obtenidos correctamente",
+            data: response,
         });
-
-        const ids = prefixedData.map(({ value }) => value.id);
-
-        const updatedResponse = response.map(item => {
-            if (ids.includes(item.dataValues.id)) {
-                return { 
-                    ...item, 
-                    dataValues: { 
-                        ...item.dataValues, 
-                        disabled: "true"
-                     
-                    } 
-                }; 
-            }
-            return item; 
-        });
-        console.log(updatedResponse);
-        
-        const updatedResponseCleaned = updatedResponse.map(item => {
-            const { dataValues } = item;
-            return { 
-                ...dataValues, 
-                disabled: dataValues.id && ids.includes(dataValues.id) ? "true" : undefined
-            };
-        });
-        // console.log('esto es lo que yo te envio al endpoint', updatedResponseCleaned);
-        // console.log('cache', prefixedData);
-        
-        
-return res.status(200).json({
-    message: "Tramites obtenidos correctamente",
-    data: updatedResponseCleaned,
-});
-
     } catch (error) {
         console.error("Error al obtener tipos de documentos de identidad:", error);
         res.status(500).json({ error: "Error interno del servidor al obtener los tramites." });
@@ -105,7 +71,7 @@ const createInformeFinalHandler = async (req, res) => {
                 await responseSocket({id: newIFI.id, method: getIFIforAR1Controller, socketSendName: 'sendAR1', res});
             }
             if(tipo=='ANALISTA_2'){
-                await responseSocket({id: id_nc, method: getIFIforAnalista2Controller, socketSendName: 'sendAnalista2', res});
+                await responseSocket({id: newIFI.id, method: getIFIforAnalista2Controller, socketSendName: 'sendAnalista2', res});
             }
             
             io.emit("sendAI1", { id: id_nc, remove: true });
@@ -124,5 +90,6 @@ const createInformeFinalHandler = async (req, res) => {
         });
     }
 };
+
 
 module.exports = { getAllNCforInstructivaHandler, createInformeFinalHandler };

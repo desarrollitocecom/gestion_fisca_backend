@@ -1,4 +1,4 @@
-const { Entidad } = require("../db_connection");
+const { Entidad, Infraccion } = require("../db_connection");
 
 const createEntidad = async ({
     nombre_entidad,
@@ -24,6 +24,29 @@ const createEntidad = async ({
     }
  };
 
+ const createInfraccion = async ({
+    codigo,
+    descripcion,
+    monto
+    }) => {
+
+    try {
+        const newInfraccion = Infraccion.create({
+            codigo,
+            descripcion,
+            monto
+        });
+
+        console.log('Infraccion creado con éxito');
+        return newInfraccion || null;
+
+    } catch (error) {
+        console.error('Infraccion creando trámite:', error);
+        return false;
+    }
+ };
+
  module.exports = {
     createEntidad,
+    createInfraccion
 };

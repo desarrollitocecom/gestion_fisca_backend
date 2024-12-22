@@ -1,5 +1,5 @@
 const { updateNC, getNCforAnalista, getAllNC, getNC } = require('../controllers/ncController');
-const { createEntidad } = require('../controllers/entidadController');
+const { createEntidad, createInfraccion } = require('../controllers/entidadController');
 const { validateNC } = require('../validations/digitadorValidation');
 const { responseSocket } = require('../utils/socketUtils')
 const sql = require("mssql");
@@ -13,9 +13,9 @@ const updateNCHandler = async (req, res) => {
         return res.status(404).json({ message: 'Este NC no existe' });
     }
 
-    if (existingNC.id_digitador) {
-        return res.status(404).json({ message: 'Este NC ya fue digitado' });
-    }
+    // if (existingNC.id_digitador) {
+    //     return res.status(404).json({ message: 'Este NC ya fue digitado' });
+    // }
 
     const errors = validateNC(req.body);
 
@@ -47,6 +47,39 @@ const updateNCHandler = async (req, res) => {
     } = req.body;
 
     try {
+        let pool = await sql.connect(config);
+        
+        console.log(id_infraccion);
+        
+        // Consulta SQL
+        const query = `
+            SELECT 
+                s.subconcepto_id AS value, 
+                s.codigo_sancion AS label, 
+                s.descripcion, 
+                m.descripcion AS medida, 
+                s.tasa
+            FROM mante.subconcepto s
+            INNER JOIN medida_complementaria m ON s.medida_complementaria = m.id
+            WHERE (codigo_area = '99') AND (codigo_complementario = '26') AND (subconcepto_id = ${id_infraccion})
+        `;
+        console.log('asd');
+        // Ejecutar la consulta
+        const result = await pool.request().query(query);
+        const {value, label, descripcion, medida, tasa } = result.recordset[0];
+        const monto = tasa * 51.50;
+        console.log(value, label, medida, tasa, monto);
+        
+        const newInfraccion = await createInfraccion({
+            codigo: label,
+            descripcion,
+            monto
+        });
+
+
+
+
+
         let id_entidad = null;
 
         const shouldCreateEntidad = nombre_entidad || domicilio_entidad || distrito_entidad || giro_entidad;
@@ -72,7 +105,7 @@ const updateNCHandler = async (req, res) => {
             ordenanza_municipal,
             nro_licencia_funcionamiento,
             id_entidad,
-            id_infraccion: 1,
+            id_infraccion: newInfraccion.id,
             lugar_infraccion,
             placa_rodaje,
             fecha_constancia_notificacion,
@@ -83,7 +116,7 @@ const updateNCHandler = async (req, res) => {
             estado: 'ANALISTA_1',
             id_digitador,
         });
-        console.log(response);
+        // console.log(response);
         if (response) {
             await responseSocket({id, method: getNCforAnalista, socketSendName: 'sendAnalista1', res});
         } else {

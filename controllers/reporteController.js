@@ -1,4 +1,4 @@
-const { RG, Usuario,  NC , TramiteInspector } = require('../db_connection'); 
+const { RG, Usuario,  NC , TramiteInspector, Infraccion } = require('../db_connection'); 
 const { Sequelize } = require('sequelize');
 const { RSG1, DescargoNC, DescargoRSG, IFI, Entidad, DescargoIFI, RSG2, RSA, DescargoRSA, RSG, Acta } = require('../db_connection'); 
 
@@ -12,6 +12,10 @@ const getAllDataController = async () => {
                 [Sequelize.col('tramiteInspector.nro_nc'), 'numero_nc'],
                 [Sequelize.col('tramiteInspector.nro_acta'), 'numero_acta'],
                 [Sequelize.col('tramiteInspector.createdAt'), 'fecha_NC'],
+
+                [Sequelize.col('infraccion.codigo'), 'codigo'],
+                [Sequelize.col('infraccion.descripcion'), 'descripcion'],
+                [Sequelize.col('infraccion.monto'), 'monto'],
 
                 [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'nombre_inspector'],
                 [Sequelize.literal(`'NOTIFICACION DE CARGO'`), 'nombre_nc'],
@@ -128,6 +132,11 @@ const getAllDataController = async () => {
                 {
                     model: Entidad, 
                     as: 'entidad', 
+                    attributes: [], 
+                },
+                {
+                    model: Infraccion, 
+                    as: 'infraccion', 
                     attributes: [], 
                 },
                 {
@@ -272,7 +281,7 @@ const getAllDataController = async () => {
 
         const transformedData = response.map(row => ({
             id: row.get('id'),
-            etapaNC: row.get('inspector_createdAt') ? {
+            //etapaNC: row.get('inspector_createdAt') ? {
                 ordenanza: row.get('ordenanza_municipal'),
                 razon_social: row.get('razon_social'),
                 nro_documento: row.get('nro_documento'),
@@ -282,57 +291,60 @@ const getAllDataController = async () => {
                 lugar_infraccion: row.get('lugar_infraccion'),
                 observaciones: row.get('observaciones'),
                 nombre_inspector: row.get('nombre_inspector'),
-            } : undefined,
-            etapaDigitador: row.get('usuarioDigitador') ? {
+                codigo: row.get('codigo'),
+                descripcion: row.get('descripcion'),
+                monto: row.get('monto'),
+            //} : undefined,
+            //etapaDigitador: row.get('usuarioDigitador') ? {
                 usuarioDigitador: row.get('usuarioDigitador'),
                 digitador_createdAt: row.get('inspector_createdAt'),
-            } : undefined,
-            estapaDescargoNC: row.get('usuarioAnalista1') ? {
+            //} : undefined,
+            //estapaDescargoNC: row.get('usuarioAnalista1') ? {
                 numero_descargoNC: row.get('numero_descargoNC'),
                 fecha_descargoNC: row.get('fecha_descargoNC'),
-            } : undefined,
-            etapaAreaInstructiva: row.get('usuarioAreaInstructiva1') ? {
+            //} : undefined,
+            //etapaAreaInstructiva: row.get('usuarioAreaInstructiva1') ? {
                 numero_IFI: row.get('numero_IFI'),
                 fecha_IFI: row.get('fecha_IFI'),
-            } : undefined,
-            etapaRSG1: row.get('usuarioRSG1') ? {
+            //} : undefined,
+            //etapaRSG1: row.get('usuarioRSG1') ? {
                 fecha_resolucion_RSG1: row.get('fecha_resolucion'),
-            } : undefined,
-            etapaDescargoIFI: row.get('usuarioAnalista2') ? {
+            //} : undefined,
+            //etapaDescargoIFI: row.get('usuarioAnalista2') ? {
                 numero_DIFI: row.get('numero_DIFI'),
                 fecha_descargo: row.get('fecha_descargo'),
-            } : undefined,
-            etapaRSA: row.get('usuarioAreaInstructiva2') ? {
+            //} : undefined,
+            //etapaRSA: row.get('usuarioAreaInstructiva2') ? {
                 numero_RSA: row.get('numero_RSA'),
                 fecha_RSA: row.get('fecha_RSA'),
                 fecha_notificacion_RSA: row.get('fecha_notificacion_RSA'),
-            } : undefined,
-            etapaDescargoRSA: row.get('usuarioAnalista3') ? {
+            //} : undefined,
+            //etapaDescargoRSA: row.get('usuarioAnalista3') ? {
                 numero_DRSA: row.get('numero_DRSA'),
                 fecha_DRSA: row.get('fecha_DRSA'),
-            } : undefined,
-            etapaRSG: row.get('usuarioAreaInstructiva3') ? {
+            //} : undefined,
+            //etapaRSG: row.get('usuarioAreaInstructiva3') ? {
                 numero_RSG: row.get('numero_RSG'),
                 fecha_RSG: row.get('fecha_RSG'),
                 AR3_createdAt: row.get('fecha_notificacion_RSG'),
-            } : undefined,
-            etapaDescargoRSG: row.get('usuarioAnalista4') ? {
+            //} : undefined,
+            //etapaDescargoRSG: row.get('usuarioAnalista4') ? {
                 nro_RSG: row.get('nro_RSG'),
                 fecha_RSG: row.get('fecha_RSG'),
-            } : undefined,
-            etapaRG: row.get('usuarioGerencia') ? {
+            //} : undefined,
+            //etapaRG: row.get('usuarioGerencia') ? {
                 numero_RG: row.get('numero_RG'),
                 fecha_RG: row.get('fecha_RG'),
                 fecha_notificacion_RG: row.get('fecha_notificacion_RG'),
-            } : undefined,
-            etapaConsentimiento: row.get('usuarioAnalista5') ? {
-                usuarioAnalista5: row.get('usuarioAnalista5'),
-                documento_Acta: {
-                    nombre: row.get('nombre_Acta'),
-                    path: row.get('documento_Acta'),
-                },
-                analista5_createdAt: row.get('Acta_createdAt'),
-            } : undefined
+            //} : undefined,
+            //etapaConsentimiento: row.get('usuarioAnalista5') ? {
+                // usuarioAnalista5: row.get('usuarioAnalista5'),
+                // documento_Acta: {
+                //     nombre: row.get('nombre_Acta'),
+                //     path: row.get('documento_Acta'),
+                // },
+                // analista5_createdAt: row.get('Acta_createdAt'),
+            //} : undefined
             
         }));
 

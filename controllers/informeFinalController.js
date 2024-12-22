@@ -458,11 +458,10 @@ const getIFIforAR2Controller = async (id) => {
 
 
 
-const getIFIforAnalista2Controller = async () => {
+const getIFIforAnalista2Controller = async (id) => {
   try {
       const response = await IFI.findOne({ 
-          where: { tipo: 'ANALISTA_2' }, 
-          order: [['id', 'ASC']],
+          where: { id: id }, 
           attributes: [
               'id',
               [Sequelize.col('NCs.id'), 'id_nc'],
