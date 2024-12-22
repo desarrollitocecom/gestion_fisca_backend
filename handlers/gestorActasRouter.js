@@ -1,5 +1,5 @@
 const { getAllUsersforControlActasController } = require('../controllers/usuarioController');
-const { createControlActaController } = require('../controllers/controlActaController');
+const { createControlActaController, actasActualesHandlerController } = require('../controllers/controlActaController');
 
 const getAllUsersforControlActasHandler = async (req, res) => {
     try {
@@ -57,4 +57,37 @@ const createControlActaHandler = async (req, res) => {
     }
 };
 
-module.exports = { getAllUsersforControlActasHandler, createControlActaHandler };
+
+
+const actasActualesHandler = async (req, res) => {
+  try {
+    const response = await actasActualesHandlerController();
+
+    if (response.length === 0) {
+      return res.status(200).json({
+        message: "No existen Usuarios asignados a Inspectores",
+        data: []
+      });
+    }
+
+    return res.status(200).json({
+      message: "Usuarios inspectores obtenidos correctamente",
+      data: response,
+    });
+
+  } catch (error) {
+    console.error("Error interno al obtener Usuarios Inspectores:", error);
+    res
+      .status(500)
+      .json({ error: "Error interno del servidor al obtener los usuarios Inspectores." });
+  }
+};
+
+
+
+
+
+
+
+
+module.exports = { getAllUsersforControlActasHandler, createControlActaHandler, actasActualesHandler };
