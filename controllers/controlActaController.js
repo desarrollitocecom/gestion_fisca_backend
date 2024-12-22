@@ -14,10 +14,10 @@ const createControlActaController=async ({fecha_laburo, nro_actas_inicio, observ
     }
 }
 
-const actasActualesHandlerController =async () => {
+const actasActualesHandlerController =async (dia) => {
   try {
       const response = await ControlActa.findAll({
-        where: { fecha_laburo: '2024-02-12' },
+        where: { fecha_laburo: dia },
         attributes: [
             'id',
             [Sequelize.col('usuarioInspector.usuario'), 'inspector'],

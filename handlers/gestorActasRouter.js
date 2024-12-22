@@ -61,25 +61,31 @@ const createControlActaHandler = async (req, res) => {
 
 const actasActualesHandler = async (req, res) => {
   try {
-    const response = await actasActualesHandlerController();
+    let { dia } = req.query;
+
+    if (!dia) {
+      dia = new Date().toISOString().split('T')[0];
+    }
+
+    const response = await actasActualesHandlerController(dia);
 
     if (response.length === 0) {
       return res.status(200).json({
-        message: "No existen Usuarios asignados a Inspectores",
+        message: "No hay Actas registradas en este dia",
         data: []
       });
     }
 
     return res.status(200).json({
-      message: "Usuarios inspectores obtenidos correctamente",
+      message: "Registro de Actas obtenidos correctamente",
       data: response,
     });
 
   } catch (error) {
-    console.error("Error interno al obtener Usuarios Inspectores:", error);
+    console.error("Error interno al obtener Registro de Actas:", error);
     res
       .status(500)
-      .json({ error: "Error interno del servidor al obtener los usuarios Inspectores." });
+      .json({ error: "Error interno del servidor al obtener los Registro de Actas." });
   }
 };
 
