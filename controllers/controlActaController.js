@@ -47,16 +47,37 @@ const actasActualesHandlerController =async () => {
 
 
 
-const updateControlActaController=async ({fecha_laburo, nro_actas_inicio, observaciones_inicio, id_encargadoInicio, id_inspector}) => {
+const updateControlActaController=async (id,{nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin}) => {
   try {
-      const response = await ControlActa.update({
-        fecha_laburo, nro_actas_inicio, observaciones_inicio, id_encargadoInicio, id_inspector
+    console.log(id);
+    
+      const findActaControl = await getControlActa(id);
+      console.log(findActaControl);
+      
+      const response = await findActaControl.update({
+        nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin
       });
       return response || null;
 
   } catch (error) {
     console.error("Error al crear el control de acta:", error);
     return false;
+  }
+}
+
+
+const getControlActa = async (id) => {
+  try {
+    console.log(id, 'asd');
+    
+      const findControlActa = await ControlActa.findOne({ 
+          where: { id } 
+      });
+
+      return findControlActa || null;
+  } catch (error) {
+      console.error({ message: "Error al encontrar el Acta Control", data: error });
+      return false;
   }
 }
 

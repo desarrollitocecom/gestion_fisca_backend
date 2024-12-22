@@ -87,7 +87,7 @@ const actasActualesHandler = async (req, res) => {
 
 const updateControlActaHandler = async (req, res) => {
   const {id}=req.params;
-  const { nro_actas_inicio, observaciones_inicio, id_encargadoInicio, id_inspector } = req.body;
+  const { nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin } = req.body;
 
   const errores = [];
   
@@ -104,7 +104,7 @@ const updateControlActaHandler = async (req, res) => {
 
   try {
       const newControlActa = await updateControlActaController(id, {
-          fecha_laburo, nro_actas_inicio, observaciones_inicio, id_encargadoInicio, id_inspector
+        nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin
       });
       if (!newControlActa) {
           return res.status(201).json({ message: 'Error al crear el Control de Acta', data: [] });

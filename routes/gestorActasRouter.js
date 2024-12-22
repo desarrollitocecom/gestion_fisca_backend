@@ -5,10 +5,10 @@ const { getAllUsersforControlActasHandler, createControlActaHandler, actasActual
 const permisoAutorizacion = require("../checkers/roleAuth");
 
 router.get('/inspectores',permisoAutorizacion(["all_system_access"]), getAllUsersforControlActasHandler);
-router.post('/creteControlActa',permisoAutorizacion(["all_system_access"]), createControlActaHandler);
+router.post('/createControlActa',permisoAutorizacion(["all_system_access"]), createControlActaHandler);
 
 router.get('/actasActuales',permisoAutorizacion(["all_system_access"]), actasActualesHandler);
-router.patch('/updateControlActa',permisoAutorizacion(["all_system_access"]), updateControlActaHandler);
+router.patch('/updateControlActa/:id',permisoAutorizacion(["all_system_access"]), updateControlActaHandler);
 
 
 module.exports = router;
