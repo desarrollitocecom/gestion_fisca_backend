@@ -126,7 +126,4 @@ const {
     }
   };
   
-  module.exports = { getAllNCforInstructivaHandler, createInformeFinalHandler };const NodeCache = require("node-cache");
-  const myCache = new NodeCache();
-  
-  module.exports = myCache;
+  module.exports = { getAllNCforInstructivaHandler, createInformeFinalHandler };
