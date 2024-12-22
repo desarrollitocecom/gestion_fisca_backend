@@ -249,7 +249,24 @@ const createUserIfNotExists = async (dni) => {
     }
   };
 
+
+const getAllUsersforControlActasController = async (id) => {
+    try {
+        const findUsuarios = await Usuario.findAll({ 
+            where: { id_rol: '10' },
+            attributes: [
+                'id', 'usuario'
+            ],
+        });
+        
+        return findUsuarios || null;
+    } catch (error) {
+        console.error({ message: "Error obteniendo todos los Inspectores", data: error });
+        return false;
+    }
+}
 module.exports = {
+    getAllUsersforControlActasController,
     createUser,
     changePassword,
     getUser,

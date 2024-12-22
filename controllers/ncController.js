@@ -1,5 +1,6 @@
 const { NC, TramiteInspector, MedidaComplementaria, TipoDocumentoComplementario, EjecucionMC, EstadoMC, DescargoNC, Usuario } = require('../db_connection');
 const { Sequelize } = require('sequelize');
+const myCache = require("../middlewares/cacheNodeStocked");
 
 const createNC = async ({ id_tramiteInspector }) => {
     try {
@@ -225,7 +226,18 @@ const getAllNCforInstructiva = async () => {
                 },
             ],
         });
-        return response || null;
+
+        const modifiedResponse = response.map(item => {
+            const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+            const cachedValue = myCache.get(`Ainstructiva-${id}`); // Obtener valor del cache si existe
+        
+            return {
+                ...item.toJSON(),
+                disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+            };
+        });
+
+        return modifiedResponse || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los Tipos de NC", data: error });
         return false;
@@ -257,6 +269,7 @@ const getAllNCforAnalista = async () => {
                 },
             ],
         });
+
         return response || null;
     } catch (error) {
         console.error({ message: "Error obteniendo todos los NC para el Analista 1 en el controlador", data: error });
