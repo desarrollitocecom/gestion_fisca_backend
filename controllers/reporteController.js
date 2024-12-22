@@ -97,8 +97,8 @@ const getAllDataController = async () => {
                 //----------------DESCARGO RESOLUCION SUBGERENCIAL-------------
                 [Sequelize.col('IFI.RSA.RSGs.DescargoRSGs.Usuarios.usuario'), 'usuarioAnalista4'],
                 [Sequelize.literal(`'DESCARGO RSG'`), 'nombre_DRSG'],
-                [Sequelize.col('IFI.RSA.RSGs.DescargoRSGs.nro_descargo'), 'nro_RSG'],//
-                [Sequelize.col('IFI.RSA.RSGs.DescargoRSGs.fecha_descargo'), 'fecha_RSG'],//
+                [Sequelize.col('IFI.RSA.RSGs.DescargoRSGs.nro_descargo'), 'nro_DRSG'],//
+                [Sequelize.col('IFI.RSA.RSGs.DescargoRSGs.fecha_descargo'), 'fecha_DRSG'],//
                 [Sequelize.col('IFI.RSA.RSGs.DescargoRSGs.documento_DRSG'), 'documento_DRSG'],
                 [Sequelize.col('IFI.RSA.RSGs.DescargoRSGs.createdAt'), 'DRSG_createdAt'],
 
@@ -289,15 +289,27 @@ const getAllDataController = async () => {
                 numero_acta: row.get('numero_acta'),
                 fecha_NC: row.get('fecha_NC'),
                 lugar_infraccion: row.get('lugar_infraccion'),
-                observaciones: row.get('observaciones'),
-                nombre_inspector: row.get('nombre_inspector'),
+                actividad_economica: 'giro',
                 codigo: row.get('codigo'),
                 descripcion: row.get('descripcion'),
+                tipo_infraccion: 'infraccion',
+                medida_complementaria: 'medida',
                 monto: row.get('monto'),
+
+                
+                
+                documento_origen: 'numero MC',
+                acta_ejecucion: 'acta de ejecucion',
+                ejecucion_medida: 'retiro',
+                levantamiento_medida: 'levantamiento',
+                observaciones: row.get('observaciones'),
+                nombre_inspector: row.get('nombre_inspector'),
+                estado_NC: 'SUBSANADO',
+
             //} : undefined,
             //etapaDigitador: row.get('usuarioDigitador') ? {
-                usuarioDigitador: row.get('usuarioDigitador'),
-                digitador_createdAt: row.get('inspector_createdAt'),
+                // usuarioDigitador: row.get('usuarioDigitador'),
+                // digitador_createdAt: row.get('inspector_createdAt'),
             //} : undefined,
             //estapaDescargoNC: row.get('usuarioAnalista1') ? {
                 numero_descargoNC: row.get('numero_descargoNC'),
@@ -308,34 +320,45 @@ const getAllDataController = async () => {
                 fecha_IFI: row.get('fecha_IFI'),
             //} : undefined,
             //etapaRSG1: row.get('usuarioRSG1') ? {
-                fecha_resolucion_RSG1: row.get('fecha_resolucion'),
+                
             //} : undefined,
             //etapaDescargoIFI: row.get('usuarioAnalista2') ? {
                 numero_DIFI: row.get('numero_DIFI'),
-                fecha_descargo: row.get('fecha_descargo'),
+                fecha_descargoIFI: row.get('fecha_descargo'),
+
+                numero_RSG_MC: '123',
+                fecha_RSG1: '12/04/2024',
+                numero_RSG1: '234',
+                fecha_RSG2: '12/04/2024',
+                numero_RSG2: '345',
+
             //} : undefined,
             //etapaRSA: row.get('usuarioAreaInstructiva2') ? {
                 numero_RSA: row.get('numero_RSA'),
                 fecha_RSA: row.get('fecha_RSA'),
                 fecha_notificacion_RSA: row.get('fecha_notificacion_RSA'),
+                estado_RSA: 'fundado',
             //} : undefined,
             //etapaDescargoRSA: row.get('usuarioAnalista3') ? {
                 numero_DRSA: row.get('numero_DRSA'),
                 fecha_DRSA: row.get('fecha_DRSA'),
             //} : undefined,
             //etapaRSG: row.get('usuarioAreaInstructiva3') ? {
-                numero_RSG: row.get('numero_RSG'),
-                fecha_RSG: row.get('fecha_RSG'),
-                AR3_createdAt: row.get('fecha_notificacion_RSG'),
+                
+                nro_RSG: row.get('numero_RSG'),
+                fecha_emision_RSG: row.get('fecha_RSG'),
+                fecha_notificacion_RSG: row.get('fecha_notificacion_RSG'),
+                resuelve_RSG: 'SI',
             //} : undefined,
             //etapaDescargoRSG: row.get('usuarioAnalista4') ? {
-                nro_RSG: row.get('nro_RSG'),
-                fecha_RSG: row.get('fecha_RSG'),
+                numero_DRSG: row.get('nro_DRSG'),
+                fecha_DRSG: row.get('fecha_DRSG'),
             //} : undefined,
             //etapaRG: row.get('usuarioGerencia') ? {
                 numero_RG: row.get('numero_RG'),
-                fecha_RG: row.get('fecha_RG'),
+                fecha_emision_RG: row.get('fecha_RG'),
                 fecha_notificacion_RG: row.get('fecha_notificacion_RG'),
+                resuelve_RG: 'NO',
             //} : undefined,
             //etapaConsentimiento: row.get('usuarioAnalista5') ? {
                 // usuarioAnalista5: row.get('usuarioAnalista5'),
