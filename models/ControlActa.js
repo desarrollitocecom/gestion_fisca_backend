@@ -42,6 +42,11 @@ module.exports = (sequelize) => {
             allowNull: true
         },
 
+        estado: {
+            type: DataTypes.ENUM('INICIADO', 'FINALIZADO'),
+            allowNull: true
+        },
+
         id_inspector: {
             type: DataTypes.UUID,
             references: {

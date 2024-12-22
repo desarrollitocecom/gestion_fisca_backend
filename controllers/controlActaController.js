@@ -4,7 +4,7 @@ const { Sequelize } = require('sequelize');
 const createControlActaController=async ({fecha_laburo, nro_actas_inicio, observaciones_inicio, id_encargadoInicio, id_inspector}) => {
     try {
         const response = await ControlActa.create({
-          fecha_laburo, nro_actas_inicio, observaciones_inicio, id_encargadoInicio, id_inspector
+          fecha_laburo, nro_actas_inicio, observaciones_inicio, id_encargadoInicio, id_inspector, estado: 'INICIADO'
         });
         return response || null;
   
@@ -26,7 +26,8 @@ const actasActualesHandlerController =async (dia) => {
             'nro_actas_realizadas',
             'observaciones_laburo',
             'nro_actas_entregadas',
-            'observaciones_fin'
+            'observaciones_fin',
+            'estado'
         ],
         include: [
           {
@@ -55,7 +56,7 @@ const updateControlActaController=async (id,{nro_actas_realizadas, observaciones
       console.log(findActaControl);
       
       const response = await findActaControl.update({
-        nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin
+        nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin, estado: 'FINALIZADO'
       });
       return response || null;
 
