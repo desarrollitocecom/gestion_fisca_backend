@@ -1,5 +1,5 @@
 const { getAllUsersforControlActasController } = require('../controllers/usuarioController');
-const { createControlActaController, actasActualesHandlerController } = require('../controllers/controlActaController');
+const { createControlActaController, actasActualesHandlerController, updateControlActaController } = require('../controllers/controlActaController');
 
 const getAllUsersforControlActasHandler = async (req, res) => {
     try {
@@ -85,9 +85,41 @@ const actasActualesHandler = async (req, res) => {
 
 
 
+const updateControlActaHandler = async (req, res) => {
+  const {id}=req.params;
+  const { nro_actas_inicio, observaciones_inicio, id_encargadoInicio, id_inspector } = req.body;
+
+  const errores = [];
+  
+  if (errores.length > 0) {
+      return res.status(400).json({
+          message: 'Se encontraron los siguientes errores',
+          data: errores
+      });
+  }
+
+  const fecha_laburo = new Date().toISOString().split('T')[0];
+  console.log(fecha_laburo);
+  
+
+  try {
+      const newControlActa = await updateControlActaController(id, {
+          fecha_laburo, nro_actas_inicio, observaciones_inicio, id_encargadoInicio, id_inspector
+      });
+      if (!newControlActa) {
+          return res.status(201).json({ message: 'Error al crear el Control de Acta', data: [] });
+      }
+
+      return res.status(200).json({ message: 'Se creo el control de Acta correctamente', data: newControlActa });
+
+  } catch (error) {
+      console.error("Error interno al crear el Control de Acta:", error);
+      return res.status(500).json({ message: "Error interno al crear el Control de Acta", data: error });
+  }
+};
 
 
 
 
 
-module.exports = { getAllUsersforControlActasHandler, createControlActaHandler, actasActualesHandler };
+module.exports = { getAllUsersforControlActasHandler, createControlActaHandler, actasActualesHandler, updateControlActaHandler };

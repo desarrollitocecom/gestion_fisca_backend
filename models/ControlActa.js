@@ -41,11 +41,6 @@ module.exports = (sequelize) => {
             type: DataTypes.TEXT,
             allowNull: true
         },
-      
-        documento_acta: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
 
         id_inspector: {
             type: DataTypes.UUID,
