@@ -7,48 +7,60 @@ module.exports = (sequelize) => {
             primaryKey: true,
             defaultValue: DataTypes.UUIDV4
         },
-        id_documento: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-            references: {
-             model: 'TipoDocumentoComplementarios',
-                key: 'id',
-            },
-       },
-       nro_medida_complementaria: {
+
+        nombre_MC: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+
+        nro_medida_complementaria: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
+
         documento_medida_complementaria: {
             type: DataTypes.STRING,
             allowNull: true
        },
-       id_ejecucionMC: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-        references: {
-            model: 'EjecucionMCs',
-            key: 'id',
-        },       
-    },
-    
-       nro_acta_ejecucion: {
+        
+        numero_ejecucion: {///////////////////
             type: DataTypes.INTEGER,
             allowNull: true
         },
-       
-        
-        dc_levantamiento: {
+
+
+        tipo_ejecucionMC: {///////////////////
             type: DataTypes.STRING,
             allowNull: true
-         },
-        id_estado: { 
+        },
+
+        documento_ejecucion: {///////////////////
             type: DataTypes.INTEGER,
+            allowNull: true
+        },
+    
+       
+        // nro_levantamiento: {///////////////////
+        //     type: DataTypes.INTEGER,
+        //     allowNull: true
+        // },
+        
+        // dc_levantamiento: {///////////////////
+        //     type: DataTypes.STRING,
+        //     allowNull: true
+        // },
+        estado: {  /////////
+            type: DataTypes.ENUM('PENDIENTE', 'REALIZADO'),
             allowNull: true,
+        },
+
+        id_usuarioMC: {///////////////////
+            type: DataTypes.UUID,
             references: {
-                model: 'EstadoMCs', 
-                key: 'id'
+                model: 'Usuarios',
+                key: 'id',
             },
+            allowNull: true
         }
 
     }, {
@@ -57,9 +69,7 @@ module.exports = (sequelize) => {
     });
 
     MedidaComplementaria.associate = (db) => {
-        MedidaComplementaria.belongsTo(db.TipoDocumentoComplementario, { foreignKey: 'id_documento', as: 'tipoDocumento' });
-        MedidaComplementaria.belongsTo(db.EjecucionMC, { foreignKey: 'id_ejecucionMC', as: 'ejecucion' });
-        MedidaComplementaria.belongsTo(db.EstadoMC, { foreignKey: 'id_estado', as: 'estado' });
+        MedidaComplementaria.belongsTo(db.Usuario,{foreignKey:'id_usuarioMC' , as:'Usuarios' });
     };
 
     return MedidaComplementaria;

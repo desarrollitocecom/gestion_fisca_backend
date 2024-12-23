@@ -1,9 +1,9 @@
 const { updateNC, getNCforAnalista, getAllNC, getNC } = require('../controllers/ncController');
 const { createEntidad, createInfraccion } = require('../controllers/entidadController');
-const { getAllUsersforControlActasController } = require('../controllers/usuarioController');
-const { createControlActaController } = require('../controllers/controlActaController');
+const { getAllMCController } = require('../controllers/medidaComplementariaController');
 const { validateNC } = require('../validations/digitadorValidation');
 const { responseSocket } = require('../utils/socketUtils')
+
 
 
 const sql = require("mssql");
@@ -237,4 +237,27 @@ const sendDetalle = async (req, res) => {
     }
 };
 
-module.exports = { updateNCHandler, allNCHandler, getCodigos, sendDetalle };
+
+const getMCHandler = async (req, res) => {
+    
+    try {
+        const response = await getAllMCController();
+
+        if (response.length === 0) {
+            return res.status(200).json({
+                message: 'No hay más Medidas Complementarias',
+                data: []
+            });
+        }
+
+        return res.status(200).json({
+            message: "Medidas Complementarias obtenidos correctamente",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener las Medidas Complementarias:", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener las Medidas Complementarias." });
+    }
+};
+
+module.exports = { updateNCHandler, allNCHandler, getCodigos, sendDetalle, getMCHandler };

@@ -1,22 +1,39 @@
-const { MedidaComplementaria } = require("../db_connection");
+const { MedidaComplementaria, TramiteInspector, Usuario, NC } = require("../db_connection");
 const { saveImage } = require('../utils/fileUtils');
+const { Sequelize } = require('sequelize');
 
 
-// Obtener todas las medidas complementarias con paginación
-const getAllMedidasComplementarias = async (page = 1, limit = 20) => {
-    const offset = (page - 1) * limit;
+const getAllMCController = async () => {
     try {
-        const response = await MedidaComplementaria.findAndCountAll({
-            limit,
-            offset,
-            order: [['id', 'ASC']],
+        const response = await NC.findAll({
+            where: Sequelize.where(Sequelize.col('tramiteInspector.medidaComplementaria.estado'), 'PENDIENTE'),
+            attributes: [
+                'id',
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('tramiteInspector.medidaComplementaria.nombre_MC'), 'nombre_MC'],
+                [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'inspector'],
+            ], 
             include: [
-                { association: 'tipoDocumento', attributes: ['id', 'documento'] },
-                { association: 'ejecucion', attributes: ['id', 'nombre'] },
-                { association: 'estado', attributes: ['id', 'nombre'] }
+                {
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
+                    include: [
+                        {
+                            model: MedidaComplementaria,
+                            as: 'medidaComplementaria',
+                            attributes: []
+                        },
+                        {
+                            model: Usuario, 
+                            as: 'inspectorUsuario',
+                            attributes: []
+                        },
+                    ],
+                    attributes: []
+                },         
             ]
         });
-        return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+        return response || null;
     } catch (error) {
         console.error("Error en el controlador al traer todas las Medidas Complementarias:", error);
         return false;
@@ -43,7 +60,7 @@ const getMedidaComplementaria = async (id) => {
 
 // Crear una nueva medida complementaria
 const createMedidaComplementaria = async ({ 
-    id_documento, 
+    nombre_MC, 
     nro_medida_complementaria, 
     documento_medida_complementaria, 
     }) => {
@@ -51,13 +68,13 @@ const createMedidaComplementaria = async ({
     let documento_MCPath;
 
     try {
-        documento_MCPath = saveImage(documento_medida_complementaria, "Opcional");
+        documento_MCPath = saveImage(documento_medida_complementaria, "Medida Complementaria");
 
         const response = await MedidaComplementaria.create({ 
-            id_documento, 
+            nombre_MC, 
             nro_medida_complementaria,
             documento_medida_complementaria: documento_MCPath,
-            id_estado: 1 
+            estado: 'PENDIENTE'
             });
             
         return response || null;
@@ -101,9 +118,9 @@ const deleteMedidaComplementaria = async (id) => {
 };
 
 module.exports = {
-    getAllMedidasComplementarias,
     getMedidaComplementaria,
     createMedidaComplementaria,
     updateMedidaComplementaria,
-    deleteMedidaComplementaria
+    deleteMedidaComplementaria,
+    getAllMCController
 };

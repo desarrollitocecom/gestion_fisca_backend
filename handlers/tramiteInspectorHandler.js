@@ -10,8 +10,7 @@ const createTramiteHandler = async (req, res) => {
     
 
     const { 
-
-            id_documento, 
+            nombre_MC, 
             nro_medida_complementaria,
 
             nro_nc, 
@@ -52,12 +51,12 @@ const createTramiteHandler = async (req, res) => {
         }
 
 
-        const relatedFields = [id_documento, nro_medida_complementaria, req.files['documento_medida_complementaria']];
+        const relatedFields = [nombre_MC, nro_medida_complementaria, req.files['documento_medida_complementaria']];
         const anyRelatedFieldFilled = relatedFields.some(field => field !== undefined && field !== null);
 
         if (anyRelatedFieldFilled) {
-            if (!id_documento) {
-                errors.push('El campo id_documento es obligatorio cuando se proporciona alguno de los otros campos relacionados.');
+            if (!nombre_MC) {
+                errors.push('El campo nombre_MC es obligatorio cuando se proporciona alguno de los otros campos relacionados.');
             }
             if (!nro_medida_complementaria) {
                 errors.push('El campo nro_medida_complementaria es obligatorio cuando se proporciona alguno de los otros campos relacionados.');
@@ -93,11 +92,11 @@ const createTramiteHandler = async (req, res) => {
             let id_medida_complementaria = null;
             let newMedidaComplementaria = null;
     
-            const shouldCreateMedidaComplementaria = id_documento && nro_medida_complementaria && req.files['documento_medida_complementaria'];
+            const shouldCreateMedidaComplementaria = nombre_MC && nro_medida_complementaria && req.files['documento_medida_complementaria'];
     
             if (shouldCreateMedidaComplementaria) {
                 newMedidaComplementaria = await createMedidaComplementaria({
-                    id_documento,
+                    nombre_MC,
                     nro_medida_complementaria,
                     documento_medida_complementaria: req.files['documento_medida_complementaria'][0],
                 });
@@ -147,14 +146,7 @@ const createTramiteHandler = async (req, res) => {
 
                 if(newMedidaComplementaria){
                     const total_documentos = newMedidaComplementaria.documento_medida_complementaria;
-                    if(id_documento == 1) nuevoModulo = 'ACTA DE EJECUCION DE MP';
-                    if(id_documento == 2) nuevoModulo = 'VALORIZACION DE LA OBRA';
-                    if(id_documento == 3) nuevoModulo = 'ACTA DE RETENCION Y/O DECOMISO';
-                    if(id_documento == 4) nuevoModulo = 'ACTA DE EVALUACION SANITARIA';
-                    if(id_documento == 5) nuevoModulo = 'INFORME TECNICO';
-                    if(id_documento == 6) nuevoModulo = 'ACTA DE RETIRO';
-
-                    await updateDocumento({id_nc, total_documentos, nuevoModulo});
+                    await updateDocumento({id_nc, total_documentos, nuevoModulo: nombre_MC});
                 }
 
                 
