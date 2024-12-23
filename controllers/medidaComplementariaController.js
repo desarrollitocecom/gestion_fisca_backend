@@ -44,12 +44,7 @@ const getAllMCController = async () => {
 const getMedidaComplementaria = async (id) => {
     try {
         const response = await MedidaComplementaria.findOne({
-            where: { id },
-            include: [
-                { association: 'tipoDocumento', attributes: ['id', 'documento'] },
-                { association: 'ejecucion', attributes: ['id', 'nombre'] },
-                { association: 'estado', attributes: ['id', 'nombre'] }
-            ]
+            where: { id }
         });
         return response || null;
     } catch (error) {
@@ -85,10 +80,17 @@ const createMedidaComplementaria = async ({
 };
 
 // Actualizar una medida complementaria
-const updateMedidaComplementaria = async (id, { nro_acta_ejecucion, dc_levantamiento, id_documento, id_ejecucionMC, id_estado }) => {
+const updateMCController = async (id, { numero_ejecucion, tipo_ejecucionMC, documento_ejecucion, id_usuarioMC }) => {
     try {
+
+        let documento_ejecucionNCPath = null;
+
+        if(documento_ejecucion){
+            documento_ejecucionNCPath = saveImage(documento_ejecucion, 'Ejecucion_Medida_Complementaria');
+        }
+
         const medida = await getMedidaComplementaria(id);
-        if (medida) await medida.update({ nro_acta_ejecucion, dc_levantamiento, id_documento, id_ejecucionMC, id_estado });
+        if (medida) await medida.update({ numero_ejecucion, tipo_ejecucionMC, documento_ejecucion: documento_ejecucionNCPath, id_usuarioMC, estado: 'REALIZADO' });
         return medida || null;
     } catch (error) {
         console.error("Error al modificar la Medida Complementaria en el controlador:", error);
@@ -120,7 +122,7 @@ const deleteMedidaComplementaria = async (id) => {
 module.exports = {
     getMedidaComplementaria,
     createMedidaComplementaria,
-    updateMedidaComplementaria,
+    updateMCController,
     deleteMedidaComplementaria,
     getAllMCController
 };

@@ -1,10 +1,9 @@
 const { updateNC, getNCforAnalista, getAllNC, getNC } = require('../controllers/ncController');
 const { createEntidad, createInfraccion } = require('../controllers/entidadController');
-const { getAllMCController } = require('../controllers/medidaComplementariaController');
+const { getAllMCController, updateMCController } = require('../controllers/medidaComplementariaController');
 const { validateNC } = require('../validations/digitadorValidation');
 const { responseSocket } = require('../utils/socketUtils')
-
-
+const {updateDocumento}=require('../controllers/documentoController');
 
 const sql = require("mssql");
 
@@ -238,7 +237,7 @@ const sendDetalle = async (req, res) => {
 };
 
 
-const getMCHandler = async (req, res) => {
+const getAllMCHandler = async (req, res) => {
     
     try {
         const response = await getAllMCController();
@@ -260,4 +259,49 @@ const getMCHandler = async (req, res) => {
     }
 };
 
-module.exports = { updateNCHandler, allNCHandler, getCodigos, sendDetalle, getMCHandler };
+const updateMCHandler = async (req, res) => {
+    const id = req.params.id;
+    const { id_nc, numero_ejecucion, tipo_ejecucionMC, id_usuarioMC } = req.body;
+
+        const errors = [];
+
+        if(!req.files['documento_ejecucion']){
+            errors.push('El documento_ejecucion es obligatorio');
+        }else{
+           
+            if(req.files['documento_ejecucion'][0].mimetype != 'application/pdf'){
+                errors.push('El documento_ejecucion debe ser formato PDF');
+            }
+        }
+    
+        if (errors.length > 0) {
+            if (req.files['documento_ejecucion']) {
+                fs.unlinkSync(req.files['documento_ejecucion'][0].path); 
+            }
+            return res.status(400).json({ error: errors.join(", ") });
+        }
+
+
+
+    
+    try {
+        const response = await updateMCController(id, { numero_ejecucion, tipo_ejecucionMC, documento_ejecucion: req.files['documento_ejecucion'][0], id_usuarioMC });
+        if (!response) {
+            return res.status(404).json({ message: "Medida complementaria no encontrada para actualizar" });
+        }
+        
+        await updateDocumento({id_nc, total_documentos: response.documento_ejecucion, nuevoModulo: 'EJECUCION MEDIDA COMPLEMENTARIA'});
+
+        res.status(200).json({
+            message: "Medida complementaria actualizada correctamente",
+            data: response
+        });
+    } catch (error) {
+        console.error("Error al actualizar medida complementaria:", error);
+        res.status(500).json({ error: "Error interno del servidor al actualizar la medida complementaria." });
+    }
+};
+
+
+
+module.exports = { updateNCHandler, allNCHandler, getCodigos, sendDetalle, getAllMCHandler, updateMCHandler };

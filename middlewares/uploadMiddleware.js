@@ -54,6 +54,10 @@ const uploadActa = upload.fields([
     { name: 'documento_acta', maxCount: 1 },
 ])
 
+const uploadMC = upload.fields([
+    { name: 'documento_ejecucion', maxCount: 1 },
+])
+
 module.exports = {
     uploadDocuments,
     uploadDocumentsDescargoNC,
@@ -69,5 +73,6 @@ module.exports = {
     uploadRG,
     uploadNone,
     uploadDocumentsDigitador,
-    uploadActa
+    uploadActa,
+    uploadMC
 };

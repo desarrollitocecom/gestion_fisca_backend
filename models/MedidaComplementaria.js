@@ -35,7 +35,7 @@ module.exports = (sequelize) => {
         },
 
         documento_ejecucion: {///////////////////
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: true
         },
     
