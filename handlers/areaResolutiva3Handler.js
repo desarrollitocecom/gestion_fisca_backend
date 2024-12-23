@@ -64,7 +64,15 @@ const createRSGHandler = async (req, res) => {
           return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
       }
 
-      const response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'TERMINADO' })
+      let response;
+
+      if(tipo == 'RSGP'){
+        response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'ARCHIVO_AR3' })
+      }
+      if(tipo == 'RSGNP'){
+        response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'TERMINADO' })
+      }
+
 
       await updateDocumento({ id_nc, total_documentos: newRSG.documento_RSG, nuevoModulo: "RESOLUCION SUBGERENCIAL NO PROCEDENTE" });
 

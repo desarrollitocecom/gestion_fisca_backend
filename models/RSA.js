@@ -23,7 +23,7 @@ module.exports = (sequelize) => {
             allowNull: false
         },
         tipo:{
-            type:DataTypes.ENUM('ANALISTA_3','RSGP','RSGNP','ACTA','AR3','ANALISTA_5', 'TERMINADO'),
+            type:DataTypes.ENUM('ANALISTA_3','RSGP','RSGNP','ACTA','AR3','ANALISTA_5', 'ARCHIVO_AR3', 'TERMINADO'),
             allowNull:true
         },
         id_RSG:{

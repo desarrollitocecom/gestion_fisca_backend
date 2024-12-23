@@ -395,7 +395,7 @@ const getRSGforAnalista5Controller = async (id) => {
 const getAllRSG3forAR3Controller = async () => {
     try {
         const response = await NC.findAll({ 
-            where: Sequelize.where(Sequelize.col('IFI.RSA.tipo'), 'TERMINADO'),
+            where: Sequelize.where(Sequelize.col('IFI.RSA.tipo'), 'ARCHIVO_AR3'),
             order: [['id', 'ASC']],
             attributes: [
                 'id',
