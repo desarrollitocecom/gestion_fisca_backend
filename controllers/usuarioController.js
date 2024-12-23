@@ -217,7 +217,7 @@ const createUserIfNotExists = async (dni) => {
           usuario: dni,
           contraseña: await argon2.hash(dni), 
           correo: `${dni}@default.com`, 
-          id_rol: rol.id,
+          id_rol: '10',
         });
       }
   

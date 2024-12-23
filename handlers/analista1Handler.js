@@ -4,6 +4,7 @@ const {updateDocumento}=require('../controllers/documentoController');
 const fs = require('fs');
 const { validateAnalista1 } = require('../validations/analista1Validation');
 const { responseSocket } = require('../utils/socketUtils')
+const { getIo } = require("../sockets");
 
 const getAllNCforAnalistaHandler = async (req, res) => {  
     try {
@@ -82,13 +83,13 @@ const createDescargoNCHandler = async (req, res) => {
      
         if (response) {
             await responseSocket({id, method: getNCforInstructiva, socketSendName: 'sendAI1', res});
+            io.emit("sendAnalista1", { id: id_nc, remove: true });
         } else {
            res.status(400).json({
                 message: 'Error al actualizar el NC desde el Analista1',
             });
         }
-
-
+    
     } catch (error) {
         console.error('Error interno del servidor al actualizar el NC desde el Analista1:', error);
         return res.status(500).json({ message: 'Error interno del servidor al actualizar el NC desde el Analista1' });
@@ -96,6 +97,7 @@ const createDescargoNCHandler = async (req, res) => {
 };
 
 const sendWithoutDescargoHandler = async (req, res) => {
+    const io = getIo();
     const id = req.params.id;
 
     const existingNC = await getNC(id); 
@@ -129,6 +131,8 @@ const sendWithoutDescargoHandler = async (req, res) => {
   
         if (response) {
             await responseSocket({id, method: getNCforInstructiva, socketSendName: 'sendAI1', res});
+            io.emit("sendAnalista1", { id, remove: true });
+
         } else {
            res.status(400).json({
                 message: 'Error interno del servidor al crear el sin Descargo NC desde el Handler Analista1',

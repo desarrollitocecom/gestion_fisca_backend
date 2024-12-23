@@ -12,7 +12,7 @@ const {
     validateAreaInstructiva1,
   } = require("../validations/areaInstructiva1Validation");
   const { responseSocket } = require("../utils/socketUtils");
-  const { getIo, getValuesByPrefix } = require("../sockets");
+  const { getIo } = require("../sockets");
   // const jwt = require('jsonwebtoken');
   
   const getAllNCforInstructivaHandler = async (req, res) => {

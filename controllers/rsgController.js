@@ -2,13 +2,14 @@ const { RSG , Usuario,  NC , TramiteInspector } = require("../db_connection");
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 const { Sequelize } = require('sequelize');
 const { RSG1, DescargoNC, IFI, DescargoIFI, RSG2, RSA, DescargoRSA } = require('../db_connection'); 
+const myCache = require("../middlewares/cacheNodeStocked");
 
 const createRSGController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSG,id_nc ,id_AR3, tipo}) => {
 
     let documento_path;
     try {
         if(documento_RSG) {
-            documento_path=saveImage(documento_RSG,'Resolucion(RSG - Procedente)')       
+            documento_path=saveImage(documento_RSG,'Resolucion(RSG)')       
         }
 
         const newRgsnp = await RSG.create({
@@ -175,7 +176,7 @@ const getRSGController = async (id) => {
 
 const getAllRSGforAnalista4Controller = async () => {
     try {
-        const rgsnps = await RSG.findAll({
+        const response = await RSG.findAll({
 
           where: { tipo: 'RSGNP' }, 
                  attributes: ['id', 'id_AR3', 'createdAt',
@@ -206,7 +207,19 @@ const getAllRSGforAnalista4Controller = async () => {
                    
                  ],
                });
-               return rgsnps || null;
+
+               const modifiedResponse = response.map(item => {
+                const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+                const cachedValue = myCache.get(`AnalistaFour-${id}`); // Obtener valor del cache si existe
+            
+                return {
+                    ...item.toJSON(),
+                    disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+                };
+              });
+        
+        
+               return modifiedResponse || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);
@@ -243,7 +256,7 @@ const updateRSGNPController = async (id, {id_descargo_RSG, id_estado_RSGNP, tipo
 
 const getAllRSGforGerenciaController = async () => {
     try {
-        const rgsnps = await RSG.findAll({
+        const response = await RSG.findAll({
           where: { tipo: 'GERENCIA' }, 
                  attributes: ['id', 'id_AR3', 'createdAt',
          
@@ -273,7 +286,18 @@ const getAllRSGforGerenciaController = async () => {
                    
                  ],
                });
-               return rgsnps || null;
+
+               const modifiedResponse = response.map(item => {
+                const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+                const cachedValue = myCache.get(`Gerencia-${id}`); // Obtener valor del cache si existe
+            
+                return {
+                    ...item.toJSON(),
+                    disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+                };
+              });
+
+               return modifiedResponse || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);

@@ -56,6 +56,11 @@ module.exports=(sequelize)=>{
             allowNull:true
         },
 
+        tipo_infraccion:{
+            type:DataTypes.STRING,
+            allowNull:true
+        },
+
         lugar_infraccion:{
             type:DataTypes.STRING,
             allowNull:true

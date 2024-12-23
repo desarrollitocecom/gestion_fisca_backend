@@ -1,10 +1,61 @@
 const socketIo = require("socket.io");
-const {
-  getNCforInstructiva,
-} = require("../gestion_fisca_backend/controllers/ncController");
+const { getNCforInstructiva, getNCforAnalista } = require("../gestion_fisca_backend/controllers/ncController");
+const { getIFIforAnalista2Controller, getIFIforAR1Controller, getIFIforAR2Controller } = require("../gestion_fisca_backend/controllers/informeFinalController");
+const { getRSAforAnalista3Controller, getRSAforAR3Controller, getRSAforAnalista5Controller } = require("../gestion_fisca_backend/controllers/rsaController")
+const { getRSGforAnalista4Controller, getRSGforGerenciaController } = require("../gestion_fisca_backend/controllers/rsgController")
+const { getRGforAnalista5Controller } = require("../gestion_fisca_backend/controllers/rgController")
+
 const cache = require("./middlewares/cacheNodeStocked");
 // Mapa para almacenar los sockets de los usuarios
 const userSockets = new Map();
+
+const areaMap = {
+  "AnalistaOne": {
+    getFunction: getNCforAnalista,  
+    emitEvent: "sendAnalista1"  
+  },
+  "AInstructiva": {
+    getFunction: getNCforInstructiva,  
+    emitEvent: "sendAI1"  
+  },
+  "AResolutivaOne": {
+    getFunction: getIFIforAR1Controller,  
+    emitEvent: "sendAR1"  
+  },
+  "AnalistaTwo": {
+    getFunction: getIFIforAnalista2Controller,  
+    emitEvent: "sendAnalista2"  
+  },
+  "AResolutivaTwo": {
+    getFunction: getIFIforAR2Controller,  
+    emitEvent: "sendAR2"  
+  },
+  "AnalistaThree": {
+    getFunction: getRSAforAnalista3Controller,  
+    emitEvent: "sendAnalista3"  
+  },
+  "AResolutivaThree": {
+    getFunction: getRSAforAR3Controller,  
+    emitEvent: "sendAR3"  
+  },
+  "AnalistaFour": {
+    getFunction: getRSGforAnalista4Controller,  
+    emitEvent: "sendAnalista4"  
+  },
+  "Gerencia": {
+    getFunction: getRSGforGerenciaController,  
+    emitEvent: "sendGerencia"  
+  },
+  "AnalistaFive-AR3": {
+    getFunction: getRSAforAnalista5Controller,  
+    emitEvent: "sendAnalita5fromAnalista3"  
+  },
+  "AnalistaFive-Gerencia": {
+    getFunction: getRGforAnalista5Controller,  
+    emitEvent: "sendAnalita5fromGerencia"  
+  },
+};
+
 
 let io; // Declaramos io como variable global en este módulo
 
@@ -15,60 +66,55 @@ function initializeSocket(server) {
       methods: ["GET", "POST"],
     },
   });
-  let prueba;
+
   io.on("connection", (socket) => {
     console.log(`Nuevo cliente conectado: ${socket.id}`);
     // Evento de registro: asociamos el socket con el usuario
     socket.on("register", (userName) => {
       userSockets.set(userName, socket); // Asocia el ID de usuario con el socket
     });
-    socket.on("modal", async ({ id, type, area, doc }) => {
-      try {
-        // console.log(type, area);
-        const key = `${area}-${id}`;
-        // cache.set(key, { disabled:type });
-        if (area == "Ainstructiva") {
-          const findNC = await getNCforInstructiva(id);
+
+    socket.on("modal", async ({ id, type, area }) => {
+      try { 
+        // Verifica si el área está en el mapeo
+        const areaConfig = areaMap[area];
+        console.log(areaConfig);
+
+        if (areaConfig) {
+          const { getFunction, emitEvent } = areaConfig;  // Obtén la función y el evento correspondiente
+    
+          const key = `${area}-${id}`;
+    
+          // Llamar a la función correspondiente para obtener los datos
+          const findNC = await getFunction(id);
           const plainNC = findNC.toJSON();
-
-          // Leer el estado actual desde el cache (si existe)
+    
           const cachedData = cache.get(key);
-          plainNC.disabled = cachedData ? cachedData.disabled : false; // Valor predeterminado: false
-
+          plainNC.disabled = cachedData ? cachedData.disabled : false;
+    
           if (type === "open") {
-            prueba = "está abierto";
             plainNC.disabled = true;
-
-            // Guardar en cache con disabled: true
             cache.set(key, { disabled: true });
+            console.log(plainNC);
             
           } else if (type === "close") {
-            prueba = "está cerrado";
             plainNC.disabled = false;
             cache.del(key);
-                      
           } else if (type === "refresh") {
-
-            // Eliminar del cache
-            const deleted = cache.del(key);
-            if (deleted) {
-              console.log(`Modal ${key} eliminado del cache`);
-            } else {
-              console.log(`Modal ${key} no encontrado en cache para eliminar`);
-            }
-
-            // Resetear plainNC.disabled si se elimina del cache
+            cache.del(key);
             plainNC.disabled = false;
           }
-
-          io.emit("sendAI1", { data: [plainNC] });
-
-          console.log("Datos emitidos con éxito:", plainNC);
+    
+          // Emitir el evento dinámicamente
+          io.emit(emitEvent, { data: [plainNC] });
+        } else {
+          console.error(`Área desconocida: ${area}`);
         }
       } catch (error) {
         console.error("Error en el evento 'modal':", error);
       }
     });
+
     // Desconexión: eliminamos el socket del mapa
     socket.on("disconnect", () => {
       // userSockets.forEach((value, key) => {

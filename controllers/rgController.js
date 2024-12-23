@@ -2,6 +2,8 @@ const { RG, Usuario,  NC , TramiteInspector } = require('../db_connection');
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 const { Sequelize } = require('sequelize');
 const { RSG1, DescargoNC, DescargoRSG, IFI, DescargoIFI, RSG2, RSA, DescargoRSA, RSG } = require('../db_connection'); 
+const myCache = require("../middlewares/cacheNodeStocked");
+
 
 // Crear un registro RG   
 const createRGController = async ({
@@ -71,7 +73,19 @@ const getAllRGforAnalista5Controller = async () => {
               },
             ]
         });
-        return response || null;
+
+        const modifiedResponse = response.map(item => {
+            const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+            const cachedValue = myCache.get(`AnalistaFive-Gerencia-${id}`); // Obtener valor del cache si existe
+        
+            return {
+                ...item.toJSON(),
+                disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+            };
+          });
+
+          
+        return modifiedResponse || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los RSGNP para AN5", data: error });
         return false;

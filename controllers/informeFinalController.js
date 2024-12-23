@@ -1,5 +1,6 @@
 const { IFI, DescargoIFI,Usuario,  NC , TramiteInspector} = require("../db_connection");
 const { Sequelize } = require('sequelize');
+const myCache = require("../middlewares/cacheNodeStocked");
 
 const { saveImage, deleteFile } = require("../utils/fileUtils");
 
@@ -148,27 +149,27 @@ const getAllIFIforAR1Controller = async () => {
             },
           ],
       });
-      return response || null;
+
+
+      const modifiedResponse = response.map(item => {
+        const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+        const cachedValue = myCache.get(`AResolutivaOne-${id}`); // Obtener valor del cache si existe
+    
+        return {
+            ...item.toJSON(),
+            disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+        };
+      });
+
+
+
+
+      return modifiedResponse || null;
   } catch (error) {
       console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
       return false;
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -211,27 +212,6 @@ const getIFIforAR1Controller = async (id) => {
       return false;
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -358,7 +338,18 @@ const getAllIFIforAnalista2Controller = async () => {
             },
           ],
       });
-      return response || null;
+
+      const modifiedResponse = response.map(item => {
+        const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+        const cachedValue = myCache.get(`AnalistaTwo-${id}`); // Obtener valor del cache si existe
+    
+        return {
+            ...item.toJSON(),
+            disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+        };
+      });
+    
+      return modifiedResponse || null;
   } catch (error) {
       console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
       return false;
@@ -398,7 +389,21 @@ const getAllIFIforAR2Controller = async () => {
             },
           ],
       });
-      return response || null;
+
+
+      const modifiedResponse = response.map(item => {
+        const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+        const cachedValue = myCache.get(`AResolutivaTwo-${id}`); // Obtener valor del cache si existe
+    
+        return {
+            ...item.toJSON(),
+            disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+        };
+      });
+
+
+      
+      return modifiedResponse || null;
   } catch (error) {
       console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
       return false;

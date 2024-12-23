@@ -1,6 +1,8 @@
 const { RSA , Usuario,  NC , TramiteInspector, DescargoRSA} = require('../db_connection'); // Asegúrate de que la ruta al modelo sea correcta
 const {saveImage,deleteFile}=require('../utils/fileUtils')
 const { Sequelize } = require('sequelize');
+const myCache = require("../middlewares/cacheNodeStocked");
+
 const createRSAController = async ({nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo, id_evaluar_rsa, id_descargo_RSA,id_nc,id_AR2}) => {
     let documento_path;
     try {
@@ -62,7 +64,21 @@ const getAllRSAforAR3Controller = async () => {
               },
             ],
         });
-        return response || null;
+
+        const modifiedResponse = response.map(item => {
+          const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+          const cachedValue = myCache.get(`AResolutivaThree-${id}`); // Obtener valor del cache si existe
+      
+          return {
+              ...item.toJSON(),
+              disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+          };
+        });
+  
+  
+
+
+        return modifiedResponse || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
         return false;
@@ -231,7 +247,18 @@ const getAllRSAforAnalista3Controller = async () => {
             },
           ],
       });
-      return response || null;
+
+      const modifiedResponse = response.map(item => {
+        const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+        const cachedValue = myCache.get(`AnalistaThree-${id}`); // Obtener valor del cache si existe
+    
+        return {
+            ...item.toJSON(),
+            disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+        };
+      });
+      
+      return modifiedResponse || null;
   } catch (error) {
       console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
       return false;
@@ -322,7 +349,19 @@ const getAllRSAforAnalista5Controller = async () => {
               },
           ],
       });
-      return response || null;
+
+      const modifiedResponse = response.map(item => {
+        const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+        const cachedValue = myCache.get(`AnalistaFive-AR3-${id}`); // Obtener valor del cache si existe
+    
+        return {
+            ...item.toJSON(),
+            disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+        };
+      });
+
+
+      return modifiedResponse || null;
   } catch (error) {
       console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
       return false;

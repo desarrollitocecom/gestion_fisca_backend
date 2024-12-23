@@ -1,4 +1,4 @@
-const { RG, Usuario,  NC , TramiteInspector, Infraccion } = require('../db_connection'); 
+const { RG, Usuario,  NC , TramiteInspector, Infraccion, MedidaComplementaria } = require('../db_connection'); 
 const { Sequelize } = require('sequelize');
 const { RSG1, DescargoNC, DescargoRSG, IFI, Entidad, DescargoIFI, RSG2, RSA, DescargoRSA, RSG, Acta } = require('../db_connection'); 
 
@@ -7,8 +7,9 @@ const getAllDataController = async () => {
         const response = await NC.findAll({ 
             order: [['id', 'ASC']],
             attributes: [
-                'id','ordenanza_municipal','nro_documento', 'lugar_infraccion', 'observaciones', 
+                'id','ordenanza_municipal','nro_documento', 'lugar_infraccion', 'observaciones', 'tipo_infraccion',
                 [Sequelize.col('entidad.nombre_entidad'), 'razon_social'],
+                [Sequelize.col('entidad.giro_entidad'), 'giro'],
                 [Sequelize.col('tramiteInspector.nro_nc'), 'numero_nc'],
                 [Sequelize.col('tramiteInspector.nro_acta'), 'numero_acta'],
                 [Sequelize.col('tramiteInspector.createdAt'), 'fecha_NC'],
@@ -25,6 +26,14 @@ const getAllDataController = async () => {
                 [Sequelize.col('tramiteInspector.createdAt'), 'inspector_createdAt'],
 
                 [Sequelize.col('digitadorUsuario.usuario'), 'usuarioDigitador'],
+
+
+                //---------MEDIDA COMPLEMENTARIA-------
+                [Sequelize.col('tramiteInspector.medidaComplementaria.nombre_MC'), 'nombre_MC'],
+                [Sequelize.col('tramiteInspector.medidaComplementaria.nro_medida_complementaria'), 'nro_medida_complementaria'],
+                [Sequelize.col('tramiteInspector.medidaComplementaria.numero_ejecucion'), 'numero_ejecucion'],
+                [Sequelize.col('tramiteInspector.medidaComplementaria.tipo_ejecucionMC'), 'tipo_ejecucionMC'],
+                
 
                 //----------DESCARGO NC---------
                 [Sequelize.col('descargoNC.analistaUsuario.usuario'), 'usuarioAnalista1'],
@@ -47,7 +56,7 @@ const getAllDataController = async () => {
                 [Sequelize.col('IFI.TERMINADO_RSG1.Usuarios.usuario'), 'usuarioRSG1'],
                 [Sequelize.literal(`'RESOLUCION SUBGERENCIAL 1'`), 'nombre_RSG1'],
                 [Sequelize.col('IFI.TERMINADO_RSG1.nro_resolucion'), 'numero_RSG1'],//
-                [Sequelize.col('IFI.TERMINADO_RSG1.fecha_resolucion'), 'fecha_resolucion'],//
+                [Sequelize.col('IFI.TERMINADO_RSG1.fecha_resolucion'), 'fecha_resolucion1'],//
                 [Sequelize.col('IFI.TERMINADO_RSG1.documento'), 'documento_RSG1'],
                 [Sequelize.col('IFI.TERMINADO_RSG1.createdAt'), 'RSG1_createdAt'],
 
@@ -64,7 +73,7 @@ const getAllDataController = async () => {
                 [Sequelize.col('IFI.RSG2.Usuarios.usuario'), 'usuarioAreaInstructiva2'],
                 [Sequelize.literal(`'RESOLUCION SUBGERENCIAL 2'`), 'nombre_AR2'],
                 [Sequelize.col('IFI.RSG2.nro_resolucion2'), 'numero_AR2'],//
-                [Sequelize.col('IFI.RSG2.fecha_resolucion'), 'fecha_resolucion'],//
+                [Sequelize.col('IFI.RSG2.fecha_resolucion'), 'fecha_resolucion2'],//
                 [Sequelize.col('IFI.RSG2.documento'), 'documento_AR2'],
                 [Sequelize.col('IFI.RSG2.createdAt'), 'AR2_createdAt'],
 
@@ -92,6 +101,7 @@ const getAllDataController = async () => {
                 [Sequelize.col('IFI.RSA.RSGs.fecha_rsg'), 'fecha_RSG'],//
                 [Sequelize.col('IFI.RSA.RSGs.fecha_notificacion'), 'fecha_notificacion_RSG'],//
                 [Sequelize.col('IFI.RSA.RSGs.documento_RSG'), 'documento_RSG'],
+                [Sequelize.col('IFI.RSA.RSGs.tipo'), 'estado_RSG'],
                 [Sequelize.col('IFI.RSA.RSGs.createdAt'), 'RSG3_createdAt'],
 
                 //----------------DESCARGO RESOLUCION SUBGERENCIAL-------------
@@ -110,12 +120,13 @@ const getAllDataController = async () => {
                 [Sequelize.col('IFI.RSA.RSGs.RGs.fecha_notificacion'), 'fecha_notificacion_RG'],
                 [Sequelize.col('IFI.RSA.RSGs.RGs.documento_rg'), 'documento_RG'],
                 [Sequelize.col('IFI.RSA.RSGs.RGs.createdAt'), 'RG_createdAt'],
+                [Sequelize.col('IFI.RSA.RSGs.RGs.tipo'), 'resuelve_RG'],
 
                 [Sequelize.col('IFI.RSA.RSGs.RGs.ActaGerente.analista5Usuario.usuario'), 'usuarioAnalista5'],
                 [Sequelize.literal(`'ACTA DE CONSENTIMIENTO'`), 'nombre_Acta'],
                 [Sequelize.col('IFI.RSA.RSGs.RGs.ActaGerente.documento_acta'), 'documento_Acta'],
                 [Sequelize.col('IFI.RSA.RSGs.RGs.ActaGerente.createdAt'), 'Acta_createdAt'],
-
+                
             ],
             include: [
                 {
@@ -125,6 +136,10 @@ const getAllDataController = async () => {
                         {
                             model: Usuario,
                             as: 'inspectorUsuario'
+                        },
+                        {
+                            model: MedidaComplementaria,
+                            as: 'medidaComplementaria'
                         }
                     ],
                     attributes: [], 
@@ -289,22 +304,22 @@ const getAllDataController = async () => {
                 numero_acta: row.get('numero_acta'),
                 fecha_NC: row.get('fecha_NC'),
                 lugar_infraccion: row.get('lugar_infraccion'),
-                actividad_economica: 'giro',
+                actividad_economica: row.get('giro'),
                 codigo: row.get('codigo'),
                 descripcion: row.get('descripcion'),
-                tipo_infraccion: 'infraccion',
-                medida_complementaria: 'medida',
+                tipo_infraccion: row.get('tipo_infraccion'),
+                medida_complementaria: row.get('nombre_MC'),
                 monto: row.get('monto'),
 
                 
                 
-                documento_origen: 'numero MC',
-                acta_ejecucion: 'acta de ejecucion',
-                ejecucion_medida: 'retiro',
-                levantamiento_medida: 'levantamiento',
+                documento_origen: row.get('nro_medida_complementaria'),
+                acta_ejecucion: row.get('numero_ejecucion'),
+                ejecucion_medida: row.get('tipo_ejecucionMC'),
+                levantamiento_medida: row.get('numero_ejecucion'),
                 observaciones: row.get('observaciones'),
                 nombre_inspector: row.get('nombre_inspector'),
-                estado_NC: 'SUBSANADO',
+                estado_NC: '',
 
             //} : undefined,
             //etapaDigitador: row.get('usuarioDigitador') ? {
@@ -326,18 +341,19 @@ const getAllDataController = async () => {
                 numero_DIFI: row.get('numero_DIFI'),
                 fecha_descargoIFI: row.get('fecha_descargo'),
 
-                numero_RSG_MC: '123',
-                fecha_RSG1: '12/04/2024',
-                numero_RSG1: '234',
-                fecha_RSG2: '12/04/2024',
-                numero_RSG2: '345',
+                numero_RSG_MC: row.get('numero_RSG1'),
+                fecha_RSG1: row.get('fecha_resolucion1'),
+                numero_RSG1: row.get('numero_RSG1'),
+                fecha_RSG2: row.get('fecha_resolucion2'),
+                numero_RSG2: row.get('numero_AR2'),
+
 
             //} : undefined,
             //etapaRSA: row.get('usuarioAreaInstructiva2') ? {
                 numero_RSA: row.get('numero_RSA'),
                 fecha_RSA: row.get('fecha_RSA'),
                 fecha_notificacion_RSA: row.get('fecha_notificacion_RSA'),
-                estado_RSA: 'fundado',
+                estado_RSA: '',
             //} : undefined,
             //etapaDescargoRSA: row.get('usuarioAnalista3') ? {
                 numero_DRSA: row.get('numero_DRSA'),
@@ -348,7 +364,10 @@ const getAllDataController = async () => {
                 nro_RSG: row.get('numero_RSG'),
                 fecha_emision_RSG: row.get('fecha_RSG'),
                 fecha_notificacion_RSG: row.get('fecha_notificacion_RSG'),
-                resuelve_RSG: 'SI',
+                resuelve_RSG: (() => {
+                    const estado = row.get('estado_RSG');
+                    return estado === 'RSGP' ? 'SI' : estado === null ? null : 'NO';
+                  })(),
             //} : undefined,
             //etapaDescargoRSG: row.get('usuarioAnalista4') ? {
                 numero_DRSG: row.get('nro_DRSG'),
@@ -358,7 +377,10 @@ const getAllDataController = async () => {
                 numero_RG: row.get('numero_RG'),
                 fecha_emision_RG: row.get('fecha_RG'),
                 fecha_notificacion_RG: row.get('fecha_notificacion_RG'),
-                resuelve_RG: 'NO',
+                resuelve_RG: (() => {
+                    const estado = row.get('resuelve_RG');
+                    return estado === 'FUNDADO' ? 'SI' : estado === null ? null : 'NO';
+                  })(),
             //} : undefined,
             //etapaConsentimiento: row.get('usuarioAnalista5') ? {
                 // usuarioAnalista5: row.get('usuarioAnalista5'),
