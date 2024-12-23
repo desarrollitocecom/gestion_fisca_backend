@@ -1,5 +1,6 @@
 const { getAllUsersforControlActasController } = require('../controllers/usuarioController');
 const { createControlActaController, actasActualesHandlerController, updateControlActaController } = require('../controllers/controlActaController');
+const { format } = require('date-fns-tz');
 
 const getAllUsersforControlActasHandler = async (req, res) => {
     try {
@@ -37,7 +38,10 @@ const createControlActaHandler = async (req, res) => {
         });
     }
 
-    const fecha_laburo = new Date().toISOString().split('T')[0];
+    const fecha_laburo = format(new Date(), 'yyyy-MM-dd', {
+        timeZone: 'America/Lima',
+    });
+
     console.log(fecha_laburo);
     
 
