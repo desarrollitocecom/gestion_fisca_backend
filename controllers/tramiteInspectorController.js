@@ -37,30 +37,14 @@ const getAllTramiteInspectorById = async (id, page = 1, limit = 20) => {
     const offset = (page - 1) * limit;
     try {
         const response = await TramiteInspector.findAndCountAll({
-            attributes: { exclude: ['id_medida_complementaria'] },
             where: {
                 id_inspector: id,
             },
+            order: [['createdAt', 'ASC']],
             include: [
                 {
                     model: MedidaComplementaria, 
                     as: 'medidaComplementaria',
-                    attributes: { exclude: ['id_estado', 'id_documento', 'id_ejecucionMC'] },
-                    include: [
-                        {
-                            model: TipoDocumentoComplementario,
-                            as: 'tipoDocumento', 
-                        },
-                        {
-                            model: EjecucionMC,
-                            as: 'ejecucion'
-                        },
-                        {
-                            model: EstadoMC,
-                            as: 'estado', 
-                        }
-                        
-                    ],
                 },
             ],
             limit,

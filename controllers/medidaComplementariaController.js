@@ -8,7 +8,8 @@ const getAllMCController = async () => {
         const response = await NC.findAll({
             where: Sequelize.where(Sequelize.col('tramiteInspector.medidaComplementaria.estado'), 'PENDIENTE'),
             attributes: [
-                'id',
+                [Sequelize.col('tramiteInspector.medidaComplementaria.id'), 'id'],
+                ['id', 'id_nc'],
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('tramiteInspector.medidaComplementaria.nombre_MC'), 'nombre_MC'],
                 [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'inspector'],

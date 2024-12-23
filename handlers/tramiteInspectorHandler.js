@@ -8,8 +8,7 @@ const { getIo } = require('../sockets');
 const createTramiteHandler = async (req, res) => {
     const io = getIo(); 
     
-
-    const { 
+    let { 
             nombre_MC, 
             nro_medida_complementaria,
 
@@ -50,6 +49,21 @@ const createTramiteHandler = async (req, res) => {
             errors.push('El inspector es obligatorio');
         }
 
+        if (nombre_MC == 1){
+            nombre_MC = 'ACTA DE EJECUCIÓN DE MEDIDA PROVICIONAL'
+        }
+        if (nombre_MC == 2){
+            nombre_MC = 'VALORIZACIÓN DE LA OBRA'
+        }
+        if (nombre_MC == 3){
+            nombre_MC = 'ACTA DE RETENCIÓN Y/O DECOMISO'
+        }
+        if (nombre_MC == 4){
+            nombre_MC = 'ACTA DE EVALUACIÓN SANITARIA'
+        }
+        if (nombre_MC == 5){
+            nombre_MC = 'INFORME TÉCNICO'
+        }
 
         const relatedFields = [nombre_MC, nro_medida_complementaria, req.files['documento_medida_complementaria']];
         const anyRelatedFieldFilled = relatedFields.some(field => field !== undefined && field !== null);
