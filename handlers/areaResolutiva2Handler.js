@@ -5,6 +5,7 @@ const {createRSAController, getRSAforAnalista3Controller} = require('../controll
 const {validateRSG2, validateRSA} = require('../validations/areaResolutiva2Validation')
 const fs = require('node:fs');
 const {responseSocket} = require('../utils/socketUtils')
+const { getIo } = require("../sockets");
 
 const getAllIFIforAR2Handler = async (req, res) => {  
 
@@ -29,6 +30,8 @@ const getAllIFIforAR2Handler = async (req, res) => {
   };
 
 const createRSG2Handler = async (req, res) => {
+    const io = getIo();
+
     const { id } = req.params;
 
     const existingIFI = await getInformeFinalController(id);
@@ -81,6 +84,7 @@ const createRSG2Handler = async (req, res) => {
         }
 
         await updateDocumento({ id_nc, total_documentos: newRsg2.documento, nuevoModulo: "RESOLUCION SUBGERENCIAL 2" });
+        io.emit("sendAR2", { id, remove: true });
 
         return res.status(200).json({
             message: "RSG2 creado correctamente",
@@ -94,6 +98,7 @@ const createRSG2Handler = async (req, res) => {
 };
 
 const createRSAHandler = async (req, res) => {
+    const io = getIo();
     const { id } = req.params;
     const existingIFI = await getInformeFinalController(id);
 
@@ -145,6 +150,7 @@ const createRSAHandler = async (req, res) => {
 
         if (response) {
             await responseSocket({id: newRSA.id, method: getRSAforAnalista3Controller, socketSendName: 'sendAnalista3', res});
+            io.emit("sendAR2", { id, remove: true });
         } else {
            res.status(400).json({
                 message: 'Error al crear el RSA',

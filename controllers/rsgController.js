@@ -309,7 +309,7 @@ const getAllRSGforGerenciaController = async () => {
 
 const getAllRSGforAnalista5Controller = async () => {
     try {
-        const rgsnps = await RSG.findAll({
+        const response = await RSG.findAll({
             where: { tipo: 'ANALISTA_5' },    
             order: [['createdAt', 'DESC']],
             attributes: ['id', 'id_AR3',
@@ -342,15 +342,24 @@ const getAllRSGforAnalista5Controller = async () => {
                    
                  ],
                });
-               return rgsnps || null;
+
+               const modifiedResponse = response.map(item => {
+                const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+                const cachedValue = myCache.get(`AnalistaFive-AR4-${id}`); // Obtener valor del cache si existe
+            
+                return {
+                    ...item.toJSON(),
+                    disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+                };
+              });
+
+               return modifiedResponse || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);
         return false
     }
 };
-
-
 
 
 
@@ -397,19 +406,6 @@ const getRSGforAnalista5Controller = async (id) => {
         return false
     }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -664,12 +660,6 @@ const getRSGforGerenciaController = async (id) => {
         return false
     }
 };
-
-
-
-
-
-
 
 
 

@@ -4,6 +4,7 @@ const { updateDocumento } = require("../controllers/documentoController");
 const { validateAnalista3 } = require("../validations/analista3Validation");
 const {responseSocket} = require('../utils/socketUtils');
 const fs = require("node:fs");
+const { getIo } = require("../sockets");
 
 const getAllRSAforAnalista3Handler = async (req, res) => {
     try {
@@ -27,6 +28,8 @@ const getAllRSAforAnalista3Handler = async (req, res) => {
 };
 
 const createDescargoRSAHandler = async (req, res) => {
+    const io = getIo();
+
     const {id}=req.params;
     const existingRSA=await getRsaController(id);
 
@@ -78,6 +81,7 @@ const createDescargoRSAHandler = async (req, res) => {
 
         if (response) {
             await responseSocket({id, method: getRSAforAR3Controller, socketSendName: 'sendAR3', res});
+            io.emit("sendAnalista3", { id, remove: true });
         } else {
            res.status(400).json({
                 message: 'Error al crear Descargo RSA en el Handler',
@@ -94,6 +98,8 @@ const createDescargoRSAHandler = async (req, res) => {
 };
 
 const sendWithoutDescargoRSAHandler = async (req, res) => {
+    const io = getIo();
+
     const {id}=req.params;
     const existingRSA=await getRsaController(id);
 
@@ -131,6 +137,8 @@ const sendWithoutDescargoRSAHandler = async (req, res) => {
 
         if (response) {
             await responseSocket({id, method: getRSAforAnalista5Controller, socketSendName: 'sendAnalita5fromAnalista3', res});
+            io.emit("sendAnalista3", { id, remove: true });
+
         } else {
            res.status(400).json({
                 message: 'Error al enviar sin Desargo RSA',

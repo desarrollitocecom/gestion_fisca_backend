@@ -3,7 +3,7 @@ const { createRGController, getAllRGforGerenciaController, getRGforAnalista5Cont
 const { updateDocumento } = require("../controllers/documentoController");
 const {responseSocket} = require('../utils/socketUtils');
 const fs = require("node:fs");
-
+const { getIo } = require("../sockets");
 
 const getAllRSGforGerenciaHandler = async (req, res) => {
     try {
@@ -28,6 +28,8 @@ const getAllRSGforGerenciaHandler = async (req, res) => {
 
 
 const createRGHandler = async (req, res) => {
+    const io = getIo();
+
     const { id } = req.params;
     const existingRSG = await getRSGController(id);
 
@@ -127,6 +129,8 @@ const createRGHandler = async (req, res) => {
 
         if (response) {
             await responseSocket({ id: newRG.id, method: getRGforAnalista5Controller, socketSendName: 'sendAnalita5fromGerencia', res });
+            io.emit("sendGerencia", { id, remove: true });
+            
         } else {
             res.status(400).json({
                 message: 'Error al enviar el RG al socket',

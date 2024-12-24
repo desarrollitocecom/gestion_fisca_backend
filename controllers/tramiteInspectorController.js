@@ -1,5 +1,6 @@
 const { TramiteInspector, MedidaComplementaria, EstadoMC, TipoDocumentoComplementario, EjecucionMC } = require('../db_connection');
 const { saveImage, deleteFile } = require('../utils/fileUtils');
+const { Sequelize } = require('sequelize');
 
 const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, id_medida_complementaria, estado, id_inspector }) => {
 
@@ -40,16 +41,21 @@ const getAllTramiteInspectorById = async (id, page = 1, limit = 20) => {
             where: {
                 id_inspector: id,
             },
-            order: [['createdAt', 'ASC']],
+            order: [['createdAt', 'DESC']],
+            attributes: ['id', 'nro_nc', 'documento_nc', 'nro_acta', 'documento_acta',
+                            [Sequelize.col('medidaComplementaria.nro_medida_complementaria'), 'nro_mc'],
+                            [Sequelize.col('medidaComplementaria.documento_medida_complementaria'), 'documento_mc'],
+                            'createdAt'
+                             ],
             include: [
                 {
                     model: MedidaComplementaria, 
                     as: 'medidaComplementaria',
+                    attributes: []
                 },
             ],
             limit,
             offset,
-            order: [['id', 'DESC']]
         });
 
         return { totalCount: response.count, data: response.rows, currentPage: page } || null;

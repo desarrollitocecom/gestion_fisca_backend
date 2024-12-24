@@ -75,7 +75,7 @@ const getAllRSAforAR3Controller = async () => {
           };
         });
   
-  
+        console.log(modifiedResponse, 'asdsad');
 
 
         return modifiedResponse || null;

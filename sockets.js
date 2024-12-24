@@ -2,7 +2,7 @@ const socketIo = require("socket.io");
 const { getNCforInstructiva, getNCforAnalista } = require("../gestion_fisca_backend/controllers/ncController");
 const { getIFIforAnalista2Controller, getIFIforAR1Controller, getIFIforAR2Controller } = require("../gestion_fisca_backend/controllers/informeFinalController");
 const { getRSAforAnalista3Controller, getRSAforAR3Controller, getRSAforAnalista5Controller } = require("../gestion_fisca_backend/controllers/rsaController")
-const { getRSGforAnalista4Controller, getRSGforGerenciaController } = require("../gestion_fisca_backend/controllers/rsgController")
+const { getRSGforAnalista4Controller, getRSGforGerenciaController, getRSGforAnalista5Controller } = require("../gestion_fisca_backend/controllers/rsgController")
 const { getRGforAnalista5Controller } = require("../gestion_fisca_backend/controllers/rgController")
 
 const cache = require("./middlewares/cacheNodeStocked");
@@ -49,6 +49,10 @@ const areaMap = {
   "AnalistaFive-AR3": {
     getFunction: getRSAforAnalista5Controller,  
     emitEvent: "sendAnalita5fromAnalista3"  
+  },
+  "AnalistaFive-AR4": {
+    getFunction: getRSGforAnalista5Controller,  
+    emitEvent: "sendAnalita5fromAnalista4"  
   },
   "AnalistaFive-Gerencia": {
     getFunction: getRGforAnalista5Controller,  

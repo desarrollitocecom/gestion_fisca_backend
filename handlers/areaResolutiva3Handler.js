@@ -9,16 +9,17 @@ const { getIo } = require('../sockets');
 const getAllRSAforAR3Handler = async (req, res) => {
   try {
     const response = await getAllRSAforAR3Controller();
-
+    
+    
     if (response.length === 0) {
       return res.status(200).json({
-        message: "No hay más RSA para el Analista 3",
+        message: "No hay más RSA para el Area Resolutiva 3",
         data: []
       });
     }
 
     return res.status(200).json({
-      message: "RSAs obtenidos correctamente para el Analista 3",
+      message: "RSAs obtenidos correctamente para el Area Resolutiva 3",
       data: response,
     });
   } catch (error) {
@@ -85,6 +86,7 @@ const createRSGHandler = async (req, res) => {
         if(tipo == 'RSGNP'){
           io.emit("sendAnalista4", { data: [plainNC] });
         }
+        io.emit("sendAR3", { id, remove: true });
 
         res.status(201).json({
             message: 'RSG creado con exito',

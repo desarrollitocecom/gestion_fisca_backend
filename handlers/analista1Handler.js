@@ -28,6 +28,7 @@ const getAllNCforAnalistaHandler = async (req, res) => {
 };
 
 const createDescargoNCHandler = async (req, res) => {
+    const io = getIo();
     const id = req.params.id;
 
     const existingNC = await getNC(id); 
@@ -83,7 +84,7 @@ const createDescargoNCHandler = async (req, res) => {
      
         if (response) {
             await responseSocket({id, method: getNCforInstructiva, socketSendName: 'sendAI1', res});
-            io.emit("sendAnalista1", { id: id_nc, remove: true });
+            io.emit("sendAnalista1", { id, remove: true });
         } else {
            res.status(400).json({
                 message: 'Error al actualizar el NC desde el Analista1',

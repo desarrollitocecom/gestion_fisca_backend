@@ -4,6 +4,7 @@ const { createDescargoIFI } = require('../controllers/descargoInformeFinalContro
 const {updateDocumento}=require('../controllers/documentoController');
 const {validateAnalista2} = require('../validations/analista2Validation')
 const {responseSocket} = require('../utils/socketUtils')
+const { getIo } = require("../sockets");
 
 const getAllIFIforAnalista2Handler = async (req, res) => {  
 
@@ -28,6 +29,8 @@ const getAllIFIforAnalista2Handler = async (req, res) => {
 };
 
 const createDescargoIFIHandler = async (req, res) => {
+    const io = getIo();
+
     const {id}=req.params;
     const existingIFI=await getInformeFinalController(id);
 
@@ -80,6 +83,7 @@ const createDescargoIFIHandler = async (req, res) => {
 
         if (response) {
             await responseSocket({id, method: getIFIforAR2Controller, socketSendName: 'sendAR2', res});
+            io.emit("sendAnalista2", { id, remove: true });
         } else {
            res.status(400).json({
                 message: 'Error al crear Descargo IFI',
@@ -96,6 +100,8 @@ const createDescargoIFIHandler = async (req, res) => {
 };
 
 const sendWithoutDescargoIFIHandler = async (req, res) => {
+    const io = getIo();
+
     const {id}=req.params;
     const existingIFI = await getInformeFinalController(id); 
 
@@ -128,6 +134,7 @@ const sendWithoutDescargoIFIHandler = async (req, res) => {
    
         if (response) {
             await responseSocket({id, method: getIFIforAR2Controller, socketSendName: 'sendAR2', res});
+            io.emit("sendAnalista2", { id, remove: true });
         } else {
            res.status(400).json({
                 message: 'Error al crear sin descargo IFI en el handler',

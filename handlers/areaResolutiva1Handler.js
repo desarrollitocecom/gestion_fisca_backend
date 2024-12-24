@@ -1,6 +1,7 @@
 const {getAllIFIforAR1Controller, getInformeFinalController, updateInformeFinalController} = require('../controllers/informeFinalController');
 const {createRSG1Controller, getAllRSG1forAR1Controller} = require('../controllers/rsg1Controller');
 const {updateDocumento}=require('../controllers/documentoController');
+const { getIo } = require("../sockets");
 
 const {validateAreaResolutiva1} = require('../validations/areaResolutiva1Validation')
 
@@ -31,6 +32,8 @@ const getAllIFIforAR1Handler = async (req, res) => {
 };
 
 const createRSG1Handler = async (req, res) => {
+    const io = getIo();
+
     const { id } = req.params;
 
     const existingIFI = await getInformeFinalController(id);
@@ -81,6 +84,9 @@ const createRSG1Handler = async (req, res) => {
                 data: []
             });
         }
+
+        io.emit("sendAR1", { id, remove: true });
+
         return res.status(200).json({
             message: "RSG1 creado correctamente",
             data: response,

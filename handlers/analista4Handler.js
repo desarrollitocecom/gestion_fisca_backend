@@ -3,6 +3,7 @@ const {createDescargoRSGNPController} = require('../controllers/descargoRsgnpCon
 const { updateDocumento } = require("../controllers/documentoController");
 const { responseSocket } = require("../utils/socketUtils")
 const fs = require("node:fs");
+const { getIo } = require("../sockets");
 
 
 const getAllRSGforAnalista4Handler = async (req, res) => {
@@ -31,6 +32,7 @@ const getAllRSGforAnalista4Handler = async (req, res) => {
 
 
 const createDescargoRSGNPHandler = async (req, res) => {
+  const io = getIo();
   const {id}=req.params;
   const existingRSG=await getRSGController(id);
 
@@ -115,6 +117,7 @@ const createDescargoRSGNPHandler = async (req, res) => {
 
         if (response) {
             await responseSocket({id, method: getRSGforGerenciaController, socketSendName: 'sendGerencia', res});
+            io.emit("sendAnalista4", { id, remove: true });
         } else {
         res.status(400).json({
                 message: 'Error al crear Descargo RSGNP',
@@ -129,6 +132,7 @@ const createDescargoRSGNPHandler = async (req, res) => {
 
 
 const sendWithoutDescargoRSGNPHandler = async (req, res) => {
+  const io = getIo();
   const {id}=req.params;
   const existingRSG=await getRSGController(id);
 
@@ -165,6 +169,7 @@ const sendWithoutDescargoRSGNPHandler = async (req, res) => {
 
         if (response) {
             await responseSocket({id, method: getRSGforAnalista5Controller, socketSendName: 'sendAnalita5fromAnalista4', res});
+            io.emit("sendAnalista4", { id, remove: true });
         } else {
         res.status(400).json({
                 message: 'Error al enviar al socket los datos',
