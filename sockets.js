@@ -1,5 +1,5 @@
 const socketIo = require("socket.io");
-const { getNCforInstructiva, getNCforAnalista } = require("../gestion_fisca_backend/controllers/ncController");
+const { getNCforInstructiva, getNCforAnalista, getNCforDigitador } = require("../gestion_fisca_backend/controllers/ncController");
 const { getIFIforAnalista2Controller, getIFIforAR1Controller, getIFIforAR2Controller } = require("../gestion_fisca_backend/controllers/informeFinalController");
 const { getRSAforAnalista3Controller, getRSAforAR3Controller, getRSAforAnalista5Controller } = require("../gestion_fisca_backend/controllers/rsaController")
 const { getRSGforAnalista4Controller, getRSGforGerenciaController, getRSGforAnalista5Controller } = require("../gestion_fisca_backend/controllers/rsgController")
@@ -9,7 +9,12 @@ const cache = require("./middlewares/cacheNodeStocked");
 // Mapa para almacenar los sockets de los usuarios
 const userSockets = new Map();
 
+
 const areaMap = {
+  "Digitador": {
+    getFunction: getNCforDigitador,  
+    emitEvent: "sendDigitador"  
+  },
   "AnalistaOne": {
     getFunction: getNCforAnalista,  
     emitEvent: "sendAnalista1"  

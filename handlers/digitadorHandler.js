@@ -4,10 +4,12 @@ const { getAllMCController, updateMCController } = require('../controllers/medid
 const { validateNC } = require('../validations/digitadorValidation');
 const { responseSocket } = require('../utils/socketUtils')
 const {updateDocumento}=require('../controllers/documentoController');
+const { getIo } = require("../sockets");
 
 const sql = require("mssql");
 
 const updateNCHandler = async (req, res) => {
+    const io = getIo();
     const id = req.params.id;
 
     const existingNC = await getNC(id);
@@ -124,6 +126,7 @@ const updateNCHandler = async (req, res) => {
         // console.log(response);
         if (response) {
             await responseSocket({id, method: getNCforAnalista, socketSendName: 'sendAnalista1', res});
+            io.emit("sendDigitador", { id, remove: true });
         } else {
             return res.status(404).json({ message: 'Error al actualizar el NC' });
         }
