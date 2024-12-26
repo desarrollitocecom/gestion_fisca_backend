@@ -160,7 +160,7 @@ if (!id_nc) errores.push('El campo id_nc es requerido');
       // }
       const total_documentos=newActa.documento_acta
 
-      const nuevoModulo="DESCARGO INFORME FINAL INSTRUCTIVO"
+      const nuevoModulo="ACTA DE CONCENTIMIENTO"
 
       await updateDocumento({id_nc, total_documentos, nuevoModulo});
 

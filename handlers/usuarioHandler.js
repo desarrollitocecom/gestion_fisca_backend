@@ -1,4 +1,4 @@
-const { createUser, getUser, changePassword, signToken, getToken, changeUserData, getAllUsers, getUserById, deleteUser, logoutUser,createUserIfNotExists, saveToken, getTokenDNI } = require("../controllers/usuarioController");
+const { createUser, getUser, changePassword, signToken, getToken, changeUserData, updateUser, getAllUsers, getUserById, deleteUser, logoutUser,createUserIfNotExists, getUserByUUid, saveToken, getTokenDNI } = require("../controllers/usuarioController");
 const argon2 = require('argon2');
 const jwt = require('jsonwebtoken');
 const { userSockets } = require("../sockets");
@@ -438,8 +438,24 @@ const facialLoginHandler = async (req, res) => {
         error: error.message,
       });
     }
-  };
+};
   
+
+const updateUsersHandler = async (req, res) => {
+    const {id}=req.params;
+    const {usuario, correo, id_rol} = req.body;
+
+    try {
+        const response = await updateUser(id, {usuario, correo, id_rol});
+        
+        return res.json({
+            success: true,
+            data: response, 
+          });
+     } catch (error) {
+        console.log(error);
+    }
+};
 
 
 module.exports = {
@@ -452,5 +468,6 @@ module.exports = {
     getUserByIdHandler,
     deleteUserHandler,
     logoutHandler,
-    facialLoginHandler 
+    facialLoginHandler,
+    updateUsersHandler 
 };

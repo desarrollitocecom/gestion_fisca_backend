@@ -99,6 +99,18 @@ const changeUserData = async (usuario, correo, id_rol /*, id_empleado */) => {
     }
 };
 
+const updateUser = async (id, {usuario, correo, id_rol}) => {
+    try {
+        const user = await getUserByUUid(id);
+
+        await user.update({usuario, correo, id_rol})
+
+        return user
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 const getAllUsers = async (page = 1, pageSize = 20) => {
     try {
         const offset = (page - 1) * pageSize;
@@ -137,6 +149,20 @@ const getUserByToken = async (token) => {
             attributes: ['id']
         });
         return user.id;
+    } catch (error) {
+        console.error('Error en obtener el id del usuario');
+        return false;
+    }
+};
+
+const getUserByUUid = async (id) => {
+    try {        
+        const user = await Usuario.findOne({
+            where: { id },
+            
+        });
+
+        return user;
     } catch (error) {
         console.error('Error en obtener el id del usuario');
         return false;
@@ -269,6 +295,7 @@ module.exports = {
     getAllUsersforControlActasController,
     createUser,
     changePassword,
+    getUserByUUid,
     getUser,
     getToken,
     signToken,
@@ -283,4 +310,5 @@ module.exports = {
     createUserIfNotExists,
     saveToken,
     getTokenDNI,
+    updateUser
 };
