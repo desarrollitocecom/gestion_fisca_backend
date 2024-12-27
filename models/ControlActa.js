@@ -7,7 +7,7 @@ module.exports = (sequelize) => {
             defaultValue: DataTypes.UUIDV4,
         },
 
-        id_ragoActa: {
+        id_rangoActa: {
             type: DataTypes.UUID,
             references: {
                 model: 'RangoActas',
@@ -16,8 +16,18 @@ module.exports = (sequelize) => {
             allowNull: true, 
         }, 
         
-        numero_acta: {
-            type: DataTypes.INTEGER,
+        numero_acta: {/////////////////////
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+
+        descripcion: {//----------------
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+
+        estado: {
+            type: DataTypes.ENUM('ENTREGADO', 'NO_ENTREGADO', 'REALIZADO', 'DEVOLVIO', 'NO_DEVOLVIO'),
             allowNull: true
         },
         
@@ -40,15 +50,9 @@ module.exports = (sequelize) => {
             allowNull: true
         },
 
-        descripcion: {
-            type: DataTypes.TEXT,
-            allowNull: true
-        },
         
-        estado: {
-            type: DataTypes.ENUM('ENTREGADO', 'REALIZADO', 'DEVOLVIO', 'ANULADO'),
-            allowNull: true
-        },
+        
+        
         
 
         id_inspector: {
@@ -69,6 +73,7 @@ module.exports = (sequelize) => {
     ControlActa.associate = (db) => {
         ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_inspector', as: 'usuarioInspector' })   
         ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_encargado', as: 'usuarioEncargado' })  
+        ControlActa.belongsTo(db.RangoActa, { foreignKey: 'id_rangoActa', as: 'rangoActa'})
     };
 
     return ControlActa;

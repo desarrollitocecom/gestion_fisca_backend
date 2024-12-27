@@ -102,43 +102,12 @@ const createRolHandler = async (req, res) => {
 
 const getAllRolsHandler = async (req, res) => {
 
-    const { page = 1, pageSize = 20 } = req.query;
-    const errores = [];
-
-    if (isNaN(page)) errores.push("El page debe ser un numero");
-    if (page <= 0) errores.push("El page debe ser mayor a 0 ");
-    if (isNaN(pageSize)) errores.push("El pageSize debe ser un numero");
-    if (pageSize <= 0) errores.push("El pageSize debe ser mayor a 0 ");
-    if (errores.length > 0) {
-        return res.status(400).json({ errores });
-    }
     try {
-        const rols = await getAllRols(page, pageSize);
-
-        // Calcular el total de páginas
-        const totalPages = Math.ceil(rols.totalCount / pageSize);
-
-        // Verificar si la página solicitada está fuera de rango
-        if (page > totalPages) {
-            return res.status(404).json({
-                message: "Página fuera de rango",
-                data: {
-                    data: [],
-                    currentPage: page,
-                    totalPages: totalPages,
-                    totalCount: rols.totalCount,
-                }
-            });
-        }
+        const rols = await getAllRols();
 
         return res.status(200).json({
             message: "Rols obtenidos correctamente",
-            data: {
-                data: rols.data,
-                currentPage: page,
-                totalPages: totalPages,
-                totalCount: rols.totalCount,
-            }
+            data: rols
         });
     } catch (error) {
         console.error("Error en getAllRols:", error.message);

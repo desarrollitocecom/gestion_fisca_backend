@@ -40,28 +40,20 @@ const createPermiso = async (action, resource, descripcion) => {
 
 };
 
-const getAllRols = async (page = 1, pageSize = 20) => {
+const getAllRols = async () => {
     try {
-        const offset = (page - 1) * pageSize;
-        const limit = pageSize;
-
-        const response = await Rol.findAndCountAll({
+        const response = await Rol.findAll({
             where: { state: true },
-            include: {
-                model: Permiso,
-                as: 'permisos',
-                attributes: ['id', 'nombre', 'descripcion']
-            },
-            limit,
-            offset,
-            order: [['nombre', 'DESC']]
+            order: [['id', 'ASC']],
+            attributes: ['id', 'nombre']
         });
+        
+        const formattedResponse = response.map(rol => ({
+            value: rol.id,
+            label: rol.nombre
+        }));
         //console.log(page, response.count);
-        return {
-            data: response.rows,
-            currentPage: page,
-            totalCount: response.rows.length,
-        };
+        return formattedResponse;
     } catch (error) {
         console.error('Error al obtener los roles:', error);
         return false;

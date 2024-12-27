@@ -18,19 +18,19 @@ Permiso.belongsToMany(Rol, { through: "Roles_Permisos", foreignKey: "id_permiso"
 
 // Roles y permisos a crear
 const rolesPermisos = [
-  { nombre: "Area Instructiva", permisos: ["create_AInstructiva"] },
-  { nombre: "Analista 2", permisos: ["create_Analista2", "read_Analista2"] },
-  { nombre: "Area Resolutiva 1", permisos: ["create_AResolutiva1", "read_AResolutiva1"] },
-  { nombre: "Area Resolutiva 2", permisos: ["create_AResolutiva2", "read_AResolutiva2"] },
-  { nombre: "Analista 3", permisos: ["create_Analista3", "read_Analista3"] },
-  { nombre: "Area Resolutiva 3", permisos: ["create_AResolutiva3", "read_AResolutiva3"] },
-  { nombre: "Analista 4", permisos: ["create_Analista4", "read_Analista4"] },
-  { nombre: "Gerente", permisos: ["create_Gerente", "read_Gerente"] },
-  { nombre: "Analista 5", permisos: ["read_Analista5", "create_Analista5"] },
-  { nombre: "Tramite Inspector", permisos: ["read_Inspector"] },
-  { nombre: "Digitador", permisos: ["read_Digitador", "create_Digitador"] },
-  { nombre: "Analista 1", permisos: ["create_Analista1","read_Analista1"] },
   { nombre: "Administrador", permisos: ["all_system_access"] },
+  { nombre: "Inspector", permisos: ["read_Inspector"] },
+  { nombre: "Digitador", permisos: ["read_Digitador", "create_Digitador"] },
+  { nombre: "Analista NC", permisos: ["create_Analista1","read_Analista1"] },
+  { nombre: "Area Instructiva", permisos: ["create_AInstructiva"] },
+  { nombre: "Area Resolutiva 1", permisos: ["create_AResolutiva1", "read_AResolutiva1"] },
+  { nombre: "Analista IFI", permisos: ["create_Analista2", "read_Analista2"] },
+  { nombre: "Area Resolutiva 2", permisos: ["create_AResolutiva2", "read_AResolutiva2"] },
+  { nombre: "Analista RSA", permisos: ["create_Analista3", "read_Analista3"] },
+  { nombre: "Area Resolutiva 3", permisos: ["create_AResolutiva3", "read_AResolutiva3"] },
+  { nombre: "Analista RSG", permisos: ["create_Analista4", "read_Analista4"] },
+  { nombre: "Gerente", permisos: ["create_Gerente", "read_Gerente"] },
+  { nombre: "Analista Acta de Concentimiento", permisos: ["read_Analista5", "create_Analista5"] },
 ];
 
 async function createRolesAndAssignPermissions() {

@@ -22,6 +22,8 @@ const createUserHandler = async (req, res) => {
     else if (!usuarioRegex.test(usuario))
         errors.push("El nombre de usuario debe tener entre 4 y 20 caracteres, y puede incluir letras, números, puntos, guiones bajos o guiones");
 
+    // await validateUsuario
+
     if (!contraseña)
         errors.push("La contraseña es requerida");
     else if (!contraseñaRegex.test(contraseña))

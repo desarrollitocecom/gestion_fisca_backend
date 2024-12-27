@@ -7,38 +7,34 @@ module.exports = (sequelize) => {
             defaultValue: DataTypes.UUIDV4,
         },
 
-        rango_inicio: {
+        numero_actas: {             //////////////////////////
             type: DataTypes.INTEGER,
             allowNull: true
         },
 
-        rango_final: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
 
-        observaciones_inicio: {
+        observaciones_inicio: { ///////////////////////////////
             type: DataTypes.TEXT,
             allowNull: true
         },
 
-        observaciones_final: {
+        observaciones_final: {//------------------------
             type: DataTypes.TEXT,
             allowNull: true
         },  
 
-        fecha_laburo: {
+        fecha_laburo: { ////////////////////////
             type: DataTypes.DATEONLY,
             allowNull: true
         },
 
-        estado: {
+        estado: { //-----------------------------
             type: DataTypes.ENUM('INICIADO', 'FINALIZADO'),
             allowNull: true
         },
 
 
-        id_inspector: {
+        id_inspector: {          /////////////////////////////
             type: DataTypes.UUID,
             references: {
                 model: 'Usuarios',
@@ -47,7 +43,7 @@ module.exports = (sequelize) => {
             allowNull: true, 
         },    
         
-        id_encargadoInicio:{
+        id_encargadoInicio:{          /////////////////////////////////
             type: DataTypes.UUID,
             references: {
                 model: 'Usuarios',
@@ -73,7 +69,8 @@ module.exports = (sequelize) => {
     RangoActa.associate = (db) => {
         RangoActa.belongsTo(db.Usuario, { foreignKey: 'id_inspector', as: 'usuarioInspector' })   
         RangoActa.belongsTo(db.Usuario, { foreignKey: 'id_encargadoInicio', as: 'usuarioEncargadoInicio' })  
-        RangoActa.belongsTo(db.Usuario, { foreignKey: 'id_encargadoFin', as: 'usuarioEncargadoFin' })  
+        RangoActa.belongsTo(db.Usuario, { foreignKey: 'id_encargadoFin', as: 'usuarioEncargadoFin' })
+        RangoActa.hasMany(db.ControlActa, { foreignKey: 'id_rangoActa', as: 'controlActa' })  
     };
 
     return RangoActa;

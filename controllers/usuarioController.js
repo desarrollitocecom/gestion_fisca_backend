@@ -275,11 +275,20 @@ const createUserIfNotExists = async (dni) => {
     }
   };
 
+  const validateUsuario = async (usuario) => {
+    try {
+        const user = await Usuario.findOne({where: {usuario: usuario}})
+        return user
+    } catch (error) {
+        throw new Error('Error al validar usuario: ' + error.message);
+    }
+  }
+
 
 const getAllUsersforControlActasController = async (id) => {
     try {
         const findUsuarios = await Usuario.findAll({ 
-            where: { id_rol: '10' },
+            where: { id_rol: '2' },
             attributes: [
                 'id', 'usuario'
             ],
@@ -310,5 +319,6 @@ module.exports = {
     createUserIfNotExists,
     saveToken,
     getTokenDNI,
-    updateUser
+    updateUser,
+    validateUsuario
 };

@@ -1,6 +1,8 @@
 const { createTramiteInspector, getAllTramiteInspectorById } = require('../controllers/tramiteInspectorController');
 const { createMedidaComplementaria } = require('../controllers/medidaComplementariaController')
 const { createNC, getNCforDigitador } = require('../controllers/ncController');
+const { updateActaInspector } = require('../controllers/controlActaController')
+
 const fs = require('fs');
 const { createDocumento, updateDocumento } = require('../controllers/documentoController');
 const { getIo } = require('../sockets'); 
@@ -12,6 +14,7 @@ const createTramiteHandler = async (req, res) => {
             nombre_MC, 
             nro_medida_complementaria,
 
+            id_controlActa,
             nro_nc, 
             nro_acta, 
             id_inspector, 
@@ -136,6 +139,10 @@ const createTramiteHandler = async (req, res) => {
              if (!newTramiteInspector) {
                return res.status(400).json({ error: 'Error al crear el Trámite Inspector' });
              }
+
+            //  const updateActa = await updateActaInspector({
+            //     id_inspector, id_controlActa
+            //  });
 
             const id_tramiteInspector = newTramiteInspector.id;
 

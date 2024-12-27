@@ -1,7 +1,8 @@
 const { getAllUsersforControlActasController } = require('../controllers/usuarioController');
-const { createControlActaController, actasActualesHandlerController, updateControlActaController } = require('../controllers/controlActaController');
+const { createControlActaController, actasActualesHandlerController, updateControlActaController, getActaActualController } = require('../controllers/controlActaController');
 const { format } = require('date-fns-tz');
-
+const {ControlActa, Usuario, TramiteInspector, RangoActa} = require('../db_connection');
+const { Sequelize } = require('sequelize');
 const getAllUsersforControlActasHandler = async (req, res) => {
     try {
       const response = await getAllUsersforControlActasController();
@@ -27,7 +28,7 @@ const getAllUsersforControlActasHandler = async (req, res) => {
 };
 
 const createControlActaHandler = async (req, res) => {
-    const { nro_actas_inicio, observaciones_inicio, id_encargadoInicio, id_inspector } = req.body;
+    const { numero_actas, id_inspector, observaciones_inicio, id_encargadoInicio } = req.body;
 
     const errores = [];
     
@@ -41,17 +42,25 @@ const createControlActaHandler = async (req, res) => {
     const fecha_laburo = format(new Date(), 'yyyy-MM-dd', {
         timeZone: 'America/Lima',
     });
-
-    console.log(fecha_laburo);
     
 
     try {
         const newControlActa = await createControlActaController({
-            fecha_laburo, nro_actas_inicio, observaciones_inicio, id_encargadoInicio, id_inspector
+          numero_actas, id_inspector, observaciones_inicio, id_encargadoInicio, fecha_laburo
         });
         if (!newControlActa) {
             return res.status(201).json({ message: 'Error al crear el Control de Acta', data: [] });
         }
+
+        const actasConRangoId = req.body.actas.map(acta => ({
+            ...acta,
+            id_inspector: id_inspector,
+            id_rangoActa: newControlActa.id,
+            estado: 'ENTREGADO'
+        }));
+
+        await ControlActa.bulkCreate(actasConRangoId);
+
 
         return res.status(200).json({ message: 'Se creo el control de Acta correctamente', data: newControlActa });
 
@@ -95,9 +104,39 @@ const actasActualesHandler = async (req, res) => {
 
 
 
+
+
+const getActaActualHandler = async (req, res) => {
+  const {id} = req.params;
+  console.log(id);
+
+  try {
+    const response = await getActaActualController(id);
+
+    if (response.length === 0) {
+      return res.status(200).json({
+        message: "No existe esta acta",
+        data: []
+      });
+    }
+
+    return res.status(200).json({
+      message: "Acta encontrada",
+      data: response,
+    });
+  } catch (error) {
+    
+  }
+  
+}
+
+
+
+
+
 const updateControlActaHandler = async (req, res) => {
   const {id}=req.params;
-  const { nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin } = req.body;
+  const { observaciones_final, id_encargadoFin, actas } = req.body;
 
   const errores = [];
   
@@ -109,27 +148,50 @@ const updateControlActaHandler = async (req, res) => {
   }
 
   const fecha_laburo = new Date().toISOString().split('T')[0];
-  console.log(fecha_laburo);
-  
 
   try {
-      const newControlActa = await updateControlActaController(id, {
-        nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin
-      });
-      if (!newControlActa) {
-          return res.status(201).json({ message: 'Error al crear el Control de Acta', data: [] });
-      }
+    const controlActa = await RangoActa.findByPk(id);
+    
+    if (!controlActa) {
+        return res.status(404).json({ message: "Control de Acta no encontrado" });
+    }
+    
+    await controlActa.update({
+        observaciones_final,
+        id_encargadoFin,
+    });
+    // Actualizar los registros hijos (Actas)
+    for (const acta of actas) {
+        const actaExistente = await ControlActa.findByPk(acta.id);
+        if (!actaExistente) {
+            return res.status(404).json({
+                message: `El acta con ID ${acta.id} no fue encontrada`,
+            });
+        }
 
-      return res.status(200).json({ message: 'Se creo el control de Acta correctamente', data: newControlActa });
+        await actaExistente.update({
+            descripcion: acta.descripcion,
+            estado: acta.estado,
+        });
+    }
 
+    return res.status(200).json({
+        message: "Control de Acta y sus Actas actualizadas correctamente",
+    });
   } catch (error) {
-      console.error("Error interno al crear el Control de Acta:", error);
-      return res.status(500).json({ message: "Error interno al crear el Control de Acta", data: error });
+      console.error("Error interno al actualizar el Control de Acta:", error);
+      return res.status(500).json({
+          message: "Error interno al actualizar el Control de Acta",
+          data: error,
+      });
   }
+
+
+
 };
 
 
 
 
 
-module.exports = { getAllUsersforControlActasHandler, createControlActaHandler, actasActualesHandler, updateControlActaHandler };
+module.exports = { getAllUsersforControlActasHandler, createControlActaHandler, actasActualesHandler, getActaActualHandler, updateControlActaHandler };
