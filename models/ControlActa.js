@@ -7,35 +7,49 @@ module.exports = (sequelize) => {
             defaultValue: DataTypes.UUIDV4,
         },
 
-        rango_inicio: {
+        id_ragoActa: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'RangoActas',
+                key: 'id',
+            },
+            allowNull: true, 
+        }, 
+        
+        numero_acta: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
-
-        rango_final: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-
-        observaciones_inicio: {
-            type: DataTypes.TEXT,
-            allowNull: true
-        },
-
-        observaciones_final: {
-            type: DataTypes.TEXT,
-            allowNull: true
+        
+        id_inspector: {
+            type: DataTypes.UUID,
+            references: {
+                model: 'Usuarios',
+                key: 'id',
+            },
+            allowNull: true, 
         },  
 
-        fecha_laburo: {
+        fecha: {
             type: DataTypes.DATEONLY,
             allowNull: true
         },
 
-        estado: {
-            type: DataTypes.ENUM('INICIADO', 'FINALIZADO'),
+        hora: {
+            type: DataTypes.TIME,
             allowNull: true
         },
+
+        descripcion: {
+            type: DataTypes.TEXT,
+            allowNull: true
+        },
+        
+        estado: {
+            type: DataTypes.ENUM('ENTREGADO', 'REALIZADO', 'DEVOLVIO', 'ANULADO'),
+            allowNull: true
+        },
+        
 
         id_inspector: {
             type: DataTypes.UUID,
@@ -44,25 +58,9 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: true, 
-        },    
-        
-        id_encargadoInicio:{
-            type: DataTypes.UUID,
-            references: {
-                model: 'Usuarios',
-                key: 'id',
-            },
-            allowNull: true
-        },
+        }, 
 
-        id_encargadoFin:{
-            type: DataTypes.UUID,
-            references: {
-                model: 'Usuarios',
-                key: 'id',
-            },
-            allowNull: true
-        },
+
         
     }, {
         tableName: 'ControlActas',
@@ -70,8 +68,7 @@ module.exports = (sequelize) => {
     });
     ControlActa.associate = (db) => {
         ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_inspector', as: 'usuarioInspector' })   
-        ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_encargadoInicio', as: 'usuarioEncargadoInicio' })  
-        ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_encargadoFin', as: 'usuarioEncargadoFin' })  
+        ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_encargado', as: 'usuarioEncargado' })  
     };
 
     return ControlActa;

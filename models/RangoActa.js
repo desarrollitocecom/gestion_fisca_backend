@@ -7,12 +7,12 @@ module.exports = (sequelize) => {
             defaultValue: DataTypes.UUIDV4,
         },
 
-        fecha_laburo: {
-            type: DataTypes.DATEONLY,
+        rango_inicio: {
+            type: DataTypes.INTEGER,
             allowNull: true
         },
 
-        nro_actas_inicio: {
+        rango_final: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
@@ -22,23 +22,13 @@ module.exports = (sequelize) => {
             allowNull: true
         },
 
-        nro_actas_realizadas: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-
-        observaciones_laburo: {
+        observaciones_final: {
             type: DataTypes.TEXT,
             allowNull: true
-        },
+        },  
 
-        nro_actas_entregadas: {
-            type: DataTypes.INTEGER,
-            allowNull: true
-        },
-
-        observaciones_fin: {
-            type: DataTypes.TEXT,
+        fecha_laburo: {
+            type: DataTypes.DATEONLY,
             allowNull: true
         },
 
@@ -46,6 +36,7 @@ module.exports = (sequelize) => {
             type: DataTypes.ENUM('INICIADO', 'FINALIZADO'),
             allowNull: true
         },
+
 
         id_inspector: {
             type: DataTypes.UUID,
@@ -72,7 +63,9 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: true
-        }
+        },
+
+
     }, {
         tableName: 'RangoActas',
         timestamps: true
