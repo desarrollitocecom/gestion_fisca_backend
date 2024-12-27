@@ -1,18 +1,18 @@
 const { DataTypes } = require('sequelize');
 module.exports = (sequelize) => {
-    const ControlActa = sequelize.define('ControlActa', {
+    const RangoActa = sequelize.define('RangoActa', {
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
             defaultValue: DataTypes.UUIDV4,
         },
 
-        rango_inicio: {
-            type: DataTypes.INTEGER,
+        fecha_laburo: {
+            type: DataTypes.DATEONLY,
             allowNull: true
         },
 
-        rango_final: {
+        nro_actas_inicio: {
             type: DataTypes.INTEGER,
             allowNull: true
         },
@@ -22,13 +22,23 @@ module.exports = (sequelize) => {
             allowNull: true
         },
 
-        observaciones_final: {
+        nro_actas_realizadas: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+
+        observaciones_laburo: {
             type: DataTypes.TEXT,
             allowNull: true
-        },  
+        },
 
-        fecha_laburo: {
-            type: DataTypes.DATEONLY,
+        nro_actas_entregadas: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
+
+        observaciones_fin: {
+            type: DataTypes.TEXT,
             allowNull: true
         },
 
@@ -62,17 +72,16 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: true
-        },
-        
+        }
     }, {
-        tableName: 'ControlActas',
+        tableName: 'RangoActas',
         timestamps: true
     });
-    ControlActa.associate = (db) => {
-        ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_inspector', as: 'usuarioInspector' })   
-        ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_encargadoInicio', as: 'usuarioEncargadoInicio' })  
-        ControlActa.belongsTo(db.Usuario, { foreignKey: 'id_encargadoFin', as: 'usuarioEncargadoFin' })  
+    RangoActa.associate = (db) => {
+        RangoActa.belongsTo(db.Usuario, { foreignKey: 'id_inspector', as: 'usuarioInspector' })   
+        RangoActa.belongsTo(db.Usuario, { foreignKey: 'id_encargadoInicio', as: 'usuarioEncargadoInicio' })  
+        RangoActa.belongsTo(db.Usuario, { foreignKey: 'id_encargadoFin', as: 'usuarioEncargadoFin' })  
     };
 
-    return ControlActa;
+    return RangoActa;
 };
