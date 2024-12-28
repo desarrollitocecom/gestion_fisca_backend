@@ -1,6 +1,34 @@
-const { TramiteInspector, MedidaComplementaria, EstadoMC, TipoDocumentoComplementario, EjecucionMC } = require('../db_connection');
+const { TramiteInspector, MedidaComplementaria, EstadoMC, TipoDocumentoComplementario, EjecucionMC, ControlActa } = require('../db_connection');
 const { saveImage, deleteFile } = require('../utils/fileUtils');
 const { Sequelize } = require('sequelize');
+
+const getLocalDate = () => {
+    const now = new Date();
+    const offsetMs = now.getTimezoneOffset() * 60000; // Offset en milisegundos
+    const localTime = new Date(now.getTime() - offsetMs);
+    return localTime.toISOString().split('T')[0];
+  };
+
+const getMyActasController = async (id) => {
+    try {
+        const response = await ControlActa.findAll({
+            where: {
+                id_inspector: id,
+                estado: 'ENTREGADO',
+                fecha: getLocalDate()
+            },
+            order: [['createdAt', 'DESC']],
+            attributes: ['id', 'numero_acta']
+        });
+
+        return response
+    } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los Tramites", data: error });
+        return false;
+    }
+}
+
+
 
 const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, id_medida_complementaria, estado, id_inspector }) => {
 
@@ -67,4 +95,4 @@ const getAllTramiteInspectorById = async (id, page = 1, limit = 20) => {
 
 
 
-module.exports = { createTramiteInspector, getAllTramiteInspectorById };
+module.exports = { createTramiteInspector, getAllTramiteInspectorById, getMyActasController };

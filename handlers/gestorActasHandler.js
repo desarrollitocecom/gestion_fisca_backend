@@ -52,9 +52,12 @@ const createControlActaHandler = async (req, res) => {
             return res.status(201).json({ message: 'Error al crear el Control de Acta', data: [] });
         }
 
+        const fecha = getLocalDate();
+
         const actasConRangoId = req.body.actas.map(acta => ({
             ...acta,
             id_inspector: id_inspector,
+            fecha,
             id_rangoActa: newControlActa.id,
             estado: 'ENTREGADO'
         }));
@@ -71,15 +74,19 @@ const createControlActaHandler = async (req, res) => {
 };
 
 
+const getLocalDate = () => {
+  const now = new Date();
+  const offsetMs = now.getTimezoneOffset() * 60000; // Offset en milisegundos
+  const localTime = new Date(now.getTime() - offsetMs);
+  return localTime.toISOString().split('T')[0];
+};
+
 
 const actasActualesHandler = async (req, res) => {
   try {
-    let { dia } = req.query;
+    let dia = req.query.dia || getLocalDate();
 
-    if (!dia) {
-      dia = new Date().toISOString().split('T')[0];
-    }
-
+    console.log(dia);
     const response = await actasActualesHandlerController(dia);
 
     if (response.length === 0) {

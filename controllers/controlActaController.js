@@ -98,7 +98,7 @@ const actasActualesHandlerController = async (dia) => {
          {
             model: ControlActa,
             as: 'controlActa', // Este alias debe coincidir con el definido en la asociación
-            attributes: ['numero_acta', 'estado'], // Ajusta los atributos que necesitas
+            attributes: ['id', 'numero_acta', 'estado'], // Ajusta los atributos que necesitas
           },
       ]
     })
@@ -144,7 +144,7 @@ const getActaActualController = async (id) => {
 }
 
 
-const updateControlActaController=async (id,{nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin}) => {
+const updateControlActaController=async (id,{nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin, estado}) => {
   try {
     console.log(id);
     
@@ -152,7 +152,7 @@ const updateControlActaController=async (id,{nro_actas_realizadas, observaciones
       console.log(findActaControl);
       
       const response = await findActaControl.update({
-        nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin, estado: 'FINALIZADO'
+        nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin, estado
       });
       return response || null;
 

@@ -1,11 +1,37 @@
-const { createTramiteInspector, getAllTramiteInspectorById } = require('../controllers/tramiteInspectorController');
+const { createTramiteInspector, getAllTramiteInspectorById, getMyActasController } = require('../controllers/tramiteInspectorController');
 const { createMedidaComplementaria } = require('../controllers/medidaComplementariaController')
 const { createNC, getNCforDigitador } = require('../controllers/ncController');
-const { updateActaInspector } = require('../controllers/controlActaController')
-
+const { updateControlActaController } = require('../controllers/controlActaController')
 const fs = require('fs');
 const { createDocumento, updateDocumento } = require('../controllers/documentoController');
 const { getIo } = require('../sockets'); 
+
+const getMyActasHandler = async (req, res) => {
+    const {id} = req.params;
+    try {
+        const response = await getMyActasController(id);
+
+        if (response.data === 0) {
+            return res.status(200).json({
+                message: 'Ya no hay mas actas',
+                data: {
+                    data: [],
+                    totalPage: response.currentPage,
+                    totalCount: response.totalCount
+                }
+            });
+        }
+
+        return res.status(200).json({
+            message: "Actas obtenidas correctamente",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener las actas:", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener las actas." });
+    }
+}
+
 
 const createTramiteHandler = async (req, res) => {
     const io = getIo(); 
@@ -148,6 +174,10 @@ const createTramiteHandler = async (req, res) => {
 
             //aqui creo el NC
             const newNC = await createNC({ id_tramiteInspector: newTramiteInspector.id });
+
+            const controlActa = await updateControlActaController(id_controlActa,{estado:'REALIZADO'});
+
+            
             
             const modelNC = 'NOTIFICACIÓN DE CARGO';
             
@@ -233,4 +263,4 @@ const allTramiteHandler = async (req, res) => {
     }
 };
 
-module.exports = { createTramiteHandler, allTramiteHandler };
+module.exports = { createTramiteHandler, allTramiteHandler, getMyActasHandler };
