@@ -1,4 +1,4 @@
-const { createUser, getUser, changePassword, signToken, getToken, changeUserData, updateUser, getAllUsers, getUserById, deleteUser, logoutUser,createUserIfNotExists, getUserByUUid, saveToken, getTokenDNI } = require("../controllers/usuarioController");
+const { createUser, validateUsuario, getUser, changePassword, signToken, getToken, changeUserData, updateUser, getAllUsers, validateCorreo, getUserById, deleteUser, logoutUser,createUserIfNotExists, getUserByUUid, saveToken, getTokenDNI } = require("../controllers/usuarioController");
 const argon2 = require('argon2');
 const jwt = require('jsonwebtoken');
 const { userSockets } = require("../sockets");
@@ -22,7 +22,15 @@ const createUserHandler = async (req, res) => {
     else if (!usuarioRegex.test(usuario))
         errors.push("El nombre de usuario debe tener entre 4 y 20 caracteres, y puede incluir letras, números, puntos, guiones bajos o guiones");
 
-    // await validateUsuario
+    const userValidate = await validateUsuario(usuario)
+    if(userValidate){
+        errors.push(`El usuario ${usuario} ya existe`);
+    }
+
+    const correoValidate = await validateCorreo(correo)
+    if(correoValidate){
+        errors.push(`El correo ${correo} ya existe`);
+    }
 
     if (!contraseña)
         errors.push("La contraseña es requerida");
@@ -36,7 +44,7 @@ const createUserHandler = async (req, res) => {
 
     //console.log(errors);
     if (errors.length > 0)
-        return res.status(402).json({ message: "Se encontraron los siguientes errores", data: errors });
+        return res.status(400).json({ message: "Se encontraron los siguientes errores", data: errors });
 
     try {
         const response = await createUser({
@@ -44,10 +52,9 @@ const createUserHandler = async (req, res) => {
             contraseña: contraseña,
             correo: correo,
             id_rol: id_rol
-            //,
             //id_empleado: id_empleado
         });
-        if (!response) return res.status(201).json({ message: "Error al crear el usuario", data: response });
+        if (!response) return res.status(400).json({ message: "Error al crear el usuario", data: response });
 
         // const historial = await createHistorial(
         //     'create',
@@ -252,54 +259,14 @@ const getTokenHandler = async (req, res) => {
 
 const getAllUsersHandler = async (req, res) => {
 
-    const { page = 1, pageSize = 20 } = req.query;
-    const token = req.user;
-
-    const errores = [];
-    if (isNaN(page)) errores.push("El page debe ser un numero");
-    if (page <= 0) errores.push("El page debe ser mayor a 0 ");
-    if (isNaN(pageSize)) errores.push("El pageSize debe ser un numero");
-    if (pageSize <= 0) errores.push("El pageSize debe ser mayor a 0 ");
-    if (errores.length > 0) {
-        return res.status(400).json({ errores });
-    }
-
     try {
-        const users = await getAllUsers(page, pageSize);
-        const totalPages = Math.ceil(users.totalCount / pageSize);
-
-        // Verificar si la página solicitada está fuera de rango
-        if (page > totalPages) {
-            return res.status(200).json({
-                message: "Página fuera de rango",
-                data: {
-                    data: [],
-                    currentPage: page,
-                    totalPages: totalPages,
-                    totalCount: users.totalCount,
-                }
-            });
-        }
-
-        // const historial = await createHistorial(
-        //     'read',
-        //     'Usuario',
-        //     'Read All Users',
-        //     null,
-        //     null,
-        //     token
-        // );
-        // if (!historial) console.warn('No se agregó al historial...');
+        const users = await getAllUsers();
 
         return res.status(200).json({
             message: "Usuarios obtenidos correctamente",
-            data: {
-                data: users.data,
-                currentPage: page,
-                totalPages: totalPages,
-                totalCount: users.totalCount,
-            }
+            data: users
         });
+
     } catch (error) {
         console.error("Error en getAllUsersHandler:", error.message);
         return res.status(500).json({
@@ -449,11 +416,8 @@ const updateUsersHandler = async (req, res) => {
 
     try {
         const response = await updateUser(id, {usuario, correo, id_rol});
-        
-        return res.json({
-            success: true,
-            data: response, 
-          });
+
+        return res.status(200).json({ success: true, message: "Usuario actualizado correctamente", data: response });
      } catch (error) {
         console.log(error);
     }

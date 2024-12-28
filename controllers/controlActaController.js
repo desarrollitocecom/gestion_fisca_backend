@@ -88,6 +88,10 @@ const actasActualesHandlerController = async (dia) => {
       attributes: [
         'id',
         [Sequelize.col('usuarioInspector.usuario'), 'inspector'],
+        'estado'
+      ],
+      order: [
+        [Sequelize.col('usuarioInspector.usuario'), 'ASC'] 
       ],
       include: [
          {
@@ -97,8 +101,8 @@ const actasActualesHandlerController = async (dia) => {
          },
          {
             model: ControlActa,
-            as: 'controlActa', // Este alias debe coincidir con el definido en la asociación
-            attributes: ['id', 'numero_acta', 'estado'], // Ajusta los atributos que necesitas
+            as: 'controlActa', 
+            attributes: ['id', 'numero_acta', 'estado'], 
           },
       ]
     })

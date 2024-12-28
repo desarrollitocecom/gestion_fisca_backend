@@ -45,12 +45,13 @@ const getAllRols = async () => {
         const response = await Rol.findAll({
             where: { state: true },
             order: [['id', 'ASC']],
-            attributes: ['id', 'nombre']
+            attributes: ['id', 'nombre', 'descripcion']
         });
         
         const formattedResponse = response.map(rol => ({
             value: rol.id,
-            label: rol.nombre
+            label: rol.nombre,
+            descripcion: rol.descripcion
         }));
         //console.log(page, response.count);
         return formattedResponse;
@@ -64,11 +65,14 @@ const getAllRols = async () => {
 const getRolById = async (id) => {
     try {
         const rol = await Rol.findByPk(id, {
-           
+            attributes: ['id', 'nombre', 'descripcion'],
             include: {
                 model: Permiso,
                 as: 'permisos',
-                attributes: ['id', 'nombre']
+                attributes: ['id', 'nombre'],
+                through: { 
+                    attributes: [] // Incluye solo estos atributos de la tabla intermedia
+                }
             }
         });
         return rol || null;
@@ -78,28 +82,38 @@ const getRolById = async (id) => {
     }
 };
 
-const getAllPermisos = async (page = 1, pageSize = 20) => {
-    try {
-        const offset = (page - 1) * pageSize;
-        const limit = pageSize;
 
-        const response = await Permiso.findAndCountAll({
+const getAllPermisos = async () => {
+    try {
+        const response = await Permiso.findAll({
             where: { state: true },
-            limit,
-            offset,
-            order: [['id', 'ASC']]
+            order: [['id', 'ASC']],
+            attributes: ['id', 'nombre']
         });
 
-        return {
-            data: response.rows,
-            currentPage: page,
-            totalCount: response.rows.length,
-        };
+        // Agrupar permisos por el sufijo después del "_"
+        const permisosAgrupados = {};
+
+        response.forEach(permiso => {
+            const analista = permiso.nombre.split('_')[1];  // Obtener el sufijo después del "_"
+            
+            if (!permisosAgrupados[analista]) {
+                permisosAgrupados[analista] = [];  // Crear un array si no existe
+            }
+
+            permisosAgrupados[analista].push({
+                id: permiso.id,
+                nombre: permiso.nombre
+            });
+        });
+
+        return permisosAgrupados;
     } catch (error) {
         console.error("Error en getAllPermisos ", error.message);
         return false;
     }
 };
+
 
 const getPermisoById = async (id) => {
 

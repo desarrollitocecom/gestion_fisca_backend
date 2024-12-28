@@ -166,6 +166,7 @@ const updateControlActaHandler = async (req, res) => {
     await controlActa.update({
         observaciones_final,
         id_encargadoFin,
+        estado: 'FINALIZADO'
     });
     // Actualizar los registros hijos (Actas)
     for (const acta of actas) {

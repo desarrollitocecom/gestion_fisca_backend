@@ -133,33 +133,13 @@ const getRolByIdHandler = async (req, res) => {
 
 const getAllPermisosHandler = async (req, res) => {
 
-    const { page = 1, pageSize = 20 } = req.query;
-
     try {
-        const permisos = await getAllPermisos(page, pageSize);
+        const permisos = await getAllPermisos();
 
-        const totalPages = Math.ceil(permisos.totalCount / pageSize);
-
-        if (page > totalPages) {
-            return res.status(404).json({
-                message: "Página fuera de rango",
-                data: {
-                    data: [],
-                    currentPage: page,
-                    totalPages: totalPages,
-                    totalCount: permisos.totalCount,
-                }
-            });
-        }
 
         return res.status(200).json({
             message: "Permisos obtenidos correctamente",
-            data: {
-                data: permisos.data,
-                currentPage: page,
-                totalPages: totalPages,
-                totalCount: permisos.totalCount,
-            }
+            data: permisos
         });
     } catch (error) {
         console.error("Error en getAllPermisosHandler:", error.message);

@@ -1,6 +1,7 @@
-const { Usuario, Rol, Empleado,Permiso } = require("../db_connection");
+const { Usuario, Rol, Empleado,Permiso, ControlActa } = require("../db_connection");
 const { updateRol, deleteRol } = require("./rol_permisoController");
 const argon2 = require('argon2');
+const { Sequelize } = require('sequelize');
 
 
 const createUser = async ({ usuario, contraseña, correo, id_rol /*, id_empleado */ }) => {
@@ -111,31 +112,23 @@ const updateUser = async (id, {usuario, correo, id_rol}) => {
     }
 }
 
-const getAllUsers = async (page = 1, pageSize = 20) => {
+const getAllUsers = async () => {
     try {
-        const offset = (page - 1) * pageSize;
-        const limit = pageSize;
-        
-        const response = await Usuario.findAndCountAll({
-            attributes: ['id', 'usuario', 'correo', 'state', 'id_rol' /*, 'id_empleado' */], // id_empleado comentado
+
+        const response = await Usuario.findAll({
+            attributes: ['id', 'usuario', 'correo', 'state', 'id_rol', /*, 'id_empleado' */
+                [Sequelize.col('rol.nombre'), 'nombre_rol'],
+            ], // id_empleado comentado
             where: { state: true },
             include: [
-                { model: Rol, as: 'rol', attributes: ['nombre'] }
+                { model: Rol, as: 'rol', attributes: [] }
                 // { model: Empleado, as: 'empleado', attributes: ['nombres', 'apellidos'] } // Comentado porque no se usará
             ],
-            limit,
-            offset,
             order: [['id', 'ASC']],
         });
 
-        const totalPages = Math.ceil(response.count / pageSize);
 
-        return {
-            data: response.rows,
-            currentPage: page,
-            totalPages: totalPages,
-            totalCount: response.count
-        };
+        return response
     } catch (error) {
         console.error("Error en getAllUsers:", error.message);
         return false;
@@ -284,22 +277,53 @@ const createUserIfNotExists = async (dni) => {
     }
   }
 
-
-const getAllUsersforControlActasController = async (id) => {
+  const validateCorreo = async (correo) => {
     try {
-        const findUsuarios = await Usuario.findAll({ 
-            where: { id_rol: '2' },
-            attributes: [
-                'id', 'usuario'
-            ],
+        const user = await Usuario.findOne({where: {correo: correo}})
+        return user
+    } catch (error) {
+        throw new Error('Error al validar correo: ' + error.message);
+    }
+  }
+
+
+  
+  const getLocalDate = () => {
+    const now = new Date();
+    const offsetMs = now.getTimezoneOffset() * 60000; // Offset en milisegundos
+    const localTime = new Date(now.getTime() - offsetMs);
+    return localTime.toISOString().split('T')[0];
+  };
+
+  const getAllUsersforControlActasController = async (id) => {
+    try {
+        // Obtener fiscalizadores ya seleccionados
+        const fiscalizadoresActios = await ControlActa.findAll({
+            where: { fecha: getLocalDate() },
+            attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('id_inspector')), 'id_inspector']]
         });
-        
-        return findUsuarios || null;
+
+        // Extraer los IDs de los fiscalizadores seleccionados
+        const selectedInspectorIds = fiscalizadoresActios.map(item => item.id_inspector);
+
+        // Obtener todos los usuarios con rol de fiscalizador (id_rol: 2)
+        const findUsuarios = await Usuario.findAll({
+            where: { id_rol: '2' },
+            attributes: ['id', 'usuario'],
+            order: [['usuario', 'ASC']],
+        });
+
+        // Filtrar los usuarios fiscalizadores que no están en la lista de seleccionados
+        const unselectedUsers = findUsuarios.filter(usuario => !selectedInspectorIds.includes(usuario.id));
+
+        return unselectedUsers || null;
     } catch (error) {
         console.error({ message: "Error obteniendo todos los Inspectores", data: error });
         return false;
     }
 }
+
+
 module.exports = {
     getAllUsersforControlActasController,
     createUser,
@@ -320,5 +344,6 @@ module.exports = {
     saveToken,
     getTokenDNI,
     updateUser,
-    validateUsuario
+    validateUsuario,
+    validateCorreo
 };
