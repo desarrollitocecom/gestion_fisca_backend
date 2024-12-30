@@ -87,7 +87,7 @@ function initializeSocket(server) {
       try { 
         // Verifica si el área está en el mapeo
         const areaConfig = areaMap[area];
-        console.log(areaConfig);
+        //console.log(areaConfig);
 
         if (areaConfig) {
           const { getFunction, emitEvent } = areaConfig;  // Obtén la función y el evento correspondiente
@@ -104,7 +104,7 @@ function initializeSocket(server) {
           if (type === "open") {
             plainNC.disabled = true;
             cache.set(key, { disabled: true });
-            console.log(plainNC);
+            //console.log(plainNC);
             
           } else if (type === "close") {
             plainNC.disabled = false;

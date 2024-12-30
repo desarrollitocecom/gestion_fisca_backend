@@ -16,7 +16,7 @@ module.exports = (sequelize) => {
         },
         contraseña: {
             type: DataTypes.STRING(255),
-            allowNull: false
+            allowNull: true
         },
         correo: {
             type: DataTypes.STRING,
@@ -39,16 +39,16 @@ module.exports = (sequelize) => {
     }, {
         tableName: 'Usuarios',
         timestamps: true,
-         hooks: { // encripta la contraseña al guardarla y al cambiarla
-             beforeCreate: async (usuario) => {
-                 usuario.contraseña = await argon2.hash(usuario.contraseña);
-             },
-             beforeUpdate: async (usuario) => {
-                 if (usuario.changed('contraseña')) {
-                     usuario.contraseña = await argon2.hash(usuario.contraseña);
-                 }
-             }
-         }
+        //  hooks: { // encripta la contraseña al guardarla y al cambiarla
+        //      beforeCreate: async (usuario) => {
+        //          usuario.contraseña = await argon2.hash(usuario.contraseña);
+        //      },
+        //      beforeUpdate: async (usuario) => {
+        //          if (usuario.changed('contraseña')) {
+        //              usuario.contraseña = await argon2.hash(usuario.contraseña);
+        //          }
+        //      }
+        //  }
     });
 
 

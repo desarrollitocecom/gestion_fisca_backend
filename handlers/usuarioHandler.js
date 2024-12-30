@@ -1,4 +1,4 @@
-const { createUser, validateUsuario, getUser, changePassword, signToken, getToken, changeUserData, updateUser, getAllUsers, validateCorreo, getUserById, deleteUser, logoutUser,createUserIfNotExists, getUserByUUid, saveToken, getTokenDNI } = require("../controllers/usuarioController");
+const { createUser, validateUsuario, getUser, validateUsuarioMovil, changePassword, signToken, getToken, changeUserData, updateUser, getAllUsers, validateCorreo, getUserById, deleteUser, logoutUser,createUserIfNotExists, getUserByUUid, saveToken, getTokenDNI } = require("../controllers/usuarioController");
 const argon2 = require('argon2');
 const jwt = require('jsonwebtoken');
 const { userSockets } = require("../sockets");
@@ -32,15 +32,17 @@ const createUserHandler = async (req, res) => {
         errors.push(`El correo ${correo} ya existe`);
     }
 
-    if (!contraseña)
-        errors.push("La contraseña es requerida");
-    else if (!contraseñaRegex.test(contraseña))
-        errors.push("La contraseña debe tener al menos 8 caracteres, incluyendo letras y números");
-
-    if (!correo)
-        errors.push("El correo es requerido");
-    else if (!correoRegex.test(correo))
-        errors.push("Formato de correo inválido");
+    if(id_rol != 2){
+        if (!contraseña)
+            errors.push("La contraseña es requerida");
+        else if (!contraseñaRegex.test(contraseña))
+            errors.push("La contraseña debe tener al menos 8 caracteres, incluyendo letras y números");
+    
+        if (!correo)
+            errors.push("El correo es requerido");
+        else if (!correoRegex.test(correo))
+            errors.push("Formato de correo inválido");
+    } 
 
     //console.log(errors);
     if (errors.length > 0)
@@ -371,7 +373,7 @@ const logoutHandler = async (req, res) => {
     }
 };
 const facialLoginHandler = async (req, res) => {
-    const { dni } = req.body;
+    const { dni, deviceId } = req.body;
   
     if (!dni || !/^\d{8}$/.test(dni)) {
       return res.status(400).json({
@@ -381,24 +383,33 @@ const facialLoginHandler = async (req, res) => {
     }
   
     try {
-      const user = await createUserIfNotExists(dni);
-  
-      let token = await getTokenDNI(dni);
-      if (!token) {
-        token = jwt.sign(
-          { usuario: user.usuario }, // Payload
-          process.env.JWT_SECRET,
-          { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
-        );
-  
-        await saveToken(dni, token);
-      }
-  
-      return res.json({
-        success: true,
-        token,
-        uuid: user.id, 
-      });
+        const dniValidate = await validateUsuarioMovil(dni);
+        if(dniValidate){
+            const user = await createUserIfNotExists(dni, deviceId);
+        
+            let token = await getTokenDNI(dni);
+            if (!token) {
+                token = jwt.sign(
+                { usuario: user.usuario }, 
+                process.env.JWT_SECRET,
+                { expiresIn: process.env.JWT_EXPIRES_IN || "8h" }
+                );
+        
+                await saveToken(dni, token);
+            }
+        
+            return res.json({
+                success: true,
+                token,
+                uuid: user.id, 
+            });
+        }else{
+            return res.status(500).json({
+              success: false,
+              message: "Este DNI no esta registrado",
+            });  
+        }
+
     } catch (error) {
       console.error("Error en facialLoginHandler:", error.message);
       return res.status(500).json({

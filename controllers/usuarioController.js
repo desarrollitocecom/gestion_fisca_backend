@@ -6,6 +6,10 @@ const { Sequelize } = require('sequelize');
 
 const createUser = async ({ usuario, contraseña, correo, id_rol /*, id_empleado */ }) => {
     try {
+        if(id_rol != 2){
+            contraseña = await argon2.hash(contraseña)
+        }
+
         const response = await Usuario.create({
             usuario: usuario,
             contraseña: contraseña,
@@ -224,27 +228,36 @@ const logoutUser = async (usuario) => {
         return false;
     }
 };
-const createUserIfNotExists = async (dni) => {
+const createUserIfNotExists = async (dni, deviceId) => {
     try {
+        console.log('dni es: ', dni)
+        console.log('dispositivo es: ', deviceId)
+      // Buscar usuario por DNI
       let user = await Usuario.findOne({ where: { usuario: dni } });
   
       if (!user) {
-        const rol = await Rol.findOne({ where: { nombre: "Administrador" } });
-        if (!rol) throw new Error('El rol "Administrador" no existe');
-  
-        user = await Usuario.create({
-          usuario: dni,
-          contraseña: await argon2.hash(dni), 
-          correo: `${dni}@default.com`, 
-          id_rol: '10',
-        });
+        throw new Error("El usuario no existe. Regístrate primero.");
       }
   
-      return user; 
+      // Si la contraseña está vacía o null, actualizarla con el hash del deviceId
+      if (!user.contraseña) {
+        await user.update({
+          contraseña: await argon2.hash(deviceId),
+        });
+      } else {
+        // Si la contraseña ya existe, validar con el deviceId
+        const isValid = await argon2.verify(user.contraseña, deviceId);
+        if (!isValid) {
+          throw new Error("Usuario no permitido: el dispositivo no está autorizado.");
+        }
+      }
+  
+      return user;
     } catch (error) {
       throw new Error("Error al crear o buscar el usuario: " + error.message);
     }
   };
+  
   
   // Guardar o actualizar el token
   const saveToken = async (dni, token) => {
@@ -286,6 +299,15 @@ const createUserIfNotExists = async (dni) => {
     }
   }
 
+  const validateUsuarioMovil = async(dni) => {
+    try {
+        const user = await Usuario.findOne({where: {usuario: dni}})
+        return user
+    } catch (error) {
+        throw new Error('Error al validar dni: ' + error.message);
+    }
+  }
+
 
   
   const getLocalDate = () => {
@@ -308,7 +330,7 @@ const createUserIfNotExists = async (dni) => {
 
         // Obtener todos los usuarios con rol de fiscalizador (id_rol: 2)
         const findUsuarios = await Usuario.findAll({
-            where: { id_rol: '2' },
+            where: { id_rol: '3' },
             attributes: ['id', 'usuario'],
             order: [['usuario', 'ASC']],
         });
@@ -345,5 +367,6 @@ module.exports = {
     getTokenDNI,
     updateUser,
     validateUsuario,
-    validateCorreo
+    validateCorreo,
+    validateUsuarioMovil
 };

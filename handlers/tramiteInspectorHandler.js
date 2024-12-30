@@ -1,5 +1,5 @@
 const { createTramiteInspector, getAllTramiteInspectorById, getMyActasController } = require('../controllers/tramiteInspectorController');
-const { createMedidaComplementaria } = require('../controllers/medidaComplementariaController')
+const { createMedidaComplementaria, getAllTipoMCController } = require('../controllers/medidaComplementariaController')
 const { createNC, getNCforDigitador } = require('../controllers/ncController');
 const { updateControlActaController } = require('../controllers/controlActaController')
 const fs = require('fs');
@@ -47,6 +47,10 @@ const createTramiteHandler = async (req, res) => {
 
         } = req.body;
 
+        if(nombre_MC == 1){
+            nombre_MC = null;
+        }
+
         const errors = [];
 
         if (!nro_nc) {
@@ -78,19 +82,19 @@ const createTramiteHandler = async (req, res) => {
             errors.push('El inspector es obligatorio');
         }
 
-        if (nombre_MC == 1){
+        if (nombre_MC == 2){
             nombre_MC = 'ACTA DE EJECUCIÓN DE MEDIDA PROVICIONAL'
         }
-        if (nombre_MC == 2){
+        if (nombre_MC == 3){
             nombre_MC = 'VALORIZACIÓN DE LA OBRA'
         }
-        if (nombre_MC == 3){
+        if (nombre_MC == 4){
             nombre_MC = 'ACTA DE RETENCIÓN Y/O DECOMISO'
         }
-        if (nombre_MC == 4){
+        if (nombre_MC == 5){
             nombre_MC = 'ACTA DE EVALUACIÓN SANITARIA'
         }
-        if (nombre_MC == 5){
+        if (nombre_MC == 6){
             nombre_MC = 'INFORME TÉCNICO'
         }
 
@@ -263,4 +267,26 @@ const allTramiteHandler = async (req, res) => {
     }
 };
 
-module.exports = { createTramiteHandler, allTramiteHandler, getMyActasHandler };
+
+const getAllTipoMC = async (req, res) => {
+    try {
+        const response = await getAllTipoMCController();
+
+        if (response.data === 0) {
+            return res.status(200).json({
+                message: 'No hay MC',
+                data: []
+            });
+        }
+
+        return res.status(200).json({
+            message: "MC obtenidas correctamente",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener las actas:", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener las actas." });
+    }
+}
+
+module.exports = { createTramiteHandler, allTramiteHandler, getMyActasHandler, getAllTipoMC };

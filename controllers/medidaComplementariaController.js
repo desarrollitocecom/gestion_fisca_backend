@@ -1,4 +1,4 @@
-const { MedidaComplementaria, TramiteInspector, Usuario, NC } = require("../db_connection");
+const { MedidaComplementaria, TramiteInspector, Usuario, NC, TipoDocumentoComplementario } = require("../db_connection");
 const { saveImage } = require('../utils/fileUtils');
 const { Sequelize } = require('sequelize');
 
@@ -120,10 +120,27 @@ const deleteMedidaComplementaria = async (id) => {
     }
 };
 
+
+const getAllTipoMCController = async () => {
+    
+    try {
+        const response = await TipoDocumentoComplementario.findAll({
+            order: [['id', 'ASC']],
+            attributes: ['id', 'documento']
+        });
+        return response || null;
+    } catch (error) {
+        console.error("Error en el controlador al traer todas las Medidas Complementarias:", error);
+        return false;
+    }
+}
+
+
 module.exports = {
     getMedidaComplementaria,
     createMedidaComplementaria,
     updateMCController,
     deleteMedidaComplementaria,
-    getAllMCController
+    getAllMCController,
+    getAllTipoMCController
 };

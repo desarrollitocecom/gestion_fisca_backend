@@ -4,6 +4,9 @@ const router = Router();
 const { getAllUsersforControlActasHandler, createControlActaHandler, actasActualesHandler, updateControlActaHandler, getActaActualHandler } = require('../handlers/gestorActasHandler');
 const permisoAutorizacion = require("../checkers/roleAuth");
 
+
+
+
 router.get('/inspectores',permisoAutorizacion(["all_system_access"]), getAllUsersforControlActasHandler);
 router.post('/createControlActa',permisoAutorizacion(["all_system_access"]), createControlActaHandler);
 

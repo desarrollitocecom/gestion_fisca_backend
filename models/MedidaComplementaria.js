@@ -14,7 +14,7 @@ module.exports = (sequelize) => {
         },
 
         nro_medida_complementaria: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: true
         },
 
@@ -24,7 +24,7 @@ module.exports = (sequelize) => {
        },
         
         numero_ejecucion: {///////////////////
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: true
         },
 

@@ -36,9 +36,12 @@ const insertData = async () => {
 
     // Insertar datos ficticios en TipoDocumentoComplementario
     await TipoDocumentoComplementario.bulkCreate([
-      { documento: "Licencia de Funcionamiento" },
-      { documento: "Certificado de Defensa Civil" },
-      { documento: "Permiso Municipal" },
+      { documento: "SIN MEDIDA COMPLEMENTARIA" },
+      { documento: "ACTA DE EJECUCIÓN DE MEDIDA PROVICIONAL" },
+      { documento: "VALORIZACIÓN DE LA OBRA" },
+      { documento: "ACTA DE RETENCIÓN Y/O DECOMISO" },
+      { documento: "ACTA DE EVALUACIÓN SANITARIA" },
+      { documento: "INFORME TÉCNICO" },
     ]);
 
     // Insertar datos ficticios en Infraccion

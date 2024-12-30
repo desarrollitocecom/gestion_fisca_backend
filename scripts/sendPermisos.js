@@ -16,75 +16,49 @@ const Permiso = require("../models/Permiso")(sequelize);
 
 
 const permisos = [
-"create_Analista5",
-"create_Analista1",
-"create_Analista2",
-"create_Analista3",
-"create_Analista4",
-"read_Digitador",
-"read_documentos",
-"read_ejecucionmc",
-"create_ejecucionmc",
-"update_ejecucionmc",
-"delete_ejecucionmc",
-"read_estdescargonc",
-"create_estdescargonc",
-"delete_estdescargonc",
-"update_estdescargonc",
-"read_estdescargoifi",
-"create_estdescargoifi",
-"delete_estdescargoifi",
-"update_estdescargoifi",
-"read_estadomc",
-"create_estadomc",
-"delete_estadomc",
-"update_estadomc",
-"read_estdescargorsa",
-"create_estdescargorsa",
-"delete_estdescargorsa",
-"update_estdescargorsa",
-"read_estdescargorsgnp",
-"create_estdescargorsgnp",
-"delete_estdescargorsgnp",
-"update_estdescargorsgnp",
-"create_AInstructiva",
-"read_AResolutiva1",
-"read_AResolutiva2",
-"create_AResolutiva2",
-"read_Inspector",
-"create_mc",
-"delete_mc",
-"update_mc",
-"create_Gerente",
-"create_permiso",
-"create_rol",
-"read_permiso",
-"read_rol",
-"update_permiso",
-"update_rol",
-"delete_permiso",
-"delete_rol",
-"read_AResolutiva3",
-"read_Gerente",
-"read_dc",
-"create_dc",
-"delete_dc",
-"update_dc",
-"read_di",
-"create_di",
-"delete_di",
-"update_di",
-"read_usuarios",
-"delete_usuarios",
-"read_Analista2", 
-"create_AResolutiva1", 
-"read_Analista3", 
-"read_Analista4", 
-"read_Analista1",
-"all_system_access"
+  //ADMINISTRADOR
+  "all_system_access",
 
+  //GESTOR ACTAS
+  "read_GestorActas", "create_GestorActas", "update_GestorActas",
 
-  ]  
+  //INSPECTOR
+  "read_Inspector", "create_Inspector", "update_Inspector",
+
+  //DIGITADOR
+  "read_Digitador", "create_Digitador", "update_Digitador",
+
+  //AnalistaNC
+  "read_AnalistaNC", "create_AnalistaNC", "update_AnalistaNC",
+
+  //AreaInstructiva
+  "read_AreaInstructiva", "create_AreaInstructiva", "update_AreaInstructiva",
+
+  //AreaResolutiva1
+  "read_AreaResolutiva1", "create_AreaResolutiva1", "update_AreaResolutiva1",
+
+  //ANALISTAIFI
+  "read_AnalistaIFI", "create_AnalistaIFI", "update_AnalistaIFI",
+
+  //AreaResolutiva2
+  "read_AreaResolutiva2", "create_AreaResolutiva2", "update_AreaResolutiva2",
+
+  //ANALISTARSA
+  "read_AnalistaRSA", "create_AnalistaRSA", "update_AnalistaRSA",
+
+  //AreaResolutiva3
+  "read_AreaResolutiva3", "create_AreaResolutiva3", "update_AreaResolutiva3",
+
+  //ANALISTARSG
+  "read_AnalistaRSG", "create_AnalistaRSG", "update_AnalistaRSG",
+
+  //Gerencia
+  "read_Gerencia", "create_Gerencia", "update_Gerencia",
+
+  //ANALISTAActa
+  "read_AnalistaActa", "create_AnalistaActa", "update_AnalistaActa",
+
+]
 
 const insertPermisos = async () => {
   try {
@@ -94,8 +68,8 @@ const insertPermisos = async () => {
     await Permiso.sync({ alter: true });
     const permisosData = permisos.map((nombre) => ({
       nombre,
-      descripcion: `Permiso para ${nombre.replace(/[-_]/g, " ")}`, 
-      state: true, 
+      descripcion: `Permiso para ${nombre.replace(/[-_]/g, " ")}`,
+      state: true,
     }));
 
     await Permiso.bulkCreate(permisosData);

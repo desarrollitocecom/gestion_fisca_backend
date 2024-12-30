@@ -30,6 +30,9 @@ const getAllUsersforControlActasHandler = async (req, res) => {
 const createControlActaHandler = async (req, res) => {
     const { numero_actas, id_inspector, observaciones_inicio, id_encargadoInicio } = req.body;
 
+    console.log("numero_actas", numero_actas, "id_inspector", id_inspector,"observaciones_inicio", observaciones_inicio,"id_encargadoInicio", id_encargadoInicio)
+
+
     const errores = [];
     
     if (errores.length > 0) {
