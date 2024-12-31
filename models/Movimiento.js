@@ -37,6 +37,10 @@ module.exports = (sequelize) => {
                 type: DataTypes.TEXT,
                 allowNull: true,
             },
+            numero_acta: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
         },
         {
             tableName: "MovimientoActas",

@@ -40,7 +40,7 @@ const createControlActaHandler = async (req, res) => {
   const errores = [];
 
   if (!anio) {
-    errores.push("El campo 'anio' es obligatorio.");
+    errores.push("El campo año es obligatorio.");
   }
 
   if (!actas || !Array.isArray(actas)) {

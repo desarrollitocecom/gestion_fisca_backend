@@ -1,4 +1,4 @@
-const {ControlActa, Usuario, TramiteInspector, RangoActa} = require('../db_connection');
+const {ControlActa, Usuario, TramiteInspector, Paquete, RangoActa, MovimientoActa} = require('../db_connection');
 const { Sequelize } = require('sequelize');
 
 const createControlActaController=async ({numero_actas, id_inspector, observaciones_inicio, id_encargadoInicio, fecha_laburo}) => {
@@ -13,73 +13,6 @@ const createControlActaController=async ({numero_actas, id_inspector, observacio
       return false;
     }
 }
-
-// const actasActualesHandlerController =async (dia) => {
-//   try {
-//       const tramitesPorInspector = await TramiteInspector.findAll({
-//         attributes: [
-//           'id_inspector',
-//           [Sequelize.fn('COUNT', Sequelize.col('id')), 'nro_actas_realizadas'],
-//         ],
-//         where: Sequelize.where(
-//           Sequelize.fn('DATE', Sequelize.col('createdAt')),
-//           dia
-//         ),
-//         group: ['id_inspector'],
-//       });
-
-//       const tramitesMap = tramitesPorInspector.reduce((acc, tramite) => {
-//         // Verificar que 'nro_actas_realizadas' sea válido y convertir a número
-//         const nroActasRealizadas = tramite.dataValues.nro_actas_realizadas || 0;
-//         acc[tramite.dataValues.id_inspector] = parseInt(nroActasRealizadas, 10);
-//         return acc;
-//       }, {});
-
-      
-
-//       const response = await ControlActa.findAll({
-//        // where: { fecha_laburo: dia },
-//         attributes: [
-//             'id',
-//             [Sequelize.col('usuarioInspector.id'), 'id_inspector'],
-//             [Sequelize.col('usuarioInspector.usuario'), 'inspector'],
-//             //'nro_actas_inicio',
-//             //'observaciones_inicio',
-//             //'nro_actas_realizadas',
-//             //'observaciones_laburo',
-//             //'nro_actas_entregadas',
-//             //'observaciones_fin',
-//             'estado'
-//         ],
-//         include: [
-//           {
-//               model: Usuario,
-//               as: 'usuarioInspector',
-//               attributes: []
-//           },
-
-//       ],
-//       });
-
-      
-
-//       const result = response.map((acta) => {
-//         const nroActasRealizadas =
-//           tramitesMap[acta.dataValues.id_inspector] || 0; // Si no hay trámites, usar 0
-//         return {
-//           ...acta.dataValues,
-//           nro_actas_realizadas: nroActasRealizadas,
-//         };
-//       });
-//       // console.log(result);
-
-//       return result || null;
-
-//   } catch (error) {
-//     console.error("Error al traer control de actas actuales:", error);
-//     return false;
-//   }
-// }
 
 const actasActualesHandlerController = async (dia) => {
   try {
@@ -186,4 +119,31 @@ const updateActaInspector = async () => {
 
 }
 
-module.exports = { createControlActaController, actasActualesHandlerController, updateControlActaController, getActaActualController, updateActaInspector };
+const getAllPaquetesController = async () => {
+  try {
+    const response = await Paquete.findAll();
+    return response;
+  } catch (error) {
+      console.error('Error obteniendos los Paquetes:', error);
+      return false
+  }
+}
+
+const seguimientoController = async (page = 1, limit = 20) => {
+  const offset = (page - 1) * limit;
+  try {
+      const response = await MovimientoActa.findAndCountAll({
+          limit,
+          offset,
+          order: [['createdAt', 'ASC']]
+      });
+      return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+  } catch (error) {
+      console.error({ message: "Error en el controlador al traer todos los Estados MC", data: error });
+      return false;
+  }
+};
+
+
+
+module.exports = { createControlActaController, seguimientoController, actasActualesHandlerController, updateControlActaController, getActaActualController, updateActaInspector, getAllPaquetesController };
