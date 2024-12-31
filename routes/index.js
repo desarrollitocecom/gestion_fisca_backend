@@ -23,6 +23,7 @@ const analista4 = require('./analista4Router');
 const gerencia = require('./gerenciaRouter');
 const analista5 = require('./analista5Router');
 const reporte = require('./reporteRouter');
+const controlAlmacen = require('./controlAlmacen');
 
 router.use('/gestor',gestorActas);
 router.use('/digitador',digitadorNC);
@@ -37,7 +38,7 @@ router.use('/analista4',analista4);
 router.use('/gerencia',gerencia);
 router.use('/analista5',analista5);
 router.use('/reporte',reporte);
-
+router.use('/controlAlmacen',controlAlmacen);
 
 router.use('/ejecucionmc',ejecucionmc);
 router.use('/medidacomplementaria',medidacomplementaria);
