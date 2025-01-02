@@ -14,7 +14,7 @@ module.exports = (sequelize) => {
                 allowNull: true,
                 unique: true
             },
-            numero_actas: {
+            cantidad_actas: {
                 type: DataTypes.INTEGER,
                 allowNull: true,
             },

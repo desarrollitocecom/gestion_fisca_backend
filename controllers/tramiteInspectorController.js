@@ -1,4 +1,4 @@
-const { TramiteInspector, MedidaComplementaria, EstadoMC, TipoDocumentoComplementario, EjecucionMC, ControlActa } = require('../db_connection');
+const { TramiteInspector, MedidaComplementaria, EstadoMC, Doc, TipoDocumentoComplementario, EjecucionMC, ControlActa } = require('../db_connection');
 const { saveImage, deleteFile } = require('../utils/fileUtils');
 const { Sequelize } = require('sequelize');
 
@@ -11,11 +11,12 @@ const getLocalDate = () => {
 
 const getMyActasController = async (id) => {
     try {
-        const response = await ControlActa.findAll({
+        console.log(id);
+        
+        const response = await Doc.findAll({
             where: {
                 id_inspector: id,
-                estado: 'ENTREGADO',
-                fecha: getLocalDate()
+                estado: 'asignada',
             },
             order: [['createdAt', 'DESC']],
             attributes: ['id', 'numero_acta']

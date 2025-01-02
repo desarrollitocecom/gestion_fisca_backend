@@ -80,38 +80,18 @@ const getActaActualController = async (id) => {
   }
 }
 
-
-// const updateControlActaController=async (id,{nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin, estado}) => {
-//   try {
-//     console.log(id);
-    
-//       const findActaControl = await getControlActa(id);
-//       console.log(findActaControl);
-      
-//       const response = await findActaControl.update({
-//         nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin, estado
-//       });
-//       return response || null;
-
-//   } catch (error) {
-//     console.error("Error al crear el control de acta:", error);
-//     return false;
-//   }
-// }
-
-
 const updateControlActaController=async (id) => {
   try {
     console.log(id);
     
       const findActaControl = await getControlActa(id);
-      console.log(findActaControl);
+      //console.log(findActaControl);
       
       const response = await findActaControl.update({
         estado:'realizada'
       });
 
-      MovimientoActa.create(
+      await MovimientoActa.create(
         {
             tipo: 'realizacion',
             cantidad: 1,
@@ -150,7 +130,9 @@ const updateActaInspector = async () => {
 
 const getAllPaquetesController = async () => {
   try {
-    const response = await Paquete.findAll();
+    const response = await Paquete.findAll({
+      order: [['createdAt', 'DESC']],
+    });
     return response;
   } catch (error) {
       console.error('Error obteniendos los Paquetes:', error);
@@ -158,20 +140,28 @@ const getAllPaquetesController = async () => {
   }
 }
 
-const seguimientoController = async (page = 1, limit = 20) => {
+const seguimientoController = async (page = 1, limit = 20, numero_acta) => {
   const offset = (page - 1) * limit;
+  const whereClause = numero_acta ? { numero_acta } : {}; // Filtro dinámico
+
   try {
       const response = await MovimientoActa.findAndCountAll({
           limit,
           offset,
-          order: [['createdAt', 'ASC']]
+          where: whereClause, // Aplica el filtro aquí
+          order: [['createdAt', 'DESC']]
       });
-      return { totalCount: response.count, data: response.rows, currentPage: page } || null;
+      return { 
+          totalCount: response.count, 
+          data: response.rows, 
+          currentPage: page 
+      } || null;
   } catch (error) {
       console.error({ message: "Error en el controlador al traer todos los Estados MC", data: error });
       return false;
   }
 };
+
 
 
 

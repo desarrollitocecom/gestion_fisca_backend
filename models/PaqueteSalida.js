@@ -1,13 +1,21 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-    const Paquete = sequelize.define(
-        "Paquete",
+    const PaqueteSalida = sequelize.define(
+        "PaqueteSalida",
         {
             id: {
                 type: DataTypes.UUID,
                 primaryKey: true,
                 defaultValue: DataTypes.UUIDV4,
+            },
+            id_paquete:{
+                type: DataTypes.UUID,
+                references: {
+                    model: 'Paquetes',
+                    key: 'id',
+                },
+                allowNull:true
             },
             rangoInicio: {
                 type: DataTypes.INTEGER,
@@ -21,28 +29,16 @@ module.exports = (sequelize) => {
                 type: DataTypes.INTEGER,
                 allowNull: true,
             },
-            cantidadActual: {
-                type: DataTypes.INTEGER,
-                allowNull: true,
-            },
-            anio: {
-                type: DataTypes.INTEGER,
-                allowNull: true
-            },
             descripcion: {
                 type: DataTypes.STRING,
                 allowNull: true,
-            },
-            fechaRegistro: {
-                type: DataTypes.DATE,
-                defaultValue: DataTypes.NOW,
-            },
+            }
         },
         {
-            tableName: "Paquetes",
+            tableName: "PaqueteSalidas",
             timestamps: true,
         }
     );
 
-    return Paquete;
+    return PaqueteSalida;
 };

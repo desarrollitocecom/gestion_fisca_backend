@@ -22,26 +22,33 @@ const createUserHandler = async (req, res) => {
     else if (!usuarioRegex.test(usuario))
         errors.push("El nombre de usuario debe tener entre 4 y 20 caracteres, y puede incluir letras, números, puntos, guiones bajos o guiones");
 
-    const userValidate = await validateUsuario(usuario)
-    if(userValidate){
-        errors.push(`El usuario ${usuario} ya existe`);
+    if(usuario){
+        const userValidate = await validateUsuario(usuario)
+        if(userValidate){
+            errors.push(`El usuario ${usuario} ya existe`);
+        }
     }
 
-    const correoValidate = await validateCorreo(correo)
-    if(correoValidate){
-        errors.push(`El correo ${correo} ya existe`);
+    if (!correo)
+        errors.push("El correo es requerido");
+    else if (!correoRegex.test(correo))
+        errors.push("Formato de correo inválido");
+
+    if(correo){
+        const correoValidate = await validateCorreo(correo)
+        if(correoValidate){
+            errors.push(`El correo ${correo} ya existe`);
+        }
     }
+    
+    
+    
 
     if(id_rol != 3){
         if (!contraseña)
             errors.push("La contraseña es requerida");
         else if (!contraseñaRegex.test(contraseña))
-            errors.push("La contraseña debe tener al menos 8 caracteres, incluyendo letras y números");
-    
-        if (!correo)
-            errors.push("El correo es requerido");
-        else if (!correoRegex.test(correo))
-            errors.push("Formato de correo inválido");
+            errors.push("La contraseña debe tener al menos 8 caracteres, incluyendo letras y números"); 
     } 
 
     //console.log(errors);
