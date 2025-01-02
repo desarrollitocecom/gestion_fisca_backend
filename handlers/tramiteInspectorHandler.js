@@ -179,9 +179,9 @@ const createTramiteHandler = async (req, res) => {
             //aqui creo el NC
             const newNC = await createNC({ id_tramiteInspector: newTramiteInspector.id });
 
-            const controlActa = await updateControlActaController(id_controlActa,{estado:'REALIZADO'});
+            const controlActa = await updateControlActaController(id_controlActa);
 
-            
+                   
             
             const modelNC = 'NOTIFICACIÓN DE CARGO';
             

@@ -1,4 +1,4 @@
-const {ControlActa, Usuario, TramiteInspector, Paquete, RangoActa, MovimientoActa} = require('../db_connection');
+const {ControlActa, Usuario, TramiteInspector, Paquete, RangoActa, MovimientoActa, Doc} = require('../db_connection');
 const { Sequelize } = require('sequelize');
 
 const createControlActaController=async ({numero_actas, id_inspector, observaciones_inicio, id_encargadoInicio, fecha_laburo}) => {
@@ -81,7 +81,26 @@ const getActaActualController = async (id) => {
 }
 
 
-const updateControlActaController=async (id,{nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin, estado}) => {
+// const updateControlActaController=async (id,{nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin, estado}) => {
+//   try {
+//     console.log(id);
+    
+//       const findActaControl = await getControlActa(id);
+//       console.log(findActaControl);
+      
+//       const response = await findActaControl.update({
+//         nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin, estado
+//       });
+//       return response || null;
+
+//   } catch (error) {
+//     console.error("Error al crear el control de acta:", error);
+//     return false;
+//   }
+// }
+
+
+const updateControlActaController=async (id) => {
   try {
     console.log(id);
     
@@ -89,8 +108,18 @@ const updateControlActaController=async (id,{nro_actas_realizadas, observaciones
       console.log(findActaControl);
       
       const response = await findActaControl.update({
-        nro_actas_realizadas, observaciones_laburo, nro_actas_entregadas, observaciones_fin, id_encargadoFin, estado
+        estado:'realizada'
       });
+
+      MovimientoActa.create(
+        {
+            tipo: 'realizacion',
+            cantidad: 1,
+            numero_acta: response.numero_acta, 
+            detalle: `Acta realizada por el inspector: ${response.numero_acta}`,
+        }
+    )
+
       return response || null;
 
   } catch (error) {
@@ -104,7 +133,7 @@ const getControlActa = async (id) => {
   try {
     console.log(id, 'asd');
     
-      const findControlActa = await ControlActa.findOne({ 
+      const findControlActa = await Doc.findOne({ 
           where: { id } 
       });
 

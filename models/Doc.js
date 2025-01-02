@@ -14,6 +14,10 @@ module.exports = (sequelize) => {
                 allowNull: true,
                 unique: true
             },
+            numero_actas: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+            },
             estado: {
                 type: DataTypes.ENUM('almacenada', 'salida', 'asignada', 'realizada', 'devuelta'),
                 allowNull: false,

@@ -6,7 +6,7 @@ const { Sequelize } = require('sequelize');
 
 const createUser = async ({ usuario, contraseña, correo, id_rol /*, id_empleado */ }) => {
     try {
-        if(id_rol != 2){
+        if(id_rol != 3){
             contraseña = await argon2.hash(contraseña)
         }
 

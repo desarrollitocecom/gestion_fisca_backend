@@ -32,7 +32,7 @@ const createUserHandler = async (req, res) => {
         errors.push(`El correo ${correo} ya existe`);
     }
 
-    if(id_rol != 2){
+    if(id_rol != 3){
         if (!contraseña)
             errors.push("La contraseña es requerida");
         else if (!contraseñaRegex.test(contraseña))
@@ -49,6 +49,7 @@ const createUserHandler = async (req, res) => {
         return res.status(400).json({ message: "Se encontraron los siguientes errores", data: errors });
 
     try {
+        
         const response = await createUser({
             usuario: usuario,
             contraseña: contraseña,

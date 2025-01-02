@@ -266,7 +266,7 @@ const sacarActas = async (req, res) => {
 
 
 const asignarActa = async (req, res) => {
-    const { id_inspector, actas } = req.body;  
+    const { id_encargado, id_inspector, actas } = req.body;  
     const anio = new Date().getFullYear(); 
 
     const numerosActa = actas.map(num => `${num.toString().padStart(5, '0')}-${anio}`);
@@ -290,18 +290,29 @@ const asignarActa = async (req, res) => {
             throw new Error(`Las siguientes actas no fueron encontradas en estado "salida": ${actasNoEncontradas.join(', ')}`);
         }
 
+        // Actualizar el estado de las actas a "asignada"
         await Promise.all(
             actasEncontradas.map(acta =>
                 acta.update({ estado: 'asignada', id_inspector }, { transaction })  
             )
         );
 
-        await MovimientoActa.create({
-            tipo: 'asignacion',
-            cantidad: actasEncontradas.length,
-            usuarioId: 2, 
-            detalle: `Actas asignadas al inspector ${id_inspector}`,
-        }, { transaction });  
+        // Crear un movimiento individual por cada acta asignada
+        await Promise.all(
+            actasEncontradas.map(acta =>
+                MovimientoActa.create(
+                    {
+                        tipo: 'asignacion',
+                        cantidad: 1,  // Siempre 1 por cada acta
+                        id_encargado,
+                        numero_acta: acta.numero_acta, // Número de acta asignada
+                        usuarioId: 2,  // Usuario asignado, puedes ajustarlo según sea necesario
+                        detalle: `Acta asignada al inspector ${id_inspector}: ${acta.numero_acta}`,
+                    },
+                    { transaction }
+                )
+            )
+        );
 
         await transaction.commit();
 
@@ -321,15 +332,18 @@ const asignarActa = async (req, res) => {
 };
 
 
-const devolverActa = async (req, res) => {
+const devolverActa = async (req, res) => { 
     const { actas } = req.body;  
     const anio = new Date().getFullYear(); 
 
-    const numerosActa = actas.map(num => `${num.toString().padStart(5, '0')}-${anio}`);
-
+    // Convertir los números de actas con el formato adecuado
+    const numerosActa = actas.map(({ numero_acta }) => `${numero_acta.toString().padStart(5, '0')}-${anio}`);
+    
+    
     const transaction = await Doc.sequelize.transaction();  
 
     try {
+        // Buscar las actas en estado "realizada"
         const actasEncontradas = await Doc.findAll({
             where: {
                 estado: 'realizada',
@@ -340,40 +354,58 @@ const devolverActa = async (req, res) => {
             transaction,  
         });
 
-        const actasNoEncontradas = numerosActa.filter(numActa => !actasEncontradas.some(acta => acta.numero_acta === numActa));
+        // Identificar actas no encontradas
+        const actasNoEncontradas = numerosActa.filter(numActa => 
+            !actasEncontradas.some(acta => acta.numero_acta === numActa)
+        );
 
         if (actasNoEncontradas.length > 0) {
-            throw new Error(`Las siguientes actas no fueron encontradas en estado "realizada": ${actasNoEncontradas.join(', ')}`);
+            throw new Error(`Las siguientes actas no fueron encontradas en estado realizada: ${actasNoEncontradas.join(', ')}`);
         }
 
+        // Actualizar el estado de las actas a "devuelta"
         await Promise.all(
             actasEncontradas.map(acta =>
                 acta.update({ estado: 'devuelta' }, { transaction })  
             )
         );
 
-        await MovimientoActa.create({
-            tipo: 'devolucion',
-            cantidad: actasEncontradas.length,
-            detalle: `Actas devuelvas`,
-        }, { transaction });  
+        // Crear un movimiento individual para cada acta
+        await Promise.all(
+            actas.map(({ numero_acta, observacion }) => {
+                const numeroActaFormateado = `${numero_acta.toString().padStart(5, '0')}-${anio}`;
+                const detalle = observacion || "Entregado correctamente";
+
+                return MovimientoActa.create(
+                    {
+                        tipo: 'devolucion',
+                        cantidad: 1,  // Siempre 1 por cada acta
+                        numero_acta: numeroActaFormateado, 
+                        usuarioId: 2,  // Ajustar según la lógica de tu aplicación
+                        detalle: `Acta ${numeroActaFormateado}: ${detalle}`,
+                    },
+                    { transaction }
+                );
+            })
+        );
 
         await transaction.commit();
 
         return res.status(200).json({
-            message: 'Actas asignadas correctamente.',
+            message: 'Actas devueltas correctamente.',
             data: actasEncontradas,
         });
     } catch (error) {
         await transaction.rollback();
 
-        console.error('Error al asignar las actas:', error);
+        console.error('Error al devolver las actas:', error);
         return res.status(500).json({
-            message: 'Error interno al asignar las actas.',
+            message: 'Error interno al devolver las actas.',
             data: error.message,  
         });
     }
 };
+
 
 
 module.exports = { generatePaquete, sacarActas, asignarActa, devolverActa, getAllPaquetes, seguimientoHandler };

@@ -4,6 +4,7 @@ const router = Router();
 const { generatePaquete, sacarActas, asignarActa, devolverActa, getAllPaquetes, seguimientoHandler } = require('../handlers/paqueteHandler');
 
 router.get('/paquetes', getAllPaquetes);
+
 router.post('/newPaquete', generatePaquete);
 
 router.patch('/sacarActas', sacarActas);
