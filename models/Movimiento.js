@@ -25,6 +25,14 @@ module.exports = (sequelize) => {
                 },
                 allowNull: true, 
             },
+            id_paquete: {
+                type: DataTypes.UUID,
+                references: {
+                    model: 'Paquetes',
+                    key: 'id',
+                },
+                allowNull: true, 
+            },
             id_encargado: {
                 type: DataTypes.UUID,
                 references: {
@@ -47,6 +55,13 @@ module.exports = (sequelize) => {
             timestamps: true,
         }
     );
+
+    MovimientoActa.associate = (db) => {
+        MovimientoActa.belongsTo(db.Paquete, { foreignKey: 'id_paquete', as: 'paquete'})
+        MovimientoActa.belongsTo(db.Usuario, { foreignKey: 'id_encargado', as: 'usuarioEncargado' })   
+        MovimientoActa.belongsTo(db.Doc, { foreignKey: 'id_doc', as: 'acta' })   
+    };
+
 
     return MovimientoActa;
 };

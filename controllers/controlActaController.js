@@ -68,8 +68,8 @@ const getActaActualController = async (id) => {
          },
          {
             model: ControlActa,
-            as: 'controlActa', // Este alias debe coincidir con el definido en la asociación
-            attributes: ['id', 'numero_acta', 'estado'], // Ajusta los atributos que necesitas
+            as: 'controlActa', 
+            attributes: ['id', 'numero_acta', 'estado'], 
           },
       ]
     })
@@ -97,6 +97,7 @@ const updateControlActaController=async (id) => {
             cantidad: 1,
             numero_acta: response.numero_acta, 
             detalle: `Acta realizada por el inspector: ${response.numero_acta}`,
+            id_paquete: response.id_paquete,
         }
     )
 
@@ -130,15 +131,53 @@ const updateActaInspector = async () => {
 
 const getAllPaquetesController = async () => {
   try {
-    const response = await Paquete.findAll({
+    // Obtener todos los paquetes
+    const paquetes = await Paquete.findAll({
       order: [['createdAt', 'DESC']],
     });
-    return response;
+
+    // Obtener las cantidades de actas devueltas por paquete
+    const paquetesConDevueltos = await Promise.all(
+      paquetes.map(async (paquete) => {
+        const cantidadDevueltos = await MovimientoActa.count({
+          where: {
+            id_paquete: paquete.id,
+            tipo: 'salida', // Filtrar solo las actas devueltas
+          },
+        });
+
+        // Retornar el paquete con la cantidad devuelta calculada
+        return {
+          ...paquete.toJSON(), // Convertir el paquete en objeto plano
+          cantidadDevueltos,
+          cantidadActual: paquete.cantidadTotal - cantidadDevueltos, // Calcular la cantidad actual
+        };
+      })
+    );
+
+    return paquetesConDevueltos;
   } catch (error) {
-      console.error('Error obteniendos los Paquetes:', error);
-      return false
+    console.error('Error obteniendo los Paquetes:', error);
+    return false;
   }
-}
+};
+
+
+const getAllSalidasFromPaqueteController = async (id) => {
+  try {
+    const totalSalidas = await MovimientoActa.count({
+      where: {
+        tipo: 'salida', 
+        id_paquete: id, 
+      },
+    });
+    return totalSalidas;
+  } catch (error) {
+    console.error('Error obteniendo las salidas del paquete:', error);
+    return false;
+  }
+};
+
 
 const seguimientoController = async (page = 1, limit = 20, numero_acta) => {
   const offset = (page - 1) * limit;
@@ -165,4 +204,4 @@ const seguimientoController = async (page = 1, limit = 20, numero_acta) => {
 
 
 
-module.exports = { createControlActaController, seguimientoController, actasActualesHandlerController, updateControlActaController, getActaActualController, updateActaInspector, getAllPaquetesController };
+module.exports = { createControlActaController, getAllSalidasFromPaqueteController, seguimientoController, actasActualesHandlerController, updateControlActaController, getActaActualController, updateActaInspector, getAllPaquetesController };

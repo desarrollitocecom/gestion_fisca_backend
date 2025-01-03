@@ -1,9 +1,11 @@
 const { Router } = require('express');
 const router = Router();
 
-const { generatePaquete, sacarActas, asignarActa, devolverActa, getAllPaquetes, seguimientoHandler, actasActuales, getActaActual, getActasRealizadasActual, getActasEntregadasActual, getActasPorRealizarActual } = require('../handlers/paqueteHandler');
+const { generatePaquete, sacarActas, asignarActa, getAllSalidasFromPaquete, devolverActa, getAllPaquetes, seguimientoHandler, actasActuales, getActaActual, getActasRealizadasActual, getActasEntregadasActual, getActasPorRealizarActual } = require('../handlers/paqueteHandler');
 
 router.get('/paquetes', getAllPaquetes);
+
+router.get('/salidas/:id', getAllSalidasFromPaquete);
 
 router.post('/newPaquete', generatePaquete);
 
