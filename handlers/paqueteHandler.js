@@ -333,8 +333,8 @@ const getActasRealizadasActual = async (req, res) => {
       where: {
         id_inspector: id, // Filtrar por inspector
         [Sequelize.Op.or]: [
-          { estado: 'realizada' },
-          { estado: 'devuelta' }
+          { tipo: 'true' },
+          // { estado: 'devuelta' }
         ], // Filtrar por estado 'realizada' o 'devuelta'
       },
       attributes: [

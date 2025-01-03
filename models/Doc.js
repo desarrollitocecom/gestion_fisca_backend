@@ -14,8 +14,8 @@ module.exports = (sequelize) => {
                 allowNull: true,
                 unique: true
             },
-            cantidad_actas: {
-                type: DataTypes.INTEGER,
+            tipo: {
+                type: DataTypes.BOOLEAN,
                 allowNull: true,
             },
             estado: {

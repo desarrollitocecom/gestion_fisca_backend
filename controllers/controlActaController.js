@@ -88,7 +88,8 @@ const updateControlActaController=async (id) => {
       //console.log(findActaControl);
       
       const response = await findActaControl.update({
-        estado:'realizada'
+        estado:'realizada',
+        tipo: true
       });
 
       await MovimientoActa.create(
