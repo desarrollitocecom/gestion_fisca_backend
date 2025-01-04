@@ -408,6 +408,12 @@ const facialLoginHandler = async (req, res) => {
         const dniValidate = await validateUsuarioMovil(dni);
         if (dniValidate) {
             const user = await createUserIfNotExists(dni, deviceId);
+            if(!user){
+                return res.status(400).json({
+                    success: false,
+                    message: "Este dispositivo no esta autorizado",
+                });
+            }
 
             let token = await getTokenDNI(dni);
             if (!token) {
@@ -426,7 +432,7 @@ const facialLoginHandler = async (req, res) => {
                 uuid: user.id,
             });
         } else {
-            return res.status(500).json({
+            return res.status(400).json({
                 success: false,
                 message: "Este DNI no esta registrado",
             });

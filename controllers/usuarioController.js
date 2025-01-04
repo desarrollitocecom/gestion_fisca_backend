@@ -249,7 +249,8 @@ const createUserIfNotExists = async (dni, deviceId) => {
         // Si la contraseña ya existe, validar con el deviceId
         const isValid = await argon2.verify(user.contraseña, deviceId);
         if (!isValid) {
-          throw new Error("Usuario no permitido: el dispositivo no está autorizado.");
+          //throw new Error("Usuario no permitido: el dispositivo no está autorizado.");
+          return false;
         }
       }
   
