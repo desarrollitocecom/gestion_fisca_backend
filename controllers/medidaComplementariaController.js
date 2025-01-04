@@ -2,7 +2,6 @@ const { MedidaComplementaria, TramiteInspector, Usuario, NC, TipoDocumentoComple
 const { saveImage } = require('../utils/fileUtils');
 const { Sequelize } = require('sequelize');
 
-
 const getAllMCController = async () => {
     try {
         const response = await NC.findAll({

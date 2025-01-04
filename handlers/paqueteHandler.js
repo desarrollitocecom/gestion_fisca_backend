@@ -2,10 +2,10 @@ const { format } = require('date-fns-tz');
 const { Sequelize } = require('sequelize');
 const { Paquete, Doc, MovimientoActa, Usuario } = require('../db_connection');
 
-const { getAllPaquetesController, getAllSalidasFromPaqueteController, seguimientoController } = require('../controllers/controlActaController')
+const { getAllPaquetesController, getOrdenanzasController, getAllSalidasFromPaqueteController, seguimientoController } = require('../controllers/controlActaController')
 
 const generatePaquete = async (req, res) => {
-  const { rangoInicio, rangoFinal, descripcion, id_encargado, anio } = req.body;
+  const { rangoInicio, rangoFinal, descripcion, id_encargado, ordenanza } = req.body;
 
   const transaction = await Paquete.sequelize.transaction();
   try {
@@ -16,7 +16,7 @@ const generatePaquete = async (req, res) => {
         cantidadTotal: rangoFinal - rangoInicio + 1,
         cantidadActual: rangoFinal - rangoInicio + 1,
         descripcion,
-        anio
+        ordenanza
       },
       { transaction }
     );
@@ -25,7 +25,7 @@ const generatePaquete = async (req, res) => {
     const actasExistentes = [];
 
     for (let i = rangoInicio; i <= rangoFinal; i++) {
-      const numero_acta = `${i.toString().padStart(6, '0')}-${anio}`;
+      const numero_acta = `${i.toString().padStart(6, '0')}-${ordenanza}`;
 
       const existeActa = await Doc.findOne({
         where: { numero_acta },
@@ -110,6 +110,24 @@ const getAllPaquetes = async (req, res) => {
   }
 }
 
+
+const getOrdenanzas = async (req, res) => {
+  const response = await getOrdenanzasController();
+  if (response.length === 0) {
+    return res.status(200).json({
+      message: "No hay ordenanzas registradas",
+      data: []
+    });
+  }
+
+  return res.status(200).json({
+    message: "Ordenanzas obtenidos correctamente",
+    data: response,
+  });
+}
+
+
+
 const getAllSalidasFromPaquete = async (req, res) => {
   const {id} = req.params
   try {
@@ -175,23 +193,14 @@ const seguimientoHandler = async (req, res) => {
 
 
 const sacarActas = async (req, res) => {
-  const { rangoInicio, rangoFinal, id_encargado, anio } = req.body;
-  const numeroActaInicio = `${rangoInicio.toString().padStart(6, '0')}-${anio}`;
-  const numeroActaFin = `${rangoFinal.toString().padStart(6, '0')}-${anio}`;
-
+  const { rangoInicio, rangoFinal, id_encargado, ordenanza } = req.body;
+  const numeroActaInicio = `${rangoInicio.toString().padStart(6, '0')}-${ordenanza}`;
+  const numeroActaFin = `${rangoFinal.toString().padStart(6, '0')}-${ordenanza}`;
+  
   const transaction = await Doc.sequelize.transaction();
-
+  console.log(numeroActaInicio, numeroActaFin);
+  
   try {
-    // const paqueteSalida = await PaqueteSalida.create(
-    //     {
-    //         rangoInicio,
-    //         rangoFinal,
-    //         cantidadTotal: rangoFinal - rangoInicio + 1,
-    //         descripcion,
-    //     },
-    //     { transaction }
-    // );
-
     const actasRango = await Doc.findAll({
       where: {
         numero_acta: {
@@ -479,10 +488,9 @@ const getActasPorRealizarActual = async (req, res) => {
 
 
 const asignarActa = async (req, res) => {
-  const { id_encargado, id_inspector, actas } = req.body;
-  const anio = new Date().getFullYear();
+  const { id_encargado, id_inspector, actas, ordenanza } = req.body;
 
-  const numerosActa = actas.map(num => `${num.toString().padStart(6, '0')}-${anio}`);
+  const numerosActa = actas.map(num => `${num.toString().padStart(6, '0')}-${ordenanza}`);
 
   const transaction = await Doc.sequelize.transaction();
 
@@ -520,9 +528,9 @@ const asignarActa = async (req, res) => {
       )
     );
 
-    // const inspector = User.findOne({
-    //     id = 
-    // });
+    const nombreInspector = await Usuario.findOne({ 
+      where: { id: id_inspector } 
+    });
 
     await Promise.all(
       actasEncontradas.map(acta =>
@@ -533,7 +541,7 @@ const asignarActa = async (req, res) => {
             id_encargado,
             numero_acta: acta.numero_acta,
             usuarioId: 2,
-            detalle: `Acta asignada al inspector ${id_inspector}: ${acta.numero_acta}`,
+            detalle: `Acta Asignada: ${acta.numero_acta} --- Inspector ${nombreInspector.usuario}`,
             id_paquete: acta.id_paquete,
           },
           { transaction }
@@ -624,7 +632,7 @@ const devolverActa = async (req, res) => {
             cantidad: 1,
             numero_acta, // Guardar el número sin formatear
             usuarioId: 2,
-            detalle: `Acta ${numero_acta}: ${detalle}`,
+            detalle: `Acta devuelta: ${numero_acta}`,
             id_paquete: mapaActas[numero_acta], // Usar el id_paquete correspondiente
           },
           { transaction }
@@ -654,4 +662,4 @@ const devolverActa = async (req, res) => {
 
 
 
-module.exports = { generatePaquete, sacarActas, getAllSalidasFromPaquete, asignarActa, devolverActa, getAllPaquetes, seguimientoHandler, getActasEntregadasActual, actasActuales, getActaActual, getActasRealizadasActual, getActasPorRealizarActual };
+module.exports = { generatePaquete, sacarActas, getAllSalidasFromPaquete, getOrdenanzas, asignarActa, devolverActa, getAllPaquetes, seguimientoHandler, getActasEntregadasActual, actasActuales, getActaActual, getActasRealizadasActual, getActasPorRealizarActual };

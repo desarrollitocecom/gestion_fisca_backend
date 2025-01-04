@@ -25,6 +25,7 @@ const EstadoDescargoNC = require("../models/EstadoDescargoNC")(sequelize);
 const EstadoDescargoIFI = require("../models/EstadoDescargoIFI")(sequelize);
 const EstadoDescargoRSA = require("../models/EstadoDescargoRSA")(sequelize);
 const EstadoRG = require("../models/EstadoRG")(sequelize);
+const Ordenanza = require("../models/Ordenanza")(sequelize);
 
 const insertData = async () => {
   try {
@@ -134,6 +135,10 @@ const insertData = async () => {
       { tipo: "CON DESCARGO" },
       { tipo: "SIN DESCARGO" },
       { tipo: "ANULADO" },
+    ]);
+
+    await Ordenanza.bulkCreate([
+      { nombre: "464" }
     ]);
 
 

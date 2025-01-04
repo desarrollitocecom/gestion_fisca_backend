@@ -4,7 +4,7 @@ const argon2 = require('argon2');
 const { Sequelize } = require('sequelize');
 
 
-const createUser = async ({ usuario, contraseña, correo, id_rol /*, id_empleado */ }) => {
+const createUser = async ({ usuario, contraseña, correo, id_rol, dni /*, id_empleado */ }) => {
     try {
         if(id_rol != 3){
             contraseña = await argon2.hash(contraseña)
@@ -16,6 +16,7 @@ const createUser = async ({ usuario, contraseña, correo, id_rol /*, id_empleado
             correo: correo,
             token: null,
             id_rol: id_rol,
+            dni
             // id_empleado: id_empleado // Comentado porque no se usará
         });
         return response || null;
@@ -104,11 +105,11 @@ const changeUserData = async (usuario, correo, id_rol /*, id_empleado */) => {
     }
 };
 
-const updateUser = async (id, {usuario, correo, id_rol}) => {
+const updateUser = async (id, {usuario, correo, id_rol, dni}) => {
     try {
         const user = await getUserByUUid(id);
 
-        await user.update({usuario, correo, id_rol})
+        await user.update({usuario, correo, id_rol, dni})
 
         return user
     } catch (error) {
@@ -120,7 +121,7 @@ const getAllUsers = async () => {
     try {
 
         const response = await Usuario.findAll({
-            attributes: ['id', 'usuario', 'correo', 'state', 'id_rol', /*, 'id_empleado' */
+            attributes: ['id', 'usuario', 'correo', 'state', 'id_rol', 'dni',/*, 'id_empleado' */
                 [Sequelize.col('rol.nombre'), 'nombre_rol'],
             ], // id_empleado comentado
             where: { state: true },
@@ -170,7 +171,7 @@ const getUserById = async (token) => {
     try {
         const user = await Usuario.findOne({
             where: { token: token },
-            attributes: ['id', 'usuario', 'correo', 'state', 'id_rol' /*, 'id_empleado' */], // id_empleado comentado
+            attributes: ['id', 'usuario', 'correo', 'state', 'id_rol', 'dni' /*, 'id_empleado' */], // id_empleado comentado
             include: [
                 {
                     model: Rol,
@@ -308,6 +309,15 @@ const createUserIfNotExists = async (dni, deviceId) => {
     }
   }
 
+  const validateDNI = async(dni) => {
+    try {
+        const user = await Usuario.findOne({where: {dni: dni}})
+        return user
+    } catch (error) {
+        throw new Error('Error al validar dni: ' + error.message);
+    }
+  }
+
 
   
   const getLocalDate = () => {
@@ -368,5 +378,6 @@ module.exports = {
     updateUser,
     validateUsuario,
     validateCorreo,
-    validateUsuarioMovil
+    validateUsuarioMovil,
+    validateDNI
 };

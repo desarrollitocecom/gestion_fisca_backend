@@ -1,4 +1,4 @@
-const {ControlActa, Usuario, TramiteInspector, Paquete, RangoActa, MovimientoActa, Doc} = require('../db_connection');
+const {ControlActa, Usuario, TramiteInspector, Paquete, RangoActa, MovimientoActa, Doc, Ordenanza} = require('../db_connection');
 const { Sequelize } = require('sequelize');
 
 const createControlActaController=async ({numero_actas, id_inspector, observaciones_inicio, id_encargadoInicio, fecha_laburo}) => {
@@ -80,24 +80,25 @@ const getActaActualController = async (id) => {
   }
 }
 
-const updateControlActaController=async (id) => {
+const updateControlActaController=async (id, id_inspector) => {
   try {
     console.log(id);
     
       const findActaControl = await getControlActa(id);
-      //console.log(findActaControl);
       
       const response = await findActaControl.update({
         estado:'realizada',
         tipo: true
       });
 
+      const findUser = await Usuario.findOne({id:id_inspector})
+
       await MovimientoActa.create(
         {
             tipo: 'realizacion',
             cantidad: 1,
             numero_acta: response.numero_acta, 
-            detalle: `Acta realizada por el inspector: ${response.numero_acta}`,
+            detalle: `Acta Realizada: ${response.numero_acta} --- Inspector: ${findUser.usuario}`,
             id_paquete: response.id_paquete,
         }
     )
@@ -164,6 +165,20 @@ const getAllPaquetesController = async () => {
 };
 
 
+
+
+
+const getOrdenanzasController = async (id) => {
+  try {
+    const ordenanzas = await Ordenanza.findAll({});
+    return ordenanzas;
+  } catch (error) {
+    console.error('Error obteniendo las ordenanzas: ', error);
+    return false;
+  }
+};
+
+
 const getAllSalidasFromPaqueteController = async (id) => {
   try {
     const totalSalidas = await MovimientoActa.count({
@@ -205,4 +220,4 @@ const seguimientoController = async (page = 1, limit = 20, numero_acta) => {
 
 
 
-module.exports = { createControlActaController, getAllSalidasFromPaqueteController, seguimientoController, actasActualesHandlerController, updateControlActaController, getActaActualController, updateActaInspector, getAllPaquetesController };
+module.exports = { createControlActaController, getOrdenanzasController, getAllSalidasFromPaqueteController, seguimientoController, actasActualesHandlerController, updateControlActaController, getActaActualController, updateActaInspector, getAllPaquetesController };
