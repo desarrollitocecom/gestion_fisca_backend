@@ -55,6 +55,12 @@ const generatePaquete = async (req, res) => {
       });
     }
 
+    const findUser = await Usuario.findOne({
+      where: {
+        id: id_encargado
+      }
+    });
+
     const actasCreadas = await Doc.bulkCreate(actas, { transaction });
 
     for (const acta of actasCreadas) {
@@ -64,7 +70,7 @@ const generatePaquete = async (req, res) => {
           cantidad: 1,
           id_encargado,
           numero_acta: acta.numero_acta,
-          detalle: `Acta registrada: ${acta.numero_acta}`,
+          detalle: `Acta registrada por ${findUser.usuario}: ${acta.numero_acta}`,
           id_paquete: paquete.id,
         },
         { transaction }
@@ -228,6 +234,12 @@ const sacarActas = async (req, res) => {
       )
     );
 
+    const findUser = await Usuario.findOne({
+      where: {
+        id: id_encargado
+      }
+    });
+
     await Promise.all(
       actasRango.map(acta =>
         MovimientoActa.create(
@@ -236,7 +248,7 @@ const sacarActas = async (req, res) => {
             id_encargado,
             cantidad: 1,
             numero_acta: acta.numero_acta,
-            detalle: `Acta retirada: ${acta.numero_acta}`,
+            detalle: `Acta retirada por ${findUser.usuario}: ${acta.numero_acta}`,
             id_paquete: acta.id_paquete,
           },
           { transaction }
@@ -429,7 +441,8 @@ const getActasPorRealizarActual = async (req, res) => {
       where: {
         id_inspector: id, // Filtrar por inspector
         [Sequelize.Op.or]: [
-          { estado: 'asignada' }
+          { estado: 'asignada' },
+          { estado: 'realizada' }
         ], // Filtrar por estado 'realizada' o 'devuelta'
       },
       attributes: [
@@ -532,6 +545,12 @@ const asignarActa = async (req, res) => {
       where: { id: id_inspector } 
     });
 
+    const findUser = await Usuario.findOne({
+      where: {
+        id: id_encargado
+      }
+    });
+
     await Promise.all(
       actasEncontradas.map(acta =>
         MovimientoActa.create(
@@ -541,7 +560,7 @@ const asignarActa = async (req, res) => {
             id_encargado,
             numero_acta: acta.numero_acta,
             usuarioId: 2,
-            detalle: `Acta Asignada: ${acta.numero_acta} --- Inspector ${nombreInspector.usuario}`,
+            detalle: `Acta Asignada por ${findUser.usuario}: ${acta.numero_acta} - Inspector ${nombreInspector.usuario}`,
             id_paquete: acta.id_paquete,
           },
           { transaction }
@@ -568,7 +587,7 @@ const asignarActa = async (req, res) => {
 
 
 const devolverActa = async (req, res) => {
-  const { actas } = req.body;
+  const { actas, id_encargado } = req.body;
 
   const transaction = await Doc.sequelize.transaction();
 
@@ -621,6 +640,12 @@ const devolverActa = async (req, res) => {
       )
     );
 
+    const findUser = await Usuario.findOne({
+      where: {
+        id: id_encargado
+      }
+    });
+
     // Crear registros en MovimientoActa
     await Promise.all(
       actas.map(({ numero_acta, observacion }) => {
@@ -632,8 +657,9 @@ const devolverActa = async (req, res) => {
             cantidad: 1,
             numero_acta, // Guardar el número sin formatear
             usuarioId: 2,
-            detalle: `Acta devuelta: ${numero_acta}`,
-            id_paquete: mapaActas[numero_acta], // Usar el id_paquete correspondiente
+            detalle: `Acta devuelta a ${findUser.usuario}: ${numero_acta}`,
+            id_paquete: mapaActas[numero_acta], 
+            id_encargado
           },
           { transaction }
         );

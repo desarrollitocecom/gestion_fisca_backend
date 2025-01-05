@@ -407,7 +407,7 @@ const facialLoginHandler = async (req, res) => {
     try {
         const dniValidate = await validateUsuarioMovil(dni);
         if (dniValidate) {
-            const user = await createUserIfNotExists(dni, deviceId);
+            const user = await createUserIfNotExists({dni, deviceId});
             if(!user){
                 return res.status(400).json({
                     success: false,
@@ -418,7 +418,7 @@ const facialLoginHandler = async (req, res) => {
             let token = await getTokenDNI(dni);
             if (!token) {
                 token = jwt.sign(
-                    { usuario: user.usuario },
+                    { dni: user.dni },
                     process.env.JWT_SECRET,
                     { expiresIn: process.env.JWT_EXPIRES_IN || "8h" }
                 );
