@@ -51,7 +51,7 @@ const createRGHandler = async (req, res) => {
             nro_rg,
             fecha_rg,
             fecha_notificacion,
-            documento_rg,
+            documento_rg: req.files['documento_rg'][0],
             id_nc,
             id_gerente,
             tipo

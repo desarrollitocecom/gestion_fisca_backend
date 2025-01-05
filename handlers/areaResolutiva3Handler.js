@@ -50,7 +50,7 @@ const createRSGHandler = async (req, res) => {
   const { id } = req.params
   
   try {
-      const newRSG = await createRSGController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSG, id_nc, id_AR3, tipo });
+      const newRSG = await createRSGController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSG: req.files['documento_RSG'][0], id_nc, id_AR3, tipo });
 
       if (!newRSG) {
           return res.status(400).json({ message: 'No fue creado con éxito', data: [] });

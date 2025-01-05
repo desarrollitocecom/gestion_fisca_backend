@@ -49,7 +49,7 @@ const createDescargoRSGNPHandler = async (req, res) => {
     const { id } = req.params
 
     try {
-        const newDescargo = await createDescargoRSGNPController({ nro_descargo, fecha_descargo, documento_DRSGNP, id_nc, id_analista_4 });
+        const newDescargo = await createDescargoRSGNPController({ nro_descargo, fecha_descargo, documento_DRSGNP: req.files['documento_DRSGNP'][0], id_nc, id_analista_4 });
 
         if (!newDescargo) {
             return res.status(400).json({

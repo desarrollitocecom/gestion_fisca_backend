@@ -48,7 +48,7 @@ const createDescargoRSAHandler = async (req, res) => {
 
     try {
 
-        const newDescargoRSA = await createDescargoRSAController({ nro_descargo, fecha_descargo, documento_DRSA, id_nc, id_estado: 1, id_analista_3 });
+        const newDescargoRSA = await createDescargoRSAController({ nro_descargo, fecha_descargo, documento_DRSA: req.files['documento_DRSA'][0], id_nc, id_estado: 1, id_analista_3 });
 
         if (!newDescargoRSA) {
             return res.status(201).json({

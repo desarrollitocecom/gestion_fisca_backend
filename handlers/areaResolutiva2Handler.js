@@ -49,7 +49,7 @@ const createRSG2Handler = async (req, res) => {
 
     try {
         
-        const newRsg2 = await createRSG2Controller({ nro_resolucion2, fecha_resolucion, documento, id_nc, id_AR2 });
+        const newRsg2 = await createRSG2Controller({ nro_resolucion2, fecha_resolucion, documento: req.files['documento'][0], id_nc, id_AR2 });
         
         if (!newRsg2) {
             return res.status(404).json({ message: "Error al crear el RSG2 en el AR2", data: [] })
@@ -98,7 +98,7 @@ const createRSAHandler = async (req, res) => {
 
     try {
         
-        const newRSA = await createRSAController({ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA, tipo: 'ANALISTA_3', id_nc, id_AR2 });
+        const newRSA = await createRSAController({ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA: req.files['documento_RSA'][0], tipo: 'ANALISTA_3', id_nc, id_AR2 });
 
         if (!newRSA) {
             return res.status(404).json({ message: "Error al crear un RSA", data: [] });

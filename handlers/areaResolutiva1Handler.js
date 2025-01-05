@@ -51,7 +51,7 @@ const createRSG1Handler = async (req, res) => {
     
     try {
 
-        const newRsg1 = await createRSG1Controller({ nro_resolucion, fecha_resolucion, documento, id_nc, id_AR1 });
+        const newRsg1 = await createRSG1Controller({ nro_resolucion, fecha_resolucion, documento: req.files['documento'][0], id_nc, id_AR1 });
 
         if (!newRsg1) {
             return res.status(404).json({ message: "Error al crear el RSG1 desde el handler", data: [] })

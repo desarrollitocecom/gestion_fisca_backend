@@ -102,7 +102,7 @@ const createActaHandler = async (req, res) => {
     const newActa = await createActaController({
       nro_acta,
       fecha_acta,
-      documento_acta,
+      documento_acta: req.files['documento_acta'][0],
       tipo,
       id_nc,
       id_analista_5

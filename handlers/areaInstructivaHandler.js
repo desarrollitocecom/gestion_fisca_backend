@@ -50,7 +50,7 @@ const createInformeFinalHandler = async (req, res) => {
     const newIFI = await createInformeFinalController({
       nro_ifi,
       fecha,
-      documento_ifi,
+      documento_ifi: req.files['documento_ifi'][0],
       id_nc,
       id_AI1,
       tipo,

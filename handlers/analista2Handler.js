@@ -55,7 +55,7 @@ const createDescargoIFIHandler = async (req, res) => {
         const newDescargoIFI = await createDescargoIFI({
             nro_descargo, 
             fecha_descargo, 
-            documento_DIFI,
+            documento_DIFI: req.files['documento_DIFI'][0],
             id_nc,
             id_estado: 1,
             id_analista_2
