@@ -1,13 +1,13 @@
 const { validateUserExistController } = require("../controllers/usuarioController")
 const { getNC } = require("../controllers/ncController")
-const { getRsaController } = require("../controllers/rsaController")
+const { getRSGController } = require("../controllers/rsgController")
 const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 const allowedFields = [
-    'nro_rsg', 'fecha_rsg', 'fecha_notificacion', 'id_nc', 'id_AR3', 'tipo'
+    'nro_rg', 'fecha_rg', 'fecha_notificacion', 'id_nc', 'id_gerente', 'tipo'
 ];
 
-const areaResolutiva3Validation = async (receivedBody, files, params) => {
+const gerenciaValidation = async (receivedBody, files, params) => {
     const errors = [];
     const id = params.id;
     const receivedFields = Object.keys(receivedBody);
@@ -17,18 +17,18 @@ const areaResolutiva3Validation = async (receivedBody, files, params) => {
         errors.push(`El campo ${field} no está permitido`);
     });
 
-    if (!receivedBody.nro_rsg) {
-        errors.push('Ingrese nro_rsg obligatorio');
+    if (!receivedBody.nro_rg) {
+        errors.push('Ingrese nro_rg obligatorio');
     }
 
-    if (!receivedBody.fecha_rsg) {
-        errors.push('Ingrese fecha_rsg obligatorio');
-    } else if (!fechaRegex.test(receivedBody.fecha_rsg)) {
-        errors.push('El formato de la fecha_rsg debe ser YYYY-MM-DD');
+    if (!receivedBody.fecha_rg) {
+        errors.push('Ingrese fecha_rg obligatorio');
+    } else if (!fechaRegex.test(receivedBody.fecha_rg)) {
+        errors.push('El formato de la fecha_rg debe ser YYYY-MM-DD');
     } else {
-        const parsedFecha = new Date(receivedBody.fecha_rsg);
+        const parsedFecha = new Date(receivedBody.fecha_rg);
         if (isNaN(parsedFecha.getTime())) {
-            errors.push('fecha_rsg debe ser una fecha válida');
+            errors.push('fecha_rg debe ser una fecha válida');
         }
     }
 
@@ -54,35 +54,35 @@ const areaResolutiva3Validation = async (receivedBody, files, params) => {
         }
     }
 
-    if (!receivedBody.id_AR3) {
-        errors.push('El AR3 es obligatorio');
+    if (!receivedBody.id_gerente) {
+        errors.push('El Gerente es obligatorio');
     } else {
-        const existingUser = await validateUserExistController({ id: receivedBody.id_AR3 });
+        const existingUser = await validateUserExistController({ id: receivedBody.id_gerente });
 
         if (!existingUser) {
-            errors.push('Este AR3 no existe');
+            errors.push('Este Gerente no existe');
         }
     }
 
-    if (!files || !files['documento_RSG']) {
-        errors.push('El documento_RSG es obligatorio');
+    if (!files || !files['documento_rg']) {
+        errors.push('El documento_rg es obligatorio');
     } else {
-        const file = files['documento_RSG'][0];
+        const file = files['documento_rg'][0];
         if (!['application/pdf'].includes(file.mimetype)) {
-            errors.push('El documento_RSG debe ser una imagen en formato PDF');
+            errors.push('El documento_rg debe ser una imagen en formato PDF');
         }
     }
 
     if (!receivedBody.tipo) {
         errors.push('Ingrese tipo obligatorio');
-    } else if (!['RSGNP', 'RSGP'].includes(receivedBody.tipo)) {
-        errors.push('El tipo debe ser RSGP o RSGNP');
+    } else if (!['FUNDADO_RG', 'ANALISTA_5'].includes(receivedBody.tipo)) {
+        errors.push('El tipo debe ser FUNDADO_RG o ANALISTA_5');
     }
 
-    const existingRSA = await getRsaController(id);
+    const existingRSG = await getRSGController(id);
 
-    if (!existingRSA) {
-        errors.push('Este RSA no existe');
+    if (!existingRSG) {
+        errors.push('Este RSG no existe');
     }
 
     return errors;
@@ -90,4 +90,4 @@ const areaResolutiva3Validation = async (receivedBody, files, params) => {
 
 
 
-module.exports = { areaResolutiva3Validation };
+module.exports = { gerenciaValidation };

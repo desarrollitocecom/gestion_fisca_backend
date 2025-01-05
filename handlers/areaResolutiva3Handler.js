@@ -1,7 +1,7 @@
 const {getAllRSAforAR3Controller, getRsaController,  updateRsaController} = require("../controllers/rsaController");
 const { createRSGController, getAllRSG3forAR3Controller, getRSGforAnalista4Controller } = require("../controllers/rsgController")
 const { updateDocumento } = require("../controllers/documentoController");
-const { validateRSG } = require("../validations/areaResolutiva3Validation")
+const { areaResolutiva3Validation } = require("../validations/areaResolutiva3Validation")
 const fs = require("node:fs");
 const { getIo } = require('../sockets'); 
 
@@ -34,30 +34,21 @@ const getAllRSAforAR3Handler = async (req, res) => {
 const createRSGHandler = async (req, res) => {
   const io = getIo();
 
-  const { id } = req.params;
-  const existingRSA = await getRsaController(id);
+  const invalidFields = await areaResolutiva3Validation(req.body, req.files, req.params);
 
-    if (!existingRSA) {
-      return res.status(404).json({ message: "El RSA no existe", data: [] })
+  if (invalidFields.length > 0) {
+    if (req.files['documento_RSG']) {
+      fs.unlinkSync(req.files['documento_RSG'][0].path);
     }
+    return res.status(400).json({
+      message: 'Se encontraron los siguientes errores',
+      data: invalidFields
+    });
+  }
   
   const { nro_rsg, fecha_rsg, fecha_notificacion, id_nc, id_AR3, tipo} = req.body;
-
-  const errors = validateRSG(req.body);
-
-  const documento_RSG = req.files && req.files["documento_RSG"] ? req.files["documento_RSG"][0] : null;
-
-  if (errors.length > 0) {
-      if (documento_RSG) {
-          fs.unlinkSync(documento_RSG.path);
-      }
-      return res.status(400).json({
-          message: 'Se encontraron los siguientes errors',
-          data: errors
-      });
-  }
-
-
+  const { id } = req.params
+  
   try {
       const newRSG = await createRSGController({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSG, id_nc, id_AR3, tipo });
 

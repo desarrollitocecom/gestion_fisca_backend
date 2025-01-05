@@ -1,26 +1,26 @@
-const {getAllIFIforAR1Controller, getInformeFinalController, updateInformeFinalController} = require('../controllers/informeFinalController');
-const {createRSG1Controller, getAllRSG1forAR1Controller} = require('../controllers/rsg1Controller');
-const {updateDocumento}=require('../controllers/documentoController');
+const { getAllIFIforAR1Controller, getInformeFinalController, updateInformeFinalController } = require('../controllers/informeFinalController');
+const { createRSG1Controller, getAllRSG1forAR1Controller } = require('../controllers/rsg1Controller');
+const { updateDocumento } = require('../controllers/documentoController');
 const { getIo } = require("../sockets");
 
-const {validateAreaResolutiva1} = require('../validations/areaResolutiva1Validation')
+const { areaResolutiva1Validation } = require('../validations/areaResolutiva1Validation')
 
 
 const fs = require('node:fs');
 
 
-const getAllIFIforAR1Handler = async (req, res) => {  
+const getAllIFIforAR1Handler = async (req, res) => {
 
     try {
         const response = await getAllIFIforAR1Controller();
-  
+
         if (response.length === 0) {
             return res.status(200).json({
                 message: 'No hay IFIs para el Área Resolutiva',
                 data: []
             });
         }
-  
+
         return res.status(200).json({
             message: "Error al obtener IFIs para el área resolutiva en el handler",
             data: response,
@@ -34,38 +34,21 @@ const getAllIFIforAR1Handler = async (req, res) => {
 const createRSG1Handler = async (req, res) => {
     const io = getIo();
 
-    const { id } = req.params;
+    const invalidFields = await areaResolutiva1Validation(req.body, req.files, req.params);
 
-    const existingIFI = await getInformeFinalController(id);
-        
-    if (!existingIFI) {
-        return res.status(404).json({ message: "Este IFI no existe", data: [] })
-    }
-
-    const { nro_resolucion, fecha_resolucion, id_nc, id_AR1 } = req.body;
-
-    const errors = validateAreaResolutiva1(req.body);
-
-    const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
-
-    if (!documento) {
-        errors.push('El documento es requerido');
-    } else {
-        if (documento.mimetype !== 'application/pdf') {
-            errors.push('El documento debe ser un archivo PDF');
-        }
-    }
-
-    if (errors.length > 0) {
-        if (documento) {
-            fs.unlinkSync(documento.path);
+    if (invalidFields.length > 0) {
+        if (req.files['documento']) {
+            fs.unlinkSync(req.files['documento'][0].path);
         }
         return res.status(400).json({
-            message: 'Se encontraron los siguientes errors',
-            data: errors
+            message: 'Se encontraron los siguientes errores',
+            data: invalidFields
         });
     }
 
+    const { nro_resolucion, fecha_resolucion, id_nc, id_AR1 } = req.body;
+    const { id } = req.params
+    
     try {
 
         const newRsg1 = await createRSG1Controller({ nro_resolucion, fecha_resolucion, documento, id_nc, id_AR1 });
@@ -97,18 +80,18 @@ const createRSG1Handler = async (req, res) => {
     }
 };
 
-const getAllRSG1forAR1Handler = async (req, res) => {  
+const getAllRSG1forAR1Handler = async (req, res) => {
 
     try {
         const response = await getAllRSG1forAR1Controller();
-  
+
         if (response.length === 0) {
             return res.status(200).json({
                 message: 'No existen RSG1 creadas',
                 data: []
             });
         }
-  
+
         return res.status(200).json({
             message: "RSG1 obtenidos correctamente",
             data: response,

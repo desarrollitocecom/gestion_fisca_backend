@@ -2,7 +2,7 @@ const fs = require('fs');
 const { getAllIFIforAnalista2Controller, updateInformeFinalController, getInformeFinalController, getIFIforAR2Controller } = require('../controllers/informeFinalController');
 const { createDescargoIFI } = require('../controllers/descargoInformeFinalController');
 const {updateDocumento}=require('../controllers/documentoController');
-const {validateAnalista2} = require('../validations/analista2Validation')
+const { analista2DescargoValidation, analista2SinDescargoValidation } = require('../validations/analista2Validation')
 const {responseSocket} = require('../utils/socketUtils')
 const { getIo } = require("../sockets");
 
@@ -31,11 +31,16 @@ const getAllIFIforAnalista2Handler = async (req, res) => {
 const createDescargoIFIHandler = async (req, res) => {
     const io = getIo();
 
-    const {id}=req.params;
-    const existingIFI=await getInformeFinalController(id);
+    const invalidFields = await analista2DescargoValidation(req.body, req.files, req.params);
 
-    if(!existingIFI){
-        return res.status(404).json({message:"No se encuentra id del IFI",data:[]})
+    if (invalidFields.length > 0) {
+        if (req.files['documento_DIFI']) {
+            fs.unlinkSync(req.files['documento_DIFI'][0].path);
+        }
+        return res.status(400).json({
+            message: 'Se encontraron los siguientes errores',
+            data: invalidFields
+        });
     }
 
     const { 
@@ -44,28 +49,7 @@ const createDescargoIFIHandler = async (req, res) => {
         id_nc ,
         id_analista_2
     } = req.body;
-
-    const errors = validateAnalista2(req.body);
-
-    const documento_DIFI = req.files && req.files["documento_DIFI"] ? req.files["documento_DIFI"][0] : null;
-
-    if (!documento_DIFI) {
-        errors.push('El documento_DIFI es requerido');
-    } else {
-        if (documento_DIFI.mimetype !== 'application/pdf') {
-            errors.push('El documento debe ser un archivo PDF');
-        }
-    }
-
-    if (errors.length > 0) {
-        if (documento_DIFI) {
-            fs.unlinkSync(documento_DIFI.path); 
-        }
-        return res.status(400).json({
-            message: 'Se encontraron los siguientes errors',
-            data: errors
-        });
-    }
+    const { id } = req.params
 
     try {
         const newDescargoIFI = await createDescargoIFI({
@@ -102,17 +86,20 @@ const createDescargoIFIHandler = async (req, res) => {
 const sendWithoutDescargoIFIHandler = async (req, res) => {
     const io = getIo();
 
-    const {id}=req.params;
-    const existingIFI = await getInformeFinalController(id); 
+    const invalidFields = await analista2SinDescargoValidation(req.body, req.params);
 
-    if (!existingIFI) {
-        return res.status(404).json({ message: "IFI no encontrada para actualizar" });
+    if (invalidFields.length > 0) {
+        return res.status(400).json({
+            message: 'Se encontraron los siguientes errores',
+            data: invalidFields
+        });
     }
 
     const { 
         id_nc,
         id_analista_2,
     } = req.body;
+    const { id } = req.params
 
     try {
         const newDescargoIFI = await createDescargoIFI({ 

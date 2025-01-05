@@ -2,7 +2,7 @@ const {getAllIFIforAR2Controller, getInformeFinalController, updateInformeFinalC
 const {updateDocumento}=require('../controllers/documentoController');
 const {createRSG2Controller, getAllRSG2forAR2Controller} = require('../controllers/rsg2Controller');
 const {createRSAController, getRSAforAnalista3Controller} = require('../controllers/rsaController');
-const {validateRSG2, validateRSA} = require('../validations/areaResolutiva2Validation')
+const { areaResolutiva2RSG2Validation, areaResolutiva2RSAValidation } = require('../validations/areaResolutiva2Validation')
 const fs = require('node:fs');
 const {responseSocket} = require('../utils/socketUtils')
 const { getIo } = require("../sockets");
@@ -32,39 +32,20 @@ const getAllIFIforAR2Handler = async (req, res) => {
 const createRSG2Handler = async (req, res) => {
     const io = getIo();
 
-    const { id } = req.params;
+    const invalidFields = await areaResolutiva2RSG2Validation(req.body, req.files, req.params);
 
-    const existingIFI = await getInformeFinalController(id);
-
-    if (!existingIFI) {
-        return res.status(404).json({ message: "No existe este IFI para crear un RSG2", data: [] })
-    }
-
-    const { nro_resolucion2, fecha_resolucion, id_nc, id_AR2} = req.body;
-
-    const errors = validateRSG2(req.body);
-
-    const documento = req.files && req.files["documento"] ? req.files["documento"][0] : null;
-
-    if (!documento || documento.length === 0) {
-        errors.push("El documento es requerido.");
-    } else {
-        if (documento.length > 1) {
-            errors.push("Solo se permite un documento.");
-        } else if (documento.mimetype !== "application/pdf") {
-            errors.push("El documento debe ser un archivo PDF.");
-        }
-    }
-
-    if (errors.length > 0) {
-        if (documento) {
-            fs.unlinkSync(documento.path);
+    if (invalidFields.length > 0) {
+        if (req.files['documento']) {
+            fs.unlinkSync(req.files['documento'][0].path);
         }
         return res.status(400).json({
-            message: 'Se encontraron los siguientes errors',
-            data: errors
+            message: 'Se encontraron los siguientes errores',
+            data: invalidFields
         });
     }
+
+    const { nro_resolucion2, fecha_resolucion, id_nc, id_AR2 } = req.body;
+    const { id } = req.params
 
     try {
         
@@ -99,42 +80,21 @@ const createRSG2Handler = async (req, res) => {
 
 const createRSAHandler = async (req, res) => {
     const io = getIo();
-    const { id } = req.params;
-    const existingIFI = await getInformeFinalController(id);
 
-    if (!existingIFI) {
-        return res.status(404).json({ message: "El id del IFI no se encuentra", data: [] })
+    const invalidFields = await areaResolutiva2RSAValidation(req.body, req.files, req.params);
+
+    if (invalidFields.length > 0) {
+        if (req.files['documento_RSA']) {
+            fs.unlinkSync(req.files['documento_RSA'][0].path);
+        }
+        return res.status(400).json({
+            message: 'Se encontraron los siguientes errores',
+            data: invalidFields
+        });
     }
 
-
     const { nro_rsa, fecha_rsa, fecha_notificacion, id_nc, id_AR2 } = req.body;
-
-    const errors = validateRSA(req.body);
-
-    const documento_RSA = req.files && req.files["documento_RSA"] ? req.files["documento_RSA"][0] : null;
-
-        if (!documento_RSA || documento_RSA.length === 0) {
-            errors.push("El documento_RSA es requerido.");
-
-        } else {
-            if (documento_RSA.length > 1) {
-                errors.push("Solo se permite un documento_RSA.");
-
-            } else if (documento_RSA.mimetype !== "application/pdf") {
-                errors.push("El documento_RSA debe ser un archivo PDF.");
-                
-            }
-        }
-
-        if (errors.length > 0) {
-            if (documento_RSA) {
-                fs.unlinkSync(documento_RSA.path);
-            }
-            return res.status(400).json({
-                message: 'Se encontraron los siguientes errors',
-                data: errors
-            });
-        }
+    const { id } = req.params
 
     try {
         

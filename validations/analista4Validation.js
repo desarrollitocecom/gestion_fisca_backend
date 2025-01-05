@@ -1,16 +1,14 @@
 const { validateUserExistController } = require("../controllers/usuarioController")
 const { getNC } = require("../controllers/ncController")
-const { getInformeFinalController } = require("../controllers/informeFinalController")
+const { getRsaController } = require("../controllers/rsaController")
+const { getRSGController } = require("../controllers/rsgController")
 const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 const allowedFields = [
-    'nro_descargo',
-    'fecha_descargo',
-    'id_nc',
-    'id_analista_2'
+    'nro_descargo', 'fecha_descargo', 'id_nc', 'id_analista_4'
 ];
 
-const analista2DescargoValidation = async (receivedBody, files, params) => {
+const analista4DescargoValidation = async (receivedBody, files, params) => {
     const errors = [];
     const id = params.id;
     const receivedFields = Object.keys(receivedBody);
@@ -35,32 +33,30 @@ const analista2DescargoValidation = async (receivedBody, files, params) => {
         }
     }
 
-    if (!files || !files['documento_DIFI']) {
-        errors.push('El documento_DIFI es obligatorio');
+    if (!files || !files['documento_DRSGNP']) {
+        errors.push('El documento_DRSGNP es obligatorio');
     } else {
-        const file = files['documento_DIFI'][0];
+        const file = files['documento_DRSGNP'][0];
         if (!['application/pdf'].includes(file.mimetype)) {
-            errors.push('El documento_DIFI debe ser una imagen en formato PDF');
+            errors.push('El documento_DRSGNP debe ser una imagen en formato PDF');
         }
     }
 
-    if (!receivedBody.id_analista_2) {
-        errors.push('El analista 2 es obligatorio');
+    if (!receivedBody.id_analista_4) {
+        errors.push('El analista 4 es obligatorio');
     } else {
-        const existingUser = await validateUserExistController({ id: receivedBody.id_analista_2 });
+        const existingUser = await validateUserExistController({ id: receivedBody.id_analista_4 });
 
         if (!existingUser) {
             errors.push('Este analista no existe');
         }
     }
 
-    const existingIFI = await getInformeFinalController(id);
+    const existingRSG = await getRSGController(id);
 
-    if(!existingIFI){
-        errors.push('Este IFI no existe');
+    if(!existingRSG){
+        errors.push('Este RSG no existe');
     }
-
-
 
     if (!receivedBody.id_nc) {
         errors.push('El campo id_nc es requerido')
@@ -75,11 +71,10 @@ const analista2DescargoValidation = async (receivedBody, files, params) => {
     return errors;
 };
 
-const analista2SinDescargoValidation = async (receivedBody, params) => {
+const analista4SinDescargoValidation = async (receivedBody, params) => {
 
     const allowedFields = [
-        'id_nc',
-        'id_analista_2'
+        'id_nc', 'id_analista_4'
     ];
 
     const errors = [];
@@ -91,20 +86,20 @@ const analista2SinDescargoValidation = async (receivedBody, params) => {
         errors.push(`El campo ${field} no está permitido`);
     });
 
-    if (!receivedBody.id_analista_2) {
-        errors.push('El analista 2 es obligatorio');
+    if (!receivedBody.id_analista_4) {
+        errors.push('El analista 4 es obligatorio');
     } else {
-        const existingUser = await validateUserExistController({ id: receivedBody.id_analista_2 });
+        const existingUser = await validateUserExistController({ id: receivedBody.id_analista_4 });
 
         if (!existingUser) {
             errors.push('Este analista no existe');
         }
     }
 
-    const existingIFI = await getInformeFinalController(id);
+    const existingRSG = await getRSGController(id);
 
-    if(!existingIFI){
-        errors.push('Este IFI no existe');
+    if(!existingRSG){
+        errors.push('Este RSG no existe');
     }
 
     if (!receivedBody.id_nc) {
@@ -121,4 +116,4 @@ const analista2SinDescargoValidation = async (receivedBody, params) => {
 };
 
 
-module.exports = { analista2DescargoValidation, analista2SinDescargoValidation };
+module.exports = { analista4DescargoValidation, analista4SinDescargoValidation };

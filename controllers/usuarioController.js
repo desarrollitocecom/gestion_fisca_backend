@@ -3,6 +3,16 @@ const { updateRol, deleteRol } = require("./rol_permisoController");
 const argon2 = require('argon2');
 const { Sequelize } = require('sequelize');
 
+const validateUserExistController = async ({id}) => {
+    try {
+        const userExist = await Usuario.findOne({
+            where: {id}
+        })
+        return userExist
+    } catch (error) {
+        throw new Error('Error al validar usuario: ' + error.message);
+    }
+}
 
 const createUser = async ({ usuario, contraseña, correo, id_rol, dni /*, id_empleado */ }) => {
     try {
@@ -380,5 +390,6 @@ module.exports = {
     validateUsuario,
     validateCorreo,
     validateUsuarioMovil,
-    validateDNI
+    validateDNI,
+    validateUserExistController
 };
