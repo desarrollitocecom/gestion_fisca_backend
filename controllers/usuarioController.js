@@ -239,12 +239,12 @@ const logoutUser = async (usuario) => {
         return false;
     }
 };
-const createUserIfNotExists = async (dni, deviceId) => {
+const createUserIfNotExists = async ({dni, deviceId}) => {
     try {
         console.log('dni es: ', dni)
         console.log('dispositivo es: ', deviceId)
       // Buscar usuario por DNI
-      let user = await Usuario.findOne({ where: { usuario: dni } });
+      let user = await Usuario.findOne({ where: { dni: dni } });
   
       if (!user) {
         throw new Error("El usuario no existe. Regístrate primero.");
@@ -274,7 +274,7 @@ const createUserIfNotExists = async (dni, deviceId) => {
   // Guardar o actualizar el token
   const saveToken = async (dni, token) => {
     try {
-      const user = await Usuario.findOne({ where: { usuario: dni } });
+      const user = await Usuario.findOne({ where: { dni: dni } });
       if (!user) throw new Error('El usuario no existe');
       user.token = token;
       await user.save();
@@ -286,7 +286,7 @@ const createUserIfNotExists = async (dni, deviceId) => {
   // Obtener el token del usuario
   const getTokenDNI = async (dni) => {
     try {
-      const user = await Usuario.findOne({ where: { usuario: dni } });
+      const user = await Usuario.findOne({ where: { dni: dni } });
       return user ? user.token : null;
     } catch (error) {
       throw new Error('Error al obtener el token: ' + error.message);
@@ -313,7 +313,7 @@ const createUserIfNotExists = async (dni, deviceId) => {
 
   const validateUsuarioMovil = async(dni) => {
     try {
-        const user = await Usuario.findOne({where: {usuario: dni}})
+        const user = await Usuario.findOne({where: {dni: dni}})
         return user
     } catch (error) {
         throw new Error('Error al validar dni: ' + error.message);

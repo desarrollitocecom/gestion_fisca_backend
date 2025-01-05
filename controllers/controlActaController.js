@@ -82,7 +82,7 @@ const getActaActualController = async (id) => {
 
 const updateControlActaController=async (id, id_inspector) => {
   try {
-    console.log(id);
+    console.log('inspector', id_inspector);
     
       const findActaControl = await getControlActa(id);
       
@@ -91,7 +91,11 @@ const updateControlActaController=async (id, id_inspector) => {
         tipo: true
       });
 
-      const findUser = await Usuario.findOne({id:id_inspector})
+      const findUser = await Usuario.findOne({
+        where: {
+          id: id_inspector
+        }
+      });
 
       await MovimientoActa.create(
         {
