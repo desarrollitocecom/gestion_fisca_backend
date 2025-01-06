@@ -44,14 +44,6 @@ module.exports = (sequelize) => {
             allowNull: true,
            
         },
-        // id_estado_IFI:{
-        //     type: DataTypes.INTEGER,
-        //     references: {
-        //         model: 'EstadoIFIs',
-        //         key: 'id',
-        //     },
-        //     allowNull:false
-        // },
         id_AI1:{
             type: DataTypes.UUID,
             references: {
@@ -59,7 +51,17 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: false
-        }
+        },
+        id_cargoNotificacion:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'CargoNotificaciones',
+                key: 'id',
+            },
+            allowNull: true,
+            unique:true
+        },
+
     }, {
         tableName: 'IFIs',
         timestamps: true
@@ -74,7 +76,7 @@ module.exports = (sequelize) => {
         IFI.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
         // IFI.belongsTo(db.EstadoIFI, { foreignKey: 'id_estado_IFI', as: 'estadoIFI'});
         IFI.belongsTo(db.Usuario,{foreignKey:'id_AI1' , as:'Usuarios' });
-
+        IFI.belongsTo(db.CargoNotificacion,{foreignKey:'id_cargoNotificacion' , as:'CargoNotificaciones' });
    
     };
 

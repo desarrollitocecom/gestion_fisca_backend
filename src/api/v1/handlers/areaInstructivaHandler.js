@@ -3,6 +3,7 @@ const { createInformeFinalController, getIFIforAR1Controller, getIFIforAnalista2
 const { updateDocumento } = require("../controllers/documentoController");
 const { areaInstructiva1Validation } = require("../validations/areaInstructiva1Validation");
 const { responseSocket } = require("../../../utils/socketUtils");
+const { createCargoNotificacionController } = require("../controllers/cargoNotificacionController")
 const fs = require('fs');
 const { getIo } = require("../../../sockets");
 
@@ -47,6 +48,11 @@ const createInformeFinalHandler = async (req, res) => {
   const { nro_ifi, fecha, id_nc, id_AI1, tipo } = req.body;
   
   try {
+
+    const newCargoNotificacion = await createCargoNotificacionController({
+      tipo: 'IFI'
+    });
+
     const newIFI = await createInformeFinalController({
       nro_ifi,
       fecha,
@@ -54,7 +60,10 @@ const createInformeFinalHandler = async (req, res) => {
       id_nc,
       id_AI1,
       tipo,
+      id_cargoNotificacion : newCargoNotificacion.id
     });
+
+    
 
     await updateDocumento({
       id_nc,

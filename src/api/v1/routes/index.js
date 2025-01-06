@@ -24,6 +24,7 @@ const gerencia = require('./gerenciaRouter');
 const analista5 = require('./analista5Router');
 const reporte = require('./reporteRouter');
 const controlAlmacen = require('./controlAlmacen');
+const motorizado = require('./motorizadoRouter');
 
 router.use('/gestor',gestorActas);
 router.use('/digitador',digitadorNC);
@@ -39,6 +40,7 @@ router.use('/gerencia',gerencia);
 router.use('/analista5',analista5);
 router.use('/reporte',reporte);
 router.use('/controlAlmacen',controlAlmacen);
+router.use('/cargoNotificacion',motorizado);
 
 router.use('/ejecucionmc',ejecucionmc);
 router.use('/medidacomplementaria',medidacomplementaria);
