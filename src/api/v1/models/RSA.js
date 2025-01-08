@@ -22,35 +22,23 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        tipo:{
-            type:DataTypes.ENUM('ANALISTA_3','RSGP','RSGNP','ACTA','AR3','ANALISTA_5', 'ARCHIVO_AR3', 'TERMINADO'),
-            allowNull:true
+        tipo: {
+            type: DataTypes.ENUM('PLATAFORMA_SANCION','RSG', 'RSA', '', 'ACTA', 'AR3', 'ANALISTA_5', 'ARCHIVO_AR3', 'TERMINADO'),
+            allowNull: true
         },
-        id_RSG:{
+        id_evaluar_rsa: {
+            type: DataTypes.UUID,
+            allowNull: true,
+        },
+        id_descargo_RSA: {
             type: DataTypes.UUID,
             references: {
-                model: 'RSGs',
+                model: 'DescargoRSAs',
                 key: 'id',
             },
             allowNull: true,
-        }, 
-
-
-
-
-        id_evaluar_rsa:{
-            type:DataTypes.UUID,
-            allowNull:true,
-         },
-         id_descargo_RSA:{
-             type: DataTypes.UUID,
-             references: {
-                 model: 'DescargoRSAs',
-                 key: 'id',
-             },
-             allowNull: true,
-         }, 
-         id_nc:{
+        },
+        id_nc: {
             type: DataTypes.UUID,
             references: {
                 model: 'NCs',
@@ -58,36 +46,27 @@ module.exports = (sequelize) => {
             },
             allowNull: true,
         },
-        id_estado_RSA:{
-            type: DataTypes.INTEGER,
+        id_AR2: {
+            type: DataTypes.UUID,
             references: {
-                model: 'EstadoRSAs',
+                model: 'Usuarios',
                 key: 'id',
             },
-            allowNull:true
-        },
-         id_AR2:{
-             type: DataTypes.UUID,
-             references: {
-                 model: 'Usuarios',
-                 key: 'id',
-             },
-             allowNull: false
-         }
+            allowNull: false
+        }
     }, {
         tableName: 'RSAs',
         timestamps: true
     });
     RSA.associate = (db) => {
-        // Relación con DescargoRSA
-        RSA.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
-        RSA.belongsTo(db.DescargoRSA, { foreignKey: 'id_descargo_RSA', as: 'DescargoRSAs' });
-        RSA.belongsTo(db.EstadoRSA, { foreignKey: 'id_estado_RSA', as: 'estadoRSA'})
-        RSA.belongsTo(db.Usuario,{foreignKey:'id_AR2' , as:'Usuarios'});
+        RSA.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
         
-        RSA.belongsTo(db.DescargoRSA, { foreignKey: 'id_evaluar_rsa', as: 'DRSA', constraints: false });
+        RSA.belongsTo(db.RSG, { foreignKey: 'id_evaluar_rsa', as: 'RSGs', constraints: false });
+        RSA.belongsTo(db.RG, { foreignKey: 'id_evaluar_rsa', as: 'RGs', constraints: false });
         RSA.belongsTo(db.Acta, { foreignKey: 'id_evaluar_rsa', as: 'ActaRsa', constraints: false });
-        RSA.belongsTo(db.RSG, { foreignKey: 'id_RSG', as: 'RSGs' });
+
+        RSA.belongsTo(db.DescargoRSA, { foreignKey: 'id_descargo_RSA', as: 'DescargoRSAs' });
+        RSA.belongsTo(db.Usuario, { foreignKey: 'id_AR2', as: 'Usuarios' });   
     };
     return RSA;
 };

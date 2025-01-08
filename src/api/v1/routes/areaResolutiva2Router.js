@@ -10,7 +10,9 @@ router.get('/ifi_for_ar2',permisoAutorizacion(["all_system_access", "read_AResol
 
 router.patch("/newRSG2/:id",permisoAutorizacion(["all_system_access", "create_AResolutiva1"]),uploadRSG1,createRSG2Handler);
 
+
 router.patch("/newRSA/:id",permisoAutorizacion(["all_system_access", "create_rsa"]),uploadRSA,createRSAHandler);
+
 
 router.get("/historialArchivados",permisoAutorizacion(["all_system_access", "read_AResolutiva2"]), getAllRSG2forAR2Handler);
 

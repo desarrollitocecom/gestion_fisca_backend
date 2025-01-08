@@ -8,15 +8,19 @@ module.exports = (sequelize) => {
         },
         nro_ifi: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         fecha: {
             type: DataTypes.DATEONLY,
-            allowNull: false
+            allowNull: true
+        },
+        fecha_notificacion: {
+            type: DataTypes.DATEONLY,
+            allowNull: true
         },
         documento_ifi: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         tipo: {
             type: DataTypes.ENUM('ANALISTA_2', 'RSG1', 'RSA', 'RSG2','AR2', 'TERMINADO', 'TERMINADO_RSG1', 'TERMINADO_RSG2'),
@@ -50,7 +54,7 @@ module.exports = (sequelize) => {
                 model: 'Usuarios',
                 key: 'id',
             },
-            allowNull: false
+            allowNull: true
         },
         id_cargoNotificacion:{
             type: DataTypes.UUID,
@@ -59,7 +63,6 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: true,
-            unique:true
         },
 
     }, {
@@ -76,7 +79,7 @@ module.exports = (sequelize) => {
         IFI.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
         // IFI.belongsTo(db.EstadoIFI, { foreignKey: 'id_estado_IFI', as: 'estadoIFI'});
         IFI.belongsTo(db.Usuario,{foreignKey:'id_AI1' , as:'Usuarios' });
-        IFI.belongsTo(db.CargoNotificacion,{foreignKey:'id_cargoNotificacion' , as:'CargoNotificaciones' });
+        IFI.belongsTo(db.CargoNotificacion,{foreignKey:'id_cargoNotificacion' , as:'cargoNotifi' });
    
     };
 

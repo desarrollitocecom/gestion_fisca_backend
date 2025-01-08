@@ -3,7 +3,7 @@ const express = require("express");
 const http = require("http");
 const { sequelize } = require("./config/db_connection");
 const router = require("./api/v1/routes/index");
-const { PORT_FISCA, PDF_RUTA } = process.env;
+const { PORT, PDF_RUTA } = process.env;
 
 const tramiteInspector = require('./api/v1/routes/tramiteInspectorRouter');
 
@@ -35,8 +35,8 @@ app.get("/", (req, res) => {
 
 app.use('/uploads', express.static(path.join(PDF_RUTA, 'uploads'))); //para leerlo defrente y el front tenga acceso a esos archivos
 
-server.listen(PORT_FISCA, () => {
-  console.log(`FISCA Server is running on port ${PORT_FISCA}`);
+server.listen(PORT, () => {
+  console.log(`FISCA Server is running on port ${PORT}`);
   sequelize.sync({ alter: true }) // cambiar de alter a force para que se borren las tablas y se creen de nuevo, hasta que queden bien diseñadas
     .then(() => console.log("Database is connected")) //con fe
     .catch(err => console.error("Error connecting to the database:", err));

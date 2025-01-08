@@ -231,10 +231,22 @@ const getAllRSG2forAR2Controller = async () => {
 
 
 
+const getAllRSG2forPlataformaController = async () => {
+    try {
+      const response = await RSG2.findAll();
+      return response || null;
+    } catch (error) {
+      return false
+    }
+  }
+
+
+
 
 module.exports = {
     createRSG2Controller,
     updateRSG2Controller,
     getRSG2Controller,
-    getAllRSG2forAR2Controller
+    getAllRSG2forAR2Controller,
+    getAllRSG2forPlataformaController
 }

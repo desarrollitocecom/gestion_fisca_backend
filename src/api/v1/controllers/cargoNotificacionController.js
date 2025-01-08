@@ -21,24 +21,68 @@ const createCargoNotificacionController = async ({
 const getAllCargoNotificacionForIFIController = async () => {
     try {
         const response = await IFI.findAll({
-            where: Sequelize.where(Sequelize.col('CargoNotificaciones.tipo'), 'TIPO'),
+            where: {
+                [Sequelize.Op.and]: [
+                    Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'IFI'),
+                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null)
+                ]
+            }, 
             attributes: [
                 'id', 
                 'nro_ifi',
-                [Sequelize.col('CargoNotificaciones.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
-                [Sequelize.col('CargoNotificaciones.tipo'), 'tipo'],
-                [Sequelize.col('CargoNotificaciones.fecha1'), 'fecha1'],
-                [Sequelize.col('CargoNotificaciones.documento1'), 'documento1'],
-                [Sequelize.col('CargoNotificaciones.fecha2'), 'fecha2'],
-                [Sequelize.col('CargoNotificaciones.documento2'), 'documento2'],
-                [Sequelize.col('CargoNotificaciones.estado_visita'), 'estado_visita'],
-                [Sequelize.col('CargoNotificaciones.estado_entrega'), 'estado_entrega'],
-                [Sequelize.col('CargoNotificaciones.id_motorizado'), 'id_motorizado'],
+                [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
+                [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
+                [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
+                [Sequelize.col('cargoNotifi.documento1'), 'documento1'],
+                [Sequelize.col('cargoNotifi.fecha2'), 'fecha2'],
+                [Sequelize.col('cargoNotifi.documento2'), 'documento2'],
+                [Sequelize.col('cargoNotifi.estado_visita'), 'estado_visita'],
+                [Sequelize.col('cargoNotifi.estado_entrega'), 'estado_entrega'],
+                [Sequelize.col('cargoNotifi.id_motorizado'), 'id_motorizado'],
             ],
             include: [
                 {
                     model: CargoNotificacion,
-                    as: 'CargoNotificaciones',
+                    as: 'cargoNotifi',
+                    attributes: [] 
+                }
+            ]
+        });
+    
+        return response || null;
+    } catch (error) {
+        console.error('Error creando Cargo Notificacion:', error);
+        return false;
+    }
+    
+};
+
+const getAllHistoryCargoNotificacionForIFIController = async () => {
+    try {
+        const response = await IFI.findAll({
+            where: {
+                [Sequelize.Op.and]: [
+                    Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'IFI'),
+                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), { [Sequelize.Op.ne]: null })
+                ]
+            },
+            attributes: [
+                'id', 
+                'nro_ifi',
+                [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
+                [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
+                [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
+                [Sequelize.col('cargoNotifi.documento1'), 'documento1'],
+                [Sequelize.col('cargoNotifi.fecha2'), 'fecha2'],
+                [Sequelize.col('cargoNotifi.documento2'), 'documento2'],
+                [Sequelize.col('cargoNotifi.estado_visita'), 'estado_visita'],
+                [Sequelize.col('cargoNotifi.estado_entrega'), 'estado_entrega'],
+                [Sequelize.col('cargoNotifi.id_motorizado'), 'id_motorizado'],
+            ],
+            include: [
+                {
+                    model: CargoNotificacion,
+                    as: 'cargoNotifi',
                     attributes: [] 
                 }
             ]
@@ -54,4 +98,4 @@ const getAllCargoNotificacionForIFIController = async () => {
 
 
 
-module.exports = { createCargoNotificacionController, getAllCargoNotificacionForIFIController };
+module.exports = { createCargoNotificacionController, getAllCargoNotificacionForIFIController, getAllHistoryCargoNotificacionForIFIController };

@@ -708,7 +708,14 @@ const getRSGforAnalista4Controller = async (id) => {
 
 
 
-
+const getAllRSGforPlataformaController = async () => {
+    try {
+      const response = await RSG.findAll();
+      return response || null;
+    } catch (error) {
+      return false
+    }
+  }
 
 
 
@@ -727,5 +734,6 @@ module.exports = {
     getAllRSGforAnalista5Controller,
     getAllRSG3forAR3Controller,
     getRSGforGerenciaController,
-    getRSGforAnalista5Controller
+    getRSGforAnalista5Controller,
+    getAllRSGforPlataformaController
 };

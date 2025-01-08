@@ -74,7 +74,7 @@ const areaResolutiva2RSG2Validation = async (receivedBody, files, params) => {
 
 const areaResolutiva2RSAValidation = async (receivedBody, files, params) => {
     const allowedFields = [
-        'nro_rsa', 'fecha_rsa', 'fecha_notificacion', 'id_nc', 'id_AR2'
+        'nro_rsa', 'fecha_rsa', 'fecha_notificacion', 'tipo', 'id_evaluar_rsa', 'id_nc', 'id_AR2'
     ];
 
     const errors = [];
