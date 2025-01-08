@@ -26,6 +26,8 @@ const createRSG2Controller = async ({nro_resolucion2, fecha_resolucion, document
         return false;
     }
 };
+
+
 const getRSG2Controller=async (id) => {
     try {
         const response=await RSG2.findByPk(id)
@@ -234,7 +236,15 @@ const getAllRSG2forAR2Controller = async () => {
 const getAllRSG2forPlataformaController = async () => {
     try {
       const response = await RSG2.findAll();
-      return response || null;
+
+      const formattedResponse = response.map(item => ({
+        id: item.id,
+        numero: item.nro_rsg, 
+        createdAt: item.createdAt, 
+        tipo: 'RSG'
+      }));
+
+      return formattedResponse || null;
     } catch (error) {
       return false
     }

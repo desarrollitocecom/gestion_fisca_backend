@@ -1,6 +1,6 @@
 const { DataTypes } = require("sequelize")
 module.exports = (sequelize) => {
-    const RSA = sequelize.define('RSA', {
+    const ResolucionSancionadora = sequelize.define('ResolucionSancionadora', {
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
@@ -14,7 +14,7 @@ module.exports = (sequelize) => {
             type: DataTypes.DATEONLY,
             allowNull: true
         },
-        fecha_notificacion: {
+        fecha_notificacion_rsa: {
             type: DataTypes.DATEONLY,
             allowNull: true
         },
@@ -22,22 +22,22 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: true
         },
+
         tipo: {
-            type: DataTypes.ENUM('PLATAFORMA_SANCION','RSG', 'RSA', '', 'ACTA', 'AR3', 'ANALISTA_5', 'ARCHIVO_AR3', 'TERMINADO'),
+            type: DataTypes.ENUM('RECURSO_RECONC', 'RECURSO_APELAC'),
             allowNull: true
         },
+
         id_evaluar_rsa: {
             type: DataTypes.UUID,
             allowNull: true,
         },
-        id_descargo_RSA: {
-            type: DataTypes.UUID,
-            references: {
-                model: 'DescargoRSAs',
-                key: 'id',
-            },
-            allowNull: true,
+
+        estado: {
+            type: DataTypes.ENUM('PLATAFORMA_SANCION', 'ARCHIVO'),
+            allowNull: true
         },
+
         id_nc: {
             type: DataTypes.UUID,
             references: {
@@ -46,6 +46,7 @@ module.exports = (sequelize) => {
             },
             allowNull: true,
         },
+
         id_AR2: {
             type: DataTypes.UUID,
             references: {
@@ -55,18 +56,17 @@ module.exports = (sequelize) => {
             allowNull: false
         }
     }, {
-        tableName: 'RSAs',
+        tableName: 'ResolucionesSancionadoras',
         timestamps: true
     });
-    RSA.associate = (db) => {
-        RSA.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
+    ResolucionSancionadora.associate = (db) => {
+        ResolucionSancionadora.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
         
-        RSA.belongsTo(db.RSG, { foreignKey: 'id_evaluar_rsa', as: 'RSGs', constraints: false });
-        RSA.belongsTo(db.RG, { foreignKey: 'id_evaluar_rsa', as: 'RGs', constraints: false });
-        RSA.belongsTo(db.Acta, { foreignKey: 'id_evaluar_rsa', as: 'ActaRsa', constraints: false });
+        ResolucionSancionadora.belongsTo(db.RSG, { foreignKey: 'id_evaluar_rsa', as: 'RSGs', constraints: false });
+        ResolucionSancionadora.belongsTo(db.RG, { foreignKey: 'id_evaluar_rsa', as: 'RGs', constraints: false });
+        ResolucionSancionadora.belongsTo(db.Acta, { foreignKey: 'id_evaluar_rsa', as: 'ActaRsa', constraints: false });
 
-        RSA.belongsTo(db.DescargoRSA, { foreignKey: 'id_descargo_RSA', as: 'DescargoRSAs' });
-        RSA.belongsTo(db.Usuario, { foreignKey: 'id_AR2', as: 'Usuarios' });   
+        ResolucionSancionadora.belongsTo(db.Usuario, { foreignKey: 'id_AR2', as: 'Usuarios' });   
     };
-    return RSA;
+    return ResolucionSancionadora;
 };

@@ -1,7 +1,7 @@
 const {getAllIFIforAR2Controller, getInformeFinalController, updateInformeFinalController} = require('../controllers/informeFinalController');
 const {updateDocumento}=require('../controllers/documentoController');
 const {createRSG2Controller, getAllRSG2forAR2Controller} = require('../controllers/rsg2Controller');
-const {createRSAController, getRSAforAnalista3Controller} = require('../controllers/rsaController');
+const {createRSAController, createResoSAController,  getRSAforAnalista3Controller} = require('../controllers/rsaController');
 const { areaResolutiva2RSG2Validation, areaResolutiva2RSAValidation } = require('../validations/areaResolutiva2Validation')
 const fs = require('node:fs');
 const {responseSocket} = require('../../../utils/socketUtils')
@@ -93,12 +93,12 @@ const createRSAHandler = async (req, res) => {
         });
     }
 
-    const { nro_rsa, fecha_rsa, fecha_notificacion, id_nc, id_AR2 } = req.body;
+    const { nro_rsa, fecha_rsa, id_nc, id_AR2 } = req.body;
     const { id } = req.params
 
     try {
         
-        const newRSA = await createRSAController({ nro_rsa, fecha_rsa, fecha_notificacion, documento_RSA: req.files['documento_RSA'][0], tipo: 'ANALISTA_3', id_nc, id_AR2 });
+        const newRSA = await createResoSAController({ nro_rsa, fecha_rsa, documento_RSA: req.files['documento_RSA'][0], id_nc, id_AR2 });
 
         if (!newRSA) {
             return res.status(404).json({ message: "Error al crear un RSA", data: [] });

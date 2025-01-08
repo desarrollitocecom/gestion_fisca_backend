@@ -5,7 +5,7 @@ const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 const areaResolutiva2RSG2Validation = async (receivedBody, files, params) => {
     const allowedFields = [
-        'nro_resolucion2', 'fecha_resolucion', 'id_nc', 'id_AR2'
+        'nro_rsg', 'fecha_rsg', 'tipo', 'id_evaluar_rsg', 'id_nc', 'id_AR2'
     ];
 
     const errors = [];
@@ -17,18 +17,18 @@ const areaResolutiva2RSG2Validation = async (receivedBody, files, params) => {
         errors.push(`El campo ${field} no está permitido`);
     });
 
-    if (!receivedBody.nro_resolucion2) {
-        errors.push('Ingrese nro_resolucion2 obligatorio');
+    if (!receivedBody.nro_rsg) {
+        errors.push('Ingrese nro_rsg obligatorio');
     }
 
-    if (!receivedBody.fecha_resolucion) {
-        errors.push('Ingrese fecha_resolucion obligatorio');
-    } else if (!fechaRegex.test(receivedBody.fecha_resolucion)) {
-        errors.push('El formato de la fecha_resolucion debe ser YYYY-MM-DD');
+    if (!receivedBody.fecha_rsg) {
+        errors.push('Ingrese fecha_rsg obligatorio');
+    } else if (!fechaRegex.test(receivedBody.fecha_rsg)) {
+        errors.push('El formato de la fecha_rsg debe ser YYYY-MM-DD');
     } else {
-        const parsedFecha = new Date(receivedBody.fecha_resolucion);
+        const parsedFecha = new Date(receivedBody.fecha_rsg);
         if (isNaN(parsedFecha.getTime())) {
-            errors.push('fecha_resolucion debe ser una fecha válida');
+            errors.push('fecha_rsg debe ser una fecha válida');
         }
     }
 
@@ -74,7 +74,7 @@ const areaResolutiva2RSG2Validation = async (receivedBody, files, params) => {
 
 const areaResolutiva2RSAValidation = async (receivedBody, files, params) => {
     const allowedFields = [
-        'nro_rsa', 'fecha_rsa', 'fecha_notificacion', 'tipo', 'id_evaluar_rsa', 'id_nc', 'id_AR2'
+        'nro_rsa', 'fecha_rsa', 'tipo', 'id_evaluar_rsa', 'id_nc', 'id_AR2'
     ];
 
     const errors = [];
@@ -98,17 +98,6 @@ const areaResolutiva2RSAValidation = async (receivedBody, files, params) => {
         const parsedFecha = new Date(receivedBody.fecha_rsa);
         if (isNaN(parsedFecha.getTime())) {
             errors.push('fecha_rsa debe ser una fecha válida');
-        }
-    }
-
-    if (!receivedBody.fecha_notificacion) {
-        errors.push('Ingrese fecha_notificacion obligatorio');
-    } else if (!fechaRegex.test(receivedBody.fecha_notificacion)) {
-        errors.push('El formato de la fecha_notificacion debe ser YYYY-MM-DD');
-    } else {
-        const parsedFecha = new Date(receivedBody.fecha_notificacion);
-        if (isNaN(parsedFecha.getTime())) {
-            errors.push('fecha_notificacion debe ser una fecha válida');
         }
     }
 

@@ -1,6 +1,6 @@
 .env
 ////PUERTO
-PORT=3004
+PORT_FISCA=3004
 //// DB
 DB_DATABASE=gestion_fiscalizacion
 DB_HOST=localhost
