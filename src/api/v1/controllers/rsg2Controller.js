@@ -1,20 +1,15 @@
 const { RSG2} = require('../../../config/db_connection'); // Asegúrate de que la ruta al modelo sea correcta
 const {saveImage,deleteFile}=require('../../../utils/fileUtils')
-const { RSG1, NC, TramiteInspector, Usuario, DescargoNC, IFI, DescargoIFI } = require('../../../config/db_connection'); 
+const { RSG1, NC, TramiteInspector, Usuario, DescargoNC, IFI, DescargoIFI, ResolucionSubgerencial } = require('../../../config/db_connection'); 
 const { Sequelize } = require('sequelize');
 
-
 // Función para crear una nueva instancia de RSG2
-const createRSG2Controller = async ({nro_resolucion2, fecha_resolucion, documento,id_nc,id_AR2}) => {
+const createRSG2Controller = async ({nro_rsg, fecha_rsg, tipo, id_evaluar_rsg, id_nc, id_AR2, estado, documento_RSG}) => {
     let documento_path;
     try {
-        documento_path=saveImage(documento,'Resolucion(RSG2)')       
-        const newRSG2 = await RSG2.create({
-            nro_resolucion2,
-            fecha_resolucion,
-            documento: documento_path,
-            id_nc,
-            id_AR2
+        documento_path=saveImage(documento_RSG,'Resolucion(RSG2)')       
+        const newRSG2 = await ResolucionSubgerencial.create({
+            nro_rsg, fecha_rsg, tipo, id_evaluar_rsg, id_nc, id_AR2, estado, documento_RSG: documento_path 
         });
 
         return newRSG2 || null;
@@ -235,13 +230,22 @@ const getAllRSG2forAR2Controller = async () => {
 
 const getAllRSG2forPlataformaController = async () => {
     try {
-      const response = await RSG2.findAll();
+        console.log('asdsadas');
+        
+      const response = await ResolucionSubgerencial.findAll({
+        where: {
+            //estado: 'PLATAFORMA_SANCION',
+            fecha_notificacion_rsg: { [Sequelize.Op.ne]: null },
+            id_evaluar_rsg: null
+          }
+      });
 
       const formattedResponse = response.map(item => ({
         id: item.id,
         numero: item.nro_rsg, 
         createdAt: item.createdAt, 
-        tipo: 'RSG'
+        id_nc: item.id_nc,
+        tipo_viene: 'RSG'
       }));
 
       return formattedResponse || null;

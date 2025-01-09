@@ -27,15 +27,15 @@ const createRSAController = async ({nro_rsa, fecha_rsa, documento_RSA, id_nc, id
     }
 };
 
-const createResoSAController = async ({nro_rsa, fecha_rsa, documento_RSA, id_nc, id_AR2}) => {
-  let documento_path;
+const createResoSAController = async ({nro_rsa, fecha_rsa, /* documento_RSA, */ id_nc, id_AR2}) => {
+  //let documento_path;
   try {
-      documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
+     // documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
 
       const newRsa = await ResolucionSancionadora.create({
           nro_rsa,
           fecha_rsa,
-          documento_RSA:documento_path,
+          // documento_RSA:documento_path,
           id_nc,
           id_AR2,
           estado: 'PLATAFORMA_SANCION'
@@ -523,7 +523,9 @@ const getAllRSAforPlataformaController = async () => {
   try {
     const response = await ResolucionSancionadora.findAll({
       where: {
-        estado: 'PLATAFORMA_SANCION' 
+        estado: 'PLATAFORMA_SANCION',
+        fecha_notificacion_rsa: { [Sequelize.Op.ne]: null },
+        id_evaluar_rsa: null
       }
     });
 
@@ -531,7 +533,8 @@ const getAllRSAforPlataformaController = async () => {
       id: item.id,
       numero: item.nro_rsa, 
       createdAt: item.createdAt, 
-      tipo: 'RSA'
+      id_nc: item.id_nc,
+      tipo_viene: 'RSA'
     }));
 
     return formattedResponse || null;

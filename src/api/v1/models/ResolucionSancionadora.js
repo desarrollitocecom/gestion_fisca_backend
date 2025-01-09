@@ -23,7 +23,7 @@ module.exports = (sequelize) => {
             allowNull: true
         },
 
-        tipo: {
+        tipo_evaluar: {
             type: DataTypes.ENUM('RECURSO_RECONC', 'RECURSO_APELAC'),
             allowNull: true
         },

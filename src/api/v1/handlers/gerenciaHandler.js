@@ -3,6 +3,7 @@ const { createRGController, getAllRGforGerenciaController, getRGforAnalista5Cont
 const { updateDocumento } = require("../controllers/documentoController");
 const { responseSocket } = require('../../../utils/socketUtils');
 const { gerenciaValidation } = require("../validations/gerenciaValidation")
+const { getAllRecursosApelacionesController, updateRecursoApelacionController } = require("../controllers/recursoApelacionController")
 const fs = require("node:fs");
 const { getIo } = require("../../../sockets");
 
@@ -27,31 +28,57 @@ const getAllRSGforGerenciaHandler = async (req, res) => {
     }
 };
 
+const getAllRecursosApelacionesHandler = async (req, res) => {
+    try {
+        const response = await getAllRecursosApelacionesController();
+
+        if (response.length === 0) {
+            return res.status(200).json({
+                message: "Ya no hay Apelaciones para gerencia",
+                data: []
+            });
+        }
+
+        return res.status(200).json({
+            message: "Apelaciones obtenidos correctamente",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener :", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener los IFIs." });
+    }
+}
+
+
+
+
+
+
+
 
 const createRGHandler = async (req, res) => {
-    const io = getIo();
+    // const io = getIo();
 
-    const invalidFields = await gerenciaValidation(req.body, req.files, req.params);
+    // const invalidFields = await gerenciaValidation(req.body, req.files, req.params);
 
-    if (invalidFields.length > 0) {
-        if (req.files['documento_rg']) {
-            fs.unlinkSync(req.files['documento_rg'][0].path);
-        }
-        return res.status(400).json({
-            message: 'Se encontraron los siguientes errores',
-            data: invalidFields
-        });
-    }
+    // if (invalidFields.length > 0) {
+    //     if (req.files['documento_rg']) {
+    //         fs.unlinkSync(req.files['documento_rg'][0].path);
+    //     }
+    //     return res.status(400).json({
+    //         message: 'Se encontraron los siguientes errores',
+    //         data: invalidFields
+    //     });
+    // }
 
-    const { nro_rg, fecha_rg, fecha_notificacion, id_nc, id_gerente, tipo } = req.body;
+    const { nro_rg, fecha_rg, id_nc, id_gerente, tipo } = req.body;
     const { id } = req.params
 
     try {
         const newRG = await createRGController({
             nro_rg,
             fecha_rg,
-            fecha_notificacion,
-            documento_rg: req.files['documento_rg'][0],
+            //documento_rg: req.files['documento_rg'][0],
             id_nc,
             id_gerente,
             tipo
@@ -60,14 +87,16 @@ const createRGHandler = async (req, res) => {
             return res.status(201).json({ message: 'Error al crear RG', data: [] });
         }
 
-        const response = await updateRSGNPController(id, { id_evaluar_rsg: newRG.id, tipo: 'TERMINADO' })
+        const response = await updateRecursoApelacionController(id, { id_gerencia: newRG.id, tipo: 'TERMINADO' })
 
-        await updateDocumento({ id_nc, total_documentos: newRG.documento_rg, nuevoModulo: "RESOLUCION GERENCIAL" });
+        //await updateDocumento({ id_nc, total_documentos: newRG.documento_rg, nuevoModulo: "RESOLUCION GERENCIAL" });
 
         if (response) {
-            await responseSocket({ id: newRG.id, method: getRGforAnalista5Controller, socketSendName: 'sendAnalita5fromGerencia', res });
-            io.emit("sendGerencia", { id, remove: true });
-
+            // await responseSocket({ id: newRG.id, method: getRGforAnalista5Controller, socketSendName: 'sendAnalita5fromGerencia', res });
+            // io.emit("sendGerencia", { id, remove: true });
+            res.status(200).json({
+                message: 'exito',
+            });
         } else {
             res.status(400).json({
                 message: 'Error al enviar el RG al socket',
@@ -108,5 +137,6 @@ const getAllRGforGerenciaHandler = async (req, res) => {
 module.exports = {
     getAllRSGforGerenciaHandler,
     createRGHandler,
-    getAllRGforGerenciaHandler
+    getAllRGforGerenciaHandler,
+    getAllRecursosApelacionesHandler
 };

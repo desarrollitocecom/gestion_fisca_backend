@@ -1,14 +1,14 @@
 const { Router } = require('express');
 const router = Router();
 
-const { uploadRG } = require('../../../middlewares/uploadMiddleware');
+const { uploadRG, uploadRecursoAdministrativo } = require('../../../middlewares/uploadMiddleware');
 const { getAllRSGforGerenciaHandler, createRGHandler, getAllRGforGerenciaHandler } = require('../handlers/gerenciaHandler');
 const { getAllCargoNotificacionForIFIHandler, getAllHistoryCargoNotificacionForIFIHandler } = require('../handlers/motorizadoHandler');
-const { getAllRSAforPlataformaHandler, getAllRSG2forPlataformaHandler, getAllDataForPlataformaHandler } =  require("../handlers/plataforma2Handler")
+const { getAllRSAforPlataformaHandler, getAllRSG2forPlataformaHandler, getAllDataForPlataformaHandler, createRecursoAdministrativoHandler, getAllRSGforPlataformaHandler } =  require("../handlers/plataforma2Handler")
 
-router.get('/rsa', getAllRSAforPlataformaHandler);
-router.get('/rsg2', getAllRSG2forPlataformaHandler);
 router.get('/todo', getAllDataForPlataformaHandler);
 
+router.patch('/:id', uploadRecursoAdministrativo,  createRecursoAdministrativoHandler);
 
-module.exports = router;    
+
+module.exports = router;

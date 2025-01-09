@@ -1,22 +1,21 @@
-const { RSG , Usuario,  NC , TramiteInspector } = require("../../../config/db_connection");
-const {saveImage,deleteFile}=require('../../../utils/fileUtils')
+const { RSG, Usuario, NC, TramiteInspector } = require("../../../config/db_connection");
+const { saveImage, deleteFile } = require('../../../utils/fileUtils')
 const { Sequelize } = require('sequelize');
-const { RSG1, DescargoNC, IFI, DescargoIFI, RSG2, RSA, DescargoRSA } = require('../../../config/db_connection'); 
+const { RSG1, DescargoNC, IFI, DescargoIFI, RSG2, RSA, DescargoRSA, RecursoApelacion } = require('../../../config/db_connection');
 const myCache = require("../../../middlewares/cacheNodeStocked");
 
-const createRSGController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, documento_RSG,id_nc ,id_AR3, tipo}) => {
+const createRSGController = async ({ nro_rsg, fecha_rsg,/* documento_RSG, */ id_nc, id_AR3, tipo }) => {
 
-    let documento_path;
+    //let documento_path;
     try {
-        if(documento_RSG) {
-            documento_path=saveImage(documento_RSG,'Resolucion(RSG)')       
-        }
+        // if(documento_RSG) {
+        //     documento_path=saveImage(documento_RSG,'Resolucion(RSG)')       
+        // }
 
         const newRgsnp = await RSG.create({
             nro_rsg,
             fecha_rsg,
-            fecha_notificacion,
-            documento_RSG:documento_path,
+            //documento_RSG:documento_path,
             id_nc,
             id_AR3,
             tipo
@@ -27,17 +26,56 @@ const createRSGController = async ({ nro_rsg, fecha_rsg, fecha_notificacion, doc
             deleteFile(documento_path);
         }
         console.error("Error creating RGSNP:", error);
-      return false
+        return false
     }
 };
 
-const updateRsgnpController = async (id, {nro_rsg,id_evaluar_rsgnp,tipo, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg ,id_nc,id_estado_RSGNP,id_AR3}) => {
-   
+const updateRSGController = async (id, { id_recurso_apelacion }) => {
     try {
-           
-        
+
+        console.log('datos RSG: ', id, 'y la apelacion creada: ', id_recurso_apelacion)
+
+        const rsgnp = await getRSGController(id);
+
+        await rsgnp.update({
+            id_recurso_apelacion
+        });
+
+        return rsgnp || null
+    } catch (error) {
+
+        console.error("Error updating RGSNP:", error);
+        return false
+
+    }
+}
+
+const getRSGController = async (id) => {
+    try {
+        console.log(id)
+        const rgsnp = await RSG.findOne({
+            where: {id}
+        })
+
+        return rgsnp || null;
+    } catch (error) {
+        console.error("Error fetching RGSNP:", error);
+        return false
+    }
+};
+
+
+
+
+
+
+const updateRsgnpController = async (id, { nro_rsg, id_evaluar_rsgnp, tipo, fecha_rsg, fecha_notificacion, documento_RSGNP, id_descargo_RSGNP, id_rg, id_nc, id_estado_RSGNP, id_AR3 }) => {
+
+    try {
+
+
         const rsgnp = await getRsgnpController(id);
-       
+
         if (rsgnp) {
             await rsgnp.update({
                 nro_rsg,
@@ -55,7 +93,7 @@ const updateRsgnpController = async (id, {nro_rsg,id_evaluar_rsgnp,tipo, fecha_r
         }
         return rsgnp || null
     } catch (error) {
-       
+
         console.error("Error updating RGSNP:", error);
         return false
 
@@ -65,7 +103,7 @@ const updateRsgnpController = async (id, {nro_rsg,id_evaluar_rsgnp,tipo, fecha_r
 const getRsgnpController = async (id) => {
     try {
         const rgsnp = await RSG.findByPk(id)
-        
+
         return rgsnp || null;
     } catch (error) {
         console.error("Error fetching RGSNP:", error);
@@ -74,8 +112,8 @@ const getRsgnpController = async (id) => {
 };
 const getAllRSGNPforAN5Controller = async () => {
     try {
-        const response = await RSGNP.findAll({ 
-            where: { tipo: 'AN5' }, 
+        const response = await RSGNP.findAll({
+            where: { tipo: 'AN5' },
             order: [['id', 'ASC']],
             attributes: [
                 'id',
@@ -84,23 +122,23 @@ const getAllRSGNPforAN5Controller = async () => {
                 'tipo',
                 [Sequelize.col('NCs.id'), 'id_nc'],
                 [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                [Sequelize.col('Usuarios.usuario'), 'analista4'],   
+                [Sequelize.col('Usuarios.usuario'), 'analista4'],
             ],
             include: [
                 {
-                    model: NC, 
+                    model: NC,
                     as: 'NCs',
                     include: [
                         {
-                            model: TramiteInspector, 
-                            as: 'tramiteInspector', 
+                            model: TramiteInspector,
+                            as: 'tramiteInspector',
                             attributes: [], // Si no necesitas atributos, está bien dejarlo vacío.
                         }
                     ],
                     attributes: []
                 },
                 {
-                    model: Usuario, 
+                    model: Usuario,
                     as: 'Usuarios',
                     attributes: [] // No se requieren atributos de Usuario.
                 },
@@ -122,37 +160,37 @@ const getAllRsgnpController = async (page = 1, limit = 20) => {
     try {
         const rgsnps = await RSGNP.findAndCountAll({
             limit,
-          offset,
-          where: { tipo: null }, 
-                 attributes: ['id', 'id_AR3', 'createdAt',
-         
-                             [Sequelize.col('NCs.id'), 'id_nc'],
-                             [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                             [Sequelize.col('Usuarios.usuario'), 'analista4'],
-                 ],
-           
-                 include: [
-                    { 
-                     model: NC, 
-                     as:'NCs',  
-                     include: [
-                       {
-                         model: TramiteInspector,
-                         as: 'tramiteInspector',
-                         attributes: []
-                       }
-                     ],
-                     attributes: [] 
-                    },
-                    { 
-                     model:Usuario,
-                     as:'Usuarios',
-                     attributes:[]
-                   },
-                   
-                 ],
-               });
-               return { totalCount: rgsnps.count, data: rgsnps.rows, currentPage: page } || null;
+            offset,
+            where: { tipo: null },
+            attributes: ['id', 'id_AR3', 'createdAt',
+
+                [Sequelize.col('NCs.id'), 'id_nc'],
+                [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('Usuarios.usuario'), 'analista4'],
+            ],
+
+            include: [
+                {
+                    model: NC,
+                    as: 'NCs',
+                    include: [
+                        {
+                            model: TramiteInspector,
+                            as: 'tramiteInspector',
+                            attributes: []
+                        }
+                    ],
+                    attributes: []
+                },
+                {
+                    model: Usuario,
+                    as: 'Usuarios',
+                    attributes: []
+                },
+
+            ],
+        });
+        return { totalCount: rgsnps.count, data: rgsnps.rows, currentPage: page } || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);
@@ -161,64 +199,55 @@ const getAllRsgnpController = async (page = 1, limit = 20) => {
 };
 
 
-const getRSGController = async (id) => {
-    try {
-        const rgsnp = await RSG.findByPk(id)
-        
-        return rgsnp || null;
-    } catch (error) {
-        console.error("Error fetching RGSNP:", error);
-        return false
-    }
-};
+
 
 
 const getAllRSGforAnalista4Controller = async () => {
     try {
         const response = await RSG.findAll({
 
-          where: { tipo: 'RSGNP' }, 
-                 attributes: ['id', 'id_AR3', 'createdAt',
-         
-                             [Sequelize.col('NCs.id'), 'id_nc'],
-                             [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                             [Sequelize.col('Usuarios.usuario'), 'area_resolutiva3'],
-                 ],
-           
-                 include: [
-                    { 
-                     model: NC, 
-                     as:'NCs',  
-                     include: [
-                       {
-                         model: TramiteInspector,
-                         as: 'tramiteInspector',
-                         attributes: []
-                       }
-                     ],
-                     attributes: [] 
-                    },
-                    { 
-                     model:Usuario,
-                     as:'Usuarios',
-                     attributes:[]
-                   },
-                   
-                 ],
-               });
+            where: { tipo: 'RSGNP' },
+            attributes: ['id', 'id_AR3', 'createdAt',
 
-               const modifiedResponse = response.map(item => {
-                const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
-                const cachedValue = myCache.get(`AnalistaFour-${id}`); // Obtener valor del cache si existe
-            
-                return {
-                    ...item.toJSON(),
-                    disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
-                };
-              });
-        
-        
-               return modifiedResponse || null;
+                [Sequelize.col('NCs.id'), 'id_nc'],
+                [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('Usuarios.usuario'), 'area_resolutiva3'],
+            ],
+
+            include: [
+                {
+                    model: NC,
+                    as: 'NCs',
+                    include: [
+                        {
+                            model: TramiteInspector,
+                            as: 'tramiteInspector',
+                            attributes: []
+                        }
+                    ],
+                    attributes: []
+                },
+                {
+                    model: Usuario,
+                    as: 'Usuarios',
+                    attributes: []
+                },
+
+            ],
+        });
+
+        const modifiedResponse = response.map(item => {
+            const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+            const cachedValue = myCache.get(`AnalistaFour-${id}`); // Obtener valor del cache si existe
+
+            return {
+                ...item.toJSON(),
+                disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+            };
+        });
+
+
+        return modifiedResponse || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);
@@ -227,13 +256,13 @@ const getAllRSGforAnalista4Controller = async () => {
 };
 
 
-const updateRSGNPController = async (id, {id_descargo_RSG, id_estado_RSGNP, tipo, id_evaluar_rsg}) => {
-   
+const updateRSGNPController = async (id, { id_descargo_RSG, id_estado_RSGNP, tipo, id_evaluar_rsg }) => {
+
     try {
-           
-        
+
+
         const rsgnp = await getRsgnpController(id);
-       
+
         if (rsgnp) {
             await rsgnp.update({
                 id_descargo_RSG,
@@ -244,7 +273,7 @@ const updateRSGNPController = async (id, {id_descargo_RSG, id_estado_RSGNP, tipo
         }
         return rsgnp || null
     } catch (error) {
-       
+
         console.error("Error updating RGSNP:", error);
         return false
 
@@ -256,47 +285,47 @@ const updateRSGNPController = async (id, {id_descargo_RSG, id_estado_RSGNP, tipo
 const getAllRSGforGerenciaController = async () => {
     try {
         const response = await RSG.findAll({
-          where: { tipo: 'GERENCIA' }, 
-                 attributes: ['id', 'id_AR3', 'createdAt',
-         
-                             [Sequelize.col('NCs.id'), 'id_nc'],
-                             [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                             [Sequelize.col('Usuarios.usuario'), 'analista4'],
-                 ],
-           
-                 include: [
-                    { 
-                     model: NC, 
-                     as:'NCs',  
-                     include: [
-                       {
-                         model: TramiteInspector,
-                         as: 'tramiteInspector',
-                         attributes: []
-                       }
-                     ],
-                     attributes: [] 
-                    },
-                    { 
-                     model:Usuario,
-                     as:'Usuarios',
-                     attributes:[]
-                   },
-                   
-                 ],
-               });
+            where: { tipo: 'GERENCIA' },
+            attributes: ['id', 'id_AR3', 'createdAt',
 
-               const modifiedResponse = response.map(item => {
-                const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
-                const cachedValue = myCache.get(`Gerencia-${id}`); // Obtener valor del cache si existe
-            
-                return {
-                    ...item.toJSON(),
-                    disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
-                };
-              });
+                [Sequelize.col('NCs.id'), 'id_nc'],
+                [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('Usuarios.usuario'), 'analista4'],
+            ],
 
-               return modifiedResponse || null;
+            include: [
+                {
+                    model: NC,
+                    as: 'NCs',
+                    include: [
+                        {
+                            model: TramiteInspector,
+                            as: 'tramiteInspector',
+                            attributes: []
+                        }
+                    ],
+                    attributes: []
+                },
+                {
+                    model: Usuario,
+                    as: 'Usuarios',
+                    attributes: []
+                },
+
+            ],
+        });
+
+        const modifiedResponse = response.map(item => {
+            const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+            const cachedValue = myCache.get(`Gerencia-${id}`); // Obtener valor del cache si existe
+
+            return {
+                ...item.toJSON(),
+                disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+            };
+        });
+
+        return modifiedResponse || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);
@@ -309,7 +338,7 @@ const getAllRSGforGerenciaController = async () => {
 const getAllRSGforAnalista5Controller = async () => {
     try {
         const response = await RSG.findAll({
-            where: { tipo: 'ANALISTA_5' },    
+            where: { tipo: 'ANALISTA_5' },
             order: [['createdAt', 'DESC']],
             attributes: ['id', 'id_AR3',
                 [Sequelize.col('NCs.id'), 'id_nc'],
@@ -318,41 +347,41 @@ const getAllRSGforAnalista5Controller = async () => {
                 [Sequelize.col('Usuarios.usuario'), 'usuario'],
                 [Sequelize.literal(`'Analista 4'`), 'area'],
                 'createdAt'
-                 ],
-           
-                 include: [
-                    { 
-                     model: NC, 
-                     as:'NCs',  
-                     include: [
-                       {
-                         model: TramiteInspector,
-                         as: 'tramiteInspector',
-                         attributes: []
-                       }
-                     ],
-                     attributes: [] 
-                    },
-                    { 
-                     model:Usuario,
-                     as:'Usuarios',
-                     attributes:[]
-                   },
-                   
-                 ],
-               });
+            ],
 
-               const modifiedResponse = response.map(item => {
-                const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
-                const cachedValue = myCache.get(`AnalistaFive-AR4-${id}`); // Obtener valor del cache si existe
-            
-                return {
-                    ...item.toJSON(),
-                    disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
-                };
-              });
+            include: [
+                {
+                    model: NC,
+                    as: 'NCs',
+                    include: [
+                        {
+                            model: TramiteInspector,
+                            as: 'tramiteInspector',
+                            attributes: []
+                        }
+                    ],
+                    attributes: []
+                },
+                {
+                    model: Usuario,
+                    as: 'Usuarios',
+                    attributes: []
+                },
 
-               return modifiedResponse || null;
+            ],
+        });
+
+        const modifiedResponse = response.map(item => {
+            const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
+            const cachedValue = myCache.get(`AnalistaFive-AR4-${id}`); // Obtener valor del cache si existe
+
+            return {
+                ...item.toJSON(),
+                disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+            };
+        });
+
+        return modifiedResponse || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);
@@ -366,7 +395,7 @@ const getAllRSGforAnalista5Controller = async () => {
 const getRSGforAnalista5Controller = async (id) => {
     try {
         const rgsnps = await RSG.findOne({
-            where: { id: id },    
+            where: { id: id },
             order: [['createdAt', 'DESC']],
             attributes: ['id', 'id_AR3',
                 [Sequelize.col('NCs.id'), 'id_nc'],
@@ -375,30 +404,30 @@ const getRSGforAnalista5Controller = async (id) => {
                 [Sequelize.col('Usuarios.usuario'), 'usuario'],
                 [Sequelize.literal(`'Analista 4'`), 'area'],
                 'createdAt'
-                 ],
-           
-                 include: [
-                    { 
-                     model: NC, 
-                     as:'NCs',  
-                     include: [
-                       {
-                         model: TramiteInspector,
-                         as: 'tramiteInspector',
-                         attributes: []
-                       }
-                     ],
-                     attributes: [] 
-                    },
-                    { 
-                     model:Usuario,
-                     as:'Usuarios',
-                     attributes:[]
-                   },
-                   
-                 ],
-               });
-               return rgsnps || null;
+            ],
+
+            include: [
+                {
+                    model: NC,
+                    as: 'NCs',
+                    include: [
+                        {
+                            model: TramiteInspector,
+                            as: 'tramiteInspector',
+                            attributes: []
+                        }
+                    ],
+                    attributes: []
+                },
+                {
+                    model: Usuario,
+                    as: 'Usuarios',
+                    attributes: []
+                },
+
+            ],
+        });
+        return rgsnps || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);
@@ -413,7 +442,7 @@ const getRSGforAnalista5Controller = async (id) => {
 
 const getAllRSG3forAR3Controller = async () => {
     try {
-        const response = await NC.findAll({ 
+        const response = await NC.findAll({
             where: Sequelize.where(Sequelize.col('IFI.RSA.tipo'), 'ARCHIVO_AR3'),
             order: [['id', 'ASC']],
             attributes: [
@@ -461,35 +490,35 @@ const getAllRSG3forAR3Controller = async () => {
             ],
             include: [
                 {
-                    model: TramiteInspector, 
-                    as: 'tramiteInspector', 
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
                     include: [
                         {
                             model: Usuario,
                             as: 'inspectorUsuario'
                         }
                     ],
-                    attributes: [], 
+                    attributes: [],
                 },
                 {
-                  model: Usuario, 
-                  as: 'digitadorUsuario',
-                  attributes: []
+                    model: Usuario,
+                    as: 'digitadorUsuario',
+                    attributes: []
                 },
                 {
-                    model: DescargoNC, 
-                    as: 'descargoNC', 
+                    model: DescargoNC,
+                    as: 'descargoNC',
                     include: [
                         {
                             model: Usuario,
                             as: 'analistaUsuario'
                         }
                     ],
-                    attributes: [], 
+                    attributes: [],
                 },
                 {
-                    model: IFI, 
-                    as: 'IFI', 
+                    model: IFI,
+                    as: 'IFI',
                     include: [
                         {
                             model: Usuario,
@@ -514,7 +543,7 @@ const getAllRSG3forAR3Controller = async () => {
                                     as: 'Usuarios',
                                 },
                                 {
-                                    model:  DescargoRSA,
+                                    model: DescargoRSA,
                                     as: 'DescargoRSAs',
                                     include: [
                                         {
@@ -524,7 +553,7 @@ const getAllRSG3forAR3Controller = async () => {
                                     ]
                                 },
                                 {
-                                    model:  RSG,
+                                    model: RSG,
                                     as: 'RSGs',
                                     include: [
                                         {
@@ -536,7 +565,7 @@ const getAllRSG3forAR3Controller = async () => {
                             ],
                         },
                     ],
-                    attributes: [], 
+                    attributes: [],
                 },
             ]
         });
@@ -623,36 +652,36 @@ const getAllRSG3forAR3Controller = async () => {
 const getRSGforGerenciaController = async (id) => {
     try {
         const rgsnps = await RSG.findOne({
-          where: { id: id }, 
-                 attributes: ['id', 'id_AR3', 'createdAt',
-         
-                             [Sequelize.col('NCs.id'), 'id_nc'],
-                             [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                             [Sequelize.col('Usuarios.usuario'), 'analista4'],
-                 ],
-           
-                 include: [
-                    { 
-                     model: NC, 
-                     as:'NCs',  
-                     include: [
-                       {
-                         model: TramiteInspector,
-                         as: 'tramiteInspector',
-                         attributes: []
-                       }
-                     ],
-                     attributes: [] 
-                    },
-                    { 
-                     model:Usuario,
-                     as:'Usuarios',
-                     attributes:[]
-                   },
-                   
-                 ],
-               });
-               return rgsnps || null;
+            where: { id: id },
+            attributes: ['id', 'id_AR3', 'createdAt',
+
+                [Sequelize.col('NCs.id'), 'id_nc'],
+                [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('Usuarios.usuario'), 'analista4'],
+            ],
+
+            include: [
+                {
+                    model: NC,
+                    as: 'NCs',
+                    include: [
+                        {
+                            model: TramiteInspector,
+                            as: 'tramiteInspector',
+                            attributes: []
+                        }
+                    ],
+                    attributes: []
+                },
+                {
+                    model: Usuario,
+                    as: 'Usuarios',
+                    attributes: []
+                },
+
+            ],
+        });
+        return rgsnps || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);
@@ -664,41 +693,41 @@ const getRSGforGerenciaController = async (id) => {
 
 
 const getRSGforAnalista4Controller = async (id) => {
-    
+
 
     try {
         const rgsnps = await RSG.findOne({
 
-          where: { id: id }, 
-                 attributes: ['id', 'id_AR3', 'createdAt',
-         
-                             [Sequelize.col('NCs.id'), 'id_nc'],
-                             [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-                             [Sequelize.col('Usuarios.usuario'), 'area_resolutiva3'],
-                 ],
-           
-                 include: [
-                    { 
-                     model: NC, 
-                     as:'NCs',  
-                     include: [
-                       {
-                         model: TramiteInspector,
-                         as: 'tramiteInspector',
-                         attributes: []
-                       }
-                     ],
-                     attributes: [] 
-                    },
-                    { 
-                     model:Usuario,
-                     as:'Usuarios',
-                     attributes:[]
-                   },
-                   
-                 ],
-               });
-               return rgsnps || null;
+            where: { id: id },
+            attributes: ['id', 'id_AR3', 'createdAt',
+
+                [Sequelize.col('NCs.id'), 'id_nc'],
+                [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+                [Sequelize.col('Usuarios.usuario'), 'area_resolutiva3'],
+            ],
+
+            include: [
+                {
+                    model: NC,
+                    as: 'NCs',
+                    include: [
+                        {
+                            model: TramiteInspector,
+                            as: 'tramiteInspector',
+                            attributes: []
+                        }
+                    ],
+                    attributes: []
+                },
+                {
+                    model: Usuario,
+                    as: 'Usuarios',
+                    attributes: []
+                },
+
+            ],
+        });
+        return rgsnps || null;
 
     } catch (error) {
         console.error("Error al traer los RSGNPs:", error);
@@ -710,12 +739,50 @@ const getRSGforAnalista4Controller = async (id) => {
 
 const getAllRSGforPlataformaController = async () => {
     try {
-      const response = await RSG.findAll();
-      return response || null;
+        const response = await RSG.findAll({
+            where: {
+                id_recurso_apelacion: null,
+                fecha_notificacion: { [Sequelize.Op.ne]: null },
+            }
+        });
+
+        const formattedResponse = response.map(item => ({
+            id: item.id,
+            numero: item.nro_rsg,
+            createdAt: item.createdAt,
+            id_nc: item.id_nc,
+            tipo_viene: 'RSG2'
+        }));
+
+
+        return formattedResponse || null;
     } catch (error) {
-      return false
+        return false
     }
-  }
+
+
+    // try {
+    //     const response = await ResolucionSancionadora.findAll({
+    //       where: {
+    //         estado: 'PLATAFORMA_SANCION',
+    //         fecha_notificacion_rsa: { [Sequelize.Op.ne]: null },
+    //         id_evaluar_rsa: null
+    //       }
+    //     });
+
+    //     const formattedResponse = response.map(item => ({
+    //       id: item.id,
+    //       numero: item.nro_rsa, 
+    //       createdAt: item.createdAt, 
+    //       id_nc: item.id_nc,
+    //       tipo_viene: 'RSA'
+    //     }));
+
+    //     return formattedResponse || null;
+    //   } catch (error) {
+    //     return false
+    //   }
+}
 
 
 
@@ -735,5 +802,6 @@ module.exports = {
     getAllRSG3forAR3Controller,
     getRSGforGerenciaController,
     getRSGforAnalista5Controller,
-    getAllRSGforPlataformaController
+    getAllRSGforPlataformaController,
+    updateRSGController
 };

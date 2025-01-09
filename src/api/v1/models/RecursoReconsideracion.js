@@ -1,35 +1,30 @@
-const { DataTypes } = require('sequelize');
+const { DataTypes } = require("sequelize")
 module.exports = (sequelize) => {
-    const RG = sequelize.define('RG', {
+    const RecursoReconsideracion = sequelize.define('RecursoReconsideracion', {
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
             defaultValue: DataTypes.UUIDV4,
         },
-        nro_rg: {
+        nro_recurso: {
             type: DataTypes.STRING,
             allowNull: true
         },
-        fecha_rg: {
+        fecha_recurso: {
             type: DataTypes.DATEONLY,
             allowNull: true
         },
-        fecha_notificacion: {
-            type: DataTypes.DATEONLY,
-            allowNull: true
-        },
-        documento_rg: {
+        documento: {
             type: DataTypes.STRING,
             allowNull: true
         },
 
-        tipo: {
-            type: DataTypes.ENUM('FUNDADO', 'ANALISTA_5', 'TERMINADO', 'TERMINADO_GERENCIA'),
-            allowNull: true
-        },
-        
-        id_evaluar_rg: {
+        id_rsg: {
             type: DataTypes.UUID,
+            references: {
+                model: 'RSGs',
+                key: 'id',
+            },
             allowNull: true,
         },
 
@@ -41,25 +36,23 @@ module.exports = (sequelize) => {
             },
             allowNull: true,
         },
-        id_gerente: {
+
+        id_plataforma2: {
             type: DataTypes.UUID,
             references: {
                 model: 'Usuarios',
                 key: 'id',
             },
-            allowNull: true
+            allowNull: false
         }
     }, {
-        tableName: 'RGs',
+        tableName: 'RecursosReconsideraciones',
         timestamps: true
     });
-    RG.associate = (db) => {
-
-        RG.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
-        RG.belongsTo(db.Acta, { foreignKey: 'id_evaluar_rg', as: 'ActaGerente' })
-        RG.belongsTo(db.Usuario, { foreignKey: 'id_gerente', as: 'Usuarios' });
-        
+    RecursoReconsideracion.associate = (db) => {
+        RecursoReconsideracion.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
+        RecursoReconsideracion.belongsTo(db.Usuario, { foreignKey: 'id_plataforma2', as: 'Usuarios' });   
+        RecursoReconsideracion.belongsTo(db.RSG, { foreignKey: 'id_rsg', as: 'RSGs' });   
     };
-
-    return RG;
+    return RecursoReconsideracion;
 };

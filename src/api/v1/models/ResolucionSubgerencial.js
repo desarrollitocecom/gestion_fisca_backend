@@ -8,30 +8,37 @@ module.exports = (sequelize) => {
         },
         nro_rsg: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
         fecha_rsg: {
             type: DataTypes.DATEONLY,
-            allowNull: false
+            allowNull: true
         },
         fecha_notificacion_rsg: {
             type: DataTypes.DATEONLY,
-            allowNull: false
+            allowNull: true
         },
         documento_RSG: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true
         },
 
         tipo: {
+            type: DataTypes.ENUM('A_MULTA', 'A_MC', 'A_TODO'),
+            allowNull: true
+        },
+
+        ////////////////////////////////////    TIPO DE DESCARGO
+        tipo_evaluar: {
             type: DataTypes.ENUM('RECURSO_RECONC', 'RECURSO_APELAC'),
             allowNull: true
         },
 
-        id_evaluar_rsa: {
+        id_evaluar_rsg: {
             type: DataTypes.UUID,
             allowNull: true,
         },
+        ////////////////////////////////////
 
         estado: {
             type: DataTypes.ENUM('PLATAFORMA_SANCION', 'ARCHIVO'),

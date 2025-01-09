@@ -5,7 +5,7 @@ const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 const areaResolutiva2RSG2Validation = async (receivedBody, files, params) => {
     const allowedFields = [
-        'nro_rsg', 'fecha_rsg', 'tipo', 'id_evaluar_rsg', 'id_nc', 'id_AR2'
+        'nro_rsg', 'fecha_rsg', 'tipo', 'id_evaluar_rsg', 'id_nc', 'id_AR2', 'estado'
     ];
 
     const errors = [];
@@ -58,12 +58,12 @@ const areaResolutiva2RSG2Validation = async (receivedBody, files, params) => {
     }
 
 
-    if (!files || !files['documento']) {
-        errors.push('El documento es obligatorio');
+    if (!files || !files['documento_RSG']) {
+        errors.push('El documento_RSG es obligatorio');
     } else {
-        const file = files['documento'][0];
+        const file = files['documento_RSG'][0];
         if (!['application/pdf'].includes(file.mimetype)) {
-            errors.push('El documento debe ser una imagen en formato PDF');
+            errors.push('El documento_RSG debe ser una imagen en formato PDF');
         }
     }
     
@@ -74,7 +74,7 @@ const areaResolutiva2RSG2Validation = async (receivedBody, files, params) => {
 
 const areaResolutiva2RSAValidation = async (receivedBody, files, params) => {
     const allowedFields = [
-        'nro_rsa', 'fecha_rsa', 'tipo', 'id_evaluar_rsa', 'id_nc', 'id_AR2'
+        'nro_rsa', 'fecha_rsa', 'id_nc', 'id_AR2'
     ];
 
     const errors = [];
