@@ -44,10 +44,16 @@ const createRSG2Handler = async (req, res) => {
         });
     }
 
-    const { nro_rsg, fecha_rsg, tipo, id_evaluar_rsg, id_nc, id_AR2, estado } = req.body;
+    const { nro_rsg, fecha_rsg, tipo, id_evaluar_rsg, id_nc, id_AR2 } = req.body;
     const { id } = req.params
 
     try {
+        let estado
+        if(tipo == 'A_TODO'){
+             estado = 'ARCHIVO'
+        }else{
+            estado = 'PLATAFORMA_SANCION'
+        }
         
         const newRsg2 = await createRSG2Controller({ nro_rsg, fecha_rsg, tipo, id_evaluar_rsg, id_nc, id_AR2, estado, documento_RSG: req.files['documento_RSG'][0] });
         
