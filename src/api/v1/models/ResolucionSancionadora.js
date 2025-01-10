@@ -24,7 +24,7 @@ module.exports = (sequelize) => {
         },
 
         tipo_evaluar: {
-            type: DataTypes.ENUM('RECURSO_RECONC', 'RECURSO_APELAC'),
+            type: DataTypes.ENUM('RECURSO_RECONC', 'RECURSO_APELAC', 'CONST_INEXIGIBILIDAD'),
             allowNull: true
         },
 
@@ -34,7 +34,7 @@ module.exports = (sequelize) => {
         },
 
         estado: {
-            type: DataTypes.ENUM('PLATAFORMA_SANCION', 'ARCHIVO'),
+            type: DataTypes.ENUM('PLATAFORMA_SANCION', 'ARCHIVO', 'ANALISTA_5'),
             allowNull: true
         },
 
@@ -64,7 +64,7 @@ module.exports = (sequelize) => {
         
         ResolucionSancionadora.belongsTo(db.RSG, { foreignKey: 'id_evaluar_rsa', as: 'RSGs', constraints: false });
         ResolucionSancionadora.belongsTo(db.RG, { foreignKey: 'id_evaluar_rsa', as: 'RGs', constraints: false });
-        ResolucionSancionadora.belongsTo(db.Acta, { foreignKey: 'id_evaluar_rsa', as: 'ActaRsa', constraints: false });
+        ResolucionSancionadora.belongsTo(db.ConstanciaInexigibilidad, { foreignKey: 'id_evaluar_rsa', as: 'ConstInexigibilidad', constraints: false });
 
         ResolucionSancionadora.belongsTo(db.Usuario, { foreignKey: 'id_AR2', as: 'Usuarios' });   
     };

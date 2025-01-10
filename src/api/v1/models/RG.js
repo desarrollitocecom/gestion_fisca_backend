@@ -28,8 +28,12 @@ module.exports = (sequelize) => {
             allowNull: true
         },
         
-        id_evaluar_rg: {
+        id_const_inexigibilidad: {
             type: DataTypes.UUID,
+            references: {
+                model: 'ConstanciasInexigibilidades',
+                key: 'id',
+            },
             allowNull: true,
         },
 
@@ -56,7 +60,7 @@ module.exports = (sequelize) => {
     RG.associate = (db) => {
 
         RG.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
-        RG.belongsTo(db.Acta, { foreignKey: 'id_evaluar_rg', as: 'ActaGerente' })
+        RG.belongsTo(db.ConstanciaInexigibilidad, { foreignKey: 'id_const_inexigibilidad', as: 'ConstInexigibilidad' });
         RG.belongsTo(db.Usuario, { foreignKey: 'id_gerente', as: 'Usuarios' });
         
     };
