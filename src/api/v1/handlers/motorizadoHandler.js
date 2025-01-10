@@ -46,7 +46,9 @@ const getAllHistoryCargoNotificacionForIFIHandler = async (req, res) => {
     }
 };
 
+const createCargoNotificacionForIFIHandler = async (req, res) => {
+    
+}
 
 
-
-module.exports = { getAllCargoNotificacionForIFIHandler, getAllHistoryCargoNotificacionForIFIHandler };
+module.exports = { getAllCargoNotificacionForIFIHandler, getAllHistoryCargoNotificacionForIFIHandler, createCargoNotificacionForIFIHandler };

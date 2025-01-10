@@ -53,7 +53,7 @@ module.exports = (sequelize) => {
     });
     DescargoIFI.associate = (db) => {
         // Relación de 1 a 1 entre DescargoIFI y los tipos basados en 'tipo'
-        DescargoIFI.belongsTo(db.EstadoDescargoIFI, { foreignKey: 'id_estado', as: 'estadoDescargoIFI' });
+        //DescargoIFI.belongsTo(db.EstadoDescargoIFI, { foreignKey: 'id_estado', as: 'estadoDescargoIFI' });
         DescargoIFI.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
         DescargoIFI.belongsTo(db.Usuario, { foreignKey: 'id_analista_2', as: 'analista2Usuario' })
     };

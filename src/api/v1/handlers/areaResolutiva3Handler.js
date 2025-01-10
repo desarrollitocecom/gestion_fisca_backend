@@ -66,6 +66,63 @@ const createRSGHandler = async (req, res) => {
       const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, id_AR3, tipo });
 
       if(newRSG){
+        await updateRecursoReconsideracionController(id, { id_original: newRSG.id, id_rsg: newRSG.id })
+      // if (!newRSG) {
+      //     return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
+      // }
+
+      // let response;
+
+      // if(tipo == 'RSGP'){
+      //   response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'ARCHIVO_AR3' })
+      // }
+      // if(tipo == 'RSGNP'){
+      //   response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'TERMINADO' })
+      // }
+
+
+      // await updateDocumento({ id_nc, total_documentos: newRSG.documento_RSG, nuevoModulo: "RESOLUCION SUBGERENCIAL NO PROCEDENTE" });
+
+      // if (response) {
+        
+      //   const findNC = await getRSGforAnalista4Controller(newRSG.id);
+        
+      //   const plainNC = findNC.toJSON();  
+
+      //   if(tipo == 'RSGNP'){
+      //     io.emit("sendAnalista4", { data: [plainNC] });
+      //   }
+      //   io.emit("sendAR3", { id, remove: true });
+
+        res.status(201).json({
+            message: 'RSG creado con exito',
+            data: 'asd'
+        });
+    } else {
+       res.status(400).json({
+            message: 'Error al crear RSG',
+        });
+    }
+  
+  } catch (error) {
+      console.error("Error interno al crear el RSG:", error);
+
+      return res.status(500).json({ error: error.message });
+
+  }
+};
+
+
+const createRSGRectificacionHandler = async (req, res) => {
+  const io = getIo();
+  
+  const { nro_rsg, fecha_rsg, id_nc, id_AR3, tipo} = req.body;
+  const { id } = req.params
+  
+  try {
+      const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, id_AR3, tipo });
+
+      if(newRSG){
         await updateRecursoReconsideracionController(id, { id_rsg: newRSG.id })
       // if (!newRSG) {
       //     return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
@@ -137,5 +194,6 @@ module.exports = {
     getAllRSAforAR3Handler,
     createRSGHandler,
     getAllRSG3forAR3Handler,
-    getAllRecursoReconsideracionesHandler
+    getAllRecursoReconsideracionesHandler,
+    createRSGRectificacionHandler
 };

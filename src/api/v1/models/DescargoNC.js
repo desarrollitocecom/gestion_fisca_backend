@@ -21,15 +21,6 @@ module.exports=(sequelize)=>{
             allowNull: true
         },
 
-        id_estado:{
-            type: DataTypes.INTEGER,
-            references: {
-                model: 'EstadoDescargoNCs',
-                key: 'id',
-            },
-            allowNull: true
-        },
-
         id_analista1:{
             type: DataTypes.UUID,
             references: {
@@ -45,7 +36,6 @@ module.exports=(sequelize)=>{
 
 
     DescargoNC.associate = (db) => {
-        DescargoNC.belongsTo(db.EstadoDescargoNC, { foreignKey: 'id_estado', as: 'estadoDescargoNC' });
         DescargoNC.belongsTo(db.Usuario, { foreignKey: 'id_analista1', as: 'analistaUsuario' })
     };
 

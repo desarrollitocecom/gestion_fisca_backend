@@ -2,7 +2,7 @@ const { createDescargoNC } = require('../controllers/ncDescargoController');
 const { updateNC, getNC, getAllNCforAnalista, getNCforInstructiva } = require('../controllers/ncController');
 const { updateDocumento } = require('../controllers/documentoController');
 const fs = require('fs');
-const { analista1DescargoValidation, analista1SinDescargoValidation } = require('../validations/analista1Validation');
+const { analista1DescargoValidation } = require('../validations/analista1Validation');
 const { responseSocket } = require('../../../utils/socketUtils')
 const { getIo } = require("../../../sockets");
 
@@ -83,54 +83,4 @@ const createDescargoNCHandler = async (req, res) => {
     }
 };
 
-const sendWithoutDescargoHandler = async (req, res) => {
-    const io = getIo();
-
-    const invalidFields = await analista1SinDescargoValidation(req.body, req.params);
-
-    if (invalidFields.length > 0) {
-        return res.status(400).json({
-            message: 'Se encontraron los siguientes errores',
-            data: invalidFields
-        });
-    }
-
-    const { id_analista1 } = req.body;
-
-    const { id } = req.params
-
-    try {
-        const newDescargoNC = await createDescargoNC({
-            id_analista1,
-            id_estado: 2
-        });
-
-        if (!newDescargoNC) {
-            return res.status(400).json({ error: 'Error al crear el descargo NC desde el Handler' });
-        }
-
-        await updateDocumento({ id_nc: id, total_documentos: '', nuevoModulo: 'SIN DESCARGO NC' });
-
-        const response = await updateNC(id, {
-            id_descargo_NC: newDescargoNC.id,
-            estado: 'A_I'
-        });
-
-
-        if (response) {
-            await responseSocket({ id, method: getNCforInstructiva, socketSendName: 'sendAI1', res });
-            io.emit("sendAnalista1", { id, remove: true });
-
-        } else {
-            res.status(400).json({
-                message: 'Error interno del servidor al crear el sin Descargo NC desde el Handler Analista1',
-            });
-        }
-
-    } catch (error) {
-        console.error('Error al crear el NC:', error);
-        return res.status(500).json({ message: 'Error interno del servidor al crear el sin Descargo NC desde el Handler Analista1' });
-    }
-}
-
-module.exports = { createDescargoNCHandler, getAllNCforAnalistaHandler, sendWithoutDescargoHandler };
+module.exports = { createDescargoNCHandler, getAllNCforAnalistaHandler };

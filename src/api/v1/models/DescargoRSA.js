@@ -52,7 +52,7 @@ module.exports = (sequelize) => {
     DescargoRSA.associate = (db) => {
         // Relación con NC
         DescargoRSA.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
-        DescargoRSA.belongsTo(db.EstadoDescargoRSA, { foreignKey: 'id_estado', as: 'estadoDescargoRSA' });
+        //DescargoRSA.belongsTo(db.EstadoDescargoRSA, { foreignKey: 'id_estado', as: 'estadoDescargoRSA' });
         DescargoRSA.belongsTo(db.Usuario,{foreignKey:'id_analista_3' , as:'Usuarios' });
 
     };

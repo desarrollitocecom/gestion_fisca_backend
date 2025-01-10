@@ -65,15 +65,25 @@ module.exports = (sequelize) => {
             allowNull: true,
         },
 
+        id_original: {
+            type: DataTypes.UUID,
+            allowNull: true,
+        },
+        
+
     }, {
         tableName: 'IFIs',
         timestamps: true
     });
     IFI.associate = (db) => {
         // Relación de 1 a 1 entre IFI y los tipos basados en 'tipo'
-        IFI.belongsTo(db.RSA, { foreignKey: 'id_evaluar', as: 'RSA', constraints: false });
-        IFI.belongsTo(db.RSG1, { foreignKey: 'id_evaluar', as: 'TERMINADO_RSG1', constraints: false });
-        IFI.belongsTo(db.RSG2, { foreignKey: 'id_evaluar', as: 'RSG2', constraints: false });
+        IFI.belongsTo(db.ResolucionSancionadora, { foreignKey: 'id_evaluar', as: 'RSA', constraints: false });
+        // IFI.belongsTo(db.RSG1, { foreignKey: 'id_evaluar', as: 'TERMINADO_RSG1', constraints: false });
+        IFI.belongsTo(db.ResolucionSubgerencial, { foreignKey: 'id_evaluar', as: 'RSG2', constraints: false });
+
+        IFI.belongsTo(db.ResolucionSancionadora, { foreignKey: 'id_original', as: 'RSA_Original', constraints: false });
+        IFI.belongsTo(db.ResolucionSubgerencial, { foreignKey: 'id_original', as: 'RSG_Original', constraints: false });
+
         // Relación con DescargoIFI
         IFI.belongsTo(db.DescargoIFI, { foreignKey: 'id_descargo_ifi', as: 'DescargoIFIs' });
         IFI.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});

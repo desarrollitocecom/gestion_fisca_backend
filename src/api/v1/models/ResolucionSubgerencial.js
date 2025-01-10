@@ -71,7 +71,7 @@ module.exports = (sequelize) => {
         
         ResolucionSubgerencial.belongsTo(db.RSG, { foreignKey: 'id_evaluar_rsg', as: 'RSGs', constraints: false });
         ResolucionSubgerencial.belongsTo(db.RG, { foreignKey: 'id_evaluar_rsg', as: 'RGs', constraints: false });
-        ResolucionSancionadora.belongsTo(db.ConstanciaInexigibilidad, { foreignKey: 'id_evaluar_rsg', as: 'ConstInexigibilidad', constraints: false });
+        ResolucionSubgerencial.belongsTo(db.ConstanciaInexigibilidad, { foreignKey: 'id_evaluar_rsg', as: 'ConstInexigibilidad', constraints: false });
 
         ResolucionSubgerencial.belongsTo(db.Usuario, { foreignKey: 'id_AR2', as: 'Usuarios' });   
     };

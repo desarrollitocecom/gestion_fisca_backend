@@ -54,7 +54,7 @@ const updateDescargoAndAssociate = async ({ id, nro_descargo, fecha_descargo, do
 };
 
 
-const createDescargoIFI = async ({ nro_descargo, fecha_descargo, documento_DIFI,id_nc, id_estado ,id_analista_2}) => {
+const createDescargoIFI = async ({ nro_descargo, fecha_descargo, documento_DIFI,id_nc ,id_analista_2}) => {
     let documento_DIFI_path;
     try {
         if(documento_DIFI){
@@ -65,7 +65,6 @@ const createDescargoIFI = async ({ nro_descargo, fecha_descargo, documento_DIFI,
             fecha_descargo,
             documento_DIFI: documento_DIFI_path,
             id_nc,
-            id_estado,
             id_analista_2
         });
 

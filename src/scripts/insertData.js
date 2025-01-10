@@ -8,28 +8,21 @@ const { DB_DATABASE, DB_HOST, DB_USERNAME, DB_PASSWORD } = process.env;
 const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
   host: DB_HOST,
   dialect: "postgres",
-  dialectOptions: {
-    ssl: {
-      require: true, // Requiere SSL para la conexión
-      rejectUnauthorized: false // Permite conexiones con certificados no confiables (opcional, dependiendo del entorno)
-    }
-  }
+  // dialectOptions: {
+//   ssl: {
+//     require: true, // Requiere SSL para la conexión
+//     rejectUnauthorized: false // Permite conexiones con certificados no confiables (opcional, dependiendo del entorno)
+//   }
+// }
 });
 
 // Importar modelos
 const TipoDocumentoComplementario = require("../api/v1/models/TipoDocumentoComplementario")(sequelize);
 const Infraccion = require("../api/v1/models/Infraccion")(sequelize);
-const EstadoMC = require("../api/v1/models/EstadoMC")(sequelize);
-const EstadoNC = require("../api/v1/models/EstadoNC")(sequelize);
-const EstadoIFI = require("../api/v1/models/EstadoIFI")(sequelize);
-const EstadoRSGNP = require("../api/v1/models/EstadoRSGNP")(sequelize);
-const EstadoRSA = require("../api/v1/models/EstadoRSA")(sequelize);
+
 const EjecucionMC = require("../api/v1/models/EjecucionMC")(sequelize);
 const TipoDocumentoIdentidad = require("../api/v1/models/TipoDocumentoIdentidad")(sequelize);
-const EstadoDescargoNC = require("../api/v1/models/EstadoDescargoNC")(sequelize);
-const EstadoDescargoIFI = require("../api/v1/models/EstadoDescargoIFI")(sequelize);
-const EstadoDescargoRSA = require("../api/v1/models/EstadoDescargoRSA")(sequelize);
-const EstadoRG = require("../api/v1/models/EstadoRG")(sequelize);
+
 const Ordenanza = require("../api/v1/models/Ordenanza")(sequelize);
 const Usuario = require("../api/v1/models/Usuario")(sequelize);
 
@@ -113,41 +106,8 @@ const insertData = async () => {
       },
     ]);
 
-    // Insertar datos ficticios en EstadoMC
-    await EstadoMC.bulkCreate([
-      { nombre: "Pendiente" },
-      { nombre: "En Proceso" },
-      { nombre: "Finalizado" },
-    ]);
 
-    // Insertar datos ficticios en EstadoNC
-    await EstadoNC.bulkCreate([
-      { tipo: "Observado" },
-      { tipo: "Validado" },
-      { tipo: "Rechazado" },
-      { tipo: "Terminado" },
-    ]);
-    await EstadoIFI.bulkCreate([
-      { nombre: "Pendiente" },
-      { nombre: "En Proceso" },
-      { nombre: "Finalizado" },
-    ]);
-    await EstadoRSA.bulkCreate([
-      { nombre: "Pendiente" },
-      { nombre: "En Proceso" },
-      { nombre: "Finalizado" },
-      { nombre: "Archivado" },
-    ]);
-    await EstadoRSGNP.bulkCreate([
-      { nombre: "Pendiente" },
-      { nombre: "En Proceso" },
-      { nombre: "Finalizado" },
-      { nombre: "Archivado" },
-    ]);
-    await EstadoRG.bulkCreate([
-      { tipo: "No Procedente" },
-      { tipo: "Archivado" },
-    ]);
+
 
     // Insertar datos ficticios en EjecucionMC
     await EjecucionMC.bulkCreate([
@@ -157,25 +117,7 @@ const insertData = async () => {
     ]);
 
     // Insertar datos ficticios en EstadoDescargoNC
-    await EstadoDescargoNC.bulkCreate([
-      { tipo: "CON DESCARGO" },
-      { tipo: "SIN DESCARGO" },
-      { tipo: "ANULADO" },
-    ]);
 
-    // Insertar datos ficticios en EstadoDescargoIFI
-    await EstadoDescargoIFI.bulkCreate([
-      { tipo: "CON DESCARGO" },
-      { tipo: "SIN DESCARGO" },
-      { tipo: "ANULADO" },
-    ]);
-
-    // Insertar datos ficticios en EstadoDescargoRSA
-    await EstadoDescargoRSA.bulkCreate([
-      { tipo: "CON DESCARGO" },
-      { tipo: "SIN DESCARGO" },
-      { tipo: "ANULADO" },
-    ]);
 
     await Ordenanza.bulkCreate([
       { nombre: "464" }

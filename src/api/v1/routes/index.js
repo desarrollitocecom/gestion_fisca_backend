@@ -12,37 +12,35 @@ const docs=require('./documentoRouter');
 
 const gestorActas = require('./gestorActasRouter');
 const digitadorNC = require('./digitadorRouter');
-const analista1 = require('./analista1Router');
 const areaInstructiva = require('./areaInstructivaRouter');
 const areaResolutiva1 = require('./areaResolutiva1Router');
-const analista2 = require('./analista2Router');
 const areaResolutiva2 = require('./areaResolutiva2Router');
-const analista3 = require('./analista3Router');
 const areaResolutiva3 = require('./areaResolutiva3Router');
-const analista4 = require('./analista4Router');
 const gerencia = require('./gerenciaRouter');
 const analista5 = require('./analista5Router');
 const reporte = require('./reporteRouter');
 const controlAlmacen = require('./controlAlmacen');
 const motorizado = require('./motorizadoRouter');
+const plataforma = require('./plataforma')
 const plataforma2 = require('./plataforma2')
+const areaResolutiva = require('./areaResolutivaRouter')
+const resoArchivaReinicia = require('../routes/resoArchivaReinicia')
 
 router.use('/gestor',gestorActas);
 router.use('/digitador',digitadorNC);
-router.use('/analista1',analista1);
 router.use('/area-instructiva',areaInstructiva);
 router.use('/area-resolutiva1',areaResolutiva1);
-router.use('/analista2',analista2);
 router.use('/area-resolutiva2',areaResolutiva2);
-router.use('/analista3',analista3);
 router.use('/area-resolutiva3',areaResolutiva3);
-router.use('/analista4',analista4);
 router.use('/gerencia',gerencia);
 router.use('/analista5',analista5);
 router.use('/reporte',reporte);
 router.use('/controlAlmacen',controlAlmacen);
 router.use('/cargoNotificacion',motorizado);
+router.use('/plataforma', plataforma)
 router.use('/plataforma2', plataforma2)
+router.use('/area-resolutiva',areaResolutiva);
+router.use('/reso-archiva-reinicia',resoArchivaReinicia);
 
 router.use('/ejecucionmc',ejecucionmc);
 router.use('/medidacomplementaria',medidacomplementaria);

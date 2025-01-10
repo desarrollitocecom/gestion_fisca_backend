@@ -1,11 +1,10 @@
 const { DescargoNC } = require('../../../config/db_connection');
 const { saveImage } = require('../../../utils/fileUtils');
 
-const createDescargoNC = async ({ 
+const createDescargoNCController = async ({ 
         nro_descargo,
         fecha_descargo,
         documento,
-        id_estado,
         id_analista1
     }) => {
 
@@ -18,7 +17,6 @@ const createDescargoNC = async ({
         
         const newDescargoNC = await DescargoNC.create({
             nro_descargo,
-            id_estado,
             fecha_descargo,
             documento: documento_descargoNCPath,
             id_analista1
@@ -32,4 +30,5 @@ const createDescargoNC = async ({
     }
 };
 
-module.exports = { createDescargoNC };
+
+module.exports = { createDescargoNCController };

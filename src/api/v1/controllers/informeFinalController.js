@@ -1,6 +1,7 @@
 const { IFI, DescargoIFI, Usuario, NC, TramiteInspector } = require('../../../config/db_connection');
 const { Sequelize } = require('sequelize');
 const myCache = require("../../../middlewares/cacheNodeStocked");
+const { Op } = require("sequelize");
 
 const { saveImage, deleteFile } = require("../../../utils/fileUtils");
 
@@ -41,6 +42,7 @@ const createInformeFinalController = async ({
 };
 
 const updateInformeFinalController = async (id, {
+  id_original,
   tipo,
   id_evaluar,
   id_descargo_ifi,
@@ -50,6 +52,7 @@ const updateInformeFinalController = async (id, {
 
     if (updateIfi) {
       await updateIfi.update({
+        id_original,
         tipo,
         id_evaluar,
         id_descargo_ifi,
@@ -304,7 +307,7 @@ const getAllIFIforRSG2Controller = async (page = 1, limit = 20) => {
     return false;
   }
 };
-const getAllIFIforAnalista2Controller = async () => {
+const getAllIFIforPlataformaController = async () => {
   try {
     const response = await IFI.findAll({
       where: {
@@ -506,6 +509,38 @@ const getIFIforAnalista2Controller = async (id) => {
   }
 };
 
+const getAllIFICaduco = async () => {
+    try {
+      // Obtén la fecha actual y ajusta la zona horaria a Lima, Perú
+      const currentDate = new Date(); // Fecha actual
+      const limaOffset = -5 * 60; // UTC-5, que es la zona horaria de Lima
+      const limaDate = new Date(currentDate.getTime() + (currentDate.getTimezoneOffset() + limaOffset) * 60000);
+      //console.log('dia hoy: ', limaDate);
+      
+  
+      // Calcula la fecha de hace 9 meses
+      limaDate.setMonth(limaDate.getMonth() - 9);
+      limaDate.setHours(0, 0, 0, 0); // Ajusta la hora al inicio del día
+  
+      // Realiza la consulta
+      const response = await IFI.findAll({
+        where: {
+          createdAt: {
+            [Op.lt]: limaDate // Fecha menor a 9 meses
+          },
+          id_evaluar: null
+        }
+      });
+      //console.log('resposne: ', response);
+      
+      // Devuelve la respuesta, o null si no hay datos
+      return response.length > 0 ? response : [];
+    } catch (error) {
+      console.error("Error al obtener los NC caducos:", error);
+      return false;
+    }
+  };
+
 module.exports = {
   createInformeFinalController,
   updateInformeFinalController,
@@ -513,11 +548,12 @@ module.exports = {
   getInformeFinalController,
   // updateinIfiController,
   getAllIFIforAR1Controller,
-  getAllIFIforAnalista2Controller,
+  getAllIFIforPlataformaController,
   getAllIFIforAR2ofRSAController,
   getAllIFIforAR2Controller,
   getAllIFIforRSG2Controller,
   getIFIforAR1Controller,
   getIFIforAnalista2Controller,
-  getIFIforAR2Controller
+  getIFIforAR2Controller,
+  getAllIFICaduco
 };

@@ -49,7 +49,12 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: false
-        }
+        },
+
+        id_original: {
+            type: DataTypes.UUID,
+            allowNull: true,
+        },
     }, {
         tableName: 'RecursosApelaciones',
         timestamps: true
@@ -59,6 +64,8 @@ module.exports = (sequelize) => {
         RecursoApelacion.belongsTo(db.Usuario, { foreignKey: 'id_plataforma2', as: 'Usuarios' });   
 
         RecursoApelacion.belongsTo(db.RG, { foreignKey: 'id_gerencia', as: 'RGs' });
+        RecursoApelacion.belongsTo(db.RG, { foreignKey: 'id_original', as: 'RG_Original', constraints: false });
+
     };
     return RecursoApelacion;
 };

@@ -28,6 +28,11 @@ module.exports = (sequelize) => {
             allowNull: true,
         },
 
+        id_original: {
+            type: DataTypes.UUID,
+            allowNull: true,
+        },
+
         id_nc: {
             type: DataTypes.UUID,
             references: {
@@ -53,6 +58,7 @@ module.exports = (sequelize) => {
         RecursoReconsideracion.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
         RecursoReconsideracion.belongsTo(db.Usuario, { foreignKey: 'id_plataforma2', as: 'Usuarios' });   
         RecursoReconsideracion.belongsTo(db.RSG, { foreignKey: 'id_rsg', as: 'RSGs' });   
+        RecursoReconsideracion.belongsTo(db.RSG, { foreignKey: 'id_original', as: 'RSG2_Original', constraints: false });
     };
     return RecursoReconsideracion;
 };

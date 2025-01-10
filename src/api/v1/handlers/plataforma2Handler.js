@@ -2,7 +2,6 @@ const { createDescargoNC } = require('../controllers/ncDescargoController');
 const { updateNC, getNC, getAllNCforAnalista, getNCforInstructiva } = require('../controllers/ncController');
 const { updateDocumento } = require('../controllers/documentoController');
 const fs = require('fs');
-const { analista1DescargoValidation, analista1SinDescargoValidation } = require('../validations/analista1Validation');
 const { responseSocket } = require('../../../utils/socketUtils')
 const { getAllRSAforPlataformaController } = require('../controllers/rsaController')
 const { getAllRSG2forPlataformaController } = require('../controllers/rsg2Controller')
@@ -140,6 +139,7 @@ const createRecursoAdministrativoHandler = async (req, res) => {
         });
       }
     }
+    
     if (tipo_va == 'APELACION') {
       recurso = await createRecursoApelacionController({ nro_recurso, fecha_recurso, id_nc, id_plataforma2, /* documento_recurso: req.files['documento_Recurso'][0]*/ });
 
