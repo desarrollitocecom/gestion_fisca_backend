@@ -231,6 +231,7 @@ const getAllRSAforAR2Controller = async () => {
             [Sequelize.col('nro_rsa'), 'nro'],
             [Sequelize.col('documento_RSA'), 'documento'],
             //'tipo',
+            'id_nc',
             [Sequelize.literal(`
               CASE 
                 WHEN tipo_evaluar = null THEN true

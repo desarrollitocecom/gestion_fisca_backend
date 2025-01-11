@@ -771,6 +771,7 @@ const getAllRSGforSubgerenciaController = async () => {
             [Sequelize.col('nro_rsg'), 'nro'],
             [Sequelize.col('documento_RSG'), 'documento'],
             //'tipo',
+            'id_nc',
             [Sequelize.literal(`
               CASE 
                 WHEN id_recurso_apelacion = null THEN true

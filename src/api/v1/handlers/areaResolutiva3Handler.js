@@ -69,7 +69,7 @@ const createRSGHandler = async (req, res) => {
       tipo: 'RSG2'
     });
 
-    const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, id_AR3, tipo, id_cargoNotificacion: newCargoNotificacion.id });
+    const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, id_AR3, tipo, documento_RSG: req.files['documento_RSG'][0],  id_cargoNotificacion: newCargoNotificacion.id });
 
     if (newRSG) {
       await updateRecursoReconsideracionController(id, { id_original: newRSG.id, id_rsg: newRSG.id })
