@@ -307,12 +307,13 @@ const getAllIFIforRSG2Controller = async (page = 1, limit = 20) => {
     return false;
   }
 };
+
 const getAllIFIforPlataformaController = async () => {
   try {
     const response = await IFI.findAll({
       where: {
         tipo: 'ANALISTA_2',
-        fecha_notificacion: { [Sequelize.Op.ne]: null } 
+        fecha_notificacion: { [Sequelize.Op.ne]: null }
       },
       order: [['id', 'ASC']],
       attributes: [
@@ -510,36 +511,63 @@ const getIFIforAnalista2Controller = async (id) => {
 };
 
 const getAllIFICaduco = async () => {
-    try {
-      // Obtén la fecha actual y ajusta la zona horaria a Lima, Perú
-      const currentDate = new Date(); // Fecha actual
-      const limaOffset = -5 * 60; // UTC-5, que es la zona horaria de Lima
-      const limaDate = new Date(currentDate.getTime() + (currentDate.getTimezoneOffset() + limaOffset) * 60000);
-      //console.log('dia hoy: ', limaDate);
-      
-  
-      // Calcula la fecha de hace 9 meses
-      limaDate.setMonth(limaDate.getMonth() - 9);
-      limaDate.setHours(0, 0, 0, 0); // Ajusta la hora al inicio del día
-  
-      // Realiza la consulta
-      const response = await IFI.findAll({
-        where: {
-          createdAt: {
-            [Op.lt]: limaDate // Fecha menor a 9 meses
-          },
-          id_evaluar: null
-        }
-      });
-      //console.log('resposne: ', response);
-      
-      // Devuelve la respuesta, o null si no hay datos
-      return response.length > 0 ? response : [];
-    } catch (error) {
-      console.error("Error al obtener los NC caducos:", error);
-      return false;
-    }
-  };
+  try {
+    // Obtén la fecha actual y ajusta la zona horaria a Lima, Perú
+    const currentDate = new Date(); // Fecha actual
+    const limaOffset = -5 * 60; // UTC-5, que es la zona horaria de Lima
+    const limaDate = new Date(currentDate.getTime() + (currentDate.getTimezoneOffset() + limaOffset) * 60000);
+    //console.log('dia hoy: ', limaDate);
+
+
+    // Calcula la fecha de hace 9 meses
+    limaDate.setMonth(limaDate.getMonth() - 9);
+    limaDate.setHours(0, 0, 0, 0); // Ajusta la hora al inicio del día
+
+    // Realiza la consulta
+    const response = await IFI.findAll({
+      where: {
+        createdAt: {
+          [Op.lt]: limaDate // Fecha menor a 9 meses
+        },
+        id_evaluar: null
+      }
+    });
+    //console.log('resposne: ', response);
+
+    // Devuelve la respuesta, o null si no hay datos
+    return response.length > 0 ? response : [];
+  } catch (error) {
+    console.error("Error al obtener los NC caducos:", error);
+    return false;
+  }
+};
+
+
+const getAllIFISForInstructivaController = async (req, res) => {
+  try {
+    const response = await IFI.findAll({
+      attributes: [
+        'id',
+        'nro_ifi',
+        'documento_ifi',
+        //'tipo',
+        [Sequelize.literal(`
+          CASE 
+            WHEN tipo = 'ANALISTA_2' OR tipo = 'RSG1' THEN true
+            ELSE false
+          END
+        `), 'activo'],
+        'createdAt',
+      ],
+    });
+
+    return response || null;
+  } catch (error) {
+    console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
+    return false;
+  }
+};
+
 
 module.exports = {
   createInformeFinalController,
@@ -555,5 +583,6 @@ module.exports = {
   getIFIforAR1Controller,
   getIFIforAnalista2Controller,
   getIFIforAR2Controller,
-  getAllIFICaduco
+  getAllIFICaduco,
+  getAllIFISForInstructivaController
 };

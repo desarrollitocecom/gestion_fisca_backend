@@ -27,7 +27,7 @@ const createRSAController = async ({nro_rsa, fecha_rsa, documento_RSA, id_nc, id
     }
 };
 
-const createResoSAController = async ({nro_rsa, fecha_rsa,  documento_RSA,  id_nc, id_AR2}) => {
+const createResoSAController = async ({nro_rsa, fecha_rsa,  documento_RSA,  id_nc, id_AR2, id_cargoNotificacion}) => {
   let documento_path;
   try {
      documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
@@ -38,7 +38,8 @@ const createResoSAController = async ({nro_rsa, fecha_rsa,  documento_RSA,  id_n
           documento_RSA:documento_path,
           id_nc,
           id_AR2,
-          estado: 'PLATAFORMA_SANCION'
+          estado: 'PLATAFORMA_SANCION',
+          id_cargoNotificacion
       });
 
       return newRsa || null;

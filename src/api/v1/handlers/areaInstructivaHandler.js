@@ -1,5 +1,5 @@
 const { updateNC, getAllNCforInstructiva } = require("../controllers/ncController");
-const { createInformeFinalController, getIFIforAR1Controller, getIFIforAnalista2Controller } = require("../controllers/informeFinalController");
+const { createInformeFinalController, getIFIforAR1Controller, getIFIforAnalista2Controller, getAllIFISForInstructivaController } = require("../controllers/informeFinalController");
 const { updateDocumento } = require("../controllers/documentoController");
 const { areaInstructiva1Validation } = require("../validations/areaInstructiva1Validation");
 const { responseSocket } = require("../../../utils/socketUtils");
@@ -112,4 +112,27 @@ const createInformeFinalHandler = async (req, res) => {
   }
 };
 
-module.exports = { getAllNCforInstructivaHandler, createInformeFinalHandler };
+const getAllIFISForInstructivaHandler = async (req, res) => {
+  try {
+    const response = await getAllIFISForInstructivaController();
+
+    if (response.length === 0) {
+      return res.status(200).json({
+        message: "Ya no hay más tramites",
+        data: [],
+      });
+    }
+
+    return res.status(200).json({
+      message: "Tramites obtenidos correctamente Instructiva fetch",
+      data: response,
+    });
+  } catch (error) {
+    console.error("Error al obtener tipos de documentos de identidad:", error);
+    res
+      .status(500)
+      .json({ error: "Error interno del servidor al obtener los tramites." });
+  }
+}
+
+module.exports = { getAllNCforInstructivaHandler, createInformeFinalHandler, getAllIFISForInstructivaHandler };
