@@ -760,31 +760,33 @@ const getAllRSGforPlataformaController = async () => {
     } catch (error) {
         return false
     }
-
-
-    // try {
-    //     const response = await ResolucionSancionadora.findAll({
-    //       where: {
-    //         estado: 'PLATAFORMA_SANCION',
-    //         fecha_notificacion_rsa: { [Sequelize.Op.ne]: null },
-    //         id_evaluar_rsa: null
-    //       }
-    //     });
-
-    //     const formattedResponse = response.map(item => ({
-    //       id: item.id,
-    //       numero: item.nro_rsa, 
-    //       createdAt: item.createdAt, 
-    //       id_nc: item.id_nc,
-    //       tipo_viene: 'RSA'
-    //     }));
-
-    //     return formattedResponse || null;
-    //   } catch (error) {
-    //     return false
-    //   }
 }
 
+
+const getAllRSGforSubgerenciaController = async () => {
+    try {
+        const response = await RSG.findAll({
+          attributes: [
+            'id',
+            [Sequelize.col('nro_rsg'), 'nro'],
+            [Sequelize.col('documento_RSG'), 'documento'],
+            //'tipo',
+            [Sequelize.literal(`
+              CASE 
+                WHEN id_recurso_apelacion = null THEN true
+                ELSE false
+              END
+            `), 'activo'],
+            'createdAt',
+          ],
+        });
+    
+        return response || null;
+      } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
+        return false;
+      }
+}
 
 
 
@@ -804,5 +806,6 @@ module.exports = {
     getRSGforGerenciaController,
     getRSGforAnalista5Controller,
     getAllRSGforPlataformaController,
-    updateRSGController
+    updateRSGController,
+    getAllRSGforSubgerenciaController
 };

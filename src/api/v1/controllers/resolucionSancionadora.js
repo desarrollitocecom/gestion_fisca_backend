@@ -223,6 +223,31 @@ const getAllRSAforPlataformaController = async () => {
     }
 }
 
+const getAllRSAforAR2Controller = async () => {
+    try {
+        const response = await ResolucionSancionadora.findAll({
+          attributes: [
+            'id',
+            [Sequelize.col('nro_rsa'), 'nro'],
+            [Sequelize.col('documento_RSA'), 'documento'],
+            //'tipo',
+            [Sequelize.literal(`
+              CASE 
+                WHEN tipo_evaluar = null THEN true
+                ELSE false
+              END
+            `), 'activo'],
+            'createdAt',
+          ],
+        });
+    
+        return response || null;
+      } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
+        return false;
+      }
+}
+
 module.exports = {
     updateRsaController,
     getRsaController,
@@ -231,5 +256,6 @@ module.exports = {
 
     getAllRSAforPlataformaController,
     createResoSAController,
-    updateResolucionSancionadoraController
+    updateResolucionSancionadoraController,
+    getAllRSAforAR2Controller
 };

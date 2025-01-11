@@ -5,6 +5,7 @@ const { createRSAController, createResoSAController, getRSGforAnalista3Controlle
 const { areaResolutiva2RSG2Validation, areaResolutiva2RSAValidation } = require('../validations/areaResolutiva2Validation')
 const { createCargoNotificacionController } = require('../controllers/cargoNotificacionController')
 const { getAllRSGforAR2Controller } = require('../controllers/resolucionSubgerencial')
+const { getAllRSAforAR2Controller } = require('../controllers/resolucionSancionadora')
 const fs = require('node:fs');
 const { responseSocket } = require('../../../utils/socketUtils')
 const { getIo } = require("../../../sockets");
@@ -295,7 +296,7 @@ const getAllIRSGForAR2Handler = async (req, res) => {
 
 const getAllIRSAForAR2Handler = async (req, res) => {
     try {
-        const response = await getAllRSGforAR2Controller();
+        const response = await getAllRSAforAR2Controller();
 
         if (response.length === 0) {
             return res.status(200).json({
