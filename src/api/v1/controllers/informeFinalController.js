@@ -548,8 +548,8 @@ const getAllIFISForInstructivaController = async (req, res) => {
     const response = await IFI.findAll({
       attributes: [
         'id',
-        'nro_ifi',
-        'documento_ifi',
+        [Sequelize.col('nro_ifi'), 'nro'],
+        [Sequelize.col('documento_ifi'), 'documento'],
         //'tipo',
         [Sequelize.literal(`
           CASE 

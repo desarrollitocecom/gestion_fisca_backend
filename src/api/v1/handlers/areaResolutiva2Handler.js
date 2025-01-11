@@ -293,6 +293,27 @@ const getAllIRSGForAR2Handler = async (req, res) => {
     }
 }
 
+const getAllIRSAForAR2Handler = async (req, res) => {
+    try {
+        const response = await getAllRSGforAR2Controller();
+
+        if (response.length === 0) {
+            return res.status(200).json({
+                message: 'No hay más IFIs para el Area Resolutiva 2',
+                data: []
+            });
+        }
+
+        return res.status(200).json({
+            message: "IFIs obtenidos correctamente para el Area Resolutiva 2",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener IFIs para AR2 en el servidor:", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener los IFIs para el AR2." });
+    }
+}
+
 
 module.exports = {
     getAllIFIforAR2Handler,
@@ -301,5 +322,6 @@ module.exports = {
     getAllRSG2forAR2Handler,
     createRSG2RectificacionHandler,
     createRSARectificacionHandler,
-    getAllIRSGForAR2Handler
+    getAllIRSGForAR2Handler,
+    getAllIRSAForAR2Handler
 }

@@ -231,8 +231,8 @@ const getAllRSGforAR2Controller = async () => {
         const response = await ResolucionSubgerencial.findAll({
           attributes: [
             'id',
-            'nro_rsg',
-            'documento_RSG',
+            [Sequelize.col('nro_rsg'), 'nro'],
+            [Sequelize.col('documento_RSG'), 'documento'],
             //'tipo',
             [Sequelize.literal(`
               CASE 
