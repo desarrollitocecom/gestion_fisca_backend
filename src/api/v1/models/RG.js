@@ -52,7 +52,7 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: true
-        }
+        },
     }, {
         tableName: 'RGs',
         timestamps: true

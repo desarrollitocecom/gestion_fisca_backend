@@ -3,6 +3,7 @@ const { updateDocumento } = require('../controllers/documentoController');
 const { createRSG2Controller, getAllRSG2forAR2Controller } = require('../controllers/rsg2Controller');
 const { createRSAController, createResoSAController, getRSGforAnalista3Controller, getRSAforAnalista3Controller } = require('../controllers/rsaController');
 const { areaResolutiva2RSG2Validation, areaResolutiva2RSAValidation } = require('../validations/areaResolutiva2Validation')
+const { createCargoNotificacionController } = require('../controllers/cargoNotificacionController')
 const fs = require('node:fs');
 const { responseSocket } = require('../../../utils/socketUtils')
 const { getIo } = require("../../../sockets");
