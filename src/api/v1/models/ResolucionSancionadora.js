@@ -54,7 +54,16 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: false
-        }
+        },
+
+        id_cargoNotificacion:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'CargoNotificaciones',
+                key: 'id',
+            },
+            allowNull: true,
+        },
     }, {
         tableName: 'ResolucionesSancionadoras',
         timestamps: true
@@ -67,6 +76,8 @@ module.exports = (sequelize) => {
         ResolucionSancionadora.belongsTo(db.ConstanciaInexigibilidad, { foreignKey: 'id_evaluar_rsa', as: 'ConstInexigibilidad', constraints: false });
 
         ResolucionSancionadora.belongsTo(db.Usuario, { foreignKey: 'id_AR2', as: 'Usuarios' });   
+        ResolucionSancionadora.belongsTo(db.CargoNotificacion,{foreignKey:'id_cargoNotificacion' , as:'cargoNotifi' });
+
     };
     return ResolucionSancionadora;
 };

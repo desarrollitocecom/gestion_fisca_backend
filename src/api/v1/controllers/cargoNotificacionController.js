@@ -1,4 +1,4 @@
-const { CargoNotificacion, IFI, ResolucionSubgerencial } = require('../../../config/db_connection');
+const { CargoNotificacion, IFI, ResolucionSubgerencial, ResolucionSancionadora } = require('../../../config/db_connection');
 const { Sequelize } = require('sequelize');
 
 const createCargoNotificacionController = async ({
@@ -29,7 +29,7 @@ const getAllCargoNotificacionForIFIController = async () => {
             }, 
             attributes: [
                 'id', 
-                'nro_ifi',
+                [Sequelize.col('nro_ifi'), 'nro'],
                 [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
                 [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
                 [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
@@ -68,7 +68,7 @@ const getAllHistoryCargoNotificacionForIFIController = async () => {
             },
             attributes: [
                 'id', 
-                'nro_ifi',
+                [Sequelize.col('nro_ifi'), 'nro'],
                 [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
                 [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
                 [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
@@ -99,7 +99,6 @@ const getAllHistoryCargoNotificacionForIFIController = async () => {
 
 const getAllCargoNotificacionForRSGController = async () => {
     try {
-        const response2 = await ResolucionSubgerencial.findAll();
         
         const response = await ResolucionSubgerencial.findAll({
             where: {
@@ -110,7 +109,7 @@ const getAllCargoNotificacionForRSGController = async () => {
             },
             attributes: [
                 'id', 
-                'nro_rsg',
+                [Sequelize.col('nro_rsg'), 'nro'],
                 [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
                 [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
                 [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
@@ -139,9 +138,7 @@ const getAllCargoNotificacionForRSGController = async () => {
 };
 
 const getAllHistoryCargoNotificacionForRSGController = async () => {
-    try {
-        const response2 = await ResolucionSubgerencial.findAll();
-        
+    try {        
         const response = await ResolucionSubgerencial.findAll({
             where: {
                 [Sequelize.Op.and]: [
@@ -151,7 +148,7 @@ const getAllHistoryCargoNotificacionForRSGController = async () => {
             },
             attributes: [
                 'id', 
-                'nro_rsg',
+                [Sequelize.col('nro_rsg'), 'nro'],
                 [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
                 [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
                 [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
@@ -179,4 +176,87 @@ const getAllHistoryCargoNotificacionForRSGController = async () => {
     
 };
 
-module.exports = { createCargoNotificacionController, getAllCargoNotificacionForIFIController, getAllHistoryCargoNotificacionForRSGController, getAllHistoryCargoNotificacionForIFIController, getAllCargoNotificacionForRSGController };
+const getAllCargoNotificacionForRSAController = async () => {
+    try {
+        
+        const response = await ResolucionSancionadora.findAll({
+            where: {
+                [Sequelize.Op.and]: [
+                    Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RSA'),
+                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null )
+                ]
+            },
+            attributes: [
+                'id', 
+                [Sequelize.col('nro_rsa'), 'nro'],
+                [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
+                [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
+                [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
+                [Sequelize.col('cargoNotifi.documento1'), 'documento1'],
+                [Sequelize.col('cargoNotifi.fecha2'), 'fecha2'],
+                [Sequelize.col('cargoNotifi.documento2'), 'documento2'],
+                [Sequelize.col('cargoNotifi.estado_visita'), 'estado_visita'],
+                [Sequelize.col('cargoNotifi.estado_entrega'), 'estado_entrega'],
+                [Sequelize.col('cargoNotifi.id_motorizado'), 'id_motorizado'],
+            ],
+            include: [
+                {
+                    model: CargoNotificacion,
+                    as: 'cargoNotifi',
+                    attributes: [] 
+                }
+            ]
+        });
+        
+        return response || null;
+    } catch (error) {
+        console.error('Error creando Cargo Notificacion:', error);
+        return false;
+    }
+    
+};
+
+const getAllHistoryCargoNotificacionForRSAController = async () => {
+    try {
+        
+        const response = await ResolucionSancionadora.findAll({
+            where: {
+                [Sequelize.Op.and]: [
+                    Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RSA'),
+                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null )
+                ]
+            },
+            attributes: [
+                'id', 
+                [Sequelize.col('nro_rsa'), 'nro'],
+                [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
+                [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
+                [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
+                [Sequelize.col('cargoNotifi.documento1'), 'documento1'],
+                [Sequelize.col('cargoNotifi.fecha2'), 'fecha2'],
+                [Sequelize.col('cargoNotifi.documento2'), 'documento2'],
+                [Sequelize.col('cargoNotifi.estado_visita'), 'estado_visita'],
+                [Sequelize.col('cargoNotifi.estado_entrega'), 'estado_entrega'],
+                [Sequelize.col('cargoNotifi.id_motorizado'), 'id_motorizado'],
+            ],
+            include: [
+                {
+                    model: CargoNotificacion,
+                    as: 'cargoNotifi',
+                    attributes: [] 
+                }
+            ]
+        });
+        
+        return response || null;
+    } catch (error) {
+        console.error('Error creando Cargo Notificacion:', error);
+        return false;
+    }
+    
+};
+
+
+
+module.exports = { createCargoNotificacionController, getAllCargoNotificacionForIFIController, getAllHistoryCargoNotificacionForRSGController, 
+    getAllHistoryCargoNotificacionForIFIController, getAllCargoNotificacionForRSGController, getAllCargoNotificacionForRSAController, getAllHistoryCargoNotificacionForRSAController };
