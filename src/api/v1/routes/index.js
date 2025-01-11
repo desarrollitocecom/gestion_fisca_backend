@@ -21,7 +21,7 @@ const analista5 = require('./analista5Router');
 const reporte = require('./reporteRouter');
 const controlAlmacen = require('./controlAlmacen');
 const motorizado = require('./motorizadoRouter');
-const plataforma = require('./plataforma')
+const plataforma1 = require('./plataforma1')
 const plataforma2 = require('./plataforma2')
 const areaResolutiva = require('./areaResolutivaRouter')
 const resoArchivaReinicia = require('../routes/resoArchivaReinicia')
@@ -37,7 +37,7 @@ router.use('/analista5',analista5);
 router.use('/reporte',reporte);
 router.use('/controlAlmacen',controlAlmacen);
 router.use('/cargoNotificacion',motorizado);
-router.use('/plataforma', plataforma)
+router.use('/plataforma1', plataforma1)
 router.use('/plataforma2', plataforma2)
 router.use('/area-resolutiva',areaResolutiva);
 router.use('/reso-archiva-reinicia',resoArchivaReinicia);

@@ -87,9 +87,9 @@ async function createRolesAndAssignPermissions() {
 
 // Ejecutar la función
 createRolesAndAssignPermissions();
-dialectOptions: {
-  ssl: {
-    require: true, // Requiere SSL para la conexión
-    rejectUnauthorized: false // Permite conexiones con certificados no confiables (opcional, dependiendo del entorno)
-  }
-}
+// dialectOptions: {
+//   ssl: {
+//     require: true, // Requiere SSL para la conexión
+//     rejectUnauthorized: false // Permite conexiones con certificados no confiables (opcional, dependiendo del entorno)
+//   }
+// }
