@@ -10,6 +10,7 @@ const { createRecursoReconsideracionController } = require('../controllers/recur
 const { updateResolucionSancionadoraController } = require('../controllers/resolucionSancionadora')
 const { updateResolucionSubgerencialController } = require('../controllers/resolucionSubgerencial')
 const { getAllRSGforPlataformaController, updateRSGController } = require('../controllers/rsgController')
+const { plataforma2Validation } = require('../validations/plataforma2Validation')
 const { getIo } = require("../../../sockets");
 
 const getAllRSAforPlataformaHandler = async (req, res) => {
@@ -36,7 +37,7 @@ const getAllRSAforPlataformaHandler = async (req, res) => {
 const getAllRSG2forPlataformaHandler = async (req, res) => {
   try {
     console.log('asdssss');
-    
+
     const response = await getAllRSG2forPlataformaController();
 
     if (response.length === 0) {
@@ -114,6 +115,20 @@ const getAllDataForPlataformaHandler = async (req, res) => {
 
 const createRecursoAdministrativoHandler = async (req, res) => {
 
+  const io = getIo();
+
+  const invalidFields = await plataforma2Validation(req.body, req.files, req.params);
+
+  if (invalidFields.length > 0) {
+    if (req.files['documento_Recurso']) {
+      fs.unlinkSync(req.files['documento_Recurso'][0].path);
+    }
+    return res.status(400).json({
+      message: 'Se encontraron los siguientes errores',
+      data: invalidFields
+    });
+  }
+
   const { nro_recurso, fecha_recurso, id_nc, id_plataforma2, tipo_viene, tipo_va } = req.body;
   const { id } = req.params
 
@@ -121,7 +136,7 @@ const createRecursoAdministrativoHandler = async (req, res) => {
 
     let recurso
     if (tipo_va == 'RECONSIDERACION') {
-      recurso = await createRecursoReconsideracionController({ nro_recurso, fecha_recurso, id_nc, id_plataforma2, /* documento_recurso: req.files['documento_Recurso'][0]  */ });
+      recurso = await createRecursoReconsideracionController({ nro_recurso, fecha_recurso, id_nc, id_plataforma2, documento_recurso: req.files['documento_Recurso'][0] });
 
       if (tipo_viene == 'RSA') {
 
@@ -139,9 +154,9 @@ const createRecursoAdministrativoHandler = async (req, res) => {
         });
       }
     }
-    
+
     if (tipo_va == 'APELACION') {
-      recurso = await createRecursoApelacionController({ nro_recurso, fecha_recurso, id_nc, id_plataforma2, /* documento_recurso: req.files['documento_Recurso'][0]*/ });
+      recurso = await createRecursoApelacionController({ nro_recurso, fecha_recurso, id_nc, id_plataforma2, documento_recurso: req.files['documento_Recurso'][0] });
 
       if (tipo_viene == 'RSA') {
         const response = await updateResolucionSancionadoraController(id, { tipo_evaluar: 'RECURSO_APELAC', id_evaluar_rsa: recurso.id })

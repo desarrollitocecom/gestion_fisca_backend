@@ -28,9 +28,10 @@ const createDocumento = async (model, id_nc, docs) => {
 
 const updateDocumento = async ({ id_nc, total_documentos, nuevoModulo }) => {
     try {
+        //console.log( id_nc, total_documentos, nuevoModulo);
         
         const response = await Documento.findOne({ where: { id_nc} });
-         
+        
         if (response) {
             
             const documentosActuales = response.total_documentos || [];

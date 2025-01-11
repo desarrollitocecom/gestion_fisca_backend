@@ -9,7 +9,8 @@ const responseSocket = async({id, method, socketSendName, res}) => {
 
     try {
         const dataResult = await method(id);
-    
+        //console.log(dataResult);
+        
         const plainResult = dataResult.toJSON();
     
         io.emit(socketSendName, { data: [plainResult] });

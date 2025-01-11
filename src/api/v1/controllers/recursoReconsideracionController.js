@@ -2,20 +2,20 @@ const { RecursoReconsideracion } = require('../../../config/db_connection');
 const { saveImage } = require('../../../utils/fileUtils');
 
 const createRecursoReconsideracionController = async ({ 
-        nro_recurso, fecha_recurso, id_nc, id_plataforma2, //documento_recurso
+        nro_recurso, fecha_recurso, id_nc, id_plataforma2, documento_recurso
     }) => {
 
     try {
-        // let documento_descargoNCPath = null;
+        let documento_descargoNCPath = null;
 
-        // if(documento_recurso){
-        //     documento_descargoNCPath = saveImage(documento_recurso, 'RecursoApelacion');
-        // }
+        if(documento_recurso){
+            documento_descargoNCPath = saveImage(documento_recurso, 'RecursoApelacion');
+        }
         
         const newDescargoNC = await RecursoReconsideracion.create({
             nro_recurso,
             fecha_recurso,
-            //documento: documento_descargoNCPath,
+            documento: documento_descargoNCPath,
             id_nc,
             id_plataforma2
         });

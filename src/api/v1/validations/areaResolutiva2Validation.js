@@ -5,7 +5,7 @@ const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 const areaResolutiva2RSG2Validation = async (receivedBody, files, params) => {
     const allowedFields = [
-        'nro_rsg', 'fecha_rsg', 'tipo', 'id_evaluar_rsg', 'id_nc', 'id_AR2', 'estado'
+        'nro_rsg', 'fecha_rsg', 'tipo', 'id_nc', 'id_AR2'
     ];
 
     const errors = [];
@@ -50,6 +50,12 @@ const areaResolutiva2RSG2Validation = async (receivedBody, files, params) => {
         if (!existingUser) {
             errors.push('Este AR2 no existe');
         }
+    }
+
+    if (!receivedBody.tipo) {
+        errors.push('Ingrese tipo obligatorio');
+    } else if (!['A_MULTA', 'A_MC', 'A_TODO'].includes(receivedBody.tipo)) {
+        errors.push('El tipo debe ser A_MULTA o A_MC o A_TODO');
     }
 
     const existingIFI = await getInformeFinalController(id);

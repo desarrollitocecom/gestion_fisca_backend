@@ -1,4 +1,4 @@
-const { RSA , Usuario,  NC , TramiteInspector, DescargoRSA, ResolucionSancionadora} = require('../../../config/db_connection'); // Asegúrate de que la ruta al modelo sea correcta
+const { RSA , Usuario,  NC , TramiteInspector, DescargoRSA, ResolucionSancionadora, ResolucionSubgerencial} = require('../../../config/db_connection'); // Asegúrate de que la ruta al modelo sea correcta
 const {saveImage,deleteFile}=require('../../../utils/fileUtils')
 const { Sequelize } = require('sequelize');
 const myCache = require("../../../middlewares/cacheNodeStocked");
@@ -27,15 +27,15 @@ const createRSAController = async ({nro_rsa, fecha_rsa, documento_RSA, id_nc, id
     }
 };
 
-const createResoSAController = async ({nro_rsa, fecha_rsa, /* documento_RSA, */ id_nc, id_AR2}) => {
-  //let documento_path;
+const createResoSAController = async ({nro_rsa, fecha_rsa,  documento_RSA,  id_nc, id_AR2}) => {
+  let documento_path;
   try {
-     // documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
+     documento_path=saveImage(documento_RSA,'Resolucion(RSA)')  
 
       const newRsa = await ResolucionSancionadora.create({
           nro_rsa,
           fecha_rsa,
-          // documento_RSA:documento_path,
+          documento_RSA:documento_path,
           id_nc,
           id_AR2,
           estado: 'PLATAFORMA_SANCION'
@@ -439,16 +439,15 @@ const getRSAforAnalista5Controller = async (id) => {
 
 const getRSAforAnalista3Controller = async (id) => {
   try {
-      const response = await RSA.findOne({ 
+      const response = await ResolucionSancionadora.findOne({ 
           where: { id: id }, 
           attributes: [
               'id',
               'createdAt',
               [Sequelize.col('NCs.id'), 'id_nc'],
               [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-              [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
               [Sequelize.col('Usuarios.usuario'), 'area_resolutiva2'],
-              'tipo'
+              //'tipo'
           ],
           include: [
               {
@@ -476,6 +475,62 @@ const getRSAforAnalista3Controller = async (id) => {
       return false;
   }
 };
+
+
+const getRSGforAnalista3Controller = async (id) => {
+  try {
+      const response = await ResolucionSubgerencial.findOne({ 
+          where: { id: id }, 
+          attributes: [
+              'id',
+              'createdAt',
+              [Sequelize.col('NCs.id'), 'id_nc'],
+              [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
+              [Sequelize.col('Usuarios.usuario'), 'area_resolutiva2'],
+              //'tipo'
+          ],
+          include: [
+              {
+                  model: NC, 
+                  as: 'NCs',
+                  include: [
+                    {
+                      model: TramiteInspector, 
+                      as: 'tramiteInspector', 
+                      attributes: [], 
+                    }
+                  ],
+                  attributes: []
+              },
+              {
+                model: Usuario, 
+                as: 'Usuarios',
+                attributes: []
+            },
+          ],
+      });
+      return response || null;
+  } catch (error) {
+      console.error({ message: "Error en el controlador al traer todos los IFI para RSG2", data: error });
+      return false;
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 const getRSAforAR3Controller = async (id) => {
@@ -558,5 +613,6 @@ module.exports = {
     getRSAforAR3Controller,
     getRSAforAnalista5Controller,
     getAllRSAforPlataformaController,
-    createResoSAController
+    createResoSAController,
+    getRSGforAnalista3Controller
 };
