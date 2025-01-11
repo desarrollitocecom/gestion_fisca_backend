@@ -4,6 +4,7 @@ const { createRSG2Controller, getAllRSG2forAR2Controller } = require('../control
 const { createRSAController, createResoSAController, getRSGforAnalista3Controller, getRSAforAnalista3Controller } = require('../controllers/rsaController');
 const { areaResolutiva2RSG2Validation, areaResolutiva2RSAValidation } = require('../validations/areaResolutiva2Validation')
 const { createCargoNotificacionController } = require('../controllers/cargoNotificacionController')
+const { getAllRSGforAR2Controller } = require('../controllers/resolucionSubgerencial')
 const fs = require('node:fs');
 const { responseSocket } = require('../../../utils/socketUtils')
 const { getIo } = require("../../../sockets");
@@ -270,11 +271,35 @@ const createRSG2RectificacionHandler = async (req, res) => {
 };
 
 
+
+const getAllIRSGForAR2Handler = async (req, res) => {
+    try {
+        const response = await getAllRSGforAR2Controller();
+
+        if (response.length === 0) {
+            return res.status(200).json({
+                message: 'No hay más IFIs para el Area Resolutiva 2',
+                data: []
+            });
+        }
+
+        return res.status(200).json({
+            message: "IFIs obtenidos correctamente para el Area Resolutiva 2",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener IFIs para AR2 en el servidor:", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener los IFIs para el AR2." });
+    }
+}
+
+
 module.exports = {
     getAllIFIforAR2Handler,
     createRSG2Handler,
     createRSAHandler,
     getAllRSG2forAR2Handler,
     createRSG2RectificacionHandler,
-    createRSARectificacionHandler
+    createRSARectificacionHandler,
+    getAllIRSGForAR2Handler
 }

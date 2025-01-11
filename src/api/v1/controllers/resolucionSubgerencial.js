@@ -31,7 +31,7 @@ const updateResolucionSubgerencialController = async (id, { tipo_evaluar, id_eva
     try {
 
         const resoSubgerencial = await getResolucionSubgerencialController(id);
-        
+
         if (resoSubgerencial) {
             await resoSubgerencial.update({
                 tipo_evaluar,
@@ -50,7 +50,7 @@ const updateResolucionSubgerencialController = async (id, { tipo_evaluar, id_eva
 const getResolucionSubgerencialController = async (id) => {
     try {
         console.log(id);
-        
+
         const rsg = await ResolucionSubgerencial.findOne({ where: { id } });
         return rsg || null;
     } catch (error) {
@@ -226,6 +226,31 @@ const getAllRSAforPlataformaController = async () => {
     }
 }
 
+const getAllRSGforAR2Controller = async () => {
+    try {
+        const response = await ResolucionSubgerencial.findAll({
+          attributes: [
+            'id',
+            'nro_rsg',
+            'documento_RSG',
+            //'tipo',
+            [Sequelize.literal(`
+              CASE 
+                WHEN tipo_evaluar = null THEN true
+                ELSE false
+              END
+            `), 'activo'],
+            'createdAt',
+          ],
+        });
+    
+        return response || null;
+      } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
+        return false;
+      }
+}
+
 module.exports = {
     updateRsaController,
     getRsaController,
@@ -234,6 +259,7 @@ module.exports = {
 
     getAllRSAforPlataformaController,
     createResoSAController,
-    updateResolucionSubgerencialController
+    updateResolucionSubgerencialController,
+    getAllRSGforAR2Controller
 };
 

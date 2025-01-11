@@ -4,12 +4,14 @@ const router = Router();
 const {uploadRSG1, uploadRSA, uploadResoSG}=require('../../../middlewares/uploadMiddleware')
 const permisoAutorizacion = require("../../../checkers/roleAuth");
 
-const {createRSG2Handler, getAllRSG2forAR2Handler, getAllIFIforAR2Handler, createRSAHandler, createRSG2RectificacionHandler, createRSARectificacionHandler}=require('../handlers/areaResolutiva2Handler');
+const {createRSG2Handler, getAllRSG2forAR2Handler, getAllIFIforAR2Handler, getAllIRSGForAR2Handler, createRSAHandler, createRSG2RectificacionHandler, createRSARectificacionHandler}=require('../handlers/areaResolutiva2Handler');
 
 router.get('/ifi',permisoAutorizacion(["all_system_access", "read_AResolutiva2"]), getAllIFIforAR2Handler);
 
 //RSG
 router.patch("/newRSG/:id",permisoAutorizacion(["all_system_access", "create_AResolutiva1"]),uploadResoSG,createRSG2Handler);
+
+router.get('/created-RSG',permisoAutorizacion(["all_system_access"]), getAllIRSGForAR2Handler);
 
 router.patch("/RSG-rectificacion/:id",permisoAutorizacion(["all_system_access", "create_AResolutiva1"]),uploadResoSG,createRSG2RectificacionHandler);
 
