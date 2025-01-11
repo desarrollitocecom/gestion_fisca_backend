@@ -223,7 +223,7 @@ const getAllHistoryCargoNotificacionForRSAController = async () => {
             where: {
                 [Sequelize.Op.and]: [
                     Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RSA'),
-                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null )
+                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), { [Sequelize.Op.ne]: null } )
                 ]
             },
             attributes: [
@@ -303,7 +303,7 @@ const getAllHistoryCargoNotificacionForRSG2Controller = async () => {
             where: {
                 [Sequelize.Op.and]: [
                     Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RSG2'),
-                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null )
+                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), { [Sequelize.Op.ne]: null } )
                 ]
             },
             attributes: [
