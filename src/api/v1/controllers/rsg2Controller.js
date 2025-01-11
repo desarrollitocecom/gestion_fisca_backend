@@ -4,12 +4,12 @@ const { RSG1, NC, TramiteInspector, Usuario, DescargoNC, IFI, DescargoIFI, Resol
 const { Sequelize } = require('sequelize');
 
 // Función para crear una nueva instancia de RSG2
-const createRSG2Controller = async ({nro_rsg, fecha_rsg, tipo, id_nc, id_AR2, estado, documento_RSG}) => {
+const createRSG2Controller = async ({nro_rsg, fecha_rsg, tipo, id_nc, id_AR2, estado, id_cargoNotificacion, documento_RSG}) => {
     let documento_path;
     try {
         documento_path=saveImage(documento_RSG,'Resolucion(RSG2)')       
         const newRSG2 = await ResolucionSubgerencial.create({
-            nro_rsg, fecha_rsg, tipo, id_nc, id_AR2, estado, documento_RSG: documento_path 
+            nro_rsg, fecha_rsg, tipo, id_nc, id_AR2, estado, id_cargoNotificacion, documento_RSG: documento_path 
         });
 
         return newRSG2 || null;

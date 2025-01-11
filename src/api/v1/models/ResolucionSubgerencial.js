@@ -61,7 +61,16 @@ module.exports = (sequelize) => {
                 key: 'id',
             },
             allowNull: false
-        }
+        },
+
+        id_cargoNotificacion:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'CargoNotificaciones',
+                key: 'id',
+            },
+            allowNull: true,
+        },
     }, {
         tableName: 'ResolucionesSubgerenciales',
         timestamps: true
@@ -73,7 +82,9 @@ module.exports = (sequelize) => {
         ResolucionSubgerencial.belongsTo(db.RG, { foreignKey: 'id_evaluar_rsg', as: 'RGs', constraints: false });
         ResolucionSubgerencial.belongsTo(db.ConstanciaInexigibilidad, { foreignKey: 'id_evaluar_rsg', as: 'ConstInexigibilidad', constraints: false });
 
-        ResolucionSubgerencial.belongsTo(db.Usuario, { foreignKey: 'id_AR2', as: 'Usuarios' });   
+        ResolucionSubgerencial.belongsTo(db.Usuario, { foreignKey: 'id_AR2', as: 'Usuarios' });  
+        ResolucionSubgerencial.belongsTo(db.CargoNotificacion,{foreignKey:'id_cargoNotificacion' , as:'cargoNotifi' });
+ 
     };
     return ResolucionSubgerencial;
 };

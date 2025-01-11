@@ -48,6 +48,11 @@ const createRSG2Handler = async (req, res) => {
     const { id } = req.params
 
     try {
+
+        const newCargoNotificacion = await createCargoNotificacionController({
+            tipo: 'RSG'
+        });
+
         let estado
         if (tipo == 'A_TODO') {
             estado = 'ARCHIVO'
@@ -55,7 +60,7 @@ const createRSG2Handler = async (req, res) => {
             estado = 'PLATAFORMA_SANCION'
         }
 
-        const newRsg2 = await createRSG2Controller({ nro_rsg, fecha_rsg, tipo, id_nc, id_AR2, estado, documento_RSG: req.files['documento_RSG'][0] });
+        const newRsg2 = await createRSG2Controller({ nro_rsg, fecha_rsg, tipo, id_nc, id_AR2, estado, id_cargoNotificacion: newCargoNotificacion.id, documento_RSG: req.files['documento_RSG'][0] });
 
         if (!newRsg2) {
             return res.status(404).json({ message: "Error al crear el RSG2 en el AR2", data: [] })
