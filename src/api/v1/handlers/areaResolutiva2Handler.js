@@ -111,7 +111,11 @@ const createRSAHandler = async (req, res) => {
 
     try {
 
-        const newRSA = await createResoSAController({ nro_rsa, fecha_rsa, documento_RSA: req.files['documento_RSA'][0], id_nc, id_AR2 });
+        const newCargoNotificacion = await createCargoNotificacionController({
+            tipo: 'RSA'
+        });
+
+        const newRSA = await createResoSAController({ nro_rsa, fecha_rsa, documento_RSA: req.files['documento_RSA'][0], id_nc, id_AR2, id_cargoNotificacion: newCargoNotificacion.id });
 
         if (!newRSA) {
             return res.status(404).json({ message: "Error al crear un RSA", data: [] });

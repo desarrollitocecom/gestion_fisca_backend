@@ -4,21 +4,22 @@ const { Sequelize } = require('sequelize');
 const { RSG1, DescargoNC, IFI, DescargoIFI, RSG2, RSA, DescargoRSA, RecursoApelacion } = require('../../../config/db_connection');
 const myCache = require("../../../middlewares/cacheNodeStocked");
 
-const createRSGController = async ({ nro_rsg, fecha_rsg,/* documento_RSG, */ id_nc, id_AR3, tipo }) => {
+const createRSGController = async ({ nro_rsg, fecha_rsg, documento_RSG, id_nc, id_AR3, tipo, id_cargoNotificacion }) => {
 
-    //let documento_path;
+    let documento_path;
     try {
-        // if(documento_RSG) {
-        //     documento_path=saveImage(documento_RSG,'Resolucion(RSG)')       
-        // }
+        if(documento_RSG) {
+            documento_path=saveImage(documento_RSG,'Resolucion(RSG)')       
+        }
 
         const newRgsnp = await RSG.create({
             nro_rsg,
             fecha_rsg,
-            //documento_RSG:documento_path,
+            documento_RSG:documento_path,
             id_nc,
             id_AR3,
-            tipo
+            tipo,
+            id_cargoNotificacion
         });
         return newRgsnp;
     } catch (error) {

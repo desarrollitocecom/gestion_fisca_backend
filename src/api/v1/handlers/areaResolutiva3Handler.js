@@ -1,17 +1,18 @@
-const {getAllRSAforAR3Controller, getRsaController,  updateRsaController} = require("../controllers/rsaController");
+const { getAllRSAforAR3Controller, getRsaController, updateRsaController } = require("../controllers/rsaController");
 const { createRSGController, getAllRSG3forAR3Controller, getRSGforAnalista4Controller } = require("../controllers/rsgController")
 const { updateDocumento } = require("../controllers/documentoController");
+const { createCargoNotificacionController } = require("../controllers/cargoNotificacionController")
 const { areaResolutiva3Validation } = require("../validations/areaResolutiva3Validation")
 const { getAllRecursoReconsideracionesController, updateRecursoReconsideracionController } = require("../controllers/recursoReconsideracionController")
 const fs = require("node:fs");
-const { getIo } = require('../../../sockets'); 
+const { getIo } = require('../../../sockets');
 
 
 const getAllRSAforAR3Handler = async (req, res) => {
   try {
     const response = await getAllRSAforAR3Controller();
-    
-    
+
+
     if (response.length === 0) {
       return res.status(200).json({
         message: "No hay más RSA para el Area Resolutiva 3",
@@ -34,8 +35,8 @@ const getAllRSAforAR3Handler = async (req, res) => {
 const getAllRecursoReconsideracionesHandler = async (req, res) => {
   try {
     const response = await getAllRecursoReconsideracionesController();
-    
-    
+
+
     if (response.length === 0) {
       return res.status(200).json({
         message: "No hay más RSA para el Area Resolutiva 3",
@@ -58,15 +59,20 @@ const getAllRecursoReconsideracionesHandler = async (req, res) => {
 
 const createRSGHandler = async (req, res) => {
   const io = getIo();
-  
-  const { nro_rsg, fecha_rsg, id_nc, id_AR3, tipo} = req.body;
-  const { id } = req.params
-  
-  try {
-      const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, id_AR3, tipo });
 
-      if(newRSG){
-        await updateRecursoReconsideracionController(id, { id_original: newRSG.id, id_rsg: newRSG.id })
+  const { nro_rsg, fecha_rsg, id_nc, id_AR3, tipo } = req.body;
+  const { id } = req.params
+
+  try {
+
+    const newCargoNotificacion = await createCargoNotificacionController({
+      tipo: 'RSG2'
+    });
+
+    const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, id_AR3, tipo, id_cargoNotificacion: newCargoNotificacion.id });
+
+    if (newRSG) {
+      await updateRecursoReconsideracionController(id, { id_original: newRSG.id, id_rsg: newRSG.id })
       // if (!newRSG) {
       //     return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
       // }
@@ -84,9 +90,9 @@ const createRSGHandler = async (req, res) => {
       // await updateDocumento({ id_nc, total_documentos: newRSG.documento_RSG, nuevoModulo: "RESOLUCION SUBGERENCIAL NO PROCEDENTE" });
 
       // if (response) {
-        
+
       //   const findNC = await getRSGforAnalista4Controller(newRSG.id);
-        
+
       //   const plainNC = findNC.toJSON();  
 
       //   if(tipo == 'RSGNP'){
@@ -94,20 +100,20 @@ const createRSGHandler = async (req, res) => {
       //   }
       //   io.emit("sendAR3", { id, remove: true });
 
-        res.status(201).json({
-            message: 'RSG creado con exito',
-            data: 'asd'
-        });
+      res.status(201).json({
+        message: 'RSG creado con exito',
+        data: 'asd'
+      });
     } else {
-       res.status(400).json({
-            message: 'Error al crear RSG',
-        });
+      res.status(400).json({
+        message: 'Error al crear RSG',
+      });
     }
-  
-  } catch (error) {
-      console.error("Error interno al crear el RSG:", error);
 
-      return res.status(500).json({ error: error.message });
+  } catch (error) {
+    console.error("Error interno al crear el RSG:", error);
+
+    return res.status(500).json({ error: error.message });
 
   }
 };
@@ -115,15 +121,15 @@ const createRSGHandler = async (req, res) => {
 
 const createRSGRectificacionHandler = async (req, res) => {
   const io = getIo();
-  
-  const { nro_rsg, fecha_rsg, id_nc, id_AR3, tipo} = req.body;
-  const { id } = req.params
-  
-  try {
-      const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, id_AR3, tipo });
 
-      if(newRSG){
-        await updateRecursoReconsideracionController(id, { id_rsg: newRSG.id })
+  const { nro_rsg, fecha_rsg, id_nc, id_AR3, tipo } = req.body;
+  const { id } = req.params
+
+  try {
+    const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, id_AR3, tipo });
+
+    if (newRSG) {
+      await updateRecursoReconsideracionController(id, { id_rsg: newRSG.id })
       // if (!newRSG) {
       //     return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
       // }
@@ -141,9 +147,9 @@ const createRSGRectificacionHandler = async (req, res) => {
       // await updateDocumento({ id_nc, total_documentos: newRSG.documento_RSG, nuevoModulo: "RESOLUCION SUBGERENCIAL NO PROCEDENTE" });
 
       // if (response) {
-        
+
       //   const findNC = await getRSGforAnalista4Controller(newRSG.id);
-        
+
       //   const plainNC = findNC.toJSON();  
 
       //   if(tipo == 'RSGNP'){
@@ -151,49 +157,49 @@ const createRSGRectificacionHandler = async (req, res) => {
       //   }
       //   io.emit("sendAR3", { id, remove: true });
 
-        res.status(201).json({
-            message: 'RSG creado con exito',
-            data: 'asd'
-        });
+      res.status(201).json({
+        message: 'RSG creado con exito',
+        data: 'asd'
+      });
     } else {
-       res.status(400).json({
-            message: 'Error al crear RSG',
-        });
+      res.status(400).json({
+        message: 'Error al crear RSG',
+      });
     }
-  
-  } catch (error) {
-      console.error("Error interno al crear el RSG:", error);
 
-      return res.status(500).json({ error: error.message });
+  } catch (error) {
+    console.error("Error interno al crear el RSG:", error);
+
+    return res.status(500).json({ error: error.message });
 
   }
 };
 
-const getAllRSG3forAR3Handler = async (req, res) => {  
+const getAllRSG3forAR3Handler = async (req, res) => {
   try {
-      const response = await getAllRSG3forAR3Controller();
+    const response = await getAllRSG3forAR3Controller();
 
-      if (response.length === 0) {
-          return res.status(200).json({
-              message: 'No hay más RSG3',
-              data: []
-          });
-      }
-
+    if (response.length === 0) {
       return res.status(200).json({
-          message: "Error al obtener los RSG3",
-          data: response,
+        message: 'No hay más RSG3',
+        data: []
       });
+    }
+
+    return res.status(200).json({
+      message: "Error al obtener los RSG3",
+      data: response,
+    });
   } catch (error) {
-      console.error("Error en el servidor al obtener los RSG3:", error);
-      res.status(500).json({ error: "Error interno del servidor al obtener los RSG3." });
+    console.error("Error en el servidor al obtener los RSG3:", error);
+    res.status(500).json({ error: "Error interno del servidor al obtener los RSG3." });
   }
 };
 
 module.exports = {
-    getAllRSAforAR3Handler,
-    createRSGHandler,
-    getAllRSG3forAR3Handler,
-    getAllRecursoReconsideracionesHandler,
-    createRSGRectificacionHandler
+  getAllRSAforAR3Handler,
+  createRSGHandler,
+  getAllRSG3forAR3Handler,
+  getAllRecursoReconsideracionesHandler,
+  createRSGRectificacionHandler
 };

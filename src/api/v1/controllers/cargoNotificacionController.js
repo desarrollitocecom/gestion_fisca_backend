@@ -262,7 +262,7 @@ const getAllCargoNotificacionForRSG2Controller = async () => {
         const response = await RSG.findAll({
             where: {
                 [Sequelize.Op.and]: [
-                    Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RSA'),
+                    Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RSG2'),
                     Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null )
                 ]
             },
@@ -302,7 +302,7 @@ const getAllHistoryCargoNotificacionForRSG2Controller = async () => {
         const response = await RSG.findAll({
             where: {
                 [Sequelize.Op.and]: [
-                    Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RSA'),
+                    Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RSG2'),
                     Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null )
                 ]
             },
