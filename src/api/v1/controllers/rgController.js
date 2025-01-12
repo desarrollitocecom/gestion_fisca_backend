@@ -9,21 +9,21 @@ const myCache = require("../../../middlewares/cacheNodeStocked");
 const createRGController = async ({
      nro_rg,
      fecha_rg,
-     //documento_rg,
+     documento_rg,
      id_nc,
      id_gerente,
      tipo
     }) => {
 
-    //let documento_path_rg;
+    let documento_path_rg;
 
     try {
-        //documento_path_rg=saveImage(documento_rg,'Resolucion(RG)')            
+        documento_path_rg=saveImage(documento_rg,'Resolucion(RG)')            
 
         const newRG = await RG.create({ 
             nro_rg,
             fecha_rg,
-            //documento_rg:documento_path_rg,
+            documento_rg:documento_path_rg,
             id_nc,
             id_gerente,
             tipo

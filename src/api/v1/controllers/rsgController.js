@@ -770,7 +770,7 @@ const getAllRSGforSubgerenciaController = async () => {
             'id',
             [Sequelize.col('nro_rsg'), 'nro'],
             [Sequelize.col('documento_RSG'), 'documento'],
-            //'tipo',
+            'tipo',
             'id_nc',
             [Sequelize.literal(`
               CASE 

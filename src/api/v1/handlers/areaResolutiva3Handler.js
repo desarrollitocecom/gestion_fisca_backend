@@ -69,45 +69,40 @@ const createRSGHandler = async (req, res) => {
       tipo: 'RSG2'
     });
 
-    const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, id_AR3, tipo, documento_RSG: req.files['documento_RSG'][0],  id_cargoNotificacion: newCargoNotificacion.id });
+    const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, id_AR3, tipo, documento_RSG: req.files['documento_RSG'][0], id_cargoNotificacion: newCargoNotificacion.id });
 
-    if (newRSG) {
-      await updateRecursoReconsideracionController(id, { id_original: newRSG.id, id_rsg: newRSG.id })
-      // if (!newRSG) {
-      //     return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
-      // }
+    if (!newRSG) {
+      return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
+    }
+    await updateRecursoReconsideracionController(id, { id_original: newRSG.id, id_rsg: newRSG.id })
 
-      // let response;
+    let response;
 
-      // if(tipo == 'RSGP'){
-      //   response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'ARCHIVO_AR3' })
-      // }
+    if (tipo == 'RSGP') {
+      response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'ARCHIVO_AR3' })
+    }
+    if (tipo == 'RSGNP') {
+      response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'TERMINADO' })
+    }
+
+
+    await updateDocumento({ id_nc, total_documentos: newRSG.documento_RSG, nuevoModulo: "RESOLUCION SUBGERENCIAL NO PROCEDENTE" });
+
+    if (response) {
+
+      const findNC = await getRSGforAnalista4Controller(newRSG.id);
+
+      const plainNC = findNC.toJSON();
+
+      res.status(200).json({
+        message: 'LO LOGRAMOS',
+      });
+      // await responseSocket({ id: newRSA.id, method: getRSAforAnalista3Controller, socketSendName: 'sendAnalista3', res });
+
       // if(tipo == 'RSGNP'){
-      //   response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'TERMINADO' })
+      //   io.emit("sendAnalista4", { data: [plainNC] });
       // }
-
-
-      // await updateDocumento({ id_nc, total_documentos: newRSG.documento_RSG, nuevoModulo: "RESOLUCION SUBGERENCIAL NO PROCEDENTE" });
-
-      // if (response) {
-
-      //   const findNC = await getRSGforAnalista4Controller(newRSG.id);
-
-      //   const plainNC = findNC.toJSON();  
-
-      //   if(tipo == 'RSGNP'){
-      //     io.emit("sendAnalista4", { data: [plainNC] });
-      //   }
-      //   io.emit("sendAR3", { id, remove: true });
-
-      res.status(201).json({
-        message: 'RSG creado con exito',
-        data: 'asd'
-      });
-    } else {
-      res.status(400).json({
-        message: 'Error al crear RSG',
-      });
+      // io.emit("sendAR3", { id, remove: true });
     }
 
   } catch (error) {
@@ -126,45 +121,37 @@ const createRSGRectificacionHandler = async (req, res) => {
   const { id } = req.params
 
   try {
-    const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, id_AR3, tipo });
-
-    if (newRSG) {
-      await updateRecursoReconsideracionController(id, { id_rsg: newRSG.id })
-      // if (!newRSG) {
-      //     return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
-      // }
-
-      // let response;
-
-      // if(tipo == 'RSGP'){
-      //   response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'ARCHIVO_AR3' })
-      // }
-      // if(tipo == 'RSGNP'){
-      //   response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'TERMINADO' })
-      // }
+    const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, documento_RSG: req.files['documento_RSG'][0], id_AR3, tipo });
 
 
-      // await updateDocumento({ id_nc, total_documentos: newRSG.documento_RSG, nuevoModulo: "RESOLUCION SUBGERENCIAL NO PROCEDENTE" });
+    if (!newRSG) {
+      return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
+    }
+    await updateRecursoReconsideracionController(id, { id_rsg: newRSG.id })
 
-      // if (response) {
 
-      //   const findNC = await getRSGforAnalista4Controller(newRSG.id);
+    let response;
 
-      //   const plainNC = findNC.toJSON();  
+    if (tipo == 'RSGP') {
+      response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'ARCHIVO_AR3' })
+    }
+    if (tipo == 'RSGNP') {
+      response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'TERMINADO' })
+    }
 
-      //   if(tipo == 'RSGNP'){
-      //     io.emit("sendAnalista4", { data: [plainNC] });
-      //   }
-      //   io.emit("sendAR3", { id, remove: true });
 
-      res.status(201).json({
-        message: 'RSG creado con exito',
-        data: 'asd'
-      });
-    } else {
-      res.status(400).json({
-        message: 'Error al crear RSG',
-      });
+    await updateDocumento({ id_nc, total_documentos: newRSG.documento_RSG, nuevoModulo: "RECTIFICACION DE RESOLUCION SUBGERENCIAL" });
+
+    if (response) {
+
+      const findNC = await getRSGforAnalista4Controller(newRSG.id);
+
+      const plainNC = findNC.toJSON();
+
+      if (tipo == 'RSGNP') {
+        io.emit("sendAnalista4", { data: [plainNC] });
+      }
+      io.emit("sendAR3", { id, remove: true });
     }
 
   } catch (error) {
@@ -201,20 +188,20 @@ const getAllIRSGForSubgerenciaHandler = async (req, res) => {
     const response = await getAllRSGforSubgerenciaController();
 
     if (response.length === 0) {
-        return res.status(200).json({
-            message: 'No hay más IFIs para el Area Resolutiva 2',
-            data: []
-        });
+      return res.status(200).json({
+        message: 'No hay más IFIs para el Area Resolutiva 2',
+        data: []
+      });
     }
 
     return res.status(200).json({
-        message: "IFIs obtenidos correctamente para el Area Resolutiva 2",
-        data: response,
+      message: "IFIs obtenidos correctamente para el Area Resolutiva 2",
+      data: response,
     });
-} catch (error) {
+  } catch (error) {
     console.error("Error al obtener IFIs para AR2 en el servidor:", error);
     res.status(500).json({ error: "Error interno del servidor al obtener los IFIs para el AR2." });
-}
+  }
 }
 
 module.exports = {

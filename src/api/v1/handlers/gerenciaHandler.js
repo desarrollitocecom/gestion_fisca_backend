@@ -128,7 +128,7 @@ const createRGRectificacionHandler = async (req, res) => {
         const newRG = await createRGController({
             nro_rg,
             fecha_rg,
-            //documento_rg: req.files['documento_rg'][0],
+            documento_rg: req.files['documento_rg'][0],
             id_nc,
             id_gerente,
             tipo

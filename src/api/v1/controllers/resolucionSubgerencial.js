@@ -1,4 +1,4 @@
-const { RSA, Usuario, NC, TramiteInspector, ResolucionSubgerencial, ResolucionSancionadora } = require('../../../config/db_connection'); // Asegúrate de que la ruta al modelo sea correcta
+const { RSA, Usuario, NC, TramiteInspector, ResolucionSubgerencial, ResolucionSancionadora, IFI } = require('../../../config/db_connection'); // Asegúrate de que la ruta al modelo sea correcta
 const { saveImage, deleteFile } = require('../../../utils/fileUtils')
 const { Sequelize } = require('sequelize');
 const myCache = require("../../../middlewares/cacheNodeStocked");
@@ -228,22 +228,30 @@ const getAllRSAforPlataformaController = async () => {
 
 const getAllRSGforAR2Controller = async () => {
     try {
-        const response = await ResolucionSubgerencial.findAll({
+        const response = await IFI.findAll({
+            where: Sequelize.where(Sequelize.col('RSG2.nro_rsg'), { [Sequelize.Op.ne]: null }),
             attributes: [
                 'id',
-                [Sequelize.col('nro_rsg'), 'nro'],
-                [Sequelize.col('documento_RSG'), 'documento'],
-                'tipo',
-                'id_nc',
+                [Sequelize.col('RSG2.nro_rsg'), 'nro'],
+                [Sequelize.col('RSG2.documento_RSG'), 'documento'],
+                [Sequelize.col('RSG2.tipo'), 'tipo'],
+                [Sequelize.col('RSG2.id_nc'), 'id_nc'],
                 [Sequelize.literal(`
-              CASE 
-                WHEN tipo_evaluar = null THEN true
-                ELSE false
-              END
-            `), 'activo'],
-                'createdAt',
+                    CASE 
+                      WHEN "RSG2"."tipo_evaluar" = null THEN true
+                      ELSE false
+                    END
+                  `), 'activo'],
+                [Sequelize.col('RSG2.createdAt'), 'createdAt'],
             ],
-        });
+            include: [
+                {
+                    model: ResolucionSubgerencial,
+                    as: 'RSG2',
+                    attributes: []
+                }
+            ]
+        })
 
         return response || null;
     } catch (error) {
