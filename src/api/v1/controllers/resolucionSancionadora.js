@@ -1,4 +1,4 @@
-const { RSA, Usuario, NC, TramiteInspector, DescargoRSA, ResolucionSancionadora } = require('../../../config/db_connection'); // Asegúrate de que la ruta al modelo sea correcta
+const { RSA, Usuario, NC, TramiteInspector, DescargoRSA, ResolucionSancionadora, IFI } = require('../../../config/db_connection'); // Asegúrate de que la ruta al modelo sea correcta
 const { saveImage, deleteFile } = require('../../../utils/fileUtils')
 const { Sequelize } = require('sequelize');
 const myCache = require("../../../middlewares/cacheNodeStocked");
@@ -225,28 +225,38 @@ const getAllRSAforPlataformaController = async () => {
 
 const getAllRSAforAR2Controller = async () => {
     try {
-        const response = await ResolucionSancionadora.findAll({
-          attributes: [
-            'id',
-            [Sequelize.col('nro_rsa'), 'nro'],
-            [Sequelize.col('documento_RSA'), 'documento'],
-            //'tipo',
-            'id_nc',
-            [Sequelize.literal(`
-              CASE 
-                WHEN tipo_evaluar = null THEN true
-                ELSE false
-              END
-            `), 'activo'],
-            'createdAt',
-          ],
-        });
+        const response = await IFI.findAll({
+            where: Sequelize.where(Sequelize.col('RSA.nro_rsa'), { [Sequelize.Op.ne]: null }),
+            attributes: [
+                'id',
+                [Sequelize.col('RSA.nro_rsa'), 'nro'],
+                [Sequelize.col('RSA.documento_RSA'), 'documento'],
+                //[Sequelize.col('RSA.tipo'), 'tipo'],
+                [Sequelize.col('RSA.id_nc'), 'id_nc'],
+                [Sequelize.literal(`
+                    CASE 
+                      WHEN "RSA"."tipo_evaluar" = null THEN true
+                      ELSE false
+                    END
+                  `), 'activo'],
+                [Sequelize.col('RSA.createdAt'), 'createdAt'],
+            ],
+            include: [
+                {
+                    model: ResolucionSancionadora,
+                    as: 'RSA',
+                    attributes: []
+                }
+            ]
+        })
     
         return response || null;
       } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
         return false;
       }
+
+      
 }
 
 module.exports = {
