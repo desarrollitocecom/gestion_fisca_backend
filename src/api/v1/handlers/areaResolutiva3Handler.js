@@ -119,16 +119,13 @@ const createRSGRectificacionHandler = async (req, res) => {
 
   const { nro_rsg, fecha_rsg, id_nc, id_AR3, tipo } = req.body;
   const { id } = req.params
-
   try {
     const newRSG = await createRSGController({ nro_rsg, fecha_rsg, id_nc, documento_RSG: req.files['documento_RSG'][0], id_AR3, tipo });
-
 
     if (!newRSG) {
       return res.status(400).json({ message: 'No fue creado con éxito', data: [] });
     }
     await updateRecursoReconsideracionController(id, { id_rsg: newRSG.id })
-
 
     let response;
 
@@ -139,20 +136,23 @@ const createRSGRectificacionHandler = async (req, res) => {
       response = await updateRsaController(id, { id_evaluar_rsa: newRSG.id, id_RSG: newRSG.id, tipo: 'TERMINADO' })
     }
 
-
     await updateDocumento({ id_nc, total_documentos: newRSG.documento_RSG, nuevoModulo: "RECTIFICACION DE RESOLUCION SUBGERENCIAL" });
+    return res.status(200).json({
+      message: 'Creado',
+      data: []
+    });
+    // if (response) {
+    //   console.log('7')
+    //   // const findNC = await getRSGforAnalista4Controller(newRSG.id);
 
-    if (response) {
+    //   // const plainNC = findNC.toJSON();
 
-      const findNC = await getRSGforAnalista4Controller(newRSG.id);
-
-      const plainNC = findNC.toJSON();
-
-      if (tipo == 'RSGNP') {
-        io.emit("sendAnalista4", { data: [plainNC] });
-      }
-      io.emit("sendAR3", { id, remove: true });
-    }
+    //   // if (tipo == 'RSGNP') {
+    //   //   io.emit("sendAnalista4", { data: [plainNC] });
+    //   // }
+    //   // io.emit("sendAR3", { id, remove: true });
+      
+    // }
 
   } catch (error) {
     console.error("Error interno al crear el RSG:", error);
