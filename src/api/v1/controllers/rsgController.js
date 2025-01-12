@@ -1,7 +1,7 @@
 const { RSG, Usuario, NC, TramiteInspector } = require("../../../config/db_connection");
 const { saveImage, deleteFile } = require('../../../utils/fileUtils')
 const { Sequelize } = require('sequelize');
-const { RSG1, DescargoNC, IFI, DescargoIFI, RSG2, RSA, DescargoRSA, RecursoApelacion } = require('../../../config/db_connection');
+const { RSG1, DescargoNC, IFI, DescargoIFI, RSG2, RSA, DescargoRSA, RecursoApelacion, RecursoReconsideracion } = require('../../../config/db_connection');
 const myCache = require("../../../middlewares/cacheNodeStocked");
 
 const createRSGController = async ({ nro_rsg, fecha_rsg, documento_RSG, id_nc, id_AR3, tipo, id_cargoNotificacion }) => {
@@ -765,22 +765,48 @@ const getAllRSGforPlataformaController = async () => {
 
 const getAllRSGforSubgerenciaController = async () => {
     try {
-        const response = await RSG.findAll({
-          attributes: [
-            'id',
-            [Sequelize.col('nro_rsg'), 'nro'],
-            [Sequelize.col('documento_RSG'), 'documento'],
-            'tipo',
-            'id_nc',
-            [Sequelize.literal(`
-              CASE 
-                WHEN id_recurso_apelacion = null THEN true
-                ELSE false
-              END
-            `), 'activo'],
-            'createdAt',
-          ],
-        });
+        const response = await RecursoReconsideracion.findAll({
+            where: Sequelize.where(Sequelize.col('RSGs.nro_rsg'), { [Sequelize.Op.ne]: null }),
+            attributes: [
+                'id',
+                [Sequelize.col('RSGs.nro_rsg'), 'nro'],
+                [Sequelize.col('RSGs.documento_RSG'), 'documento'],
+                //[Sequelize.col('RSA.tipo'), 'tipo'],
+                [Sequelize.col('RSGs.id_nc'), 'id_nc'],
+                [Sequelize.literal(`
+                    CASE 
+                      WHEN "RSGs"."id_recurso_apelacion" = null THEN true
+                      ELSE false
+                    END
+                  `), 'activo'],
+                [Sequelize.col('RSGs.createdAt'), 'createdAt'],
+            ],
+            include: [
+                {
+                    model: RSG,
+                    as: 'RSGs',
+                    attributes: []
+                }
+            ]
+        })
+
+
+        // const response = await RSG.findAll({
+        //   attributes: [
+        //     'id',
+        //     [Sequelize.col('nro_rsg'), 'nro'],
+        //     [Sequelize.col('documento_RSG'), 'documento'],
+        //     'tipo',
+        //     'id_nc',
+        //     [Sequelize.literal(`
+        //       CASE 
+        //         WHEN id_recurso_apelacion = null THEN true
+        //         ELSE false
+        //       END
+        //     `), 'activo'],
+        //     'createdAt',
+        //   ],
+        // });
     
         return response || null;
       } catch (error) {
