@@ -744,6 +744,7 @@ const getAllRSGforPlataformaController = async () => {
             where: {
                 id_recurso_apelacion: null,
                 fecha_notificacion: { [Sequelize.Op.ne]: null },
+                tipo: 'RSGNP',
             }
         });
 

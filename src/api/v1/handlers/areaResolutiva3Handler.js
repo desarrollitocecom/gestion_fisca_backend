@@ -88,22 +88,27 @@ const createRSGHandler = async (req, res) => {
 
     await updateDocumento({ id_nc, total_documentos: newRSG.documento_RSG, nuevoModulo: "RESOLUCION SUBGERENCIAL NO PROCEDENTE" });
 
-    if (response) {
+    return res.status(200).json({
+      message: "Subido Correctamente",
+      data: response
+    });
 
-      const findNC = await getRSGforAnalista4Controller(newRSG.id);
+    // if (response) {
 
-      const plainNC = findNC.toJSON();
+    //   const findNC = await getRSGforAnalista4Controller(newRSG.id);
 
-      res.status(200).json({
-        message: 'LO LOGRAMOS',
-      });
-      // await responseSocket({ id: newRSA.id, method: getRSAforAnalista3Controller, socketSendName: 'sendAnalista3', res });
+    //   const plainNC = findNC.toJSON();
 
-      // if(tipo == 'RSGNP'){
-      //   io.emit("sendAnalista4", { data: [plainNC] });
-      // }
-      // io.emit("sendAR3", { id, remove: true });
-    }
+    //   res.status(200).json({
+    //     message: 'LO LOGRAMOS',
+    //   });
+    //   // await responseSocket({ id: newRSA.id, method: getRSAforAnalista3Controller, socketSendName: 'sendAnalista3', res });
+
+    //   // if(tipo == 'RSGNP'){
+    //   //   io.emit("sendAnalista4", { data: [plainNC] });
+    //   // }
+    //   // io.emit("sendAR3", { id, remove: true });
+    // }
 
   } catch (error) {
     console.error("Error interno al crear el RSG:", error);

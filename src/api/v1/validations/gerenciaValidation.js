@@ -4,7 +4,7 @@ const { getRSGController } = require("../controllers/rsgController")
 const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 const allowedFields = [
-    'nro_rg', 'fecha_rg', 'fecha_notificacion', 'id_nc', 'id_gerente', 'tipo'
+    'nro_rg', 'fecha_rg', 'id_nc', 'id_gerente', 'tipo'
 ];
 
 const gerenciaValidation = async (receivedBody, files, params) => {
@@ -29,17 +29,6 @@ const gerenciaValidation = async (receivedBody, files, params) => {
         const parsedFecha = new Date(receivedBody.fecha_rg);
         if (isNaN(parsedFecha.getTime())) {
             errors.push('fecha_rg debe ser una fecha válida');
-        }
-    }
-
-    if (!receivedBody.fecha_notificacion) {
-        errors.push('Ingrese fecha_notificacion obligatorio');
-    } else if (!fechaRegex.test(receivedBody.fecha_notificacion)) {
-        errors.push('El formato de la fecha_notificacion debe ser YYYY-MM-DD');
-    } else {
-        const parsedFecha = new Date(receivedBody.fecha_notificacion);
-        if (isNaN(parsedFecha.getTime())) {
-            errors.push('fecha_notificacion debe ser una fecha válida');
         }
     }
 

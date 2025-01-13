@@ -138,15 +138,6 @@ const createRecursoAdministrativoHandler = async (req, res) => {
     if (tipo_va == 'RECONSIDERACION') {
       recurso = await createRecursoReconsideracionController({ nro_recurso, fecha_recurso, id_nc, id_plataforma2, documento_recurso: req.files['documento_Recurso'][0] });
 
-      if (tipo_viene == 'RSA') {
-
-        const response = await updateResolucionSancionadoraController(id, { tipo_evaluar: 'RECURSO_RECONC', id_evaluar_rsa: recurso.id })
-
-        return res.status(200).json({
-          message: "Recurso Subido Correctamente",
-          data: response
-        });
-      }
       if (tipo_viene == 'RSG') {
         const response = await updateResolucionSubgerencialController(id, { tipo_evaluar: 'RECURSO_RECONC', id_evaluar_rsg: recurso.id })
 
@@ -155,6 +146,16 @@ const createRecursoAdministrativoHandler = async (req, res) => {
           data: response
         });
       }
+
+      if (tipo_viene == 'RSA') {
+        const response = await updateResolucionSancionadoraController(id, { tipo_evaluar: 'RECURSO_RECONC', id_evaluar_rsa: recurso.id })
+
+        return res.status(200).json({
+          message: "Recurso Subido Correctamente",
+          data: response
+        });
+      }
+      
     }
 
     if (tipo_va == 'APELACION') {

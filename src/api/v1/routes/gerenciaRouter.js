@@ -11,7 +11,7 @@ router.patch('/newRG/:id',permisoAutorizacion(["all_system_access"]),uploadRG, c
 
 router.get('/created-gerencia',permisoAutorizacion(["all_system_access"]), getAllRGForGerenciaHandler);
 
-router.patch('/RG-rectificacion/:id/:id',permisoAutorizacion(["all_system_access"]),uploadRG, createRGRectificacionHandler);
+router.patch('/RG-rectificacion/:id',permisoAutorizacion(["all_system_access"]),uploadRG, createRGRectificacionHandler);
 
 router.get("/historialArchivados",permisoAutorizacion(["all_system_access"]), getAllRGforGerenciaHandler);
 

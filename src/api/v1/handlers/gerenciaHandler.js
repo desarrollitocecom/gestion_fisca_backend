@@ -52,19 +52,19 @@ const getAllRecursosApelacionesHandler = async (req, res) => {
 
 
 const createRGHandler = async (req, res) => {
-    // const io = getIo();
+    const io = getIo();
 
-    // const invalidFields = await gerenciaValidation(req.body, req.files, req.params);
+    const invalidFields = await gerenciaValidation(req.body, req.files, req.params);
 
-    // if (invalidFields.length > 0) {
-    //     if (req.files['documento_rg']) {
-    //         fs.unlinkSync(req.files['documento_rg'][0].path);
-    //     }
-    //     return res.status(400).json({
-    //         message: 'Se encontraron los siguientes errores',
-    //         data: invalidFields
-    //     });
-    // }
+    if (invalidFields.length > 0) {
+        if (req.files['documento_rg']) {
+            fs.unlinkSync(req.files['documento_rg'][0].path);
+        }
+        return res.status(400).json({
+            message: 'Se encontraron los siguientes errores',
+            data: invalidFields
+        });
+    }
 
     const { nro_rg, fecha_rg, id_nc, id_gerente, tipo } = req.body;
     const { id } = req.params
@@ -73,7 +73,7 @@ const createRGHandler = async (req, res) => {
         const newRG = await createRGController({
             nro_rg,
             fecha_rg,
-            //documento_rg: req.files['documento_rg'][0],
+            documento_rg: req.files['documento_rg'][0],
             id_nc,
             id_gerente,
             tipo
@@ -84,14 +84,16 @@ const createRGHandler = async (req, res) => {
 
         const response = await updateRecursoApelacionController(id, { id_original: newRG.id, id_gerencia: newRG.id, tipo: 'TERMINADO' })
 
-        //await updateDocumento({ id_nc, total_documentos: newRG.documento_rg, nuevoModulo: "RESOLUCION GERENCIAL" });
+        await updateDocumento({ id_nc, total_documentos: newRG.documento_rg, nuevoModulo: "RESOLUCION GERENCIAL" });
 
         if (response) {
             // await responseSocket({ id: newRG.id, method: getRGforAnalista5Controller, socketSendName: 'sendAnalita5fromGerencia', res });
             // io.emit("sendGerencia", { id, remove: true });
-            res.status(200).json({
-                message: 'exito',
-            });
+            return res.status(200).json({
+                message: "Subido Correctamente",
+                data: response
+              });
+          
         } else {
             res.status(400).json({
                 message: 'Error al enviar el RG al socket',
@@ -107,19 +109,19 @@ const createRGHandler = async (req, res) => {
 
 
 const createRGRectificacionHandler = async (req, res) => {
-    // const io = getIo();
+    const io = getIo();
 
-    // const invalidFields = await gerenciaValidation(req.body, req.files, req.params);
+    const invalidFields = await gerenciaValidation(req.body, req.files, req.params);
 
-    // if (invalidFields.length > 0) {
-    //     if (req.files['documento_rg']) {
-    //         fs.unlinkSync(req.files['documento_rg'][0].path);
-    //     }
-    //     return res.status(400).json({
-    //         message: 'Se encontraron los siguientes errores',
-    //         data: invalidFields
-    //     });
-    // }
+    if (invalidFields.length > 0) {
+        if (req.files['documento_rg']) {
+            fs.unlinkSync(req.files['documento_rg'][0].path);
+        }
+        return res.status(400).json({
+            message: 'Se encontraron los siguientes errores',
+            data: invalidFields
+        });
+    }
 
     const { nro_rg, fecha_rg, id_nc, id_gerente, tipo } = req.body;
     const { id } = req.params
@@ -139,14 +141,16 @@ const createRGRectificacionHandler = async (req, res) => {
 
         const response = await updateRecursoApelacionController(id, { id_gerencia: newRG.id, tipo: 'TERMINADO' })
 
-        //await updateDocumento({ id_nc, total_documentos: newRG.documento_rg, nuevoModulo: "RESOLUCION GERENCIAL" });
+        await updateDocumento({ id_nc, total_documentos: newRG.documento_rg, nuevoModulo: "RESOLUCION GERENCIAL" });
 
         if (response) {
             // await responseSocket({ id: newRG.id, method: getRGforAnalista5Controller, socketSendName: 'sendAnalita5fromGerencia', res });
             // io.emit("sendGerencia", { id, remove: true });
-            res.status(200).json({
-                message: 'exito',
-            });
+            return res.status(200).json({
+                message: "Subido Correctamente",
+                data: response
+              });
+          
         } else {
             res.status(400).json({
                 message: 'Error al enviar el RG al socket',

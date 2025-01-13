@@ -18,6 +18,7 @@ const createRGController = async ({
     let documento_path_rg;
 
     try {
+        console.log(documento_rg)
         documento_path_rg=saveImage(documento_rg,'Resolucion(RG)')            
 
         const newRG = await RG.create({ 
