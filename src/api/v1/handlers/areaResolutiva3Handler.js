@@ -142,8 +142,9 @@ const createRSGRectificacionHandler = async (req, res) => {
     }
 
     await updateDocumento({ id_nc, total_documentos: newRSG.documento_RSG, nuevoModulo: "RECTIFICACION DE RESOLUCION SUBGERENCIAL" });
+    
     return res.status(200).json({
-      message: 'Creado',
+      message: 'Rectificacion Creada Exitosamente',
       data: []
     });
     // if (response) {

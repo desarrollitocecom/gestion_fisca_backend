@@ -1,4 +1,4 @@
-const { RecursoApelacion } = require('../../../config/db_connection');
+const { RecursoApelacion,Usuario } = require('../../../config/db_connection');
 const { saveImage } = require('../../../utils/fileUtils');
 const { Sequelize } = require('sequelize');
 
@@ -34,7 +34,19 @@ const getAllRecursosApelacionesController = async () => {
         const apelaciones = await RecursoApelacion.findAll({
             where: {
                 id_gerencia: null,
-            }
+            },
+            attributes: {
+                include: [
+                    [Sequelize.col('Usuarios.usuario'), 'analista4']
+                ]
+            },
+            include: [
+                {
+                    model: Usuario,
+                    as: 'Usuarios',
+                    attributes: [],
+                }
+            ],
         });
         return apelaciones || null;
     } catch (error) {
