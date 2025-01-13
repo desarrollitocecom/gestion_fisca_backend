@@ -244,6 +244,13 @@ const getAllRSGforAR2Controller = async () => {
                     END
                   `), 'activo'],
                 [Sequelize.col('RSG2.createdAt'), 'createdAt'],
+                [Sequelize.literal(`
+                    CASE 
+                      WHEN "id_evaluar" != "id_original" THEN false
+                      ELSE true
+                    END
+                `), 'estado']
+                
             ],
             include: [
                 {
