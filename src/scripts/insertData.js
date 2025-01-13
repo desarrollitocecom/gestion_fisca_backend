@@ -120,7 +120,7 @@ const insertData = async () => {
 
 
     await Ordenanza.bulkCreate([
-      { nombre: "464" }
+      { nombre: "2025" }
     ]);
 
 
