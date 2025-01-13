@@ -71,7 +71,9 @@ const getAllHistoryCargoNotificacionForIFIController = async () => {
             where: {
                 [Sequelize.Op.and]: [
                     Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'IFI'),
-                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), { [Sequelize.Op.ne]: null })
+                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), { 
+                        [Sequelize.Op.in]: ['PUERTA', 'PERSONA'] 
+                    })
                 ]
             },
             attributes: [
@@ -359,7 +361,7 @@ const getCargoNotificacionController = async ({ id }) => {
     }
 }
 
-const updateCargoNotificacionController = async (id, { numero_cargoNotificacion, fecha1, estado_visita, fecha2, estado_entrega, documento1, documento2, id_motorizado }) => {
+const updateCargoNotificacionController = async (id, { numero_cargoNotificacion, fecha1, estado_visita, fecha2, estado_entrega, documento1, documento2, id_motorizado, numero_cargoNotificacion2 }) => {
     let documento_path_1;
     let documento_path_2;
     try {
@@ -380,7 +382,7 @@ const updateCargoNotificacionController = async (id, { numero_cargoNotificacion,
             }
         })
 
-        const res = await response.update({ numero_cargoNotificacion, fecha1, fecha2, estado_visita, estado_entrega, documento1: documento_path_1, documento2: documento_path_2, id_motorizado })
+        const res = await response.update({ numero_cargoNotificacion, fecha1, fecha2, estado_visita, estado_entrega, documento1: documento_path_1, documento2: documento_path_2, id_motorizado, numero_cargoNotificacion2 })
         //console.log(res);
 
         return res || null

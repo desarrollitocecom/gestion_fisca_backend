@@ -27,6 +27,11 @@ module.exports = (sequelize) => {
             allowNull: true
         },
 
+        numero_cargoNotificacion2: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+
         fecha2: {
             type: DataTypes.DATEONLY,
             allowNull: true

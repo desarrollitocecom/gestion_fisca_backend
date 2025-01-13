@@ -229,7 +229,7 @@ const updateCargoNotificacion1ForIFIHandler = async (req, res) => {
 }
 
 const updateCargoNotificacion2ForIFIHandler = async (req, res) => {
-    const { id_ifi, id_nc, fecha2, estado_visita, estado_entrega } = req.body;
+    const { id_ifi, id_nc, fecha2, estado_visita, estado_entrega, numero_cargoNotificacion2 } = req.body;
     const { id } = req.params
 
     try {
@@ -238,7 +238,8 @@ const updateCargoNotificacion2ForIFIHandler = async (req, res) => {
             fecha2,
             estado_visita,
             estado_entrega,
-            documento2: req.files['documento2'][0]
+            documento2: req.files['documento2'][0],
+            numero_cargoNotificacion2
         });
 
         if (estado_entrega == 'PERSONA' || estado_entrega == 'PUERTA') {
