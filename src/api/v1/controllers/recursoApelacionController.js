@@ -85,4 +85,4 @@ const getRecursoApelacionController = async (id) => {
     }
 }
 
-module.exports = { createRecursoApelacionController, getAllRecursosApelacionesController, updateRecursoApelacionController };
+module.exports = { createRecursoApelacionController, getAllRecursosApelacionesController, updateRecursoApelacionController, getRecursoApelacionController };

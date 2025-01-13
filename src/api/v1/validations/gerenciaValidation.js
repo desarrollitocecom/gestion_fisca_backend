@@ -1,6 +1,7 @@
 const { validateUserExistController } = require("../controllers/usuarioController")
 const { getNC } = require("../controllers/ncController")
 const { getRSGController } = require("../controllers/rsgController")
+const { getRecursoApelacionController } = require("../controllers/recursoApelacionController")
 const fechaRegex = /^\d{4}-\d{2}-\d{2}$/;
 
 const allowedFields = [
@@ -68,7 +69,7 @@ const gerenciaValidation = async (receivedBody, files, params) => {
         errors.push('El tipo debe ser FUNDADO_RG o ANALISTA_5');
     }
 
-    const existingRSG = await getRSGController(id);
+    const existingRSG = await getRecursoApelacionController(id);
 
     if (!existingRSG) {
         errors.push('Este RSG no existe');
