@@ -141,7 +141,7 @@ const createRGRectificacionHandler = async (req, res) => {
 
         const response = await updateRecursoApelacionController(id, { id_gerencia: newRG.id, tipo: 'TERMINADO' })
 
-        await updateDocumento({ id_nc, total_documentos: newRG.documento_rg, nuevoModulo: "RESOLUCION GERENCIAL" });
+        await updateDocumento({ id_nc, total_documentos: newRG.documento_rg, nuevoModulo: "RECTIFICACION RESOLUCION GERENCIAL" });
 
         if (response) {
             // await responseSocket({ id: newRG.id, method: getRGforAnalista5Controller, socketSendName: 'sendAnalita5fromGerencia', res });

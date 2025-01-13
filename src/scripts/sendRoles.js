@@ -7,12 +7,12 @@ const { DB_DATABASE, DB_HOST, DB_USERNAME, DB_PASSWORD } = process.env;
 const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
   host: DB_HOST,
   dialect: "postgres",
-    dialectOptions: {
-  ssl: {
-    require: true, // Requiere SSL para la conexión
-    rejectUnauthorized: false // Permite conexiones con certificados no confiables (opcional, dependiendo del entorno)
-  }
-}
+  // dialectOptions: {
+  //   ssl: {
+  //     require: true, // Requiere SSL para la conexión
+  //     rejectUnauthorized: false // Permite conexiones con certificados no confiables (opcional, dependiendo del entorno)
+  //   }
+  // }
 });
 
 const Rol = require("../api/v1/models/Rol")(sequelize);
@@ -41,7 +41,7 @@ const rolesPermisos = [
 ];
 
 async function createRolesAndAssignPermissions() {
-  const transaction = await sequelize.transaction(); 
+  const transaction = await sequelize.transaction();
   try {
     for (const { nombre, permisos } of rolesPermisos) {
       // Crear el rol

@@ -5,6 +5,7 @@ const { getAllCargoNotificacionForIFIController, getAllHistoryCargoNotificacionF
 const { getInformeFinalController, updateInformeFinalController } = require('../controllers/informeFinalController')
 const { updateResolucionSubgerencialController } = require('../controllers/resolucionSubgerencial')
 const { getIo } = require('../../../sockets');
+const { updateDocumento } = require('../controllers/documentoController')
 
 const getAllCargoNotificacionForIFIHandler = async (req, res) => {
 
@@ -188,21 +189,26 @@ const getAllHistoryCargoNotificacionForRSG2Handler = async (req, res) => {
 
 
 const updateCargoNotificacion1ForIFIHandler = async (req, res) => {
-    const { id_ifi, numero_cargoNotificacion, fecha1, estado_visita, estado_entrega } = req.body;
+    const { id_ifi, id_nc, numero_cargoNotificacion, fecha1, estado_visita, estado_entrega, id_motorizado } = req.body;
+    console.log(id_ifi, id_nc, numero_cargoNotificacion, fecha1, estado_visita, estado_entrega, id_motorizado);
+    
     const { id } = req.params
-
+    console.log('este id: ', id)
     try {
         const updateCargoNotificacion = await updateCargoNotificacionController(id, {
             numero_cargoNotificacion,
             fecha1,
             estado_visita,
             estado_entrega,
-            documento1: req.files['documento1'][0]
+            documento1: req.files['documento1'][0],
+            id_motorizado
         });
 
         if (estado_entrega == 'PERSONA' || estado_entrega == 'PUERTA') {
             await updateInformeFinalController(id_ifi, { fecha_notificacion: fecha1 });
         }
+
+        await updateDocumento({ id_nc, total_documentos: updateCargoNotificacion.documento1, nuevoModulo: 'IFI - CARGO NOTIFICACION 1' });
 
         if (updateCargoNotificacion) {
             return res.status(200).json({
@@ -223,7 +229,7 @@ const updateCargoNotificacion1ForIFIHandler = async (req, res) => {
 }
 
 const updateCargoNotificacion2ForIFIHandler = async (req, res) => {
-    const { id_ifi, fecha2, estado_visita, estado_entrega } = req.body;
+    const { id_ifi, id_nc, fecha2, estado_visita, estado_entrega } = req.body;
     const { id } = req.params
 
     try {
@@ -239,6 +245,7 @@ const updateCargoNotificacion2ForIFIHandler = async (req, res) => {
             await updateInformeFinalController(id_ifi, { fecha_notificacion: fecha2 });
         }
 
+        await updateDocumento({ id_nc, total_documentos: updateCargoNotificacion.documento2, nuevoModulo: 'IFI - CARGO NOTIFICACION 2' });
 
         if (updateCargoNotificacion) {
             return res.status(200).json({

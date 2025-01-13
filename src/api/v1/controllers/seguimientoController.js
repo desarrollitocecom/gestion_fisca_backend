@@ -1,5 +1,5 @@
 const { TramiteInspector, NC, DescargoNC, IFI, RSG1, DescargoIFI, RSG2, RSA, DescargoRSA, RSG, DescargoRSG, RG, Usuario, Acta, 
-    ResolucionSubgerencial, ResolucionSancionadora, ConstanciaInexigibilidad } = require('../../../config/db_connection');
+    ResolucionSubgerencial, CargoNotificacion,ResolucionSancionadora, ConstanciaInexigibilidad } = require('../../../config/db_connection');
 const { Sequelize } = require('sequelize');
 
 const getAllNCSeguimientoController = async () => {
@@ -24,10 +24,10 @@ const getAllNCSeguimientoController = async () => {
                 [Sequelize.col('descargoNC.documento'), 'documento_descargoNC'],
                 [Sequelize.col('descargoNC.createdAt'), 'analista_createdAt'],
 
-                // [Sequelize.col('IFI.Usuarios.usuario'), 'usuarioAreaInstructiva1'],
-                // [Sequelize.literal(`'INFORME FINAL'`), 'nombre_AI'],
-                // [Sequelize.col('IFI.documento_ifi'), 'documento_AI'],
-                // [Sequelize.col('IFI.createdAt'), 'AI_createdAt'],
+                [Sequelize.col('IFI.Usuarios.usuario'), 'usuarioAreaInstructiva1'],
+                [Sequelize.literal(`'INFORME FINAL'`), 'nombre_AI'],
+                [Sequelize.col('IFI.documento_ifi'), 'documento_AI'],
+                [Sequelize.col('IFI.createdAt'), 'AI_createdAt'],
 
                 // //primera muerte
                 // [Sequelize.col('IFI.TERMINADO_RSG1.Usuarios.usuario'), 'usuarioRSG1'],
@@ -35,21 +35,27 @@ const getAllNCSeguimientoController = async () => {
                 // [Sequelize.col('IFI.TERMINADO_RSG1.documento'), 'documento_RSG1'],
                 // [Sequelize.col('IFI.TERMINADO_RSG1.createdAt'), 'RSG1_createdAt'],
 
-                // [Sequelize.col('IFI.DescargoIFIs.analista2Usuario.usuario'), 'usuarioAnalista2'],
-                // [Sequelize.literal(`'DESCARGO IFI'`), 'nombre_DIFI'],
-                // [Sequelize.col('IFI.DescargoIFIs.documento_DIFI'), 'documento_DIFI'],
-                // [Sequelize.col('IFI.DescargoIFIs.createdAt'), 'analista2_createdAt'],
+                [Sequelize.col('IFI.DescargoIFIs.analista2Usuario.usuario'), 'usuarioAnalista2'],
+                [Sequelize.literal(`'DESCARGO IFI'`), 'nombre_DIFI'],
+                [Sequelize.col('IFI.DescargoIFIs.documento_DIFI'), 'documento_DIFI'],
+                [Sequelize.col('IFI.DescargoIFIs.createdAt'), 'analista2_createdAt'],
 
                 // //primera muerte
-                // [Sequelize.col('IFI.RSG2.Usuarios.usuario'), 'usuarioAreaInstructiva2'],
-                // [Sequelize.literal(`'RESOLUCION SUBGERENCIAL 2'`), 'nombre_AR2'],
-                // [Sequelize.col('IFI.RSG2.documento'), 'documento_AR2'],
-                // [Sequelize.col('IFI.RSG2.createdAt'), 'AR2_createdAt'],
+                [Sequelize.col('IFI.RSG2.Usuarios.usuario'), 'usuarioAreaInstructiva2'],
+                [Sequelize.literal(`'RESOLUCION SUBGERENCIAL 2'`), 'nombre_AR2'],
+                [Sequelize.col('IFI.RSG2.documento_RSG'), 'documento_AR2'],
+                [Sequelize.col('IFI.RSG2.createdAt'), 'AR2_createdAt'],
 
-                // [Sequelize.col('IFI.RSA.Usuarios.usuario'), 'usuarioAreaInstructiva2'],
-                // [Sequelize.literal(`'RESOLUCION SANCIONADORA ADMINISTRATIVA'`), 'nombre_RSA'],
-                // [Sequelize.col('IFI.RSA.documento_RSA'), 'documento_RSA'],
-                // [Sequelize.col('IFI.RSA.createdAt'), 'RSA_createdAt'],
+                [Sequelize.col('IFI.RSA.Usuarios.usuario'), 'usuarioAreaInstructiva2'],
+                [Sequelize.literal(`'RESOLUCION SANCIONADORA ADMINISTRATIVA'`), 'nombre_RSA'],
+                [Sequelize.col('IFI.RSA.documento_RSA'), 'documento_RSA'],
+                [Sequelize.col('IFI.RSA.createdAt'), 'RSA_createdAt'],
+
+                [Sequelize.col('IFI.RSA.cargoNotifi.usuarioMotorizado.usuario'), 'usuarioNotificadorIFI'],
+                [Sequelize.literal(`'CARGO DE NOTIFICACION IFI'`), 'nombre_CARGO_IFI'],
+                [Sequelize.col('IFI.RSA.cargoNotifi.documento1'), 'documento_CARGO_IFI_1'],
+                [Sequelize.col('IFI.RSA.cargoNotifi.createdAt'), 'cargoNotiIFI_createdAt'],
+                
 
                 // [Sequelize.col('IFI.RSA.DescargoRSAs.Usuarios.usuario'), 'usuarioAnalista3'],
                 // [Sequelize.literal(`'DESCARGO RSA'`), 'nombre_DRSA'],
@@ -123,16 +129,6 @@ const getAllNCSeguimientoController = async () => {
                                 },
                             ]
                         },
-                        // {
-                        //     model: RSG2,
-                        //     as: 'RSG2',
-                        //     include: [
-                        //         {
-                        //             model: Usuario,
-                        //             as: 'Usuarios',
-                        //         },
-                        //     ]
-                        // },
                         {
                             model: DescargoIFI,
                             as: 'DescargoIFIs',
@@ -152,6 +148,16 @@ const getAllNCSeguimientoController = async () => {
                                     as: 'Usuarios',
                                 },
                                 {
+                                    model: CargoNotificacion,
+                                    as: 'cargoNotifi',
+                                    include: [
+                                        {
+                                            model: Usuario,
+                                            as: 'usuarioMotorizado',
+                                        }
+                                    ]
+                                },
+                                {
                                     model:  RSG,
                                     as: 'RSGs',
                                     include: [
@@ -161,16 +167,16 @@ const getAllNCSeguimientoController = async () => {
                                         }
                                     ]
                                 },
-                                {
-                                    model:  RG,
-                                    as: 'RGs',
-                                    include: [
-                                        {
-                                            model: Usuario,
-                                            as: 'Usuarios',
-                                        }
-                                    ]
-                                },
+                                // {
+                                //     model:  RG,
+                                //     as: 'RGs',
+                                //     include: [
+                                //         {
+                                //             model: Usuario,
+                                //             as: 'Usuarios',
+                                //         }
+                                //     ]
+                                // },
                                 {
                                     model:  ConstanciaInexigibilidad,
                                     as: 'ConstInexigibilidad',
@@ -310,6 +316,16 @@ const getAllNCSeguimientoController = async () => {
                 },
                 AR2_createdAt: row.get('RSA_createdAt'),
             } : undefined,
+
+            etapaNotificacionIFI: row.get('usuarioNotificadorIFI') ? {
+                usuarioNotificacionIFI: row.get('usuarioNotificadorIFI'),
+                documento_NotificacionIFI1: {
+                    nombre: row.get('nombre_CARGO_IFI_1'),
+                    path: row.get('documento_CARGO_IFI_1'),
+                },
+                NotificacionIFI1_createdAt: row.get('cargoNotiIFI_createdAt'),
+            } : undefined,
+
             etapaDescargoRSA: row.get('usuarioAnalista3') ? {
                 usuarioAnalista3: row.get('usuarioAnalista3'),
                 documento_DRSA: {

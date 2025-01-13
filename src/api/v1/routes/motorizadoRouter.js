@@ -11,6 +11,7 @@ const { getAllCargoNotificacionForIFIHandler, getAllHistoryCargoNotificacionForI
 } = require('../handlers/motorizadoHandler');
 
 router.get('/ifi', getAllCargoNotificacionForIFIHandler);
+
 router.patch('/cargoIfi1/:id', uploadCargo1, updateCargoNotificacion1ForIFIHandler);
 router.patch('/cargoIfi2/:id', uploadCargo2, updateCargoNotificacion2ForIFIHandler);
 

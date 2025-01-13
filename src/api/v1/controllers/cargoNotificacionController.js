@@ -25,13 +25,19 @@ const getAllCargoNotificacionForIFIController = async () => {
             where: {
                 [Sequelize.Op.and]: [
                     Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'IFI'),
-                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null)
+                    {
+                        [Sequelize.Op.or]: [
+                            Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null),
+                            Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), 'NO_ESTA')
+                        ]
+                    }
                 ]
             },
             attributes: [
                 'id',
                 [Sequelize.col('cargoNotifi.id'), 'id_cargo'],
                 [Sequelize.col('nro_ifi'), 'nro'],
+                [Sequelize.col('id_nc'), 'id_nc'],
                 [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
                 [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
                 [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
@@ -342,9 +348,9 @@ const getCargoNotificacionController = async ({ id }) => {
     try {
         const response = await CargoNotificacion.findOne({
             where: {
-              id: id
+                id: id
             }
-          })
+        })
 
         return response
     } catch (error) {
@@ -353,21 +359,28 @@ const getCargoNotificacionController = async ({ id }) => {
     }
 }
 
-const updateCargoNotificacionController = async (id, { numero_cargoNotificacion, fecha1, estado_visita, fecha2, estado_entrega, documento1, documento2 }) => {
+const updateCargoNotificacionController = async (id, { numero_cargoNotificacion, fecha1, estado_visita, fecha2, estado_entrega, documento1, documento2, id_motorizado }) => {
+    let documento_path_1;
+    let documento_path_2;
     try {
-        let documento_path_1;
-        let documento_path_2;
+
 
         if (documento1) {
+            console.log('asd');
+
             documento_path_1 = saveImage(documento1, "Notificacion Cargo IFI 1");
         }
         if (documento2) {
             documento_path_2 = saveImage(documento2, "Notificacion Cargo IFI 1");
         }
 
-        const response = await CargoNotificacion.findOne({ id })
+        const response = await CargoNotificacion.findOne({
+            where: {
+                id: id
+            }
+        })
 
-        const res = await response.update({ numero_cargoNotificacion, fecha1, fecha2, estado_visita, estado_entrega, documento1: documento_path_1, documento2: documento_path_2 })
+        const res = await response.update({ numero_cargoNotificacion, fecha1, fecha2, estado_visita, estado_entrega, documento1: documento_path_1, documento2: documento_path_2, id_motorizado })
         //console.log(res);
 
         return res || null

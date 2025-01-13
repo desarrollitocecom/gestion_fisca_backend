@@ -135,7 +135,7 @@ const getNCforAnalista = async (id) => {
             attributes: [
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
-                [Sequelize.col('digitadorUsuario.usuario'), 'digitador'],
+                [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'digitador'],
                 [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
                 [Sequelize.col('estado'), 'estado'],
                 
@@ -309,7 +309,7 @@ const getAllNCforPlataformaController = async () => {
             attributes: [
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
-                [Sequelize.col('digitadorUsuario.usuario'), 'digitador'],
+                [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'inspector'],
                 [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
                 [Sequelize.col('estado'), 'estado']
             ],
@@ -323,6 +323,13 @@ const getAllNCforPlataformaController = async () => {
                     model: TramiteInspector, 
                     as: 'tramiteInspector', 
                     attributes: [], 
+                    include: [
+                        {
+                            model: Usuario, 
+                            as: 'inspectorUsuario',
+                            attributes: []
+                        },
+                    ]
                 },
             ],
         });

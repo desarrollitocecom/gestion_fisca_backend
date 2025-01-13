@@ -49,11 +49,11 @@ const updateInformeFinalController = async (id, {
   id_cargoNotificacion,
   fecha_notificacion
 }) => {
-  console.log('este id: ', id);
+  //console.log('este id: ', id);
   
   try {
     const updateIfi = await getInformeFinalController(id);
-    console.log(updateIfi);
+    //console.log(updateIfi);
     
     if (updateIfi) {
       await updateIfi.update({
