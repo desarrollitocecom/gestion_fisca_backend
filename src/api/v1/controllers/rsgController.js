@@ -781,6 +781,12 @@ const getAllRSGforSubgerenciaController = async () => {
                     END
                   `), 'activo'],
                 [Sequelize.col('RSGs.createdAt'), 'createdAt'],
+                [Sequelize.literal(`
+                    CASE 
+                      WHEN "id_rsg" != "id_original" THEN false
+                      ELSE true
+                    END
+                `), 'estado']
             ],
             include: [
                 {
