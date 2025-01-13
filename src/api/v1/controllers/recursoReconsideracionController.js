@@ -1,17 +1,18 @@
-const { RecursoReconsideracion } = require('../../../config/db_connection');
+const { RecursoReconsideracion, Usuario } = require('../../../config/db_connection');
 const { saveImage } = require('../../../utils/fileUtils');
+const { Sequelize } = require('sequelize');
 
-const createRecursoReconsideracionController = async ({ 
-        nro_recurso, fecha_recurso, id_nc, id_plataforma2, documento_recurso
-    }) => {
+const createRecursoReconsideracionController = async ({
+    nro_recurso, fecha_recurso, id_nc, id_plataforma2, documento_recurso
+}) => {
 
     try {
         let documento_descargoNCPath = null;
 
-        if(documento_recurso){
+        if (documento_recurso) {
             documento_descargoNCPath = saveImage(documento_recurso, 'RecursoApelacion');
         }
-        
+
         const newDescargoNC = await RecursoReconsideracion.create({
             nro_recurso,
             fecha_recurso,
@@ -31,7 +32,19 @@ const createRecursoReconsideracionController = async ({
 const getAllRecursoReconsideracionesController = async () => {
     try {
         const newDescargoNC = await RecursoReconsideracion.findAll({
-            where: {id_rsg: null}
+            where: { id_rsg: null },
+            attributes: {
+                include: [
+                    [Sequelize.col('Usuarios.usuario'), 'analista_3']
+                ]
+            },
+            include: [
+                {
+                    model: Usuario,
+                    as: 'Usuarios',
+                    attributes: [],
+                }
+            ],
         });
 
         return newDescargoNC || null;
@@ -42,7 +55,7 @@ const getAllRecursoReconsideracionesController = async () => {
     }
 }
 
-const updateRecursoReconsideracionController = async (id, {id_rsg}) => {
+const updateRecursoReconsideracionController = async (id, { id_rsg }) => {
     try {
         const findRecursoReconsideracion = await getRecursoReconsideracionController(id);
 
