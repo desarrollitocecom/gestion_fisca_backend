@@ -8,14 +8,14 @@ const createRSGController = async ({ nro_rsg, fecha_rsg, documento_RSG, id_nc, i
 
     let documento_path;
     try {
-        if(documento_RSG) {
-            documento_path=saveImage(documento_RSG,'Resolucion(RSG)')       
+        if (documento_RSG) {
+            documento_path = saveImage(documento_RSG, 'Resolucion(RSG)')
         }
 
         const newRgsnp = await RSG.create({
             nro_rsg,
             fecha_rsg,
-            documento_RSG:documento_path,
+            documento_RSG: documento_path,
             id_nc,
             id_AR3,
             tipo,
@@ -55,7 +55,7 @@ const getRSGController = async (id) => {
     try {
         console.log(id)
         const rgsnp = await RSG.findOne({
-            where: {id}
+            where: { id }
         })
 
         return rgsnp || null;
@@ -790,29 +790,11 @@ const getAllRSGforSubgerenciaController = async () => {
             ]
         })
 
-
-        // const response = await RSG.findAll({
-        //   attributes: [
-        //     'id',
-        //     [Sequelize.col('nro_rsg'), 'nro'],
-        //     [Sequelize.col('documento_RSG'), 'documento'],
-        //     'tipo',
-        //     'id_nc',
-        //     [Sequelize.literal(`
-        //       CASE 
-        //         WHEN id_recurso_apelacion = null THEN true
-        //         ELSE false
-        //       END
-        //     `), 'activo'],
-        //     'createdAt',
-        //   ],
-        // });
-    
         return response || null;
-      } catch (error) {
+    } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
         return false;
-      }
+    }
 }
 
 

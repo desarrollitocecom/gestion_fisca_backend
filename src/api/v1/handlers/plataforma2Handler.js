@@ -142,15 +142,17 @@ const createRecursoAdministrativoHandler = async (req, res) => {
 
         const response = await updateResolucionSancionadoraController(id, { tipo_evaluar: 'RECURSO_RECONC', id_evaluar_rsa: recurso.id })
 
-        res.status(200).json({
-          message: response,
+        return res.status(200).json({
+          message: "Recurso Subido Correctamente",
+          data: response
         });
       }
       if (tipo_viene == 'RSG') {
         const response = await updateResolucionSubgerencialController(id, { tipo_evaluar: 'RECURSO_RECONC', id_evaluar_rsg: recurso.id })
 
-        res.status(200).json({
-          message: response,
+        return res.status(200).json({
+          message: "Recurso Subido Correctamente",
+          data: response
         });
       }
     }
@@ -161,50 +163,28 @@ const createRecursoAdministrativoHandler = async (req, res) => {
       if (tipo_viene == 'RSA') {
         const response = await updateResolucionSancionadoraController(id, { tipo_evaluar: 'RECURSO_APELAC', id_evaluar_rsa: recurso.id })
 
-        res.status(200).json({
-          message: response,
+        return res.status(200).json({
+          message: "Recurso Subido Correctamente",
+          data: response
         });
       }
       if (tipo_viene == 'RSG') {
         const response = await updateResolucionSubgerencialController(id, { tipo_evaluar: 'RECURSO_APELAC', id_evaluar_rsg: recurso.id })
 
-        res.status(200).json({
-          message: response,
+        return res.status(200).json({
+          message: "Recurso Subido Correctamente",
+          data: response
         });
       }
       if (tipo_viene == 'RSG2') {
         const response = await updateRSGController(id, { id_recurso_apelacion: recurso.id })
 
-        res.status(200).json({
-          message: response,
+        return res.status(200).json({
+          message: "Recurso Subido Correctamente",
+          data: response
         });
       }
     }
-
-
-    // res.status(200).json({
-    //   message: 'fino',
-    // });
-
-    // if (!asd) {
-    //   return res.status(400).json({
-    //     message: "Error al crear el Descargo RSGNP",
-    //     data: []
-    //   });
-    // }
-
-    // const response = await update(id, { id_descargo_RSG: newDescargo.id, id_estado_RSGNP: 3, tipo: 'GERENCIA' })
-
-    // await updateDocumento({ id_nc, total_documentos: newDescargo.documento_DRSG, nuevoModulo: "RECURSO DE APELACION" });
-
-    // if (response) {
-    //   await responseSocket({ id, method: getRSGforGerenciaController, socketSendName: 'sendGerencia', res });
-    //   io.emit("sendAnalista4", { id, remove: true });
-    // } else {
-    //   res.status(400).json({
-    //     message: 'Error al crear Descargo RSGNP',
-    //   });
-    // }
 
   } catch (error) {
     console.error("Error interno al crear el descargo RSGNP:", error);

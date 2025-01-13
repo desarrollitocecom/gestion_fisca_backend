@@ -27,13 +27,14 @@ const createResoSAController = async ({ nro_rsa, fecha_rsa, documento_RSA, id_nc
     }
 };
 
-const updateResolucionSubgerencialController = async (id, { tipo_evaluar, id_evaluar_rsg }) => {
+const updateResolucionSubgerencialController = async (id, { tipo_evaluar, id_evaluar_rsg, fecha_notificacion_rsg }) => {
     try {
 
         const resoSubgerencial = await getResolucionSubgerencialController(id);
 
         if (resoSubgerencial) {
             await resoSubgerencial.update({
+                fecha_notificacion_rsg,
                 tipo_evaluar,
                 id_evaluar_rsg
             });

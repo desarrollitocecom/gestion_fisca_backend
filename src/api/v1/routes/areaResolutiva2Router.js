@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const {uploadRSG1, uploadRSA, uploadResoSG}=require('../../../middlewares/uploadMiddleware')
+const {uploadRSA, uploadResoSG}=require('../../../middlewares/uploadMiddleware')
 const permisoAutorizacion = require("../../../checkers/roleAuth");
 
 const {createRSG2Handler, getAllRSG2forAR2Handler, getAllIFIforAR2Handler, createRSAHandler}=require('../handlers/areaResolutiva2Handler');

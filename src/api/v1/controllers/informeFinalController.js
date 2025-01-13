@@ -46,16 +46,23 @@ const updateInformeFinalController = async (id, {
   tipo,
   id_evaluar,
   id_descargo_ifi,
+  id_cargoNotificacion,
+  fecha_notificacion
 }) => {
+  console.log('este id: ', id);
+  
   try {
     const updateIfi = await getInformeFinalController(id);
-
+    console.log(updateIfi);
+    
     if (updateIfi) {
       await updateIfi.update({
         id_original,
         tipo,
         id_evaluar,
         id_descargo_ifi,
+        id_cargoNotificacion,
+        fecha_notificacion
       });
     }
     return updateIfi || null;

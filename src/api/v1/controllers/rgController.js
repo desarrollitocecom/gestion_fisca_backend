@@ -445,6 +445,46 @@ const getAllRGforGerenciaController = async () => {
 };
 
 
+
+const getAllRGForGerenciaController = async () => {
+    try {
+        const response = await RecursoApelacion.findAll({
+            where: Sequelize.where(Sequelize.col('RSGs.nro_rsg'), { [Sequelize.Op.ne]: null }),
+            attributes: [
+                'id',
+                [Sequelize.col('RSGs.nro_rg'), 'nro'],
+                [Sequelize.col('RSGs.documento_RG'), 'documento'],
+                [Sequelize.col('RSGs.tipo'), 'tipo'],
+                [Sequelize.col('RSGs.id_nc'), 'id_nc'],
+                [Sequelize.literal(`
+                    CASE 
+                      WHEN "RSGs"."id_recurso_apelacion" = null THEN true
+                      ELSE false
+                    END
+                  `), 'activo'],
+                [Sequelize.col('RSGs.createdAt'), 'createdAt'],
+            ],
+            include: [
+                {
+                    model: RG,
+                    as: 'RGs',
+                    attributes: []
+                }
+            ]
+        })
+
+        return response || null;
+    } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
+        return false;
+    }
+}
+
+
+
+
+
+
 module.exports = {
     createRGController,
     updateRGController,
@@ -452,5 +492,6 @@ module.exports = {
     getAllRGController,
     getAllRGforGerenciaController,
     getAllRGforAnalista5Controller,
-    getRGforAnalista5Controller
+    getRGforAnalista5Controller,
+    getAllRGForGerenciaController
 };

@@ -1,15 +1,15 @@
-const { RSG2} = require('../../../config/db_connection'); // Asegúrate de que la ruta al modelo sea correcta
-const {saveImage,deleteFile}=require('../../../utils/fileUtils')
-const { RSG1, NC, TramiteInspector, Usuario, DescargoNC, IFI, DescargoIFI, ResolucionSubgerencial } = require('../../../config/db_connection'); 
+const { RSG2 } = require('../../../config/db_connection'); // Asegúrate de que la ruta al modelo sea correcta
+const { saveImage, deleteFile } = require('../../../utils/fileUtils')
+const { RSG1, NC, TramiteInspector, Usuario, DescargoNC, IFI, DescargoIFI, ResolucionSubgerencial } = require('../../../config/db_connection');
 const { Sequelize } = require('sequelize');
 
 // Función para crear una nueva instancia de RSG2
-const createRSG2Controller = async ({nro_rsg, fecha_rsg, tipo, id_nc, id_AR2, estado, id_cargoNotificacion, documento_RSG}) => {
+const createRSG2Controller = async ({ nro_rsg, fecha_rsg, tipo, id_nc, id_AR2, estado, id_cargoNotificacion, documento_RSG }) => {
     let documento_path;
     try {
-        documento_path=saveImage(documento_RSG,'Resolucion(RSG2)')       
+        documento_path = saveImage(documento_RSG, 'Resolucion(RSG2)')
         const newRSG2 = await ResolucionSubgerencial.create({
-            nro_rsg, fecha_rsg, tipo, id_nc, id_AR2, estado, id_cargoNotificacion, documento_RSG: documento_path 
+            nro_rsg, fecha_rsg, tipo, id_nc, id_AR2, estado, id_cargoNotificacion, documento_RSG: documento_path
         });
 
         return newRSG2 || null;
@@ -23,23 +23,23 @@ const createRSG2Controller = async ({nro_rsg, fecha_rsg, tipo, id_nc, id_AR2, es
 };
 
 
-const getRSG2Controller=async (id) => {
+const getRSG2Controller = async (id) => {
     try {
-        const response=await RSG2.findByPk(id)
-        return response || null 
+        const response = await RSG2.findByPk(id)
+        return response || null
     } catch (error) {
         console.error('Error  crear RSG2:', error);
         return false;
     }
 }
 
-const updateRSG2Controller = async ({id, nro_resolucion2, fecha_resolucion, documento,id_nc,id_AR2}) => {
+const updateRSG2Controller = async ({ id, nro_resolucion2, fecha_resolucion, documento, id_nc, id_AR2 }) => {
     let documento_path;
     try {
         // documento_path=saveImage(documento,'Resolucion(RSG2)')  ;
 
         const rsg2 = await RSG2.findOne({ where: { id } });
-        documento_path=rsg2.documento
+        documento_path = rsg2.documento
         if (documento) {
             documento_path = saveImage(documento, 'Resolucion(RSG2)');
             if (rsg2.documento) {
@@ -50,7 +50,7 @@ const updateRSG2Controller = async ({id, nro_resolucion2, fecha_resolucion, docu
             await rsg2.update({
                 nro_resolucion2,
                 fecha_resolucion,
-                documento:documento_path,
+                documento: documento_path,
                 id_nc,
                 id_AR2
             });
@@ -68,8 +68,8 @@ const updateRSG2Controller = async ({id, nro_resolucion2, fecha_resolucion, docu
 
 const getAllRSG2forAR2Controller = async () => {
     try {
-        const response = await NC.findAll({ 
-            where: Sequelize.where(Sequelize.col('IFI.tipo'), 'TERMINADO_RSG2'),
+        const response = await NC.findAll({
+            where: Sequelize.where(Sequelize.col('IFI.RSG2.estado'), 'ARCHIVO'),
             order: [['id', 'ASC']],
             attributes: [
                 'id',
@@ -100,40 +100,40 @@ const getAllRSG2forAR2Controller = async () => {
 
                 [Sequelize.col('IFI.RSG2.Usuarios.usuario'), 'usuarioAreaInstructiva2'],
                 [Sequelize.literal(`'RESOLUCION SUBGERENCIAL 2'`), 'nombre_AR2'],
-                [Sequelize.col('IFI.RSG2.documento'), 'documento_AR2'],
+                [Sequelize.col('IFI.RSG2.documento_RSG'), 'documento_AR2'],
                 [Sequelize.col('IFI.RSG2.createdAt'), 'AR2_createdAt'],
             ],
             include: [
                 {
-                    model: TramiteInspector, 
-                    as: 'tramiteInspector', 
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
                     include: [
                         {
                             model: Usuario,
                             as: 'inspectorUsuario'
                         }
                     ],
-                    attributes: [], 
+                    attributes: [],
                 },
                 {
-                  model: Usuario, 
-                  as: 'digitadorUsuario',
-                  attributes: []
+                    model: Usuario,
+                    as: 'digitadorUsuario',
+                    attributes: []
                 },
                 {
-                    model: DescargoNC, 
-                    as: 'descargoNC', 
+                    model: DescargoNC,
+                    as: 'descargoNC',
                     include: [
                         {
                             model: Usuario,
                             as: 'analistaUsuario'
                         }
                     ],
-                    attributes: [], 
+                    attributes: [],
                 },
                 {
-                    model: IFI, 
-                    as: 'IFI', 
+                    model: IFI,
+                    as: 'IFI',
                     include: [
                         {
                             model: Usuario,
@@ -150,7 +150,7 @@ const getAllRSG2forAR2Controller = async () => {
                             ]
                         },
                         {
-                            model: RSG2,
+                            model: ResolucionSubgerencial,
                             as: 'RSG2',
                             include: [
                                 {
@@ -160,7 +160,7 @@ const getAllRSG2forAR2Controller = async () => {
                             ]
                         },
                     ],
-                    attributes: [], 
+                    attributes: [],
                 },
             ]
         });
@@ -230,29 +230,33 @@ const getAllRSG2forAR2Controller = async () => {
 
 const getAllRSG2forPlataformaController = async () => {
     try {
-        console.log('asdsadas');
+        //console.log('asd');
         
-      const response = await ResolucionSubgerencial.findAll({
-        where: {
-            //estado: 'PLATAFORMA_SANCION',
-            fecha_notificacion_rsg: { [Sequelize.Op.ne]: null },
-            id_evaluar_rsg: null
-          }
-      });
+        const response = await ResolucionSubgerencial.findAll({
+            where: {
+                //estado: 'PLATAFORMA_SANCION',
+                fecha_notificacion_rsg: { [Sequelize.Op.ne]: null },
+                id_evaluar_rsg: null,
+                estado: { [Sequelize.Op.ne]: 'ARCHIVO' }
+            }
+        });
+        //console.log(response);
+        const formattedResponse = response.map(item => ({
+            id: item.id,
+            numero: item.nro_rsg,
+            createdAt: item.createdAt,
+            id_nc: item.id_nc,
+            tipo_viene: 'RSG'
+        }));
 
-      const formattedResponse = response.map(item => ({
-        id: item.id,
-        numero: item.nro_rsg, 
-        createdAt: item.createdAt, 
-        id_nc: item.id_nc,
-        tipo_viene: 'RSG'
-      }));
+        
+        
 
-      return formattedResponse || null;
+        return formattedResponse || null;
     } catch (error) {
-      return false
+        return false
     }
-  }
+}
 
 
 

@@ -1,5 +1,5 @@
 const { getRSGController, getAllRSGforGerenciaController, updateRSGNPController } = require("../controllers/rsgController")
-const { createRGController, getAllRGforGerenciaController, getRGforAnalista5Controller } = require("../controllers/rgController")
+const { createRGController, getAllRGforGerenciaController, getRGforAnalista5Controller, getAllRGForGerenciaController } = require("../controllers/rgController")
 const { updateDocumento } = require("../controllers/documentoController");
 const { responseSocket } = require('../../../utils/socketUtils');
 const { gerenciaValidation } = require("../validations/gerenciaValidation")
@@ -188,11 +188,33 @@ const getAllRGforGerenciaHandler = async (req, res) => {
     }
 };
 
+const getAllRGForGerenciaHandler = async (req, res) => {
+    try {
+      const response = await getAllRGForGerenciaController();
+  
+      if (response.length === 0) {
+        return res.status(200).json({
+          message: 'No hay más IFIs para el Area Resolutiva 2',
+          data: []
+        });
+      }
+  
+      return res.status(200).json({
+        message: "IFIs obtenidos correctamente para el Area Resolutiva 2",
+        data: response,
+      });
+    } catch (error) {
+      console.error("Error al obtener IFIs para AR2 en el servidor:", error);
+      res.status(500).json({ error: "Error interno del servidor al obtener los IFIs para el AR2." });
+    }
+  }
+
 
 module.exports = {
     getAllRSGforGerenciaHandler,
     createRGHandler,
     getAllRGforGerenciaHandler,
     getAllRecursosApelacionesHandler,
-    createRGRectificacionHandler
+    createRGRectificacionHandler,
+    getAllRGForGerenciaHandler
 };

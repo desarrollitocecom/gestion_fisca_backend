@@ -43,7 +43,7 @@ module.exports = (sequelize) => {
         },
 
         estado_entrega: {
-            type: DataTypes.ENUM('PERSONA', 'PUERTA'),
+            type: DataTypes.ENUM('NO_ESTA','PERSONA', 'PUERTA'),
             allowNull: true
         },
         
