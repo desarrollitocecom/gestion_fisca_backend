@@ -207,6 +207,8 @@ const getNCforInstructiva = async (id) => {
 };
 
 const getAllNCforInstructiva = async () => {
+    console.log('asddasdasd');
+    
     try {
         const response = await NC.findAll({ 
             where: { estado: 'A_I' }, 

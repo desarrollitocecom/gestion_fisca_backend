@@ -35,13 +35,13 @@ const getAllRecursoReconsideracionesController = async () => {
             where: { id_rsg: null },
             attributes: {
                 include: [
-                    [Sequelize.col('Usuarios.usuario'), 'analista_3']
+                    [Sequelize.col('RecursoReconUsuario.usuario'), 'analista_3']
                 ]
             },
             include: [
                 {
                     model: Usuario,
-                    as: 'Usuarios',
+                    as: 'RecursoReconUsuario',
                     attributes: [],
                 }
             ],

@@ -2,7 +2,6 @@ const { Router } = require('express');
 const router = Router();
 
 const { uploadRG, uploadCargo1, uploadCargo2 } = require('../../../middlewares/uploadMiddleware');
-const { getAllRSGforGerenciaHandler, createRGHandler, getAllRGforGerenciaHandler } = require('../handlers/gerenciaHandler');
 const { getAllCargoNotificacionForIFIHandler, getAllHistoryCargoNotificacionForIFIHandler,
     getAllCargoNotificacionForRSGHandler, getAllHistoryCargoNotificacionForRSGHandler,
     getAllCargoNotificacionForRSAHandler, getAllHistoryCargoNotificacionForRSAHandler, getAllCargoNotificacionForRSG2Handler,

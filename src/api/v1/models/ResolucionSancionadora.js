@@ -71,11 +71,11 @@ module.exports = (sequelize) => {
     ResolucionSancionadora.associate = (db) => {
         ResolucionSancionadora.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
         
-        ResolucionSancionadora.belongsTo(db.RSG, { foreignKey: 'id_evaluar_rsa', as: 'RSGs', constraints: false });
-        ResolucionSancionadora.belongsTo(db.RG, { foreignKey: 'id_evaluar_rsa', as: 'RGs', constraints: false });
-        ResolucionSancionadora.belongsTo(db.ConstanciaInexigibilidad, { foreignKey: 'id_evaluar_rsa', as: 'ConstInexigibilidad', constraints: false });
+        ResolucionSancionadora.belongsTo(db.RecursoReconsideracion, { foreignKey: 'id_evaluar_rsa', as: 'Reconsideracion', constraints: false });
+        ResolucionSancionadora.belongsTo(db.RecursoApelacion, { foreignKey: 'id_evaluar_rsa', as: 'Apelacion', constraints: false });
+        ResolucionSancionadora.belongsTo(db.ConstanciaInexigibilidad, { foreignKey: 'id_evaluar_rsa', as: 'inexResoSanc', constraints: false });
 
-        ResolucionSancionadora.belongsTo(db.Usuario, { foreignKey: 'id_AR2', as: 'Usuarios' });   
+        ResolucionSancionadora.belongsTo(db.Usuario, { foreignKey: 'id_AR2', as: 'resoSancUsuario' });   
         ResolucionSancionadora.belongsTo(db.CargoNotificacion,{foreignKey:'id_cargoNotificacion' , as:'cargoNotifi' });
 
     };

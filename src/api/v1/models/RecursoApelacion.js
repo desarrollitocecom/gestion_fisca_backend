@@ -61,7 +61,7 @@ module.exports = (sequelize) => {
     });
     RecursoApelacion.associate = (db) => {
         RecursoApelacion.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
-        RecursoApelacion.belongsTo(db.Usuario, { foreignKey: 'id_plataforma2', as: 'Usuarios' });   
+        RecursoApelacion.belongsTo(db.Usuario, { foreignKey: 'id_plataforma2', as: 'RecApelacionUsuario' });   
 
         RecursoApelacion.belongsTo(db.RG, { foreignKey: 'id_gerencia', as: 'RGs' });
         RecursoApelacion.belongsTo(db.RG, { foreignKey: 'id_original', as: 'RG_Original', constraints: false });

@@ -27,14 +27,14 @@ module.exports = (sequelize) => {
             allowNull: true,
         },
         
-        id_estado:{
-            type: DataTypes.INTEGER,
-            references: {
-                model: 'EstadoDescargoRSAs',
-                key: 'id',
-            },
-            allowNull: true
-        },
+        // id_estado:{
+        //     type: DataTypes.INTEGER,
+        //     references: {
+        //         model: 'EstadoDescargoRSAs',
+        //         key: 'id',
+        //     },
+        //     allowNull: true
+        // },
 
         id_analista_3:{
              type: DataTypes.UUID,

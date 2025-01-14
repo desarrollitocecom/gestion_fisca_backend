@@ -328,7 +328,7 @@ const getAllIFIforPlataformaController = async () => {
         [Sequelize.col('NCs.id'), 'id_nc'],
         [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
         [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-        [Sequelize.col('Usuarios.usuario'), 'area_instructiva1'],
+        [Sequelize.col('ifiUsuario.usuario'), 'area_instructiva1'],
         'tipo',
         'createdAt'
       ],
@@ -347,7 +347,7 @@ const getAllIFIforPlataformaController = async () => {
         },
         {
           model: Usuario,
-          as: 'Usuarios',
+          as: 'ifiUsuario',
           attributes: []
         },
       ],
@@ -370,6 +370,7 @@ const getAllIFIforPlataformaController = async () => {
   }
 };
 const getAllIFIforAR2Controller = async () => {
+
   try {
     const response = await IFI.findAll({
       where: { tipo: 'AR2' },
@@ -379,7 +380,7 @@ const getAllIFIforAR2Controller = async () => {
         [Sequelize.col('NCs.id'), 'id_nc'],
         [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
         [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-        [Sequelize.col('Usuarios.usuario'), 'Analista2'],
+        [Sequelize.col('ifiUsuario.usuario'), 'Analista2'],
         'tipo',
         'createdAt'
       ],
@@ -398,7 +399,7 @@ const getAllIFIforAR2Controller = async () => {
         },
         {
           model: Usuario,
-          as: 'Usuarios',
+          as: 'ifiUsuario',
           attributes: []
         },
       ],

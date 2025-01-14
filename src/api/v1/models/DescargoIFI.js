@@ -28,14 +28,14 @@ module.exports = (sequelize) => {
             
         },
 
-        id_estado:{
-            type: DataTypes.INTEGER,
-            references: {
-                model: 'EstadoDescargoIFIs',
-                key: 'id',
-            },
-            allowNull: true
-        },
+        // id_estado:{
+        //     type: DataTypes.INTEGER,
+        //     references: {
+        //         model: 'EstadoDescargoIFIs',
+        //         key: 'id',
+        //     },
+        //     allowNull: true
+        // },
 
 
         id_analista_2:{

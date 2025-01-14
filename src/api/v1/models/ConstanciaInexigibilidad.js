@@ -45,7 +45,7 @@ module.exports = (sequelize) => {
     ConstanciaInexigibilidad.associate = (db) => {
         // Relación con DescargoActa
         ConstanciaInexigibilidad.belongsTo(db.NC,{foreignKey:'id_nc',as:'NCs'});
-        ConstanciaInexigibilidad.belongsTo(db.Usuario, { foreignKey: 'id_analista_5', as: 'analista5Usuario' })  
+        ConstanciaInexigibilidad.belongsTo(db.Usuario, { foreignKey: 'id_analista_5', as: 'ConstInexiUsuario' })  
     };
 
 

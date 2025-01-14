@@ -26,8 +26,12 @@ module.exports = (sequelize) => {
             type: DataTypes.ENUM('RSGP', 'RSGNP', 'GERENCIA', 'TERMINADO', 'ANALISTA_5'),
             allowNull: true
         },
-        id_evaluar_rsg: {
+        id_constancia_inexigibilidad: {
             type: DataTypes.UUID,
+            eferences: {
+                model: 'ConstanciasInexigibilidades',
+                key: 'id',
+            },
             allowNull: true,
         },
         id_recurso_apelacion: {
@@ -70,12 +74,15 @@ module.exports = (sequelize) => {
     });
 
     RSG.associate = (db) => {
-        RSG.belongsTo(db.ConstanciaInexigibilidad, { foreignKey: 'id_evaluar_rsg', as: 'ConstInexigibilidad', constraints: false });
 
-        RSG.belongsTo(db.RecursoApelacion, { foreignKey: 'id_recurso_apelacion', as: 'RecApelaciones' });
         RSG.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
-        RSG.belongsTo(db.Usuario, { foreignKey: 'id_AR3', as: 'Usuarios' });
+        RSG.belongsTo(db.RecursoApelacion, { foreignKey: 'id_recurso_apelacion', as: 'RecApelaciones' });
 
+        RSG.belongsTo(db.ConstanciaInexigibilidad, { foreignKey: 'id_constancia_inexigibilidad', as: 'InexiRSG' });
+
+        
+        
+        RSG.belongsTo(db.Usuario, { foreignKey: 'id_AR3', as: 'rsgUsuario' });
         RSG.belongsTo(db.CargoNotificacion,{foreignKey:'id_cargoNotificacion' , as:'cargoNotifi' });
 
     };

@@ -1,5 +1,5 @@
 const { getAllRSAforAR3Controller, getRsaController, updateRsaController } = require("../controllers/rsaController");
-const { createRSGController, getAllRSG3forAR3Controller, getRSGforAnalista4Controller, getAllRSGforSubgerenciaController } = require("../controllers/rsgController")
+const { createRSGController, getAllRSG3forAR3Controller1, getAllRSG3forAR3Controller2, getRSGforAnalista4Controller, getAllRSGforSubgerenciaController } = require("../controllers/rsgController")
 const { updateDocumento } = require("../controllers/documentoController");
 const { createCargoNotificacionController } = require("../controllers/cargoNotificacionController")
 const { areaResolutiva3Validation } = require("../validations/areaResolutiva3Validation")
@@ -170,24 +170,37 @@ const createRSGRectificacionHandler = async (req, res) => {
 
 const getAllRSG3forAR3Handler = async (req, res) => {
   try {
-    const response = await getAllRSG3forAR3Controller();
+    // Ejecutar ambos controladores en paralelo
+    const [rsaResponse, rsgResponse] = await Promise.all([
+      getAllRSG3forAR3Controller1(),
+      getAllRSG3forAR3Controller2(),
+    ]);
 
-    if (response.length === 0) {
+    // Combinar las respuestas en un solo arreglo
+    const combinedResponse = [
+      ...rsaResponse,
+      ...rsgResponse
+    ];
+
+    if (combinedResponse.length === 0) {
       return res.status(200).json({
-        message: 'No hay más RSG3',
+        message: 'No hay datos para Plataforma',
         data: []
       });
     }
 
     return res.status(200).json({
-      message: "Error al obtener los RSG3",
-      data: response,
+      message: 'Datos para Plataforma obtenidos correctamente',
+      data: combinedResponse,
     });
   } catch (error) {
-    console.error("Error en el servidor al obtener los RSG3:", error);
-    res.status(500).json({ error: "Error interno del servidor al obtener los RSG3." });
+    console.error('Error del servidor al traer los datos para Plataforma:', error);
+    return res.status(500).json({
+      error: 'Error del servidor al traer los datos para Plataforma',
+    });
   }
 };
+
 
 const getAllIRSGForSubgerenciaHandler = async (req, res) => {
   try {

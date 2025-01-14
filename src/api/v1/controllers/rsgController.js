@@ -1,7 +1,7 @@
 const { RSG, Usuario, NC, TramiteInspector } = require("../../../config/db_connection");
 const { saveImage, deleteFile } = require('../../../utils/fileUtils')
 const { Sequelize } = require('sequelize');
-const { RSG1, DescargoNC, IFI, DescargoIFI, RSG2, RSA, DescargoRSA, RecursoApelacion, RecursoReconsideracion } = require('../../../config/db_connection');
+const { RSG1, DescargoNC, IFI, DescargoIFI, RSG2, RSA, ResolucionSancionadora, DescargoRSA,ConstanciaInexigibilidad, RecursoApelacion, RecursoReconsideracion, ResolucionSubgerencial } = require('../../../config/db_connection');
 const myCache = require("../../../middlewares/cacheNodeStocked");
 
 const createRSGController = async ({ nro_rsg, fecha_rsg, documento_RSG, id_nc, id_AR3, tipo, id_cargoNotificacion }) => {
@@ -441,203 +441,370 @@ const getRSGforAnalista5Controller = async (id) => {
 
 
 
-const getAllRSG3forAR3Controller = async () => {
+const getAllRSG3forAR3Controller1 = async () => {
     try {
         const response = await NC.findAll({
-            where: Sequelize.where(Sequelize.col('IFI.RSA.tipo'), 'ARCHIVO_AR3'),
-            order: [['id', 'ASC']],
-            attributes: [
-                'id',
-                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
-                [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'usuarioInspector'],
-                [Sequelize.literal(`'NOTIFICACION DE CARGO'`), 'nombre_nc'],
-                [Sequelize.col('tramiteInspector.documento_nc'), 'documento_nc'],
-                [Sequelize.literal(`'ACTA DE FISCALIZACION'`), 'nombre_acta'],
-                [Sequelize.col('tramiteInspector.documento_acta'), 'documento_acta'],
-                [Sequelize.col('tramiteInspector.createdAt'), 'inspector_createdAt'],
-
-                [Sequelize.col('digitadorUsuario.usuario'), 'usuarioDigitador'],
-
-                [Sequelize.col('descargoNC.analistaUsuario.usuario'), 'usuarioAnalista1'],
-                [Sequelize.literal(`'DESCARGO NC'`), 'nombre_descargoNC'],
-                [Sequelize.col('descargoNC.documento'), 'documento_descargoNC'],
-                [Sequelize.col('descargoNC.createdAt'), 'analista_createdAt'],
-
-                [Sequelize.col('IFI.Usuarios.usuario'), 'usuarioAreaInstructiva1'],
-                [Sequelize.literal(`'INFORME FINAL'`), 'nombre_AI'],
-                [Sequelize.col('IFI.documento_ifi'), 'documento_AI'],
-                [Sequelize.col('IFI.createdAt'), 'AI_createdAt'],
-
-                [Sequelize.col('IFI.DescargoIFIs.analista2Usuario.usuario'), 'usuarioAnalista2'],
-                [Sequelize.literal(`'DESCARGO IFI'`), 'nombre_DIFI'],
-                [Sequelize.col('IFI.DescargoIFIs.documento_DIFI'), 'documento_DIFI'],
-                [Sequelize.col('IFI.DescargoIFIs.createdAt'), 'analista2_createdAt'],
-
-                [Sequelize.col('IFI.RSA.Usuarios.usuario'), 'usuarioAreaInstructiva2'],
-                [Sequelize.literal(`'RESOLUCION SANCIONADORA ADMINISTRATIVA'`), 'nombre_RSA'],
-                [Sequelize.col('IFI.RSA.documento_RSA'), 'documento_RSA'],
-                [Sequelize.col('IFI.RSA.createdAt'), 'RSA_createdAt'],
-
-                [Sequelize.col('IFI.RSA.DescargoRSAs.Usuarios.usuario'), 'usuarioAnalista3'],
-                [Sequelize.literal(`'DESCARGO RSA'`), 'nombre_DRSA'],
-                [Sequelize.col('IFI.RSA.DescargoRSAs.documento_DRSA'), 'documento_DRSA'],
-                [Sequelize.col('IFI.RSA.DescargoRSAs.createdAt'), 'DRSA_createdAt'],
-
-                [Sequelize.col('IFI.RSA.RSGs.Usuarios.usuario'), 'usuarioAreaInstructiva3'],
-                [Sequelize.literal(`'RESOLUCION SUBGERENCIAL GENERAL 3'`), 'nombre_RSG3'],
-                [Sequelize.col('IFI.RSA.RSGs.documento_RSG'), 'documento_RSG'],
-                [Sequelize.col('IFI.RSA.RSGs.createdAt'), 'RSG3_createdAt'],
-
-            ],
-            include: [
-                {
-                    model: TramiteInspector,
-                    as: 'tramiteInspector',
-                    include: [
-                        {
-                            model: Usuario,
-                            as: 'inspectorUsuario'
-                        }
+                    where: Sequelize.where(Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.tipo'), 'RSGP'),
+                    order: [['id', 'ASC']],
+                    attributes: [
+                        'id',
+                        //TRAMITE INSPECTOR
+                        [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                        [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'usuarioInspector'],
+                        [Sequelize.literal(`'NOTIFICACION DE CARGO'`), 'nombre_nc'],
+                        [Sequelize.col('tramiteInspector.documento_nc'), 'documento_nc'],
+                        [Sequelize.literal(`'ACTA DE FISCALIZACION'`), 'nombre_acta'],
+                        [Sequelize.col('tramiteInspector.documento_acta'), 'documento_acta'],
+                        [Sequelize.col('tramiteInspector.createdAt'), 'inspector_createdAt'],
+        
+                        //                 //DIGITADOR
+                        [Sequelize.col('digitadorUsuario.usuario'), 'usuarioDigitador'],
+        
+                        //                 //DESCARGO NC
+                        [Sequelize.col('descargoNC.analistaUsuario.usuario'), 'usuarioAnalista1'],
+                        [Sequelize.literal(`'DESCARGO NC'`), 'nombre_descargoNC'],
+                        [Sequelize.col('descargoNC.documento'), 'documento_descargoNC'],
+                        [Sequelize.col('descargoNC.createdAt'), 'analista_createdAt'],
+        
+                        [Sequelize.col('IFI.ifiUsuario.usuario'), 'usuarioAreaInstructiva1'],
+                        [Sequelize.literal(`'INFORME FINAL'`), 'nombre_AI'],
+                        [Sequelize.col('IFI.documento_ifi'), 'documento_AI'],
+                        [Sequelize.col('IFI.createdAt'), 'AI_createdAt'],
+        
+                        //Descargo IFI
+                        [Sequelize.col('IFI.DescargoIFIs.analista2Usuario.usuario'), 'usuarioAnalista2'],
+                        [Sequelize.literal(`'DESCARGO IFI'`), 'nombre_DIFI'],
+                        [Sequelize.col('IFI.DescargoIFIs.documento_DIFI'), 'documento_DIFI'],
+                        [Sequelize.col('IFI.DescargoIFIs.createdAt'), 'analista2_createdAt'],
+               
+        
+                        //RESOLUCION SUBGERENCIAL///////////////////////
+                        [Sequelize.col('IFI.RSG2.ResoSubUsuario.usuario'), 'usuarioResoSub'],
+                        [Sequelize.literal(`'RESOLUCION SUBGERENCIAL'`), 'nombre_ResoSub'],
+                        [Sequelize.col('IFI.RSG2.documento_RSG'), 'documento_ResoSub'],
+                        [Sequelize.col('IFI.RSG2.createdAt'), 'ResoSub_createdAt'],
+        
+                            //RECONSIDERACION SUBGERENCIAL/////////////////
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.RecursoReconUsuario.usuario'), 'usuarioReconsiSubg_Reconcideracion'],
+                        [Sequelize.literal(`'RECURSO DE RECONSIDERACION'`), 'nombre_ReconsiSubg_Reconcideracion'],
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.documento'), 'documento_ReconsiSubg_Reconcideracion'],
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.createdAt'), 'ReconsiSubg_createdAt_Reconcideracion'],
+        
+                                //SUBGERENCIA////////////////////
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.rsgUsuario.usuario'), 'usuarioRSG_Reconcideracion'],
+                        [Sequelize.literal(`'SUBGERENCIA'`), 'nombre_RSG_Reconcideracion'],
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.documento_RSG'), 'documento_RSG_Reconcideracion'],
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.createdAt'), 'RSG_createdAt_Reconcideracion'],
+             
+        
+                        //RESOLUCION SANCIONADORA
+                        [Sequelize.col('IFI.RSG2.ResoSubUsuario.usuario'), 'usuarioResoSanc'],
+                        [Sequelize.literal(`'RESOLUCION SUBGERENCIAL'`), 'nombre_ResoSanc'],
+                        [Sequelize.col('IFI.RSG2.documento_RSG'), 'documento_ResoSanc'],
+                        [Sequelize.col('IFI.RSG2.createdAt'), 'ResoSanc_createdAt'],
+                            //RECONSIDERACION SUBGERENCIAL
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.RecursoReconUsuario.usuario'), 'usuarioReconsiSubg_Reconcideracion_Sanc'],
+                        [Sequelize.literal(`'RECURSO DE RECONSIDERACION'`), 'nombre_ReconsiSubg_Reconcideracion_Sanc'],
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.documento'), 'documento_ReconsiSubg_Reconcideracion_Sanc'],
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.createdAt'), 'ReconsiSubg_createdAt_Reconcideracion_Sanc'],
+        
+                                //SUBGERENCIA
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.rsgUsuario.usuario'), 'usuarioRSG_Reconcideracion_Sanc'],
+                        [Sequelize.literal(`'SUBGERENCIA'`), 'nombre_RSG_Reconcideracion_Sanc'],
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.documento_RSG'), 'documento_RSG_Reconcideracion_Sanc'],
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.createdAt'), 'RSG_createdAt_Reconcideracion_Sanc'],
+        
+        
+        
                     ],
-                    attributes: [],
-                },
-                {
-                    model: Usuario,
-                    as: 'digitadorUsuario',
-                    attributes: []
-                },
-                {
-                    model: DescargoNC,
-                    as: 'descargoNC',
                     include: [
                         {
-                            model: Usuario,
-                            as: 'analistaUsuario'
-                        }
-                    ],
-                    attributes: [],
-                },
-                {
-                    model: IFI,
-                    as: 'IFI',
-                    include: [
-                        {
-                            model: Usuario,
-                            as: 'Usuarios',
-                        },
-                        {
-                            model: DescargoIFI,
-                            as: 'DescargoIFIs',
+                            model: TramiteInspector,
+                            as: 'tramiteInspector',
                             include: [
                                 {
                                     model: Usuario,
-                                    as: 'analista2Usuario',
-                                },
-                            ]
-                        },
-                        {
-                            model: RSA,
-                            as: 'RSA',
-                            include: [
-                                {
-                                    model: Usuario,
-                                    as: 'Usuarios',
-                                },
-                                {
-                                    model: DescargoRSA,
-                                    as: 'DescargoRSAs',
-                                    include: [
-                                        {
-                                            model: Usuario,
-                                            as: 'Usuarios',
-                                        }
-                                    ]
-                                },
-                                {
-                                    model: RSG,
-                                    as: 'RSGs',
-                                    include: [
-                                        {
-                                            model: Usuario,
-                                            as: 'Usuarios',
-                                        }
-                                    ]
+                                    as: 'inspectorUsuario'
                                 }
                             ],
+                            attributes: [],
                         },
-                    ],
-                    attributes: [],
-                },
-            ]
-        });
-
-        const transformedData = response.map(row => ({
-            nro_nc: row.get('nro_nc'),
-            etapaInspector: {
-                usuarioInspector: row.get('usuarioInspector'),
-                documento_nc: {
-                    nombre: row.get('nombre_nc'),
-                    path: row.get('documento_nc'),
-                },
-                documento_acta: {
-                    nombre: row.get('nombre_acta'),
-                    path: row.get('documento_acta'),
-                },
-                inspector_createdAt: row.get('inspector_createdAt'),
-            },
-            etapaDigitador: {
-                usuarioDigitador: row.get('usuarioDigitador'),
-                digitador_createdAt: row.get('inspector_createdAt'),
-            },
-            estapaDescargoNC: {
-                usuarioAnalista1: row.get('usuarioAnalista1'),
-                documento_descargoNC: {
-                    nombre: row.get('nombre_descargoNC'),
-                    path: row.get('documento_descargoNC')
-                },
-                analista_createdAt: row.get('analista_createdAt'),
-            },
-            etapaAreaInstructiva: {
-                usuarioAreaInstructiva1: row.get('usuarioAreaInstructiva1'),
-                documento_AI: {
-                    nombre: row.get('nombre_AI'),
-                    path: row.get('documento_AI'),
-                },
-                AI_createdAt: row.get('AI_createdAt'),
-            },
-            etapaDescargoIFI: {
-                usuarioAnalista2: row.get('usuarioAnalista2'),
-                documento_descargoIFI: {
-                    nombre: row.get('nombre_DIFI'),
-                    path: row.get('documento_DIFI'),
-                },
-                analista2_createdAt: row.get('analista2_createdAt'),
-            },
-            etapaRSA: {
-                usuarioAreaInstructiva2: row.get('usuarioAreaInstructiva2'),
-                documento_RSA: {
-                    nombre: row.get('nombre_RSA'),
-                    path: row.get('documento_RSA'),
-                },
-                AR2_createdAt: row.get('RSA_createdAt'),
-            },
-            etapaDescargoRSA: {
-                usuarioAnalista3: row.get('usuarioAnalista3'),
-                documento_RSA: {
-                    nombre: row.get('nombre_DRSA'),
-                    path: row.get('documento_DRSA'),
-                },
-                analista3_createdAt: row.get('DRSA_createdAt'),
-            },
-            etapaRSG: {
-                usuarioAreaInstructiva3: row.get('usuarioAreaInstructiva3'),
-                documento_RSA: {
-                    nombre: row.get('nombre_RSG3'),
-                    path: row.get('documento_RSG'),
-                },
-                AR3_createdAt: row.get('RSG3_createdAt'),
-            }
-        }));
+                        {
+                            model: Usuario,
+                            as: 'digitadorUsuario',
+                            attributes: []
+                        },
+                        {
+                            model: DescargoNC,
+                            as: 'descargoNC',
+                            include: [
+                                {
+                                    model: Usuario,
+                                    as: 'analistaUsuario'
+                                }
+                            ],
+                            attributes: [],
+                        },
+                        {
+                            model: IFI,
+                            as: 'IFI',
+                            include: [
+                                {
+                                    model: Usuario,
+                                    as: 'ifiUsuario',
+                                    attributes: []
+                                },
+                                {
+                                    model: DescargoIFI,
+                                    as: 'DescargoIFIs',
+                                    include: [
+                                        {
+                                            model: Usuario,
+                                            as: 'analista2Usuario',
+                                            attributes: []
+                                        },
+                                    ],
+                                    attributes: []
+                                },
+                                {
+                                    model: ResolucionSubgerencial,
+                                    as: 'RSG2',
+                                    include: [
+                                        {
+                                            model: RecursoReconsideracion,
+                                            as: 'Reconsideracion',
+                                            include: [
+                                                {
+                                                    model: RSG,
+                                                    as: 'RSGs',
+                                                    include: [
+                                                        
+                                                        {
+                                                            model: Usuario,
+                                                            as: 'rsgUsuario',
+                                                            attributes: []
+                                                        },
+                                                    ],
+                                                    attributes: []
+                                                },
+                                                {
+                                                    model: Usuario,
+                                                    as: 'RecursoReconUsuario',
+                                                    attributes: []
+                                                }
+                                            ],
+                                            attributes: []
+                                        },
+                                        {
+                                            model: ConstanciaInexigibilidad,
+                                            as: 'inexiResoSub',
+                                            attributes: []
+                                        },
+                                        {
+                                            model: Usuario,
+                                            as: 'ResoSubUsuario',
+                                            attributes: []
+                                        }
+                                    ],
+                                    attributes: []
+                                },
+                                {
+                                    model: ResolucionSancionadora,
+                                    as: 'RSA',
+                                    include: [
+                                        {
+                                            model: RecursoReconsideracion,
+                                            as: 'Reconsideracion',
+                                            // include: [
+                                            //     {
+                                            //         model: RSG,
+                                            //         as: 'RSGs',
+                                            //         include: [
+                                            //             {
+                                            //                 model: RecursoApelacion,
+                                            //                 as: 'RecApelaciones',
+                                            //                 include: [
+                                            //                     {
+                                            //                         model: RG,
+                                            //                         as: 'RGs',
+                                            //                         include: [
+                                            //                             {
+                                            //                                 model: ConstanciaInexigibilidad,
+                                            //                                 as: 'inexiRG',
+                                            //                                 include: [
+                                            //                                     {
+                                            //                                         model: Usuario,
+                                            //                                         as: 'ConstInexiUsuario',
+                                            //                                         attributes: []
+                                            //                                     }
+                                            //                                 ],
+                                            //                                 attributes: []
+                                            //                             },
+                                            //                             {
+                                            //                                 model: Usuario,
+                                            //                                 as: 'rgUsuario',
+                                            //                                 attributes: []
+                                            //                             }
+                                            //                         ],
+                                            //                         attributes: []
+                                            //                     },
+                                            //                     {
+                                            //                         model: Usuario,
+                                            //                         as: 'RecApelacionUsuario',
+                                            //                         attributes: []
+                                            //                     }
+                                            //                 ],
+                                            //                 attributes: []
+                                            //             },
+                                            //             {
+                                            //                 model: ConstanciaInexigibilidad,
+                                            //                 as: 'InexiRSG',
+                                            //                 attributes: []
+                                            //             },
+                                            //             {
+                                            //                 model: Usuario,
+                                            //                 as: 'rsgUsuario',
+                                            //                 attributes: []
+                                            //             },
+                                            //         ],
+                                            //         attributes: []
+                                            //     },
+                                            //     {
+                                            //         model: Usuario,
+                                            //         as: 'RecursoReconUsuario',
+                                            //         attributes: []
+                                            //     }
+                                            // ],
+                                            attributes: []
+                                        },
+                                        // {
+                                        //     model: RecursoApelacion,
+                                        //     as: 'Apelacion',
+                                        //     include: [
+                                        //         {
+                                        //             model: RG,
+                                        //             as: 'RGs',
+                                        //             include: [
+                                        //                 {
+                                        //                     model: ConstanciaInexigibilidad,
+                                        //                     as: 'inexiRG',
+                                        //                     include: [
+                                        //                         {
+                                        //                             model: Usuario,
+                                        //                             as: 'ConstInexiUsuario',
+                                        //                             attributes: []
+                                        //                         }
+                                        //                     ],
+                                        //                     attributes: []
+                                        //                 },
+                                        //                 {
+                                        //                     model: Usuario,
+                                        //                     as: 'rgUsuario',
+                                        //                     attributes: []
+                                        //                 }
+                                        //             ],
+                                        //             attributes: []
+                                        //         },
+                                        //         {
+                                        //             model: Usuario,
+                                        //             as: 'RecApelacionUsuario',
+                                        //             attributes: []
+                                        //         }
+                                        //     ],
+                                        //     attributes: []
+                                        // },
+                                        {
+                                            model: ConstanciaInexigibilidad,
+                                            as: 'inexResoSanc',
+                                            attributes: []
+                                        },
+                                        {
+                                            model: Usuario,
+                                            as: 'resoSancUsuario',
+                                            attributes: []
+                                        }
+                                    ],
+                                    attributes: []
+                                },
+                            ],
+                            attributes: [],
+                        },
+                    ]
+                });
+        
+                const transformedData = response.map(row => ({
+                    id: row.get('id'),
+                    nro_nc: row.get('nro_nc'),
+                    etapaInspector: row.get('usuarioInspector') ? {
+                        usuarioInspector: row.get('usuarioInspector'),
+                        documento_nc: {
+                            nombre: row.get('nombre_nc'),
+                            path: row.get('documento_nc'),
+                        },
+                        documento_acta: {
+                            nombre: row.get('nombre_acta'),
+                            path: row.get('documento_acta'),
+                        },
+                        inspector_createdAt: row.get('inspector_createdAt'),
+                    } : undefined,
+                    etapaDigitador: row.get('usuarioDigitador') ? {
+                        usuarioDigitador: row.get('usuarioDigitador'),
+                        digitador_createdAt: row.get('inspector_createdAt'),
+                    } : undefined,
+                    estapaDescargoNC: row.get('usuarioAnalista1') ? {
+                        usuarioAnalista1: row.get('usuarioAnalista1'),
+                        documento_descargoNC: {
+                            nombre: row.get('nombre_descargoNC'),
+                            path: row.get('documento_descargoNC')
+                        },
+                        analista_createdAt: row.get('analista_createdAt'),
+                    } : undefined,
+        
+                    etapaAreaInstructiva: row.get('usuarioAreaInstructiva1') ? {
+                        usuarioAreaInstructiva1: row.get('usuarioAreaInstructiva1'),
+                        documento_AI: {
+                            nombre: row.get('nombre_AI'),
+                            path: row.get('documento_AI'),
+                        },
+                        AI_createdAt: row.get('AI_createdAt'),
+                    } : undefined,
+        
+                    etapaDescargoIFI: row.get('usuarioAnalista2') ? {
+                        usuarioAnalista2: row.get('usuarioAnalista2'),
+                        documento_descargoIFI: {
+                            nombre: row.get('nombre_DIFI'),
+                            path: row.get('documento_DIFI'),
+                        },
+                        analista2_createdAt: row.get('analista2_createdAt'),
+                    } : undefined,
+        
+                    etapaResolucionSubgerencial: row.get('usuarioReso_Sanc') ? {
+                        usuarioResoSub: row.get('usuarioReso_Sanc'),
+                        documento_ResolucionSubgerencial: {
+                            nombre: row.get('nombre_Reso_Sanc'),
+                            path: row.get('documento_Reso_Sanc'),
+                        },
+                        ResoSub_createdAt: row.get('ResoSanc_createdAt'),
+                    } : undefined,
+        
+                    etapaRecursoReconsideracionSub: row.get('usuarioReconsiSubg_Reconcideracion_Sanc') ? {
+                        usuarioReconsiSubg_Reconcideracion: row.get('usuarioReconsiSubg_Reconcideracion_Sanc'),
+                        documento_RecursoReconsideracionSub: {
+                            nombre: row.get('nombre_ReconsiSubg_Reconcideracion_Sanc'),
+                            path: row.get('documento_ReconsiSubg_Reconcideracion_Sanc'),
+                        },
+                        ReconsiSubg_createdAt_Reconcideracion: row.get('ReconsiSubg_createdAt_Reconcideracion_Sanc'),
+                    } : undefined,
+        
+                    etapaRSGReconsideracionSub: row.get('usuarioRSG_Reconcideracion_Sanc') ? {
+                        usuarioRSG_Reconcideracion: row.get('usuarioRSG_Reconcideracion_Sanc'),
+                        documento_RSGReconsideracionSub: {
+                            nombre: row.get('nombre_RSG_Reconcideracion_Sanc'),
+                            path: row.get('documento_RSG_Reconcideracion_Sanc'),
+                        },
+                        ReconsiSubg_createdAt_Reconcideracion: row.get('RSG_createdAt_Reconcideracion_Sanc'),
+                    } : undefined,
+                }));
 
 
         return transformedData || null;
@@ -648,7 +815,378 @@ const getAllRSG3forAR3Controller = async () => {
 };
 
 
+const getAllRSG3forAR3Controller2 = async () => {
+    try {
+        const response = await NC.findAll({
+                    where: Sequelize.where(Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.tipo'), 'RSGP'),
+                    order: [['id', 'ASC']],
+                    attributes: [
+                        'id',
+                        //TRAMITE INSPECTOR
+                        [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                        [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'usuarioInspector'],
+                        [Sequelize.literal(`'NOTIFICACION DE CARGO'`), 'nombre_nc'],
+                        [Sequelize.col('tramiteInspector.documento_nc'), 'documento_nc'],
+                        [Sequelize.literal(`'ACTA DE FISCALIZACION'`), 'nombre_acta'],
+                        [Sequelize.col('tramiteInspector.documento_acta'), 'documento_acta'],
+                        [Sequelize.col('tramiteInspector.createdAt'), 'inspector_createdAt'],
+        
+                        //                 //DIGITADOR
+                        [Sequelize.col('digitadorUsuario.usuario'), 'usuarioDigitador'],
+        
+                        //                 //DESCARGO NC
+                        [Sequelize.col('descargoNC.analistaUsuario.usuario'), 'usuarioAnalista1'],
+                        [Sequelize.literal(`'DESCARGO NC'`), 'nombre_descargoNC'],
+                        [Sequelize.col('descargoNC.documento'), 'documento_descargoNC'],
+                        [Sequelize.col('descargoNC.createdAt'), 'analista_createdAt'],
+        
+                        [Sequelize.col('IFI.ifiUsuario.usuario'), 'usuarioAreaInstructiva1'],
+                        [Sequelize.literal(`'INFORME FINAL'`), 'nombre_AI'],
+                        [Sequelize.col('IFI.documento_ifi'), 'documento_AI'],
+                        [Sequelize.col('IFI.createdAt'), 'AI_createdAt'],
+        
+                        //Descargo IFI
+                        [Sequelize.col('IFI.DescargoIFIs.analista2Usuario.usuario'), 'usuarioAnalista2'],
+                        [Sequelize.literal(`'DESCARGO IFI'`), 'nombre_DIFI'],
+                        [Sequelize.col('IFI.DescargoIFIs.documento_DIFI'), 'documento_DIFI'],
+                        [Sequelize.col('IFI.DescargoIFIs.createdAt'), 'analista2_createdAt'],
+               
+        
+                        // //RESOLUCION SUBGERENCIAL///////////////////////
+                        // [Sequelize.col('IFI.RSG2.ResoSubUsuario.usuario'), 'usuarioResoSub'],
+                        // [Sequelize.literal(`'RESOLUCION SUBGERENCIAL'`), 'nombre_ResoSub'],
+                        // [Sequelize.col('IFI.RSG2.documento_RSG'), 'documento_ResoSub'],
+                        // [Sequelize.col('IFI.RSG2.createdAt'), 'ResoSub_createdAt'],
+        
+                        //     //RECONSIDERACION SUBGERENCIAL/////////////////
+                        // [Sequelize.col('IFI.RSG2.Reconsideracion.RecursoReconUsuario.usuario'), 'usuarioReconsiSubg_Reconcideracion'],
+                        // [Sequelize.literal(`'RECURSO DE RECONSIDERACION'`), 'nombre_ReconsiSubg_Reconcideracion'],
+                        // [Sequelize.col('IFI.RSG2.Reconsideracion.documento'), 'documento_ReconsiSubg_Reconcideracion'],
+                        // [Sequelize.col('IFI.RSG2.Reconsideracion.createdAt'), 'ReconsiSubg_createdAt_Reconcideracion'],
+        
+                        //         //SUBGERENCIA////////////////////
+                        // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.rsgUsuario.usuario'), 'usuarioRSG_Reconcideracion'],
+                        // [Sequelize.literal(`'SUBGERENCIA'`), 'nombre_RSG_Reconcideracion'],
+                        // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.documento_RSG'), 'documento_RSG_Reconcideracion'],
+                        // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.createdAt'), 'RSG_createdAt_Reconcideracion'],
+             
+        
+                        //RESOLUCION SANCIONADORA
+                        [Sequelize.col('IFI.RSG2.ResoSubUsuario.usuario'), 'usuarioResoSanc'],
+                        [Sequelize.literal(`'RESOLUCION SUBGERENCIAL'`), 'nombre_ResoSanc'],
+                        [Sequelize.col('IFI.RSG2.documento_RSG'), 'documento_ResoSanc'],
+                        [Sequelize.col('IFI.RSG2.createdAt'), 'ResoSanc_createdAt'],
+                            //RECONSIDERACION SUBGERENCIAL
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.RecursoReconUsuario.usuario'), 'usuarioReconsiSubg_Reconcideracion_Sanc'],
+                        [Sequelize.literal(`'RECURSO DE RECONSIDERACION'`), 'nombre_ReconsiSubg_Reconcideracion_Sanc'],
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.documento'), 'documento_ReconsiSubg_Reconcideracion_Sanc'],
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.createdAt'), 'ReconsiSubg_createdAt_Reconcideracion_Sanc'],
+        
+                                //SUBGERENCIA
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.rsgUsuario.usuario'), 'usuarioRSG_Reconcideracion_Sanc'],
+                        [Sequelize.literal(`'SUBGERENCIA'`), 'nombre_RSG_Reconcideracion_Sanc'],
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.documento_RSG'), 'documento_RSG_Reconcideracion_Sanc'],
+                        [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.createdAt'), 'RSG_createdAt_Reconcideracion_Sanc'],
+        
+        
+        
+                    ],
+                    include: [
+                        {
+                            model: TramiteInspector,
+                            as: 'tramiteInspector',
+                            include: [
+                                {
+                                    model: Usuario,
+                                    as: 'inspectorUsuario'
+                                }
+                            ],
+                            attributes: [],
+                        },
+                        {
+                            model: Usuario,
+                            as: 'digitadorUsuario',
+                            attributes: []
+                        },
+                        {
+                            model: DescargoNC,
+                            as: 'descargoNC',
+                            include: [
+                                {
+                                    model: Usuario,
+                                    as: 'analistaUsuario'
+                                }
+                            ],
+                            attributes: [],
+                        },
+                        {
+                            model: IFI,
+                            as: 'IFI',
+                            include: [
+                                {
+                                    model: Usuario,
+                                    as: 'ifiUsuario',
+                                    attributes: []
+                                },
+                                {
+                                    model: DescargoIFI,
+                                    as: 'DescargoIFIs',
+                                    include: [
+                                        {
+                                            model: Usuario,
+                                            as: 'analista2Usuario',
+                                            attributes: []
+                                        },
+                                    ],
+                                    attributes: []
+                                },
+                                {
+                                    model: ResolucionSubgerencial,
+                                    as: 'RSG2',
+                                    include: [
+                                        {
+                                            model: RecursoReconsideracion,
+                                            as: 'Reconsideracion',
+                                            include: [
+                                                {
+                                                    model: RSG,
+                                                    as: 'RSGs',
+                                                    include: [
+                                                        
+                                                        {
+                                                            model: Usuario,
+                                                            as: 'rsgUsuario',
+                                                            attributes: []
+                                                        },
+                                                    ],
+                                                    attributes: []
+                                                },
+                                                {
+                                                    model: Usuario,
+                                                    as: 'RecursoReconUsuario',
+                                                    attributes: []
+                                                }
+                                            ],
+                                            attributes: []
+                                        },
+                                        {
+                                            model: ConstanciaInexigibilidad,
+                                            as: 'inexiResoSub',
+                                            attributes: []
+                                        },
+                                        {
+                                            model: Usuario,
+                                            as: 'ResoSubUsuario',
+                                            attributes: []
+                                        }
+                                    ],
+                                    attributes: []
+                                },
+                                {
+                                    model: ResolucionSancionadora,
+                                    as: 'RSA',
+                                    include: [
+                                        {
+                                            model: RecursoReconsideracion,
+                                            as: 'Reconsideracion',
+                                            // include: [
+                                            //     {
+                                            //         model: RSG,
+                                            //         as: 'RSGs',
+                                            //         include: [
+                                            //             {
+                                            //                 model: RecursoApelacion,
+                                            //                 as: 'RecApelaciones',
+                                            //                 include: [
+                                            //                     {
+                                            //                         model: RG,
+                                            //                         as: 'RGs',
+                                            //                         include: [
+                                            //                             {
+                                            //                                 model: ConstanciaInexigibilidad,
+                                            //                                 as: 'inexiRG',
+                                            //                                 include: [
+                                            //                                     {
+                                            //                                         model: Usuario,
+                                            //                                         as: 'ConstInexiUsuario',
+                                            //                                         attributes: []
+                                            //                                     }
+                                            //                                 ],
+                                            //                                 attributes: []
+                                            //                             },
+                                            //                             {
+                                            //                                 model: Usuario,
+                                            //                                 as: 'rgUsuario',
+                                            //                                 attributes: []
+                                            //                             }
+                                            //                         ],
+                                            //                         attributes: []
+                                            //                     },
+                                            //                     {
+                                            //                         model: Usuario,
+                                            //                         as: 'RecApelacionUsuario',
+                                            //                         attributes: []
+                                            //                     }
+                                            //                 ],
+                                            //                 attributes: []
+                                            //             },
+                                            //             {
+                                            //                 model: ConstanciaInexigibilidad,
+                                            //                 as: 'InexiRSG',
+                                            //                 attributes: []
+                                            //             },
+                                            //             {
+                                            //                 model: Usuario,
+                                            //                 as: 'rsgUsuario',
+                                            //                 attributes: []
+                                            //             },
+                                            //         ],
+                                            //         attributes: []
+                                            //     },
+                                            //     {
+                                            //         model: Usuario,
+                                            //         as: 'RecursoReconUsuario',
+                                            //         attributes: []
+                                            //     }
+                                            // ],
+                                            attributes: []
+                                        },
+                                        // {
+                                        //     model: RecursoApelacion,
+                                        //     as: 'Apelacion',
+                                        //     include: [
+                                        //         {
+                                        //             model: RG,
+                                        //             as: 'RGs',
+                                        //             include: [
+                                        //                 {
+                                        //                     model: ConstanciaInexigibilidad,
+                                        //                     as: 'inexiRG',
+                                        //                     include: [
+                                        //                         {
+                                        //                             model: Usuario,
+                                        //                             as: 'ConstInexiUsuario',
+                                        //                             attributes: []
+                                        //                         }
+                                        //                     ],
+                                        //                     attributes: []
+                                        //                 },
+                                        //                 {
+                                        //                     model: Usuario,
+                                        //                     as: 'rgUsuario',
+                                        //                     attributes: []
+                                        //                 }
+                                        //             ],
+                                        //             attributes: []
+                                        //         },
+                                        //         {
+                                        //             model: Usuario,
+                                        //             as: 'RecApelacionUsuario',
+                                        //             attributes: []
+                                        //         }
+                                        //     ],
+                                        //     attributes: []
+                                        // },
+                                        {
+                                            model: ConstanciaInexigibilidad,
+                                            as: 'inexResoSanc',
+                                            attributes: []
+                                        },
+                                        {
+                                            model: Usuario,
+                                            as: 'resoSancUsuario',
+                                            attributes: []
+                                        }
+                                    ],
+                                    attributes: []
+                                },
+                            ],
+                            attributes: [],
+                        },
+                    ]
+                });
+        
+                const transformedData = response.map(row => ({
+                    id: row.get('id'),
+                    nro_nc: row.get('nro_nc'),
+                    etapaInspector: row.get('usuarioInspector') ? {
+                        usuarioInspector: row.get('usuarioInspector'),
+                        documento_nc: {
+                            nombre: row.get('nombre_nc'),
+                            path: row.get('documento_nc'),
+                        },
+                        documento_acta: {
+                            nombre: row.get('nombre_acta'),
+                            path: row.get('documento_acta'),
+                        },
+                        inspector_createdAt: row.get('inspector_createdAt'),
+                    } : undefined,
+                    etapaDigitador: row.get('usuarioDigitador') ? {
+                        usuarioDigitador: row.get('usuarioDigitador'),
+                        digitador_createdAt: row.get('inspector_createdAt'),
+                    } : undefined,
+                    estapaDescargoNC: row.get('usuarioAnalista1') ? {
+                        usuarioAnalista1: row.get('usuarioAnalista1'),
+                        documento_descargoNC: {
+                            nombre: row.get('nombre_descargoNC'),
+                            path: row.get('documento_descargoNC')
+                        },
+                        analista_createdAt: row.get('analista_createdAt'),
+                    } : undefined,
+        
+                    etapaAreaInstructiva: row.get('usuarioAreaInstructiva1') ? {
+                        usuarioAreaInstructiva1: row.get('usuarioAreaInstructiva1'),
+                        documento_AI: {
+                            nombre: row.get('nombre_AI'),
+                            path: row.get('documento_AI'),
+                        },
+                        AI_createdAt: row.get('AI_createdAt'),
+                    } : undefined,
+        
+                    etapaDescargoIFI: row.get('usuarioAnalista2') ? {
+                        usuarioAnalista2: row.get('usuarioAnalista2'),
+                        documento_descargoIFI: {
+                            nombre: row.get('nombre_DIFI'),
+                            path: row.get('documento_DIFI'),
+                        },
+                        analista2_createdAt: row.get('analista2_createdAt'),
+                    } : undefined,
+        
+                    etapaResolucionSubgerencial: row.get('usuarioResoSub') ? {
+                        usuarioResoSub: row.get('usuarioResoSub'),
+                        documento_ResolucionSubgerencial: {
+                            nombre: row.get('nombre_ResoSub'),
+                            path: row.get('documento_ResoSub'),
+                        },
+                        ResoSub_createdAt: row.get('ResoSub_createdAt'),
+                    } : undefined,
+        
+                    etapaRecursoReconsideracionSub: row.get('usuarioReconsiSubg_Reconcideracion') ? {
+                        usuarioReconsiSubg_Reconcideracion: row.get('usuarioReconsiSubg_Reconcideracion'),
+                        documento_RecursoReconsideracionSub: {
+                            nombre: row.get('nombre_ReconsiSubg_Reconcideracion'),
+                            path: row.get('documento_ReconsiSubg_Reconcideracion'),
+                        },
+                        ReconsiSubg_createdAt_Reconcideracion: row.get('ReconsiSubg_createdAt_Reconcideracion'),
+                    } : undefined,
+        
+                    etapaRSGReconsideracionSub: row.get('usuarioRSG_Reconcideracion') ? {
+                        usuarioRSG_Reconcideracion: row.get('usuarioRSG_Reconcideracion'),
+                        documento_RSGReconsideracionSub: {
+                            nombre: row.get('nombre_RSG_Reconcideracion'),
+                            path: row.get('documento_RSG_Reconcideracion'),
+                        },
+                        ReconsiSubg_createdAt_Reconcideracion: row.get('RSG_createdAt_Reconcideracion'),
+                    } : undefined,
+                }));
 
+
+        return transformedData || null;
+    } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los reportes de RSG1", data: error });
+        return false;
+    }
+};
 
 const getRSGforGerenciaController = async (id) => {
     try {
@@ -818,7 +1356,8 @@ module.exports = {
     updateRSGNPController,
     getAllRSGforGerenciaController,
     getAllRSGforAnalista5Controller,
-    getAllRSG3forAR3Controller,
+    getAllRSG3forAR3Controller1,
+    getAllRSG3forAR3Controller2,
     getRSGforGerenciaController,
     getRSGforAnalista5Controller,
     getAllRSGforPlataformaController,
