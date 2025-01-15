@@ -37,13 +37,13 @@ const getAllRecursosApelacionesController = async () => {
             },
             attributes: {
                 include: [
-                    [Sequelize.col('Usuarios.usuario'), 'analista4']
+                    [Sequelize.col('RecApelacionUsuario.usuario'), 'analista4']
                 ]
             },
             include: [
                 {
                     model: Usuario,
-                    as: 'Usuarios',
+                    as: 'RecApelacionUsuario',
                     attributes: [],
                 }
             ],

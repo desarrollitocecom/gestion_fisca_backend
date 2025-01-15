@@ -12,7 +12,8 @@ const createRGController = async ({
      documento_rg,
      id_nc,
      id_gerente,
-     tipo
+     tipo,
+     id_cargoNotificacion
     }) => {
 
     let documento_path_rg;
@@ -27,7 +28,8 @@ const createRGController = async ({
             documento_rg:documento_path_rg,
             id_nc,
             id_gerente,
-            tipo
+            tipo,
+            id_cargoNotificacion
         });
 
         return newRG || null;
@@ -48,7 +50,7 @@ const getAllRGforAnalista5Controller = async () => {
                 'id',
                 // 'id_gerente',
                 [Sequelize.col('NCs.id'), 'id_nc'],
-                [Sequelize.col('Usuarios.usuario'), 'usuario'],
+                [Sequelize.col('rgUsuario.usuario'), 'usuario'],
                 [Sequelize.literal(`'Gerencia'`), 'area'],
                 'createdAt',
             ],
@@ -67,7 +69,7 @@ const getAllRGforAnalista5Controller = async () => {
                 },
                 {
                   model: Usuario, 
-                  as: 'Usuarios',
+                  as: 'rgUsuario',
                   attributes: []
               },
             ]
@@ -93,12 +95,12 @@ const getAllRGforAnalista5Controller = async () => {
 
 
 // Actualizar un registro RG
-const updateRGController = async (id,{ tipo,id_evaluar_rg,id_estado_RG}) => {
+const updateRGController = async (id,{ tipo,id_evaluar_rg,id_estado_RG, fecha_notificacion}) => {
    
     try {
         const rg = await getRGController(id);
 
-        await rg.update({tipo,id_evaluar_rg,id_estado_RG});
+        await rg.update({tipo,id_evaluar_rg,id_estado_RG, fecha_notificacion});
 
         return rg || null;
 

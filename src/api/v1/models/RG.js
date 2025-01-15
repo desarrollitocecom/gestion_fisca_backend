@@ -53,6 +53,16 @@ module.exports = (sequelize) => {
             },
             allowNull: true
         },
+
+        id_cargoNotificacion:{
+            type: DataTypes.UUID,
+            references: {
+                model: 'CargoNotificaciones',
+                key: 'id',
+            },
+            allowNull: true,
+        },
+
     }, {
         tableName: 'RGs',
         timestamps: true
@@ -62,6 +72,9 @@ module.exports = (sequelize) => {
         RG.belongsTo(db.NC, { foreignKey: 'id_nc', as: 'NCs' });
         RG.belongsTo(db.ConstanciaInexigibilidad, { foreignKey: 'id_const_inexigibilidad', as: 'inexiRG' });
         RG.belongsTo(db.Usuario, { foreignKey: 'id_gerente', as: 'rgUsuario' });
+
+        RG.belongsTo(db.CargoNotificacion,{foreignKey:'id_cargoNotificacion' , as:'cargoNotifi' });
+
         
     };
 

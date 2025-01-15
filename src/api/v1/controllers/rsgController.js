@@ -31,15 +31,16 @@ const createRSGController = async ({ nro_rsg, fecha_rsg, documento_RSG, id_nc, i
     }
 };
 
-const updateRSGController = async (id, { id_recurso_apelacion }) => {
+const updateRSGController = async (id, { id_recurso_apelacion, fecha_notificacion }) => {
     try {
 
-        console.log('datos RSG: ', id, 'y la apelacion creada: ', id_recurso_apelacion)
+        //console.log('datos RSG: ', id, 'y la apelacion creada: ', id_recurso_apelacion)
 
         const rsgnp = await getRSGController(id);
 
         await rsgnp.update({
-            id_recurso_apelacion
+            id_recurso_apelacion,
+            fecha_notificacion
         });
 
         return rsgnp || null
@@ -85,7 +86,7 @@ const updateRsgnpController = async (id, { nro_rsg, id_evaluar_rsgnp, tipo, fech
                 documento_RSGNP,
                 id_descargo_RSGNP,
                 id_evaluar_rsgnp,
-                id_rg,
+                id_rg, 
                 tipo,
                 id_nc,
                 id_estado_RSGNP,

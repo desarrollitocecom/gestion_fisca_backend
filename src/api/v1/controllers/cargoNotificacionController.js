@@ -1,4 +1,4 @@
-const { CargoNotificacion, IFI, ResolucionSubgerencial, ResolucionSancionadora, RSG } = require('../../../config/db_connection');
+const { CargoNotificacion, IFI, ResolucionSubgerencial, ResolucionSancionadora, RSG, RG } = require('../../../config/db_connection');
 const { Sequelize } = require('sequelize');
 const { saveImage, deleteFile } = require("../../../utils/fileUtils");
 
@@ -72,8 +72,8 @@ const getAllHistoryCargoNotificacionForIFIController = async () => {
             where: {
                 [Sequelize.Op.and]: [
                     Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'IFI'),
-                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), { 
-                        [Sequelize.Op.in]: ['PUERTA', 'PERSONA'] 
+                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), {
+                        [Sequelize.Op.in]: ['PUERTA', 'PERSONA']
                     })
                 ]
             },
@@ -197,17 +197,23 @@ const getAllHistoryCargoNotificacionForRSGController = async () => {
 
 const getAllCargoNotificacionForRSAController = async () => {
     try {
-
         const response = await ResolucionSancionadora.findAll({
             where: {
                 [Sequelize.Op.and]: [
                     Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RSA'),
-                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null)
+                    {
+                        [Sequelize.Op.or]: [
+                            Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null),
+                            Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), 'NO_ESTA')
+                        ]
+                    }
                 ]
             },
             attributes: [
                 'id',
+                [Sequelize.col('cargoNotifi.id'), 'id_cargo'],
                 [Sequelize.col('nro_rsa'), 'nro'],
+                [Sequelize.col('id_nc'), 'id_nc'],
                 [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
                 [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
                 [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
@@ -277,17 +283,23 @@ const getAllHistoryCargoNotificacionForRSAController = async () => {
 
 const getAllCargoNotificacionForRSG2Controller = async () => {
     try {
-
         const response = await RSG.findAll({
             where: {
                 [Sequelize.Op.and]: [
                     Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RSG2'),
-                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null)
+                    {
+                        [Sequelize.Op.or]: [
+                            Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null),
+                            Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), 'NO_ESTA')
+                        ]
+                    }
                 ]
             },
             attributes: [
                 'id',
+                [Sequelize.col('cargoNotifi.id'), 'id_cargo'],
                 [Sequelize.col('nro_rsg'), 'nro'],
+                [Sequelize.col('id_nc'), 'id_nc'],
                 [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
                 [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
                 [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
@@ -355,6 +367,99 @@ const getAllHistoryCargoNotificacionForRSG2Controller = async () => {
 
 };
 
+
+
+
+
+
+
+const getAllCargoNotificacionForRGController = async () => {
+    try {
+        const response = await RG.findAll({
+            where: {
+                [Sequelize.Op.and]: [
+                    Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RG'),
+                    {
+                        [Sequelize.Op.or]: [
+                            Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null),
+                            Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), 'NO_ESTA')
+                        ]
+                    }
+                ]
+            },
+            attributes: [
+                'id',
+                [Sequelize.col('cargoNotifi.id'), 'id_cargo'],
+                [Sequelize.col('nro_rg'), 'nro'],
+                [Sequelize.col('id_nc'), 'id_nc'],
+                [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
+                [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
+                [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
+                [Sequelize.col('cargoNotifi.documento1'), 'documento1'],
+                [Sequelize.col('cargoNotifi.fecha2'), 'fecha2'],
+                [Sequelize.col('cargoNotifi.documento2'), 'documento2'],
+                [Sequelize.col('cargoNotifi.estado_visita'), 'estado_visita'],
+                [Sequelize.col('cargoNotifi.estado_entrega'), 'estado_entrega'],
+                [Sequelize.col('cargoNotifi.id_motorizado'), 'id_motorizado'],
+            ],
+            include: [
+                {
+                    model: CargoNotificacion,
+                    as: 'cargoNotifi',
+                    attributes: []
+                }
+            ]
+        });
+
+        return response || null;
+    } catch (error) {
+        console.error('Error creando Cargo Notificacion:', error);
+        return false;
+    }
+
+};
+
+const getAllHistoryCargoNotificacionForRGController = async () => {
+    try {
+
+        const response = await RG.findAll({
+            where: {
+                [Sequelize.Op.and]: [
+                    Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RG'),
+                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), { [Sequelize.Op.ne]: null })
+                ]
+            },
+            attributes: [
+                'id',
+                [Sequelize.col('nro_rg'), 'nro'],
+                [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
+                [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
+                [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
+                [Sequelize.col('cargoNotifi.documento1'), 'documento1'],
+                [Sequelize.col('cargoNotifi.fecha2'), 'fecha2'],
+                [Sequelize.col('cargoNotifi.documento2'), 'documento2'],
+                [Sequelize.col('cargoNotifi.estado_visita'), 'estado_visita'],
+                [Sequelize.col('cargoNotifi.estado_entrega'), 'estado_entrega'],
+                [Sequelize.col('cargoNotifi.id_motorizado'), 'id_motorizado'],
+            ],
+            include: [
+                {
+                    model: CargoNotificacion,
+                    as: 'cargoNotifi',
+                    attributes: []
+                }
+            ]
+        });
+
+        return response || null;
+    } catch (error) {
+        console.error('Error creando Cargo Notificacion:', error);
+        return false;
+    }
+
+};
+
+
 const getCargoNotificacionController = async ({ id }) => {
     try {
         const response = await CargoNotificacion.findOne({
@@ -383,7 +488,7 @@ const updateCargoNotificacionController = async (id, { numero_cargoNotificacion,
             documento_path_1 = saveImage(documento1, "Notificacion Cargo IFI 1");
         }
         if (documento2) {
-            documento_path_2 = saveImage(documento2, "Notificacion Cargo IFI 1");
+            documento_path_2 = saveImage(documento2, "Notificacion Cargo IFI 2");
         }
 
         const response = await CargoNotificacion.findOne({
@@ -412,5 +517,7 @@ const updateCargoNotificacionController = async (id, { numero_cargoNotificacion,
 module.exports = {
     createCargoNotificacionController, getAllCargoNotificacionForIFIController, getAllHistoryCargoNotificacionForRSGController,
     getAllHistoryCargoNotificacionForIFIController, getAllCargoNotificacionForRSGController, getAllCargoNotificacionForRSAController, getAllHistoryCargoNotificacionForRSAController,
-    getAllCargoNotificacionForRSG2Controller, getAllHistoryCargoNotificacionForRSG2Controller, getCargoNotificacionController, updateCargoNotificacionController
+    getAllCargoNotificacionForRSG2Controller, getAllHistoryCargoNotificacionForRSG2Controller, getCargoNotificacionController, updateCargoNotificacionController,
+    getAllHistoryCargoNotificacionForRGController, getAllCargoNotificacionForRGController
+
 };

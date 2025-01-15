@@ -70,13 +70,19 @@ const createRGHandler = async (req, res) => {
     const { id } = req.params
 
     try {
+        const newCargoNotificacion = await createCargoNotificacionController({
+            tipo: 'RG'
+          });
+
+
         const newRG = await createRGController({
             nro_rg,
             fecha_rg,
             documento_rg: req.files['documento_rg'][0],
             id_nc,
             id_gerente,
-            tipo
+            tipo,
+            id_cargoNotificacion: newCargoNotificacion.id
         });
         if (!newRG) {
             return res.status(201).json({ message: 'Error al crear RG', data: [] });
