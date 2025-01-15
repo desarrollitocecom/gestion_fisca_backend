@@ -14,13 +14,18 @@ router.get('/ifi', getAllCargoNotificacionForIFIHandler);
 router.patch('/cargoIfi1/:id', uploadCargo1, updateCargoNotificacion1ForIFIHandler);
 router.patch('/cargoIfi2/:id', uploadCargo2, updateCargoNotificacion2ForIFIHandler);
 
-//router.get('/cargoNotificacion/:id', createCargoNotificacionForIFIHandler);
 router.get('/ifi/history', getAllHistoryCargoNotificacionForIFIHandler);
 
+
 router.get('/rsg', getAllCargoNotificacionForRSGHandler);
-router.get('/rsg/history', getAllHistoryCargoNotificacionForRSGHandler);
+
 router.patch('/cargoResoSub1/:id', uploadCargo1, updateCargoNotificacion1ForResoSubgHandler);
 router.patch('/cargoResoSub2/:id', uploadCargo2, updateCargoNotificacion2ForResoSubgHandler);
+
+router.get('/rsg/history', getAllHistoryCargoNotificacionForRSGHandler);
+
+
+
 
 router.get('/rsa', getAllCargoNotificacionForRSAHandler);
 router.get('/rsa/history', getAllHistoryCargoNotificacionForRSAHandler);

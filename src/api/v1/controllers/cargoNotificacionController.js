@@ -19,6 +19,7 @@ const createCargoNotificacionController = async ({
 };
 
 
+//aqui
 const getAllCargoNotificacionForIFIController = async () => {
     try {
         const response = await IFI.findAll({
@@ -107,6 +108,7 @@ const getAllHistoryCargoNotificacionForIFIController = async () => {
 };
 
 
+//
 const getAllCargoNotificacionForRSGController = async () => {
     try {
 
@@ -114,12 +116,19 @@ const getAllCargoNotificacionForRSGController = async () => {
             where: {
                 [Sequelize.Op.and]: [
                     Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'RSG'),
-                    Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null)
+                    {
+                        [Sequelize.Op.or]: [
+                            Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null),
+                            Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), 'NO_ESTA')
+                        ]
+                    }
                 ]
             },
             attributes: [
                 'id',
+                [Sequelize.col('cargoNotifi.id'), 'id_cargo'],
                 [Sequelize.col('nro_rsg'), 'nro'],
+                [Sequelize.col('id_nc'), 'id_nc'],
                 [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
                 [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
                 [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
@@ -361,6 +370,7 @@ const getCargoNotificacionController = async ({ id }) => {
     }
 }
 
+//aqui
 const updateCargoNotificacionController = async (id, { numero_cargoNotificacion, fecha1, estado_visita, fecha2, estado_entrega, documento1, documento2, id_motorizado, numero_cargoNotificacion2 }) => {
     let documento_path_1;
     let documento_path_2;
