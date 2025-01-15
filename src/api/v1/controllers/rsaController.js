@@ -342,7 +342,7 @@ const getAllRSAforAnalista5Controller = async () => {
         'id',
         [Sequelize.col('NCs.id'), 'id_nc'],
         'nro_rsg',
-        [Sequelize.col('Usuarios.usuario'), 'usuario'],
+        [Sequelize.col('ResoSubUsuario.usuario'), 'usuario'],
         [Sequelize.literal(`'Analista 3'`), 'area'],
         'createdAt',
       ],
@@ -361,7 +361,7 @@ const getAllRSAforAnalista5Controller = async () => {
         },
         {
           model: Usuario,
-          as: 'Usuarios'
+          as: 'ResoSubUsuario'
         }
         // {
         //   model: DescargoRSA, 
@@ -452,7 +452,7 @@ const getRSAforAnalista3Controller = async (id) => {
         'createdAt',
         [Sequelize.col('NCs.id'), 'id_nc'],
         [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-        [Sequelize.col('Usuarios.usuario'), 'area_resolutiva2'],
+        [Sequelize.col('resoSancUsuario.usuario'), 'area_resolutiva2'],
         //'tipo'
       ],
       include: [
@@ -470,7 +470,7 @@ const getRSAforAnalista3Controller = async (id) => {
         },
         {
           model: Usuario,
-          as: 'Usuarios',
+          as: 'resoSancUsuario',
           attributes: []
         },
       ],
@@ -492,7 +492,7 @@ const getRSGforAnalista3Controller = async (id) => {
         'createdAt',
         [Sequelize.col('NCs.id'), 'id_nc'],
         [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-        [Sequelize.col('Usuarios.usuario'), 'area_resolutiva2'],
+        [Sequelize.col('ResoSubUsuario.usuario'), 'area_resolutiva2'],
         //'tipo'
       ],
       include: [
@@ -510,7 +510,7 @@ const getRSGforAnalista3Controller = async (id) => {
         },
         {
           model: Usuario,
-          as: 'Usuarios',
+          as: 'ResoSubUsuario',
           attributes: []
         },
       ],

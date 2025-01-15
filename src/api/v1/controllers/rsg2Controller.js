@@ -88,7 +88,7 @@ const getAllRSG2forAR2Controller = async () => {
                 [Sequelize.col('descargoNC.documento'), 'documento_descargoNC'],
                 [Sequelize.col('descargoNC.createdAt'), 'analista_createdAt'],
 
-                [Sequelize.col('IFI.Usuarios.usuario'), 'usuarioAreaInstructiva1'],
+                [Sequelize.col('IFI.ifiUsuario.usuario'), 'usuarioAreaInstructiva1'],
                 [Sequelize.literal(`'INFORME FINAL'`), 'nombre_AI'],
                 [Sequelize.col('IFI.documento_ifi'), 'documento_AI'],
                 [Sequelize.col('IFI.createdAt'), 'AI_createdAt'],
@@ -98,7 +98,7 @@ const getAllRSG2forAR2Controller = async () => {
                 [Sequelize.col('IFI.DescargoIFIs.documento_DIFI'), 'documento_DIFI'],
                 [Sequelize.col('IFI.DescargoIFIs.createdAt'), 'analista2_createdAt'],
 
-                [Sequelize.col('IFI.RSG2.Usuarios.usuario'), 'usuarioAreaInstructiva2'],
+                [Sequelize.col('IFI.RSG2.ResoSubUsuario.usuario'), 'usuarioAreaInstructiva2'],
                 [Sequelize.literal(`'RESOLUCION SUBGERENCIAL 2'`), 'nombre_AR2'],
                 [Sequelize.col('IFI.RSG2.documento_RSG'), 'documento_AR2'],
                 [Sequelize.col('IFI.RSG2.createdAt'), 'AR2_createdAt'],
@@ -137,7 +137,7 @@ const getAllRSG2forAR2Controller = async () => {
                     include: [
                         {
                             model: Usuario,
-                            as: 'Usuarios',
+                            as: 'ifiUsuario',
                         },
                         {
                             model: DescargoIFI,
@@ -155,7 +155,7 @@ const getAllRSG2forAR2Controller = async () => {
                             include: [
                                 {
                                     model: Usuario,
-                                    as: 'Usuarios',
+                                    as: 'ResoSubUsuario',
                                 },
                             ]
                         },

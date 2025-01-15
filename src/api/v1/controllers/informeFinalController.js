@@ -193,7 +193,7 @@ const getIFIforAR1Controller = async (id) => {
         'id',
         [Sequelize.col('NCs.id'), 'id_nc'],
         [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-        [Sequelize.col('Usuarios.usuario'), 'area_instructiva1'],
+        [Sequelize.col('ifiUsuario.usuario'), 'area_instructiva1'],
         'tipo'
       ],
       include: [
@@ -211,7 +211,7 @@ const getIFIforAR1Controller = async (id) => {
         },
         {
           model: Usuario,
-          as: 'Usuarios',
+          as: 'ifiUsuario',
           attributes: []
         },
       ],
@@ -437,7 +437,7 @@ const getIFIforAR2Controller = async (id) => {
         [Sequelize.col('NCs.id'), 'id_nc'],
         [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
         [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-        [Sequelize.col('Usuarios.usuario'), 'Analista2'],
+        [Sequelize.col('ifiUsuario.usuario'), 'Analista2'],
         'tipo',
         'createdAt'
       ],
@@ -456,7 +456,7 @@ const getIFIforAR2Controller = async (id) => {
         },
         {
           model: Usuario,
-          as: 'Usuarios',
+          as: 'ifiUsuario',
           attributes: []
         },
       ],
@@ -487,7 +487,7 @@ const getIFIforAnalista2Controller = async (id) => {
         [Sequelize.col('NCs.id'), 'id_nc'],
         [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
         [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
-        [Sequelize.col('Usuarios.usuario'), 'area_instructiva1'],
+        [Sequelize.col('ifiUsuario.usuario'), 'area_instructiva1'],
         'tipo',
         'createdAt'
       ],
@@ -506,7 +506,7 @@ const getIFIforAnalista2Controller = async (id) => {
         },
         {
           model: Usuario,
-          as: 'Usuarios',
+          as: 'ifiUsuario',
           attributes: []
         },
       ],
