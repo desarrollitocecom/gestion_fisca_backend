@@ -26,12 +26,13 @@ const getAllNCSeguimientoController = async () => {
                 [Sequelize.col('descargoNC.documento'), 'documento_descargoNC'],
                 [Sequelize.col('descargoNC.createdAt'), 'analista_createdAt'],
 
+                //                  IFI
                 [Sequelize.col('IFI.ifiUsuario.usuario'), 'usuarioAreaInstructiva1'],
                 [Sequelize.literal(`'INFORME FINAL'`), 'nombre_AI'],
                 [Sequelize.col('IFI.documento_ifi'), 'documento_AI'],
                 [Sequelize.col('IFI.createdAt'), 'AI_createdAt'],
 
-                //Descargo IFI
+                //                  Descargo IFI
                 [Sequelize.col('IFI.DescargoIFIs.analista2Usuario.usuario'), 'usuarioAnalista2'],
                 [Sequelize.literal(`'DESCARGO IFI'`), 'nombre_DIFI'],
                 [Sequelize.col('IFI.DescargoIFIs.documento_DIFI'), 'documento_DIFI'],
@@ -95,6 +96,7 @@ const getAllNCSeguimientoController = async () => {
 
 
 
+                //-------------------------------------------------------------------
 
                 
 
@@ -466,6 +468,8 @@ const getAllNCSeguimientoController = async () => {
                 usuarioDigitador: row.get('usuarioDigitador'),
                 digitador_createdAt: row.get('inspector_createdAt'),
             } : undefined,
+
+            //descargo nc
             estapaDescargoNC: row.get('usuarioAnalista1') ? {
                 usuarioAnalista1: row.get('usuarioAnalista1'),
                 documento_descargoNC: {
@@ -475,6 +479,7 @@ const getAllNCSeguimientoController = async () => {
                 analista_createdAt: row.get('analista_createdAt'),
             } : undefined,
 
+            //ifi
             etapaAreaInstructiva: row.get('usuarioAreaInstructiva1') ? {
                 usuarioAreaInstructiva1: row.get('usuarioAreaInstructiva1'),
                 documento_AI: {
@@ -484,6 +489,7 @@ const getAllNCSeguimientoController = async () => {
                 AI_createdAt: row.get('AI_createdAt'),
             } : undefined,
 
+            //descargo ifi
             etapaDescargoIFI: row.get('usuarioAnalista2') ? {
                 usuarioAnalista2: row.get('usuarioAnalista2'),
                 documento_descargoIFI: {
@@ -493,6 +499,7 @@ const getAllNCSeguimientoController = async () => {
                 analista2_createdAt: row.get('analista2_createdAt'),
             } : undefined,
 
+            //reso subgerencial
             etapaResolucionSubgerencial: row.get('usuarioResoSub') ? {
                 usuarioResoSub: row.get('usuarioResoSub'),
                 documento_ResolucionSubgerencial: {
@@ -502,6 +509,7 @@ const getAllNCSeguimientoController = async () => {
                 ResoSub_createdAt: row.get('ResoSub_createdAt'),
             } : undefined,
 
+            //reconsideracion 
             etapaRecursoReconsideracionSub: row.get('usuarioReconsiSubg_Reconcideracion') ? {
                 usuarioReconsiSubg_Reconcideracion: row.get('usuarioReconsiSubg_Reconcideracion'),
                 documento_RecursoReconsideracionSub: {
@@ -511,6 +519,7 @@ const getAllNCSeguimientoController = async () => {
                 ReconsiSubg_createdAt_Reconcideracion: row.get('ReconsiSubg_createdAt_Reconcideracion'),
             } : undefined,
 
+            //subgerencia
             etapaRSGReconsideracionSub: row.get('usuarioRSG_Reconcideracion') ? {
                 usuarioRSG_Reconcideracion: row.get('usuarioRSG_Reconcideracion'),
                 documento_RSGReconsideracionSub: {
@@ -520,6 +529,7 @@ const getAllNCSeguimientoController = async () => {
                 ReconsiSubg_createdAt_Reconcideracion: row.get('RSG_createdAt_Reconcideracion'),
             } : undefined,
 
+            //apelacion
             etapaRecursoApelacionSub: row.get('usuarioApelacionSubg_Reconcideracion') ? {
                 usuarioApelacionSubg_Reconcideracion: row.get('usuarioApelacionSubg_Reconcideracion'),
                 documento_RecursoApelacionSub: {
@@ -529,6 +539,7 @@ const getAllNCSeguimientoController = async () => {
                 ReconsiSubg_createdAt_Reconcideracion: row.get('ApelacionSubg_createdAt_Reconcideracion'),
             } : undefined,
 
+            //gerencia
             etapaGerenciaSub: row.get('usuarioGerencia_Reconcideracion') ? {
                 usuarioGerencia_Reconcideracion: row.get('usuarioGerencia_Reconcideracion'),
                 documento_GerenciaSub: {
@@ -538,6 +549,7 @@ const getAllNCSeguimientoController = async () => {
                 ReconsiSubg_createdAt_Reconcideracion: row.get('Gerencia_createdAt_Reconcideracion'),
             } : undefined,
 
+            //inexigibilidad
             etapaInexigibilidadSub: row.get('usuarioConstInexigibilidad_Reconcideracion') ? {
                 usuarioConstInexigibilidad_Reconcideracion: row.get('usuarioConstInexigibilidad_Reconcideracion'),
                 documento_InexigibilidadSub: {
@@ -546,6 +558,7 @@ const getAllNCSeguimientoController = async () => {
                 },
                 ReconsiSubg_createdAt_Reconcideracion: row.get('ConstInexigibilidad_createdAt_Reconcideracion'),
             } : undefined,
+
 
             etapaRecursoApelacionSub2: row.get('usuarioApelacionSubg_Apelacion') ? {
                 usuarioApelacionSubg_Apelacion: row.get('usuarioApelacionSubg_Apelacion'),
@@ -573,7 +586,104 @@ const getAllNCSeguimientoController = async () => {
                 },
                 ReconsiSubg_createdAt_Reconcideracion: row.get('ConstInexigibilidad_createdAt_Apelacion'),
             } : undefined,
-           
+
+
+
+
+
+
+
+
+
+
+            //reso sancionadora
+            etapaResolucionSubgerencial: row.get('usuarioResoSub') ? {
+                usuarioResoSub: row.get('usuarioResoSub'),
+                documento_ResolucionSubgerencial: {
+                    nombre: row.get('nombre_ResoSub'),
+                    path: row.get('documento_ResoSub'),
+                },
+                ResoSub_createdAt: row.get('ResoSub_createdAt'),
+            } : undefined,
+
+            //reconsideracion 
+            etapaRecursoReconsideracionSub: row.get('usuarioReconsiSubg_Reconcideracion') ? {
+                usuarioReconsiSubg_Reconcideracion: row.get('usuarioReconsiSubg_Reconcideracion'),
+                documento_RecursoReconsideracionSub: {
+                    nombre: row.get('nombre_ReconsiSubg_Reconcideracion'),
+                    path: row.get('documento_ReconsiSubg_Reconcideracion'),
+                },
+                ReconsiSubg_createdAt_Reconcideracion: row.get('ReconsiSubg_createdAt_Reconcideracion'),
+            } : undefined,
+
+            //subgerencia
+            etapaRSGReconsideracionSub: row.get('usuarioRSG_Reconcideracion') ? {
+                usuarioRSG_Reconcideracion: row.get('usuarioRSG_Reconcideracion'),
+                documento_RSGReconsideracionSub: {
+                    nombre: row.get('nombre_RSG_Reconcideracion'),
+                    path: row.get('documento_RSG_Reconcideracion'),
+                },
+                ReconsiSubg_createdAt_Reconcideracion: row.get('RSG_createdAt_Reconcideracion'),
+            } : undefined,
+
+            //apelacion
+            etapaRecursoApelacionSub: row.get('usuarioApelacionSubg_Reconcideracion') ? {
+                usuarioApelacionSubg_Reconcideracion: row.get('usuarioApelacionSubg_Reconcideracion'),
+                documento_RecursoApelacionSub: {
+                    nombre: row.get('nombre_ApelacionSubg_Reconcideracion'),
+                    path: row.get('documento_ApelacionSubg_Reconcideracion'),
+                },
+                ReconsiSubg_createdAt_Reconcideracion: row.get('ApelacionSubg_createdAt_Reconcideracion'),
+            } : undefined,
+
+            //gerencia
+            etapaGerenciaSub: row.get('usuarioGerencia_Reconcideracion') ? {
+                usuarioGerencia_Reconcideracion: row.get('usuarioGerencia_Reconcideracion'),
+                documento_GerenciaSub: {
+                    nombre: row.get('nombre_Gerencia_Reconcideracion'),
+                    path: row.get('documento_Gerencia_Reconcideracion'),
+                },
+                ReconsiSubg_createdAt_Reconcideracion: row.get('Gerencia_createdAt_Reconcideracion'),
+            } : undefined,
+
+            //inexigibilidad
+            etapaInexigibilidadSub: row.get('usuarioConstInexigibilidad_Reconcideracion') ? {
+                usuarioConstInexigibilidad_Reconcideracion: row.get('usuarioConstInexigibilidad_Reconcideracion'),
+                documento_InexigibilidadSub: {
+                    nombre: row.get('nombre_ConstInexigibilidad_Reconcideracion'),
+                    path: row.get('documento_ConstInexigibilidad_Reconcideracion'),
+                },
+                ReconsiSubg_createdAt_Reconcideracion: row.get('ConstInexigibilidad_createdAt_Reconcideracion'),
+            } : undefined,
+
+
+            etapaRecursoApelacionSub2: row.get('usuarioApelacionSubg_Apelacion') ? {
+                usuarioApelacionSubg_Apelacion: row.get('usuarioApelacionSubg_Apelacion'),
+                documento_RecursoApelacionSub2: {
+                    nombre: row.get('nombre_ApelacionSubg_Apelacion'),
+                    path: row.get('documento_ApelacionSubg_Apelacion'),
+                },
+                ReconsiSubg_createdAt_Reconcideracion: row.get('ApelacionSubg_createdAt_Apelacion'),
+            } : undefined,
+
+            etapaGerenciaSub2: row.get('usuarioGerencia_Apelacion') ? {
+                usuarioGerencia_Apelacion: row.get('usuarioGerencia_Apelacion'),
+                documento_GerenciaSub2: {
+                    nombre: row.get('nombre_Gerencia_Apelacion'),
+                    path: row.get('documento_Gerencia_Apelacion'),
+                },
+                ReconsiSubg_createdAt_Reconcideracion: row.get('Gerencia_createdAt_Apelacion'),
+            } : undefined,
+
+            etapaConstInexigibilidad2: row.get('usuarioConstInexigibilidad_Apelacion') ? {
+                usuarioConstInexigibilidad_Apelacion: row.get('usuarioConstInexigibilidad_Apelacion'),
+                documento_ConstInexigibilidad2: {
+                    nombre: row.get('nombre_ConstInexigibilidad_Apelacion'),
+                    path: row.get('documento_ConstInexigibilidad_Apelacion'),
+                },
+                ReconsiSubg_createdAt_Reconcideracion: row.get('ConstInexigibilidad_createdAt_Apelacion'),
+            } : undefined,
+
         }));
 
 

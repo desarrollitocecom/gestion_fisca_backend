@@ -21,6 +21,11 @@ module.exports = (sequelize) => {
             type: DataTypes.STRING,
             allowNull: true
         },
+
+        tipo: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         
         id_nc:{
             type: DataTypes.UUID,
