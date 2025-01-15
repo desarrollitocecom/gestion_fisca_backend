@@ -44,7 +44,10 @@ const createRGController = async ({
 const getAllRGforAnalista5Controller = async () => {
     try {
         const response = await RG.findAll({ 
-            where: { tipo: 'ANALISTA_5' }, 
+            where: { 
+                tipo: 'ANALISTA_5',
+                fecha_notificacion: { [Sequelize.Op.ne]: null }
+            }, 
             order: [['id', 'ASC']],
             attributes: [
                 'id',

@@ -4,6 +4,7 @@ const { updateDocumento } = require("../controllers/documentoController");
 const { responseSocket } = require('../../../utils/socketUtils');
 const { gerenciaValidation } = require("../validations/gerenciaValidation")
 const { getAllRecursosApelacionesController, updateRecursoApelacionController } = require("../controllers/recursoApelacionController")
+const { createCargoNotificacionController } = require("../controllers/cargoNotificacionController")
 const fs = require("node:fs");
 const { getIo } = require("../../../sockets");
 
@@ -226,5 +227,6 @@ module.exports = {
     getAllRGforGerenciaHandler,
     getAllRecursosApelacionesHandler,
     createRGRectificacionHandler,
-    getAllRGForGerenciaHandler
+    getAllRGForGerenciaHandler,
+    
 };
