@@ -5,6 +5,8 @@ const { validateNC } = require('../validations/digitadorValidation');
 const { responseSocket } = require('../../../utils/socketUtils')
 const {updateDocumento}=require('../controllers/documentoController');
 const { getIo } = require("../../../sockets");
+const axios = require('axios');
+
 
 const sql = require("mssql");
 
@@ -155,85 +157,59 @@ const allNCforDigitadorHandler = async (req, res) => {
     }
 };
 
-const config = {
-    user: 'jjhuaman', // Usuario de la base de datos
-    password: 'Asdfgh@2024', // Contraseña de la base de datos
-    server: '172.16.1.97', // Nombre o IP del servidor (ej. localhost o 192.168.x.x)
-    database: 'bd_cloud_10122024', // Nombre de tu base de datos
-    options: {
-        encrypt: false, // Usa true si estás usando Azure; false para una base de datos local
-        trustServerCertificate: true // Usa true si confías en el certificado del servidor
-    }
-};
-
 const getCodigos = async (req, res) => {
     try {
-        // Crear una conexión con SQL Server
-        let pool = await sql.connect(config);
+        // Obtener el token
+        const tokenResponse = await axios.post('http://172.16.1.60/api/login', {
+            email: 'fiscalizacion@municipalidad.sjl.com',
+            password: 'fisca**2024$$',
+        });
+        const token = tokenResponse.data.token; // Asegúrate de que el token venga en esta propiedad
 
-        // Consulta SQL
-        const query = `
-            SELECT s.subconcepto_id as value, s.codigo_sancion as label 
-            FROM mante.subconcepto s
-            INNER JOIN medida_complementaria m ON s.medida_complementaria = m.id
-            WHERE (codigo_area = '99') AND (codigo_complementario = '26')
-        `;
+        // Realizar la solicitud al endpoint correspondiente
+        const response = await axios.get('http://172.16.1.60/api/fiscalizacion/cuis', {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-        // Ejecutar la consulta
-        const result = await pool.request().query(query);
-
-        // Retornar los resultados como respuesta
-        res.status(200).json(result.recordset);
-
-        // Cerrar la conexión
-        sql.close();
+        // Retornar los datos obtenidos como respuesta
+        res.status(200).json(response.data);
     } catch (error) {
-        console.error(error);
-
-        // Enviar un mensaje de error al cliente
-        res.status(500).json({ error: "Error ejecutando la consulta" });
+        console.error('Error al obtener los códigos:', error.message);
+        res.status(500).json({ error: 'Error obteniendo los códigos desde el servicio.' });
     }
 };
 
-
+// Controlador para obtener el detalle por ID
 const sendDetalle = async (req, res) => {
     const { id } = req.params;
     try {
-        // Crear una conexión con SQL Server
-        let pool = await sql.connect(config);
+        // Obtener el token
+        const tokenResponse = await axios.post('http://172.16.1.60/api/login', {
+            email: 'fiscalizacion@municipalidad.sjl.com',
+            password: 'fisca**2024$$',
+        });
+        const token = tokenResponse.data.token; // Asegúrate de que el token venga en esta propiedad
 
-        // Consulta SQL
-        const query = `
-            SELECT 
-                s.subconcepto_id AS value, 
-                s.codigo_sancion AS label, 
-                s.descripcion, 
-                m.descripcion AS medida, 
-                s.tasa
-            FROM mante.subconcepto s
-            INNER JOIN medida_complementaria m ON s.medida_complementaria = m.id
-            WHERE (codigo_area = '99') AND (codigo_complementario = '26') AND (subconcepto_id = ${id})
-        `;
-
-        // Ejecutar la consulta
-        const result = await pool.request().query(query);
+        // Realizar la solicitud al endpoint correspondiente con el ID
+        const response = await axios.get(`http://172.16.1.60/api/fiscalizacion/cuis/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
         // Agregar el campo "monto" calculado al resultado
-        const dataWithMonto = result.recordset.map(item => ({
+        const dataWithMonto = response.data.map(item => ({
             ...item,
-            monto: item.tasa * 51.50, // Multiplica la tasa por 60
+            monto: item.tasa * 51.50, // Multiplica la tasa por 51.50
         }));
 
-        // Retornar los resultados como respuesta
+        // Retornar los datos obtenidos como respuesta
         res.status(200).json(dataWithMonto);
-
-        // Cerrar la conexión
-        sql.close();
     } catch (error) {
-        console.error(error);
-
-        // Enviar un mensaje de error al cliente
-        res.status(500).json({ error: "Error ejecutando la consulta" });
+        console.error('Error al obtener el detalle:', error.message);
+        res.status(500).json({ error: 'Error obteniendo el detalle desde el servicio.' });
     }
 };
 
