@@ -55,29 +55,29 @@ const updateNCHandler = async (req, res) => {
     } = req.body;
 
     try {
-        let pool = await sql.connect(config);
-        
-        // Consulta SQL
-        const query = `
-            SELECT 
-                s.subconcepto_id AS value, 
-                s.codigo_sancion AS label, 
-                s.descripcion, 
-                m.descripcion AS medida, 
-                s.tasa
-            FROM mante.subconcepto s
-            INNER JOIN medida_complementaria m ON s.medida_complementaria = m.id
-            WHERE (codigo_area = '99') AND (codigo_complementario = '26') AND (subconcepto_id = ${id_infraccion})
-        `;
-        // Ejecutar la consulta
-        const result = await pool.request().query(query);
-        const {value, label, descripcion, medida, tasa } = result.recordset[0];
-        const monto = tasa * 51.50;
-        
+        const tokenResponse = await axios.post('http://172.16.1.60/api/login', {
+            email: 'fiscalizacion@municipalidad.sjl.com',
+            password: 'fisca**2024$$',
+        });
+        const token = tokenResponse.data.token;
+
+        // Obtener los datos del infracción desde el endpoint
+        const asd = await axios.get(`http://172.16.1.60/api/fiscalizacion/cuis/${id_infraccion}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        console.log('datos: ', asd)
+
+        const { value, label, descripcion, medida, tasa } = asd.data;
+        // const monto = tasa * 51.50;
+
+        // Crear la infracción con los datos obtenidos
         const newInfraccion = await createInfraccion({
-            codigo: label,
+            // codigo: label,
             descripcion,
-            monto
+            // monto,
         });
 
 
@@ -164,6 +164,7 @@ const getCodigos = async (req, res) => {
             email: 'fiscalizacion@municipalidad.sjl.com',
             password: 'fisca**2024$$',
         });
+        //console.log('token response es: ', tokenResponse)
         const token = tokenResponse.data.token; // Asegúrate de que el token venga en esta propiedad
 
         // Realizar la solicitud al endpoint correspondiente
@@ -202,7 +203,7 @@ const sendDetalle = async (req, res) => {
         // Agregar el campo "monto" calculado al resultado
         const dataWithMonto = response.data.map(item => ({
             ...item,
-            monto: item.tasa * 51.50, // Multiplica la tasa por 51.50
+            monto: item.tasa * 53.50, // Multiplica la tasa por 51.50
         }));
 
         // Retornar los datos obtenidos como respuesta
