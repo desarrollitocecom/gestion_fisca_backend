@@ -97,12 +97,12 @@ const createActaHandler = async (req, res) => {
     nro_acta, fecha_acta, id_nc, id_analista_5, tipo
   } = req.body;
   const { id } = req.params
-  
+
   try {
     const newActa = await createActaController({
       nro_acta,
       fecha_acta,
-      documento_acta: req.files['documento_acta'][0],
+      documento_ci: req.files['documento_acta'][0],
       tipo,
       id_nc,
       id_analista_5
@@ -114,10 +114,12 @@ const createActaHandler = async (req, res) => {
 
     //     return res.status(404).json({message:"No se encuentra id del IFI",data:[]})
     // }
-    const total_documentos = newActa.documento_acta
+    const total_documentos = newActa.documento_ci
 
-    const nuevoModulo = "ACTA DE CONCENTIMIENTO"
+    const nuevoModulo = "CONSTANCIA DE INEXIGIBILIDAD"
 
+    console.log(id_nc, total_documentos, nuevoModulo);
+    
     await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 
     const id_acta = newActa.id;
@@ -132,7 +134,7 @@ const createActaHandler = async (req, res) => {
     }
 
     if (tipo == 'gerencia') {
-      response = await updateRGController(id, { tipo: 'TERMINADO', id_evaluar_rg: id_acta })
+      response = await updateRGController(id, { tipo: 'TERMINADO', id_const_inexigibilidad: id_acta })
     }
 
 

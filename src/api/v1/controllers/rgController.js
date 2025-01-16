@@ -44,7 +44,10 @@ const createRGController = async ({
 const getAllRGforAnalista5Controller = async () => {
     try {
         const response = await RG.findAll({ 
-            where: { tipo: 'ANALISTA_5' }, 
+            where: { 
+                tipo: 'ANALISTA_5',
+                fecha_notificacion: { [Sequelize.Op.ne]: null }
+            }, 
             order: [['id', 'ASC']],
             attributes: [
                 'id',
@@ -95,12 +98,12 @@ const getAllRGforAnalista5Controller = async () => {
 
 
 // Actualizar un registro RG
-const updateRGController = async (id,{ tipo,id_evaluar_rg,id_estado_RG, fecha_notificacion}) => {
+const updateRGController = async (id,{ tipo,id_const_inexigibilidad,id_estado_RG, fecha_notificacion}) => {
    
     try {
         const rg = await getRGController(id);
 
-        await rg.update({tipo,id_evaluar_rg,id_estado_RG, fecha_notificacion});
+        await rg.update({tipo,id_const_inexigibilidad,id_estado_RG, fecha_notificacion});
 
         return rg || null;
 
