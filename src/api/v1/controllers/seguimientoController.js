@@ -5,7 +5,7 @@ const { Sequelize } = require('sequelize');
 const getAllNCSeguimientoController = async () => {
     try {
         const response = await NC.findAll({
-            order: [['id', 'ASC']],
+            order: [['createdAt', 'ASC']],
             attributes: [
                 'id',
                 //TRAMITE INSPECTOR

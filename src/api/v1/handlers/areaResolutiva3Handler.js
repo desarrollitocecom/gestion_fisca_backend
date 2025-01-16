@@ -1,5 +1,5 @@
 const { getAllRSAforAR3Controller, getRsaController, updateRsaController } = require("../controllers/rsaController");
-const { createRSGController, getAllRSG3forAR3Controller1, getAllRSG3forAR3Controller2, getRSGforAnalista4Controller, getAllRSGforSubgerenciaController } = require("../controllers/rsgController")
+const { createRSGController, getAllRSG3forAR3Controller1, getAllRSG3forAR3Controller2, getRSGforAnalista4Controller, getAllRSGforSubgerenciaController, getAllRSG3forAR3Controller } = require("../controllers/rsgController")
 const { updateDocumento } = require("../controllers/documentoController");
 const { createCargoNotificacionController } = require("../controllers/cargoNotificacionController")
 const { areaResolutiva3Validation } = require("../validations/areaResolutiva3Validation")
@@ -170,35 +170,23 @@ const createRSGRectificacionHandler = async (req, res) => {
 
 const getAllRSG3forAR3Handler = async (req, res) => {
   try {
-    // Ejecutar ambos controladores en paralelo
-    const [rsaResponse, rsgResponse] = await Promise.all([
-      getAllRSG3forAR3Controller1(),
-      getAllRSG3forAR3Controller2(),
-    ]);
+    const response = await getAllRSG3forAR3Controller();
 
-    // Combinar las respuestas en un solo arreglo
-    const combinedResponse = [
-      ...rsaResponse,
-      ...rsgResponse
-    ];
-
-    if (combinedResponse.length === 0) {
-      return res.status(200).json({
-        message: 'No hay datos para Plataforma',
-        data: []
-      });
+    if (response.length === 0) {
+        return res.status(200).json({
+            message: 'No existen más RG para gerencia',
+            data: []
+        });
     }
 
     return res.status(200).json({
-      message: 'Datos para Plataforma obtenidos correctamente',
-      data: combinedResponse,
+        message: "RG obtenidos correctamente",
+        data: response,
     });
-  } catch (error) {
-    console.error('Error del servidor al traer los datos para Plataforma:', error);
-    return res.status(500).json({
-      error: 'Error del servidor al traer los datos para Plataforma',
-    });
-  }
+} catch (error) {
+    console.error("Error interno la obtener los RG para Gerencia:", error);
+    res.status(500).json({ error: "Error interno del servidor al obtener los RG para Gerencia." });
+}
 };
 
 
