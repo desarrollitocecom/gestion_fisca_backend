@@ -76,22 +76,24 @@ const getAllNCforDigitadorController = async () => {
             ],
         });
 
-        const modifiedResponse = response.map(item => {
+        const modifiedResponse = response.map((item, index) => {
             const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
             const cachedValue = myCache.get(`Digitador-${id}`); // Obtener valor del cache si existe
-        
+            
             return {
                 ...item.toJSON(),
                 disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+                blocked: index < 5 ? false : true, // Primeros 5 false, resto true
             };
         });
 
-        return  modifiedResponse  || null;
+        return modifiedResponse || null;
     } catch (error) {
         console.error({ message: "Error obteniendo todos los NC en el controlador", data: error });
         return false;
     }
 };
+
 
 const getNCforDigitador = async (id) => {
     try {
