@@ -3,6 +3,21 @@ const { Sequelize } = require('sequelize');
 const myCache = require("../../../middlewares/cacheNodeStocked");
 const { Op } = require("sequelize");
 
+const getAllNCController = async () => {
+    try {
+        const response = await NC.findAll({
+            // attributes: [
+            //     'id'
+            // ]
+        });
+
+        return response || null;
+    } catch (error) {
+        console.error({ message: "Error al encontrar los NCs", data: error });
+        return false;
+    }
+}
+
 const createNC = async ({ id_tramiteInspector }) => {
     try {
         const newNC = await NC.create({
@@ -388,5 +403,5 @@ const getAllNCCaduco = async () => {
   };
 module.exports = { createNC, getNCforInstructiva, updateNC, getAllNCforDigitadorController , 
     getNCforDigitador, getNCforAnalista, getAllNCforInstructiva, getNC, getAllNCforAnalista,
-    getAllNCforPlataformaController, getAllNCCaduco /*getAllNCCaduco*/ 
+    getAllNCforPlataformaController, getAllNCCaduco /*getAllNCCaduco*/ , getAllNCController
 };
