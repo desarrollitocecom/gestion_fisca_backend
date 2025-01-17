@@ -7,7 +7,7 @@ const { PORT, PDF_RUTA } = process.env;
 
 const tramiteInspector = require('./api/v1/routes/tramiteInspectorRouter');
 
-
+//con fe
 const { initializeSocket, userSockets } = require("./sockets");
 const loginMiddleware = require("./checkers/validateToken");
 const usuariosRouter = require("./api/v1/routes/loginRouter");
