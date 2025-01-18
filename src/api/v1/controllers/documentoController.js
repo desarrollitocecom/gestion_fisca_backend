@@ -1,5 +1,5 @@
 const {
-    Documento
+    Documento, DocumentoOpcional, DocumetoOpcionalLista
 } = require('../../../config/db_connection');
 
 const getDocumento = async (id) => {
@@ -64,10 +64,26 @@ const updateDocumento = async ({ id_nc, total_documentos, nuevoModulo }) => {
 };
 
 
+const createDocumentoOpcional = async (model, id_nc, docs) => {
+    console.log(docs);
+
+    const total_DocumentoOpcional = [{ modulo: model, document_path: docs }];
+
+    try {
+        const response = await DocumentoOpcional.create({ id_nc, total_DocumentoOpcional });
+        return response || null;
+    } catch (error) {
+        console.error({ message: "Error en el Controlador", data: error })
+        return false
+    }
+}
+
+
 
 
 module.exports = {
     createDocumento,
     getDocumento,
-    updateDocumento
+    updateDocumento,
+    createDocumentoOpcional
 }

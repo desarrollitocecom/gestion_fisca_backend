@@ -6,9 +6,18 @@ const { Op } = require("sequelize");
 const getAllNCController = async () => {
     try {
         const response = await NC.findAll({
-            // attributes: [
-            //     'id'
-            // ]
+            attributes: [
+                'id', 
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                'createdAt'
+            ],
+            include: [
+                {
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
+                    attributes: []
+                }
+            ]
         });
 
         return response || null;

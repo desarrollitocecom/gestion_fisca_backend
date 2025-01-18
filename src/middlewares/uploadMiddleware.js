@@ -75,7 +75,7 @@ const uploadCargo2 = upload.fields([
 ])
 
 const uploadDocumentoOpcional = upload.fields([
-    { name: 'opcional', maxCount: 1 }
+    { name: 'documento_opcional', maxCount: 1 }
 ])
 
 module.exports = {
