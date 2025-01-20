@@ -1,11 +1,41 @@
 const { RG, Usuario, NC, TramiteInspector, Infraccion, MedidaComplementaria } = require('../../../config/db_connection');
 const { Sequelize } = require('sequelize');
 const { RSG1, DescargoNC, DescargoRSG, IFI, Entidad, DescargoIFI, ResolucionSancionadora, RSG2, RSA, DescargoRSA, ConstanciaInexigibilidad, RecursoApelacion, RSG, Acta, ResolucionSubgerencial, RecursoReconsideracion } = require('../../../config/db_connection');
+const { Op } = require("sequelize");
 
-const getAllDataController = async () => {
+const getAllDataController = async (page = 1, limit = 20, ordenanza = null, actividad_economica = null, fecha_NC = null) => {
+    const offset = page == 0 ? null : (page - 1) * limit;
+    limit = page == 0 ? null : limit;
+
+    let whereCondition = {
+        ...(ordenanza && { ordenanza_municipal: { [Op.iLike]: `%${ordenanza}%` } }),
+        ...(actividad_economica && {
+            '$entidad.giro_entidad$': { [Op.iLike]: `%${actividad_economica}%` }
+        })
+    };
+
+    if (fecha_NC) {
+        let fechaStart = new Date(fecha_NC.start); 
+        let fechaEnd = new Date(fecha_NC.end);    
+
+        fechaStart.setUTCHours(0, 0, 0, 0);
+        fechaEnd.setUTCHours(23, 59, 59, 999);
+
+        whereCondition = {
+            ...whereCondition,
+            '$tramiteInspector.createdAt$': {
+                [Op.between]: [fechaStart, fechaEnd]
+            }
+        };
+    }
+
     try {
-        const response = await NC.findAll({
-            order: [['id', 'ASC']],
+        const response = await NC.findAndCountAll({
+            where: whereCondition,
+            order: [['createdAt', 'ASC']],
+            limit,
+            //logging: console.log,
+            offset,
             attributes: [
                 'id',
                 'ordenanza_municipal',
@@ -19,12 +49,12 @@ const getAllDataController = async () => {
                 [Sequelize.col('infraccion.codigo'), 'codigo'],
                 [Sequelize.col('infraccion.descripcion'), 'descripcion'],
                 [Sequelize.col('infraccion.tipo'), 'tipo_infraccion'],
-                
+
                 [Sequelize.col('infraccion.monto'), 'monto'],
-                
+
                 'observaciones',
                 [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'usuarioInspector'],
-         
+
 
                 // //                 //DIGITADOR
                 // [Sequelize.col('digitadorUsuario.usuario'), 'usuarioDigitador'],
@@ -459,9 +489,8 @@ const getAllDataController = async () => {
             ]
         });
 
-        const transformedData = response.map(row => ({
+        const transformedData = response.rows.map(row => ({
             id: row.get('id'),
-            //etapaNC: row.get('inspector_createdAt') ? {
             ordenanza: row.get('ordenanza_municipal'),
             razon_social: row.get('razon_social'),
             nro_documento: row.get('nro_documento'),
@@ -558,8 +587,8 @@ const getAllDataController = async () => {
 
         }));
 
+        return { totalCount: response.count, data: transformedData, currentPage: page } || null;
 
-        return transformedData || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los reportes de RSG1", data: error });
         return false;

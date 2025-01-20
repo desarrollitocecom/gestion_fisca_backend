@@ -3,6 +3,30 @@ const { Sequelize } = require('sequelize');
 const myCache = require("../../../middlewares/cacheNodeStocked");
 const { Op } = require("sequelize");
 
+const getAllNCController = async () => {
+    try {
+        const response = await NC.findAll({
+            attributes: [
+                'id', 
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+                'createdAt'
+            ],
+            include: [
+                {
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
+                    attributes: []
+                }
+            ]
+        });
+
+        return response || null;
+    } catch (error) {
+        console.error({ message: "Error al encontrar los NCs", data: error });
+        return false;
+    }
+}
+
 const createNC = async ({ id_tramiteInspector }) => {
     try {
         const newNC = await NC.create({
@@ -76,22 +100,24 @@ const getAllNCforDigitadorController = async () => {
             ],
         });
 
-        const modifiedResponse = response.map(item => {
+        const modifiedResponse = response.map((item, index) => {
             const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
             const cachedValue = myCache.get(`Digitador-${id}`); // Obtener valor del cache si existe
-        
+            
             return {
                 ...item.toJSON(),
                 disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
+                blocked: index < 5 ? false : true, // Primeros 5 false, resto true
             };
         });
 
-        return  modifiedResponse  || null;
+        return modifiedResponse || null;
     } catch (error) {
         console.error({ message: "Error obteniendo todos los NC en el controlador", data: error });
         return false;
     }
 };
+
 
 const getNCforDigitador = async (id) => {
     try {
@@ -386,5 +412,5 @@ const getAllNCCaduco = async () => {
   };
 module.exports = { createNC, getNCforInstructiva, updateNC, getAllNCforDigitadorController , 
     getNCforDigitador, getNCforAnalista, getAllNCforInstructiva, getNC, getAllNCforAnalista,
-    getAllNCforPlataformaController, getAllNCCaduco /*getAllNCCaduco*/ 
+    getAllNCforPlataformaController, getAllNCCaduco /*getAllNCCaduco*/ , getAllNCController
 };
