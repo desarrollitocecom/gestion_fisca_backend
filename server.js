@@ -1,16 +1,16 @@
 require("dotenv").config();
 const express = require("express");
 const http = require("http");
-const { sequelize } = require("./config/db_connection");
-const router = require("./api/v1/routes/index");
+const { sequelize } = require("./src/config/db_connection");
+const router = require("./src/api/v1/routes/index");
 const { PORT, PDF_RUTA } = process.env;
 
-const tramiteInspector = require('./api/v1/routes/tramiteInspectorRouter');
+const tramiteInspector = require('./src/api/v1/routes/tramiteInspectorRouter');
 
 //con fe
-const { initializeSocket, userSockets } = require("./sockets");
-const loginMiddleware = require("./checkers/validateToken");
-const usuariosRouter = require("./api/v1/routes/loginRouter");
+const { initializeSocket, userSockets } = require("./src/sockets");
+const loginMiddleware = require("./src/checkers/validateToken");
+const usuariosRouter = require("./src/api/v1/routes/loginRouter");
 const cors = require("cors");
 const path = require('path'); //traer path
 const app = express();
@@ -23,7 +23,7 @@ app.use('/inspector', tramiteInspector);
 // no aplica authMiddleware para el manejo de usuarios
 app.use(loginMiddleware); // usa el middleware globalmente para validar todas las rutas a las que se va a acceder en el sistema solo estando logeado
 const server = http.createServer(app); // servidor http a partir de express
-const facialLoginRouter = require('./api/v1/routes/facialLoginRouter');
+const facialLoginRouter = require('./src/api/v1/routes/facialLoginRouter');
 
 initializeSocket(server); // Inicializamos Socket.io
 
