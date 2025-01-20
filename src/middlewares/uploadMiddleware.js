@@ -78,6 +78,10 @@ const uploadDocumentoOpcional = upload.fields([
     { name: 'documento_opcional', maxCount: 1 }
 ])
 
+const inspectorLoginPhoto = upload.fields([
+    { name: 'photoInspector', maxCount: 1 }
+])
+
 module.exports = {
     uploadDocuments,
     uploadDocumentsDescargoNC,
@@ -99,5 +103,6 @@ module.exports = {
     uploadRecursoAdministrativo,
     uploadCargo1,
     uploadCargo2,
-    uploadDocumentoOpcional
+    uploadDocumentoOpcional,
+    inspectorLoginPhoto
 };
