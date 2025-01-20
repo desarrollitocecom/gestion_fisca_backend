@@ -7,9 +7,6 @@ const {updateDocumento}=require('../controllers/documentoController');
 const { getIo } = require("../../../sockets");
 const axios = require('axios');
 
-
-const sql = require("mssql");
-
 const updateNCHandler = async (req, res) => {
     const io = getIo();
     const id = req.params.id;

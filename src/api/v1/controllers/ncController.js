@@ -81,6 +81,7 @@ const getAllNCforDigitadorController = async () => {
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'inspector'],
                 [Sequelize.col('tramiteInspector.documento_nc'), 'documento_nc'],
+                [Sequelize.col('tramiteInspector.documento_acta'), 'documento_acta'],
                 [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
                 [Sequelize.col('estado'), 'estado'],
             ],
