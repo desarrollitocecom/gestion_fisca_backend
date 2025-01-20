@@ -2,7 +2,6 @@ const { Router } = require('express');
 const router = Router();
 const { createUserHandler, changePasswordHandler, loginHandler, getTokenHandler, changeUserDataHandler } = require('../handlers/usuarioHandler');
 
-
 router.post("/signup", createUserHandler);
 router.post("/signin", loginHandler);
 router.patch("/password", changePasswordHandler);

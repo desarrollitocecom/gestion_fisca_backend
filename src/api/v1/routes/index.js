@@ -25,7 +25,9 @@ const plataforma1 = require('./plataforma1')
 const plataforma2 = require('./plataforma2')
 const areaResolutiva = require('./areaResolutivaRouter')
 const resoArchivaReinicia = require('../routes/resoArchivaReinicia')
+const docOpcional = require('../routes/plataformaOpcional')
 
+router.use('/doc-opcional',docOpcional);
 router.use('/gestor',gestorActas);
 router.use('/digitador',digitadorNC);
 router.use('/area-instructiva',areaInstructiva);

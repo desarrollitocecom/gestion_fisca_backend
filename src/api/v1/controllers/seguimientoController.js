@@ -8,6 +8,38 @@ const getAllNCSeguimientoController = async () => {
             order: [['createdAt', 'ASC']],
             attributes: [
                 'id',
+                [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
+            ],
+            include: [
+                {
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
+                    include: [
+                        {
+                            model: Usuario,
+                            as: 'inspectorUsuario'
+                        }
+                    ],
+                    attributes: [],
+                },
+            ]
+        });
+
+
+        return response || null;
+    } catch (error) {
+        console.error({ message: "Error en el controlador al traer todos los reportes de RSG1", data: error });
+        return false;
+    }
+};
+
+const getSeguimientoController = async (id) => {
+    try {
+        const response = await NC.findAll({
+            where: {id},
+            order: [['createdAt', 'ASC']],
+            attributes: [
+                'id',
                 //TRAMITE INSPECTOR
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'usuarioInspector'],
@@ -698,5 +730,6 @@ const getAllNCSeguimientoController = async () => {
 };
 
 module.exports = {
-    getAllNCSeguimientoController
+    getAllNCSeguimientoController,
+    getSeguimientoController
 };

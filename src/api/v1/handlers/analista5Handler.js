@@ -2,7 +2,7 @@ const { getAllRSAforAnalista5Controller, updateRsaController } = require("../con
 const { getAllRGforAnalista5Controller, updateRGController } = require("../controllers/rgController")
 const { updateRSGNPController, getAllRSGforAnalista5Controller } = require('../controllers/rsgController')
 const { createActaController } = require('../controllers/actaController')
-const { getAllNCSeguimientoController } = require('../controllers/seguimientoController')
+const { getAllNCSeguimientoController, getSeguimientoController } = require('../controllers/seguimientoController')
 const { analista5Validation } = require("../validations/analista5Validation")
 
 const { updateDocumento } = require("../controllers/documentoController");
@@ -164,6 +164,7 @@ const createActaHandler = async (req, res) => {
 
 
 const seguimientoHandler = async (req, res) => {
+
   try {
     const response = await getAllNCSeguimientoController();
 
@@ -187,12 +188,46 @@ const seguimientoHandler = async (req, res) => {
 };
 
 
+
+const getTrazabilidadHandler = async (req, res) => {
+  const {id} = req.params
+
+  try {
+    const response = await getSeguimientoController(id);
+
+    if (response.length === 0) {
+      return res.status(200).json({
+        message: "No exiten NCs para realizar su seguimiento",
+        data: []
+      });
+    }
+
+    return res.status(200).json({
+      message: "NCs obtenidos correctamente para su seguimiento",
+      data: response,
+    });
+  } catch (error) {
+    console.error("Error al obtener NCs para Seguimiento:", error);
+    res
+      .status(500)
+      .json({ error: "Error interno del servidor al obtener los NCs para el seguimiento." });
+  }
+};
+
+
+
+
+
+
+
+
 module.exports = {
   getAllRSAforAnalista5Handler,
   getAllRSGforAnalista5Handler,
   getAllRGforAnalista5Handler,
   createActaHandler,
-  seguimientoHandler
+  seguimientoHandler,
+  getTrazabilidadHandler
 };
 
 

@@ -1,14 +1,160 @@
-const { createUser, validateUsuario, getUser, validateUsuarioMovil, validateDNI, changePassword, signToken, getToken, changeUserData, updateUser, getAllUsers, validateCorreo, getUserById, deleteUser, logoutUser, createUserIfNotExists, getUserByUUid, saveToken, getTokenDNI } = require("../controllers/usuarioController");
+const { guardarFoto, createUser, validateUsuario, getUser, validateUsuarioMovil, validateDNI, changePassword, signToken, getToken, changeUserData, updateUser, getAllUsers, validateCorreo, getUserById, deleteUser, logoutUser, createUserIfNotExists, getUserByUUid, saveToken, getTokenDNI } = require("../controllers/usuarioController");
 const argon2 = require('argon2');
 const jwt = require('jsonwebtoken');
 const { userSockets } = require("../../../sockets");
-//const { createHistorial } = require('../controllers/historialController');
 
+//const { createHistorial } = require('../controllers/historialController');
+const path = require('path');
 const usuarioRegex = /^[a-zA-Z0-9._-]{4,20}$/;
 const contraseñaRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*#?&]{8,}$/;
 const correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const idRolRegex = /^[1-9]\d*$/;
 const SECRET_KEY = process.env.JWT_SECRET;
+const fs = require('fs');
+const axios = require('axios');
+const sharp = require('sharp'); // Importar la librería sharp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const verifyPhotoHandler = async (req, res) => {
+    const { deviceId } = req.body;
+    console.log('este es el deviceId: ', deviceId);
+
+    try {
+        console.log('1');
+        // Validar si se subió el archivo
+        if (!req.files || !req.files['photoInspector']) {
+            return res.status(400).json({
+                success: false,
+                message: "No se recibió ninguna imagen. Por favor, intente nuevamente."
+            });
+        }
+        console.log('2');
+        const filePath = req.files['photoInspector'][0].path;
+
+        const imageBuffer = await sharp(filePath)
+            .rotate()
+            .toBuffer();
+
+        const base64Image = imageBuffer.toString('base64');
+        console.log('3');
+        const datos = {
+            foto: base64Image
+        };
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'x-api-key': '972cbc17838710f8179133d624ed3c4646034b2bcbbea6dfe5da154fd4f046a6'
+        };
+        console.log('4');
+        // Solicitud a la API externa
+        const response = await fetch('https://backendtareaje.munisjl.gob.pe/axxon/face', {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(datos)
+        });
+        console.log('5');
+        if (!response.ok) {
+            const errorData = await response.json();
+            return res.status(response.status).json({
+                success: false,
+                message: errorData.message || "Error al procesar la imagen en la API externa."
+            });
+        }
+        console.log('6');
+        const data = await response.json();
+        console.log(data.message);
+
+        const dni = data.data.dni;
+        console.log('7');
+        const dniValidate = await validateUsuarioMovil(dni);
+        if (!dniValidate) {
+            return res.status(400).json({
+                success: false,
+                message: "Este DNI no está registrado."
+            });
+        }
+        console.log('8');
+        const user = await createUserIfNotExists({ dni, deviceId });
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "Este dispositivo no está autorizado."
+            });
+        }
+        console.log('9');
+        let token = await getTokenDNI(dni);
+        if (!token) {
+            token = jwt.sign(
+                { dni: user.dni },
+                process.env.JWT_SECRET,
+                { expiresIn: process.env.JWT_EXPIRES_IN || "8h" }
+            );
+
+            await saveToken(dni, token);
+        }
+        console.log('10');
+        return res.json({
+            success: true,
+            message: "Usuario autenticado con éxito.",
+            token,
+            id_inspector: user.id,
+            usuario: user.usuario,
+            dni: dni
+        });
+    } catch (error) {
+        console.error("Error al procesar la solicitud:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Ocurrió un error interno al procesar la solicitud.",
+            error: error.message,
+        });
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const createUserHandler = async (req, res) => {
 
@@ -407,8 +553,8 @@ const facialLoginHandler = async (req, res) => {
     try {
         const dniValidate = await validateUsuarioMovil(dni);
         if (dniValidate) {
-            const user = await createUserIfNotExists({dni, deviceId});
-            if(!user){
+            const user = await createUserIfNotExists({ dni, deviceId });
+            if (!user) {
                 return res.status(400).json({
                     success: false,
                     message: "Este dispositivo no esta autorizado",
@@ -474,5 +620,6 @@ module.exports = {
     deleteUserHandler,
     logoutHandler,
     facialLoginHandler,
-    updateUsersHandler
+    updateUsersHandler,
+    verifyPhotoHandler
 };

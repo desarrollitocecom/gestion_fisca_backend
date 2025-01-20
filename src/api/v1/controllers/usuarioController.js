@@ -2,6 +2,37 @@ const { Usuario, Rol, Empleado,Permiso, ControlActa } = require('../../../config
 const { updateRol, deleteRol } = require("./rol_permisoController");
 const argon2 = require('argon2');
 const { Sequelize } = require('sequelize');
+const fs = require('fs');
+const path = require('path');
+const { saveImage, deleteFile } = require('../../../utils/fileUtils');
+
+const guardarFoto = async ({ documento_foto }) => {
+
+
+    let documento_fotoPath;
+
+    try {
+        documento_fotoPath = saveImage(documento_foto, 'AAAAAAAAA');
+
+        // const newTramiteNC = await TramiteInspector.create({
+        //     nro_nc,
+        //     documento_nc: documento_ncPath,
+        //     nro_acta,
+        //     documento_acta: documento_actaPath,
+        //     id_medida_complementaria,
+        //     estado,
+        //     id_inspector
+        // });
+
+        return true;
+    } catch (error) {
+        console.error('Error creando trámite:', error);
+
+        deleteFile(documento_fotoPath);
+
+        return false;
+    }
+};
 
 const validateUserExistController = async ({id}) => {
     try {
@@ -388,5 +419,6 @@ module.exports = {
     validateCorreo,
     validateUsuarioMovil,
     validateDNI,
-    validateUserExistController
+    validateUserExistController,
+    guardarFoto
 };

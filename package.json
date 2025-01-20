@@ -1,10 +1,10 @@
 {
   "name": "fisca_backend",
   "version": "1.0.0",
-  "main": "src/server.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/server.js",
+    "start": "nodemon server.js",
     "script0": "node src/scripts/resetDatabase.js",
     "script1": "node src/scripts/sendPermisos.js",
     "script2": "node src/scripts/sendRoles.js",
@@ -42,6 +42,7 @@
     "pg-hstore": "^2.3.4",
     "redis": "^4.7.0",
     "sequelize": "^6.37.5",
+    "sharp": "^0.33.5",
     "socket.io": "^4.8.1"
   }
 }
