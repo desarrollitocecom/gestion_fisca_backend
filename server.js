@@ -3,7 +3,7 @@ const express = require("express");
 const http = require("http");
 const { sequelize } = require("./src/config/db_connection");
 const router = require("./src/api/v1/routes/index");
-const { PORT, PDF_RUTA } = process.env;
+const { PORT, PDF_RUTA, DOC_RUTA } = process.env;
 
 const tramiteInspector = require('./src/api/v1/routes/tramiteInspectorRouter');
 
@@ -34,6 +34,7 @@ app.get("/", (req, res) => {
 });
 
 app.use('/uploads', express.static(path.join(PDF_RUTA, 'uploads'))); //para leerlo defrente y el front tenga acceso a esos archivos
+app.use('/uploads/evidencias', express.static(path.resolve(DOC_RUTA)));
 
 server.listen(PORT, () => {
   console.log(`FISCA Server is running on port ${PORT}`);

@@ -1,8 +1,10 @@
 const { format } = require('date-fns-tz');
 const { Sequelize } = require('sequelize');
+const path = require('path');
 const { Paquete, Doc, MovimientoActa, Usuario } = require('../../../config/db_connection');
 
 const { getAllPaquetesController, getOrdenanzasController, getAllSalidasFromPaqueteController, seguimientoController } = require('../controllers/controlActaController')
+const { deleteFile } = require('../../../middlewares/evidenciasMiddleware')
 
 const generatePaquete = async (req, res) => {
   const { rangoInicio, rangoFinal, descripcion, id_encargado, ordenanza } = req.body;
@@ -582,39 +584,42 @@ const asignarActa = async (req, res) => {
   }
 };
 
-
+// Handler para devolver acta :
 const devolverActa = async (req, res) => {
-  const { actas, id_encargado } = req.body;
 
+  const { id_encargado } = req.body;
   const transaction = await Doc.sequelize.transaction();
+  const errores = [];
+
+  if (!req.files || req.files.length === 0) errores.push('Es necesario el envío de archivos');
+  if (!id_encargado) errores.push('Es necesario el ID del encargado');
+  if (errores.length > 0) {
+    if (req.files.length > 0) for (const file of req.files) await deleteFile(file.filename);
+    return res.status(400).json({
+      message: 'Se encontraron los siguientes errores',
+      data: errores
+    });
+  }
 
   try {
-    // Obtenemos solo los números de acta
-    const numerosActa = actas.map(({ numero_acta }) => numero_acta.toString());
-
+    // Obtenemos solo los números de acta :
+    const numerosActa = req.files.map(file => file.fieldname.split('_')[1]);
 
     // Buscar actas en la base de datos
     const actasEncontradas = await Doc.findAll({
       where: {
-        estado: {
-          [Sequelize.Op.or]: ['realizada', 'asignada'],  // Estado puede ser "realizada" o "asignada"
-        },
-        numero_acta: {
-          [Sequelize.Op.in]: numerosActa, // Coincidir números de actas directamente
-        },
+        estado: { [Sequelize.Op.or]: ['realizada', 'asignada'] },
+        numero_acta: { [Sequelize.Op.in]: numerosActa },
       },
       transaction,
     });
 
     // Identificar actas no encontradas
-    const actasNoEncontradas = numerosActa.filter(numActa =>
-      !actasEncontradas.some(acta => acta.numero_acta === numActa)
-    );
+    const actasNoEncontradas = numerosActa.filter(numActa => !actasEncontradas.some(acta => acta.numero_acta === numActa));
 
     if (actasNoEncontradas.length > 0) {
-      const errores = actasNoEncontradas.map(
-        numActa => `No se encontró el acta: ${numActa}`
-      );
+      for (const file of req.files) await deleteFile(file.filename);
+      const errores = actasNoEncontradas.map(numActa => `No se encontró el acta: ${numActa}`);
       await transaction.rollback();
       return res.status(400).json({
         message: "Se encontraron los siguientes errores",
@@ -622,58 +627,67 @@ const devolverActa = async (req, res) => {
       });
     }
 
-    // Actualizar estado de las actas encontradas
-    // Crear un mapa de número_acta -> id_paquete para referencias rápidas
-    const mapaActas = actasEncontradas.reduce((map, acta) => {
-      map[acta.numero_acta] = acta.id_paquete; // Relacionar numero_acta con id_paquete
-      return map;
-    }, {});
+  // Crear un mapa de número_acta -> id_paquete para referencias rápidas
+  const mapaActas = actasEncontradas.reduce((map, acta) => {
+    map[acta.numero_acta] = acta.id_paquete; // Relacionar numero_acta con id_paquete
+    return map;
+  }, {});
 
-    // Actualizar el estado de las actas a 'devuelta'
-    await Promise.all(
-      actasEncontradas.map(acta =>
-        acta.update({ estado: 'devuelta' }, { transaction })
-      )
-    );
-
-    const findUser = await Usuario.findOne({
-      where: {
-        id: id_encargado
+  // Actualizar el estado de las actas a 'devuelta' :
+  for (const file of req.files) {
+    const n_acta = file.fieldname.split('_')[1];
+    const savePath = path.join('uploads', 'evidencias', file.filename).replace(/\\/g, '/');
+    await Doc.update(
+      {
+        estado: 'devuelta',
+        evidencia_salida: savePath
+      },
+      {
+        where: {
+          numero_acta: n_acta,
+          estado: { [Sequelize.Op.or]: ['realizada', 'asignada'] },
+        },
+        transaction,
       }
-    });
-
-    // Crear registros en MovimientoActa
-    await Promise.all(
-      actas.map(({ numero_acta, observacion }) => {
-        const detalle = observacion || "Entregado correctamente";
-
-        return MovimientoActa.create(
-          {
-            tipo: 'devolucion',
-            cantidad: 1,
-            numero_acta, // Guardar el número sin formatear
-            usuarioId: 2,
-            detalle: `Acta devuelta a ${findUser.usuario}: ${numero_acta}`,
-            id_paquete: mapaActas[numero_acta], 
-            id_encargado
-          },
-          { transaction }
-        );
-      })
     );
+  }
 
+  // Buscar al usuario encargado
+  const findUser = await Usuario.findOne({
+    where: { id: id_encargado }
+  });
 
-    // Confirmar la transacción
-    await transaction.commit();
+  // Crear registros en MovimientoActa
+  const movimientos = req.files.map(({ fieldname }) => {
+    const numero_acta = fieldname.split('_')[1];
+    const detalle = `Acta devuelta a ${findUser.usuario}: ${numero_acta}`;
 
-    return res.status(200).json({
-      message: 'Actas devueltas correctamente.',
-      data: actasEncontradas,
-    });
+    return {
+      tipo: 'devolucion',
+      cantidad: 1,
+      numero_acta, // Guardar el número sin formatear
+      usuarioId: findUser.id,
+      detalle,
+      id_paquete: mapaActas[numero_acta],
+      id_encargado,
+    };
+  });
+
+  // Insertar todos los movimientos de una sola vez
+  await MovimientoActa.bulkCreate(movimientos, { transaction });
+
+  // Confirmar la transacción
+  await transaction.commit();
+
+  return res.status(200).json({
+    message: 'Actas devueltas correctamente.',
+    data: actasEncontradas,
+  });
+  
   } catch (error) {
     // Revertir la transacción en caso de error
     await transaction.rollback();
-
+    if (req.files.length > 0) req.files.map(file => deleteFile(file.filename));
     console.error('Error al devolver las actas:', error);
     return res.status(500).json({
       message: 'Error interno al devolver las actas.',
