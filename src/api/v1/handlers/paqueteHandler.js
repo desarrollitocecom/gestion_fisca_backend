@@ -634,13 +634,16 @@ const devolverActa = async (req, res) => {
   }, {});
 
   // Actualizar el estado de las actas a 'devuelta' :
+  const actas = req.body.actas;
   for (const file of req.files) {
     const n_acta = file.fieldname.split('_')[1];
+    const observacion = actas[`acta_${n_acta}`].observacion;
     const savePath = path.join('uploads', 'evidencias', file.filename).replace(/\\/g, '/');
     await Doc.update(
       {
         estado: 'devuelta',
-        evidencia_salida: savePath
+        evidencia_salida: savePath,
+        observacion: observacion
       },
       {
         where: {
