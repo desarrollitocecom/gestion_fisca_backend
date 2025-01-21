@@ -37,21 +37,16 @@ app.use('/inspector', tramiteInspector);
 
 
 app.get('/verPDF123', (req, res) => {
-  console.log('sdasadsda')
   const { ruta, nombre } = req.query;
 
-  // Verifica que la ruta esté correcta
-  const filePath = path.join('C:/Users/James/gestion_fisca/', ruta);
-  console.log("Ruta del archivo:", filePath); // Esto te ayudará a verificar la ruta
+  const filePath = path.join(`${PDF_RUTA}`, ruta);
+  console.log("Ruta del archivo:", filePath); 
 
-  // Nombre amigable que quieres mostrar
-  const friendlyName = nombre; // Cambia esto según el archivo
+  const friendlyName = nombre; 
 
-  // Configurar encabezados para que el navegador use un nombre amigable
   res.setHeader('Content-Disposition', `inline; filename="${friendlyName}"`);
-  res.setHeader('Content-Type', 'application/pdf'); // Cambia el tipo MIME según tu archivo
+  res.setHeader('Content-Type', 'application/pdf'); 
 
-  // Enviar el archivo
   res.sendFile(filePath, (err) => {
       if (err) {
           console.error('Error al servir el archivo:', err);
