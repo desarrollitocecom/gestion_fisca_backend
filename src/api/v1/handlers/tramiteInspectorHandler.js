@@ -107,8 +107,6 @@ const createTramiteHandler = async (req, res) => {
         }
 
         const nroNC = await getDoc(id_controlActa);
-        console.log(nroNC);
-        
 
         const newTramiteInspector = await createTramiteInspector({
             nro_nc: nroNC.numero_acta,

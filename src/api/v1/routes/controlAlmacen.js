@@ -3,6 +3,7 @@ const router = Router();
 
 const { uploadFotosActas } = require('../../../middlewares/evidenciasMiddleware');
 const { generatePaquete, getOrdenanzas, sacarActas, asignarActa, getAllSalidasFromPaquete, devolverActa, getAllPaquetes, seguimientoHandler, actasActuales, getActaActual, getActasRealizadasActual, getActasEntregadasActual, getActasPorRealizarActual } = require('../handlers/paqueteHandler');
+const { getActasFiscalizacionHandler } =  require('../handlers/actasFiscalizacionHandler')
 
 router.get('/paquetes', getAllPaquetes);
 
@@ -29,5 +30,7 @@ router.post('/asignarActa', asignarActa);
 router.post('/devolverActa', uploadFotosActas, devolverActa);
 
 router.get('/seguimiento', seguimientoHandler);
+
+router.get('/actas-fiscalizacion', getActasFiscalizacionHandler);
 
 module.exports = router;
