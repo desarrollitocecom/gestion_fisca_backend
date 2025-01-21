@@ -65,12 +65,9 @@ const updateNCHandler = async (req, res) => {
             },
         });
 
-        console.log('datos: ', asd)
-
         const { value, label, descripcion, medida, tasa } = asd.data;
         // const monto = tasa * 51.50;
 
-        // Crear la infracción con los datos obtenidos
         const newInfraccion = await createInfraccion({
             // codigo: label,
             descripcion,
@@ -115,13 +112,17 @@ const updateNCHandler = async (req, res) => {
             dni_infractor,
             relacion_infractor,
             observaciones,
-            estado: 'ANALISTA_1',
-            id_digitador,
+            estado_digitado: 'DIGITADO',
         });
         // console.log(response);
         if (response) {
-            await responseSocket({id, method: getNCforAnalista, socketSendName: 'sendAnalista1', res});
-            io.emit("sendDigitador", { id, remove: true });
+            // await responseSocket({id, method: getNCforAnalista, socketSendName: 'sendAnalista1', res});
+            // io.emit("sendDigitador", { id, remove: true });
+            return res.status(200).json({
+                message: 'Se guardó correctamente',
+                data: []
+            });
+
         } else {
             return res.status(404).json({ message: 'Error al actualizar el NC' });
         }

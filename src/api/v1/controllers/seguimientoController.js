@@ -46,6 +46,7 @@ const getSeguimientoController = async (id) => {
                 [Sequelize.literal(`'NOTIFICACION DE CARGO'`), 'nombre_nc'],
                 [Sequelize.col('tramiteInspector.documento_nc'), 'documento_nc'],
                 [Sequelize.literal(`'ACTA DE FISCALIZACION'`), 'nombre_acta'],
+                [Sequelize.col('tramiteInspector.nro_acta'), 'nro_acta'],
                 [Sequelize.col('tramiteInspector.documento_acta'), 'documento_acta'],
                 [Sequelize.col('tramiteInspector.createdAt'), 'inspector_createdAt'],
 
@@ -55,6 +56,7 @@ const getSeguimientoController = async (id) => {
                 //                 //DESCARGO NC
                 [Sequelize.col('descargoNC.analistaUsuario.usuario'), 'usuarioAnalista1'],
                 [Sequelize.literal(`'DESCARGO NC'`), 'nombre_descargoNC'],
+                [Sequelize.col('descargoNC.nro_descargo'), 'nro_descargo'],
                 [Sequelize.col('descargoNC.documento'), 'documento_descargoNC'],
                 [Sequelize.col('descargoNC.createdAt'), 'analista_createdAt'],
 
@@ -490,11 +492,13 @@ const getSeguimientoController = async (id) => {
                     name: "inspector",
                     usuarioInspector: row.get('usuarioInspector'),
                     documento_nc: {
-                        nombre: row.get('nombre_nc'),
+                        modulo: row.get('nombre_nc'),
+                        //numero: row.get('nro_nc'),
                         path: row.get('documento_nc'),
                     },
                     documento_acta: {
-                        nombre: row.get('nombre_acta'),
+                        modulo: row.get('nombre_acta'),
+                        //numero: row.get('nro_acta'),
                         path: row.get('documento_acta'),
                     },
                     inspector_createdAt: row.get('inspector_createdAt'),
@@ -511,7 +515,8 @@ const getSeguimientoController = async (id) => {
                     name: 'Descargo NC',
                     usuarioAnalista1: row.get('usuarioAnalista1'),
                     documento_descargoNC: {
-                        nombre: row.get('nombre_descargoNC'),
+                        modulo: row.get('nombre_descargoNC'),
+                        // numero: row.get('nro_descargo'),
                         path: row.get('documento_descargoNC')
                     },
                     analista_createdAt: row.get('analista_createdAt'),
@@ -521,7 +526,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Informe Final',
                     usuarioAreaInstructiva1: row.get('usuarioAreaInstructiva1'),
                     documento_AI: {
-                        nombre: row.get('nombre_AI'),
+                        modulo: row.get('nombre_AI'),
                         path: row.get('documento_AI'),
                     },
                     AI_createdAt: row.get('AI_createdAt'),
@@ -531,7 +536,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Descargo IFI',
                     usuarioAnalista2: row.get('usuarioAnalista2'),
                     documento_descargoIFI: {
-                        nombre: row.get('nombre_DIFI'),
+                        modulo: row.get('nombre_DIFI'),
                         path: row.get('documento_DIFI'),
                     },
                     analista2_createdAt: row.get('analista2_createdAt'),
@@ -541,7 +546,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Resolucion Subgerencial',
                     usuarioResoSub: row.get('usuarioResoSub'),
                     documento_ResolucionSubgerencial: {
-                        nombre: row.get('nombre_ResoSub'),
+                        modulo: row.get('nombre_ResoSub'),
                         path: row.get('documento_ResoSub'),
                     },
                     ResoSub_createdAt: row.get('ResoSub_createdAt'),
@@ -551,7 +556,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Recurso de Reconsideración',
                     usuarioReconsiSubg_Reconcideracion: row.get('usuarioReconsiSubg_Reconcideracion'),
                     documento_RecursoReconsideracionSub: {
-                        nombre: row.get('nombre_ReconsiSubg_Reconcideracion'),
+                        modulo: row.get('nombre_ReconsiSubg_Reconcideracion'),
                         path: row.get('documento_ReconsiSubg_Reconcideracion'),
                     },
                     ReconsiSubg_createdAt_Reconcideracion: row.get('ReconsiSubg_createdAt_Reconcideracion'),
@@ -561,7 +566,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Subgerencia',
                     usuarioRSG_Reconcideracion: row.get('usuarioRSG_Reconcideracion'),
                     documento_RSGReconsideracionSub: {
-                        nombre: row.get('nombre_RSG_Reconcideracion'),
+                        modulo: row.get('nombre_RSG_Reconcideracion'),
                         path: row.get('documento_RSG_Reconcideracion'),
                     },
                     ReconsiSubg_createdAt_Reconcideracion: row.get('RSG_createdAt_Reconcideracion'),
@@ -571,7 +576,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Recurso de Apelacion',
                     usuarioApelacionSubg_Reconcideracion: row.get('usuarioApelacionSubg_Reconcideracion'),
                     documento_RecursoApelacionSub: {
-                        nombre: row.get('nombre_ApelacionSubg_Reconcideracion'),
+                        modulo: row.get('nombre_ApelacionSubg_Reconcideracion'),
                         path: row.get('documento_ApelacionSubg_Reconcideracion'),
                     },
                     ReconsiSubg_createdAt_Reconcideracion: row.get('ApelacionSubg_createdAt_Reconcideracion'),
@@ -581,7 +586,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Gerencia',
                     usuarioGerencia_Reconcideracion: row.get('usuarioGerencia_Reconcideracion'),
                     documento_GerenciaSub: {
-                        nombre: row.get('nombre_Gerencia_Reconcideracion'),
+                        modulo: row.get('nombre_Gerencia_Reconcideracion'),
                         path: row.get('documento_Gerencia_Reconcideracion'),
                     },
                     ReconsiSubg_createdAt_Reconcideracion: row.get('Gerencia_createdAt_Reconcideracion'),
@@ -591,7 +596,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Constancia de Inexigibilidad',
                     usuarioConstInexigibilidad_Reconcideracion: row.get('usuarioConstInexigibilidad_Reconcideracion'),
                     documento_InexigibilidadSub: {
-                        nombre: row.get('nombre_ConstInexigibilidad_Reconcideracion'),
+                        modulo: row.get('nombre_ConstInexigibilidad_Reconcideracion'),
                         path: row.get('documento_ConstInexigibilidad_Reconcideracion'),
                     },
                     ReconsiSubg_createdAt_Reconcideracion: row.get('ConstInexigibilidad_createdAt_Reconcideracion'),
@@ -601,7 +606,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Recurso de Apelacion',
                     usuarioApelacionSubg_Apelacion: row.get('usuarioApelacionSubg_Apelacion'),
                     documento_RecursoApelacionSub2: {
-                        nombre: row.get('nombre_ApelacionSubg_Apelacion'),
+                        modulo: row.get('nombre_ApelacionSubg_Apelacion'),
                         path: row.get('documento_ApelacionSubg_Apelacion'),
                     },
                     ReconsiSubg_createdAt_Reconcideracion: row.get('ApelacionSubg_createdAt_Apelacion'),
@@ -611,7 +616,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Gerencia',
                     usuarioGerencia_Apelacion: row.get('usuarioGerencia_Apelacion'),
                     documento_GerenciaSub2: {
-                        nombre: row.get('nombre_Gerencia_Apelacion'),
+                        modulo: row.get('nombre_Gerencia_Apelacion'),
                         path: row.get('documento_Gerencia_Apelacion'),
                     },
                     ReconsiSubg_createdAt_Reconcideracion: row.get('Gerencia_createdAt_Apelacion'),
@@ -621,7 +626,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Constancia de Inexigibilidad',
                     usuarioConstInexigibilidad_Apelacion: row.get('usuarioConstInexigibilidad_Apelacion'),
                     documento_ConstInexigibilidad2: {
-                        nombre: row.get('nombre_ConstInexigibilidad_Apelacion'),
+                        modulo: row.get('nombre_ConstInexigibilidad_Apelacion'),
                         path: row.get('documento_ConstInexigibilidad_Apelacion'),
                     },
                     ReconsiSubg_createdAt_Reconcideracion: row.get('ConstInexigibilidad_createdAt_Apelacion'),
@@ -631,7 +636,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Resolucion Sancionadora',
                     usuarioResoSanc: row.get('usuarioResoSanc'),
                     documento_ResolucionSancionadora: {
-                        nombre: row.get('nombre_ResoSanc'),
+                        modulo: row.get('nombre_ResoSanc'),
                         path: row.get('documento_ResoSanc'),
                     },
                     ResoSanc_createdAt: row.get('ResoSanc_createdAt'),
@@ -641,7 +646,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Recurso de Reconsideracion',
                     usuarioReconsiSubg_Reconcideracion_Sanc: row.get('usuarioReconsiSubg_Reconcideracion_Sanc'),
                     documento_RecursoReconsideracionSanc: {
-                        nombre: row.get('nombre_ReconsiSubg_Reconcideracion_Sanc'),
+                        modulo: row.get('nombre_ReconsiSubg_Reconcideracion_Sanc'),
                         path: row.get('documento_ReconsiSubg_Reconcideracion_Sanc'),
                     },
                     ReconsiSubg_createdAt_Reconcideracion_Sanc: row.get('ReconsiSubg_createdAt_Reconcideracion_Sanc'),
@@ -651,7 +656,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Subgerencia',
                     usuarioRSG_Reconcideracion_Sanc: row.get('usuarioRSG_Reconcideracion_Sanc'),
                     documento_RSGReconsideracionSanc: {
-                        nombre: row.get('nombre_RSG_Reconcideracion_Sanc'),
+                        modulo: row.get('nombre_RSG_Reconcideracion_Sanc'),
                         path: row.get('documento_RSG_Reconcideracion_Sanc'),
                     },
                     RSG_createdAt_Reconcideracion_Sanc: row.get('RSG_createdAt_Reconcideracion_Sanc'),
@@ -661,7 +666,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Recurso de Apelación',
                     usuarioApelacionSubg_Reconcideracion_Sanc: row.get('usuarioApelacionSubg_Reconcideracion_Sanc'),
                     documento_RecursoApelacionSanc: {
-                        nombre: row.get('nombre_ApelacionSubg_Reconcideracion_Sanc'),
+                        modulo: row.get('nombre_ApelacionSubg_Reconcideracion_Sanc'),
                         path: row.get('documento_ApelacionSubg_Reconcideracion_Sanc'),
                     },
                     ApelacionSubg_createdAt_Reconcideracion_Sanc: row.get('ApelacionSubg_createdAt_Reconcideracion_Sanc'),
@@ -671,7 +676,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Gerencia',
                     usuarioGerencia_Reconcideracion_Sanc: row.get('usuarioGerencia_Reconcideracion_Sanc'),
                     documento_GerenciaSanc: {
-                        nombre: row.get('nombre_Gerencia_Reconcideracion_Sanc'),
+                        modulo: row.get('nombre_Gerencia_Reconcideracion_Sanc'),
                         path: row.get('documento_Gerencia_Reconcideracion_Sanc'),
                     },
                     Gerencia_createdAt_Reconcideracion_Sanc: row.get('Gerencia_createdAt_Reconcideracion_Sanc'),
@@ -681,7 +686,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Constancia de Inexigibilidad',
                     usuarioConstInexigibilidad_Reconcideracion_Sanc: row.get('usuarioConstInexigibilidad_Reconcideracion_Sanc'),
                     documento_InexigibilidadSanc: {
-                        nombre: row.get('nombre_ConstInexigibilidad_Reconcideracion_Sanc'),
+                        modulo: row.get('nombre_ConstInexigibilidad_Reconcideracion_Sanc'),
                         path: row.get('documento_ConstInexigibilidad_Reconcideracion_Sanc'),
                     },
                     ConstInexigibilidad_createdAt_Reconcideracion_Sanc: row.get('ConstInexigibilidad_createdAt_Reconcideracion_Sanc'),
@@ -691,7 +696,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Recurso de Apelacion',
                     usuarioApelacionSubg_Apelacion_Sanc: row.get('usuarioApelacionSubg_Apelacion_Sanc'),
                     documento_RecursoApelacionSub2_Sanc: {
-                        nombre: row.get('nombre_ApelacionSubg_Apelacion_Sanc'),
+                        modulo: row.get('nombre_ApelacionSubg_Apelacion_Sanc'),
                         path: row.get('documento_ApelacionSubg_Apelacion_Sanc'),
                     },
                     ApelacionSubg_createdAt_Apelacion_Sanc: row.get('ApelacionSubg_createdAt_Apelacion_Sanc'),
@@ -701,7 +706,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Gerencia',
                     usuarioGerencia_Apelacion_Sanc: row.get('usuarioGerencia_Apelacion_Sanc'),
                     documento_GerenciaSub2_Sanc: {
-                        nombre: row.get('nombre_Gerencia_Apelacion_Sanc'),
+                        modulo: row.get('nombre_Gerencia_Apelacion_Sanc'),
                         path: row.get('documento_Gerencia_Apelacion_Sanc'),
                     },
                     ReconsiSubg_createdAt_Reconcideracion: row.get('Gerencia_createdAt_Apelacion_Sanc'),
@@ -711,7 +716,7 @@ const getSeguimientoController = async (id) => {
                     name: 'Constancia de Inexigibilidad',
                     usuarioConstInexigibilidad_Apelacion_Sanc: row.get('usuarioConstInexigibilidad_Apelacion_Sanc'),
                     documento_ConstInexigibilidad2_Sanc: {
-                        nombre: row.get('nombre_ConstInexigibilidad_Apelacion_Sanc'),
+                        modulo: row.get('nombre_ConstInexigibilidad_Apelacion_Sanc'),
                         path: row.get('documento_ConstInexigibilidad_Apelacion_Sanc'),
                     },
                     ConstInexigibilidad_createdAt_Apelacion_Sanc: row.get('ConstInexigibilidad_createdAt_Apelacion_Sanc'),
