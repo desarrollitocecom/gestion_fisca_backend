@@ -18,7 +18,7 @@ const sequelize = new Sequelize(DB_DATABASE, DB_USERNAME, DB_PASSWORD, {
 
 // Importar modelos
 const TipoDocumentoComplementario = require("../api/v1/models/TipoDocumentoComplementario")(sequelize);
-const Infraccion = require("../api/v1/models/Infraccion")(sequelize);
+//const Infraccion = require("../api/v1/models/Infraccion")(sequelize);
 
 const EjecucionMC = require("../api/v1/models/EjecucionMC")(sequelize);
 const TipoDocumentoIdentidad = require("../api/v1/models/TipoDocumentoIdentidad")(sequelize);
@@ -79,32 +79,32 @@ const insertData = async () => {
     ]);
 
     // Insertar datos ficticios en Infraccion
-    await Infraccion.bulkCreate([
-      {
-        actividad_economica: "Comercio",
-        codigo: "C01",
-        descripcion: "Venta sin autorización",
-        tipo: "Grave",
-        monto: 500,
-        lugar_infraccion: "Mercado Central",
-      },
-      {
-        actividad_economica: "Transporte",
-        codigo: "T02",
-        descripcion: "Falta de seguro vehicular",
-        tipo: "Moderada",
-        monto: 300,
-        lugar_infraccion: "Avenida Principal",
-      },
-      {
-        actividad_economica: "Construcción",
-        codigo: "B03",
-        descripcion: "Construcción sin licencia",
-        tipo: "Grave",
-        monto: 1000,
-        lugar_infraccion: "Zona Industrial",
-      },
-    ]);
+    // await Infraccion.bulkCreate([
+    //   {
+    //     actividad_economica: "Comercio",
+    //     codigo: "C01",
+    //     descripcion: "Venta sin autorización",
+    //     tipo: "Grave",
+    //     monto: 500,
+    //     lugar_infraccion: "Mercado Central",
+    //   },
+    //   {
+    //     actividad_economica: "Transporte",
+    //     codigo: "T02",
+    //     descripcion: "Falta de seguro vehicular",
+    //     tipo: "Moderada",
+    //     monto: 300,
+    //     lugar_infraccion: "Avenida Principal",
+    //   },
+    //   {
+    //     actividad_economica: "Construcción",
+    //     codigo: "B03",
+    //     descripcion: "Construcción sin licencia",
+    //     tipo: "Grave",
+    //     monto: 1000,
+    //     lugar_infraccion: "Zona Industrial",
+    //   },
+    // ]);
 
 
 
