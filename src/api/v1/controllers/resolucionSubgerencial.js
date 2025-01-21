@@ -226,6 +226,7 @@ const getAllRSAforPlataformaController = async () => {
         return false
     }
 }
+const moment = require('moment');
 
 const getAllRSGforAR2Controller = async () => {
     try {
@@ -242,7 +243,7 @@ const getAllRSGforAR2Controller = async () => {
                       WHEN "RSG2"."tipo_evaluar" = null THEN true
                       ELSE false
                     END
-                  `), 'activo'],
+                `), 'activo'],
                 [Sequelize.col('RSG2.createdAt'), 'createdAt'],
                 [Sequelize.literal(`
                     CASE 
@@ -250,7 +251,6 @@ const getAllRSGforAR2Controller = async () => {
                       ELSE true
                     END
                 `), 'estado']
-                
             ],
             include: [
                 {
@@ -259,15 +259,20 @@ const getAllRSGforAR2Controller = async () => {
                     attributes: []
                 }
             ]
-        })
+        });
 
-        return response || null;
+        // Formatear el campo createdAt
+        const formattedResponse = response.map(item => ({
+            ...item.get(),
+            createdAt: moment(item.get().createdAt).format('DD/MM/YYYY, HH:mm:ss')
+        }));
+
+        return formattedResponse || null;
     } catch (error) {
         console.error({ message: "Error en el controlador al traer todos los IFI para RSG1", data: error });
         return false;
     }
-}
-
+};
 module.exports = {
     updateRsaController,
     getRsaController,

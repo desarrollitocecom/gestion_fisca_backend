@@ -18,6 +18,10 @@ module.exports = (sequelize) => {
                 type: DataTypes.BOOLEAN,
                 allowNull: true,
             },
+            evidencia_salida: {
+                type: DataTypes.STRING,
+                allowNull: true,
+            },
             estado: {
                 type: DataTypes.ENUM('almacenada', 'salida', 'asignada', 'realizada', 'devuelta'),
                 allowNull: false,

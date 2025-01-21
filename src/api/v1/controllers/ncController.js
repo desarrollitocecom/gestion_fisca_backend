@@ -75,12 +75,13 @@ const getAllNCforDigitadorController = async () => {
     try {
         const response = await NC.findAll({
             where: { estado_digitado: 'NO_DIGITADO' }, 
-            order: [['createdAt', 'ASC']],
+            order: [['createdAt', 'DESC']],
             attributes: [
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'inspector'],
                 [Sequelize.col('tramiteInspector.documento_nc'), 'documento_nc'],
+                [Sequelize.col('tramiteInspector.documento_acta'), 'documento_acta'],
                 [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
                 [Sequelize.col('estado'), 'estado'],
             ],
@@ -333,7 +334,7 @@ const getAllNCforPlataformaController = async () => {
     try {
         const response = await NC.findAll({ 
             where: { estado: 'INICIADO' }, 
-            // order: [['id', 'ASC']],
+            order: [['createdAt', 'DESC']],
             attributes: [
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],

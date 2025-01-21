@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
+const { uploadFotosActas } = require('../../../middlewares/evidenciasMiddleware');
 const { generatePaquete, getOrdenanzas, sacarActas, asignarActa, getAllSalidasFromPaquete, devolverActa, getAllPaquetes, seguimientoHandler, actasActuales, getActaActual, getActasRealizadasActual, getActasEntregadasActual, getActasPorRealizarActual } = require('../handlers/paqueteHandler');
 
 router.get('/paquetes', getAllPaquetes);
@@ -25,8 +26,8 @@ router.get('/getActasPorRealizarActual/:id', getActasPorRealizarActual)
 
 router.post('/asignarActa', asignarActa);
 
-router.post('/devolverActa', devolverActa);
+router.post('/devolverActa', uploadFotosActas, devolverActa);
 
 router.get('/seguimiento', seguimientoHandler);
 
-module.exports = router;    
+module.exports = router;

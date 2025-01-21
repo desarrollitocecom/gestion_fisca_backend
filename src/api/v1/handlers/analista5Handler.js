@@ -194,6 +194,7 @@ const getTrazabilidadHandler = async (req, res) => {
 
   try {
     const response = await getSeguimientoController(id);
+    console.log(response)
 
     if (response.length === 0) {
       return res.status(200).json({
