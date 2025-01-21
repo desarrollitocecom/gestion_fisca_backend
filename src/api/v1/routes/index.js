@@ -26,6 +26,7 @@ const plataforma2 = require('./plataforma2')
 const areaResolutiva = require('./areaResolutivaRouter')
 const resoArchivaReinicia = require('../routes/resoArchivaReinicia')
 const docOpcional = require('../routes/plataformaOpcional')
+const pdf = require('../routes/pdfRouter')
 
 router.use('/doc-opcional',docOpcional);
 router.use('/gestor',gestorActas);
@@ -43,6 +44,7 @@ router.use('/plataforma1', plataforma1)
 router.use('/plataforma2', plataforma2)
 router.use('/area-resolutiva',areaResolutiva);
 router.use('/reso-archiva-reinicia',resoArchivaReinicia);
+router.use('/pdf', pdf)
 
 router.use('/ejecucionmc',ejecucionmc);
 router.use('/medidacomplementaria',medidacomplementaria);

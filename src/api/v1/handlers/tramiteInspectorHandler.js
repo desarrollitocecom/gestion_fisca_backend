@@ -1,4 +1,4 @@
-const { createTramiteInspector, getAllTramiteInspectorById, getMyActasController } = require('../controllers/tramiteInspectorController');
+const { createTramiteInspector, getAllTramiteInspectorById, getMyActasController, getDoc } = require('../controllers/tramiteInspectorController');
 const { createMedidaComplementaria, getAllTipoMCController } = require('../controllers/medidaComplementariaController')
 const { createNC, getNCforDigitador } = require('../controllers/ncController');
 const { updateControlActaController } = require('../controllers/controlActaController')
@@ -106,8 +106,10 @@ const createTramiteHandler = async (req, res) => {
             }
         }
 
+        const nroNC = await getDoc(id_controlActa);
+
         const newTramiteInspector = await createTramiteInspector({
-            nro_nc,
+            nro_nc: nroNC.numero_acta,
             documento_nc: req.files['documento_nc'][0],
             nro_acta,
             documento_acta: req.files['documento_acta'][0],
@@ -228,5 +230,7 @@ const getAllTipoMC = async (req, res) => {
         res.status(500).json({ error: "Error interno del servidor al obtener las actas." });
     }
 }
+
+
 
 module.exports = { createTramiteHandler, allTramiteHandler, getMyActasHandler, getAllTipoMC };

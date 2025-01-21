@@ -3,7 +3,7 @@ const { saveImage, deleteFile } = require('../../../utils/fileUtils');
 const { Sequelize } = require('sequelize');
 
 const getMyActasController = async (id) => {
-    try {       
+    try {
         const response = await Doc.findAll({
             where: {
                 id_inspector: id,
@@ -62,13 +62,13 @@ const getAllTramiteInspectorById = async (id, page = 1, limit = 20) => {
             },
             order: [['createdAt', 'DESC']],
             attributes: ['id', 'nro_nc', 'documento_nc', 'nro_acta', 'documento_acta',
-                            [Sequelize.col('medidaComplementaria.nro_medida_complementaria'), 'nro_mc'],
-                            [Sequelize.col('medidaComplementaria.documento_medida_complementaria'), 'documento_mc'],
-                            'createdAt'
-                             ],
+                [Sequelize.col('medidaComplementaria.nro_medida_complementaria'), 'nro_mc'],
+                [Sequelize.col('medidaComplementaria.documento_medida_complementaria'), 'documento_mc'],
+                'createdAt'
+            ],
             include: [
                 {
-                    model: MedidaComplementaria, 
+                    model: MedidaComplementaria,
                     as: 'medidaComplementaria',
                     attributes: []
                 },
@@ -85,5 +85,21 @@ const getAllTramiteInspectorById = async (id, page = 1, limit = 20) => {
 };
 
 
+const getDoc = async (id) => {
+    try {
+        const response = await Doc.findOne({
+            where: {
+                id: id
+            }
+        })
 
-module.exports = { createTramiteInspector, getAllTramiteInspectorById, getMyActasController };
+        return response
+    } catch (error) {
+        return false
+    }
+}
+
+
+
+
+module.exports = { createTramiteInspector, getAllTramiteInspectorById, getMyActasController, getDoc };
