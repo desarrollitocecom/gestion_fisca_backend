@@ -27,6 +27,10 @@ module.exports = (sequelize) => {
                 allowNull: false,
                 defaultValue: 'almacenada',
             },
+            observacion: {
+                type: DataTypes.STRING,
+                allowNull: true
+            },
             id_paquete: {
                 type: DataTypes.UUID,
                 references: {
@@ -42,7 +46,7 @@ module.exports = (sequelize) => {
                     key: 'id',
                 },
                 allowNull: true, 
-            }, 
+            }
         },
         {
             tableName: "Docs",
