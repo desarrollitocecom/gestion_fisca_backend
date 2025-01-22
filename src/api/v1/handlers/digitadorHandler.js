@@ -64,14 +64,17 @@ const updateNCHandler = async (req, res) => {
                 Authorization: `Bearer ${token}`,
             },
         });
-
-        const { value, label, descripcion, medida, tasa } = asd.data;
-        // const monto = tasa * 51.50;
+        const { value, label, descripcion, medida, tasa } = asd.data[0];
+        console.log(value, label, descripcion, medida, tasa)
+        const tasaNumerica = parseFloat(tasa);
+        const monto = (tasaNumerica * 53.50).toFixed(2);
 
         const newInfraccion = await createInfraccion({
-            // codigo: label,
+            actividad_economica: giro_entidad,
+            codigo: label,
             descripcion,
-            // monto,
+            tipo: tipo_infraccion,
+            monto,
         });
 
 
