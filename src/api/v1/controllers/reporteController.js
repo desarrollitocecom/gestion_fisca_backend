@@ -66,6 +66,7 @@ const getAllDataController = async (page = 1, limit = 20, ordenanza = null, acti
                 // //                  IFI
                 [Sequelize.col('IFI.nro_ifi'), 'numero_IFI'],
                 [Sequelize.col('IFI.createdAt'), 'fecha_IFI'],
+                [Sequelize.col('IFI.fecha_notificacion'), 'fecha_notificacion_IFI'],
 
                 // //                  Descargo IFI
                 [Sequelize.col('IFI.DescargoIFIs.nro_descargo'), 'numero_DIFI'],
@@ -74,37 +75,31 @@ const getAllDataController = async (page = 1, limit = 20, ordenanza = null, acti
 
                 // //RESOLUCION SUBGERENCIAL///////////////////////
                 [Sequelize.col('IFI.RSG2.nro_rsg'), 'numero_RSG1'],
-                [Sequelize.col('IFI.RSG2.createdAt'), 'fecha_resolucion1'],
+                [Sequelize.col('IFI.RSG2.createdAt'), 'fecha_RSG1'],
+                [Sequelize.col('IFI.RSG2.fecha_notificacion_rsg'), 'fecha_notificacion_RSG1'],
+
 
                 // //RECONSIDERACION SUBGERENCIAL/////////////////
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RecursoReconUsuario.usuario'), 'usuarioReconsiSubg_Reconcideracion'],
-                // [Sequelize.literal(`'RECURSO DE RECONSIDERACION'`), 'nombre_ReconsiSubg_Reconcideracion'],
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.documento'), 'documento_ReconsiSubg_Reconcideracion'],
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.createdAt'), 'ReconsiSubg_createdAt_Reconcideracion'],
+                [Sequelize.col('IFI.RSG2.Reconsideracion.nro_recurso'), 'numero_reconsideracion'],
+                [Sequelize.col('IFI.RSG2.Reconsideracion.fecha_recurso'), 'fecha_reconsideracion'],
 
                 // //SUBGERENCIA////////////////////
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.rsgUsuario.usuario'), 'usuarioRSG_Reconcideracion'],
-                // [Sequelize.literal(`'SUBGERENCIA'`), 'nombre_RSG_Reconcideracion'],
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.documento_RSG'), 'documento_RSG_Reconcideracion'],
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.createdAt'), 'RSG_createdAt_Reconcideracion'],
+                [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.nro_rsg'), 'fecha_RSG2'],
+                [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.fecha_rsg'), 'numero_RSG2'],
+                [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.fecha_notificacion'), 'fecha_notificacion_RSG2'],
 
                 // //APELACION SUBGERENCIAL////////////////////
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.RecApelacionUsuario.usuario'), 'usuarioApelacionSubg_Reconcideracion'],
-                // [Sequelize.literal(`'SUBGERENCIA'`), 'nombre_ApelacionSubg_Reconcideracion'],
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.documento'), 'documento_ApelacionSubg_Reconcideracion'],
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.createdAt'), 'ApelacionSubg_createdAt_Reconcideracion'],
+                [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.nro_recurso'), 'numero_apelacion'],
+                [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.fecha_recurso'), 'fecha_apelacion'],
 
                 // //GERENCIA///////////////
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.RGs.rgUsuario.usuario'), 'usuarioGerencia_Reconcideracion'],
-                // [Sequelize.literal(`'GERENCIA'`), 'nombre_Gerencia_Reconcideracion'],
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.RGs.documento_rg'), 'documento_Gerencia_Reconcideracion'],
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.RGs.createdAt'), 'Gerencia_createdAt_Reconcideracion'],
+                [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.RGs.nro_rg'), 'fecha_RG'],
+                [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.RGs.fecha_rg'), 'numero_RG'],
+                [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.RGs.fecha_notificacion'), 'fecha_notificacion_RG'],
 
                 // //CONSTANCIA INEXIGILIDAD///////////////////
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.RGs.inexiRG.ConstInexiUsuario.usuario'), 'usuarioConstInexigibilidad_Reconcideracion'],
-                // [Sequelize.literal(`'CONSTANCIA DE INEXIGIBILIDAD'`), 'nombre_ConstInexigibilidad_Reconcideracion'],
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.RGs.inexiRG.documento_ci'), 'documento_ConstInexigibilidad_Reconcideracion'],
-                // [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.RGs.inexiRG.createdAt'), 'ConstInexigibilidad_createdAt_Reconcideracion'],
+                [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.RGs.inexiRG.nro_ci'), 'numero_constancia_exigibilidad'],
+                [Sequelize.col('IFI.RSG2.Reconsideracion.RSGs.RecApelaciones.RGs.inexiRG.fecha_ci'), 'fecha_constancia_Exigibilidad'],
 
                 // //APELACION SUBGERENCIAL///////////////
                 // [Sequelize.col('IFI.RSG2.Apelacion.RecApelacionUsuario.usuario'), 'usuarioApelacionSubg_Apelacion'],
@@ -131,9 +126,9 @@ const getAllDataController = async (page = 1, limit = 20, ordenanza = null, acti
 
 
 
-                // //RESOLUCION SANCIONADORA
-                [Sequelize.col('IFI.RSA.nro_rsa'), 'numero_RSA'],
-                [Sequelize.col('IFI.RSA.createdAt'), 'fecha_RSA'],
+                // // //RESOLUCION SANCIONADORA
+                // [Sequelize.col('IFI.RSA.nro_rsa'), 'numero_RSA'],
+                // [Sequelize.col('IFI.RSA.createdAt'), 'fecha_RSA'],
 
                 // //RECONSIDERACION SUBGERENCIAL
                 // [Sequelize.col('IFI.RSA.Reconsideracion.RecursoReconUsuario.usuario'), 'usuarioReconsiSubg_Reconcideracion_Sanc'],
@@ -513,86 +508,49 @@ const getAllDataController = async (page = 1, limit = 20, ordenanza = null, acti
             levantamiento_medida: row.get('numero_ejecucion'),
             observaciones: row.get('observaciones'),
             nombre_inspector: row.get('usuarioInspector'),
-            estado_NC: '',
 
-            //} : undefined,
-            //etapaDigitador: row.get('usuarioDigitador') ? {
-            // usuarioDigitador: row.get('usuarioDigitador'),
-            // digitador_createdAt: row.get('inspector_createdAt'),
-            //} : undefined,
-            //estapaDescargoNC: row.get('usuarioAnalista1') ? {
             numero_descargoNC: row.get('numero_descargoNC'),
             fecha_descargoNC: row.get('fecha_descargoNC'),
-            //} : undefined,
-            //etapaAreaInstructiva: row.get('usuarioAreaInstructiva1') ? {
+
             numero_IFI: row.get('numero_IFI'),
             fecha_IFI: row.get('fecha_IFI'),
-            //} : undefined,
-            //etapaRSG1: row.get('usuarioRSG1') ? {
+            fecha_notificacion_IFI: row.get('fecha_notificacion_IFI'),
 
-            //} : undefined,
-            //etapaDescargoIFI: row.get('usuarioAnalista2') ? {
             numero_DIFI: row.get('numero_DIFI'),
             fecha_descargoIFI: row.get('fecha_descargo'),
 
-            numero_RSG_MC: row.get('numero_RSG1'),
-            fecha_RSG1: row.get('fecha_resolucion1'),
             numero_RSG1: row.get('numero_RSG1'),
-            fecha_RSG2: row.get('fecha_resolucion2'),
-            numero_RSG2: row.get('numero_AR2'),
+            fecha_RSG1: row.get('fecha_RSG1'),
+            fecha_notificacion_RSG1: row.get('fecha_notificacion_RSG1'),
 
-
-            //} : undefined,
-            //etapaRSA: row.get('usuarioAreaInstructiva2') ? {
             numero_RSA: row.get('numero_RSA'),
             fecha_RSA: row.get('fecha_RSA'),
             fecha_notificacion_RSA: row.get('fecha_notificacion_RSA'),
-            estado_RSA: '',
-            //} : undefined,
-            //etapaDescargoRSA: row.get('usuarioAnalista3') ? {
-            numero_DRSA: row.get('numero_DRSA'),
-            fecha_DRSA: row.get('fecha_DRSA'),
-            //} : undefined,
-            //etapaRSG: row.get('usuarioAreaInstructiva3') ? {
 
-            nro_RSG: row.get('numero_RSG'),
-            fecha_emision_RSG: row.get('fecha_RSG'),
-            fecha_notificacion_RSG: row.get('fecha_notificacion_RSG'),
-            resuelve_RSG: (() => {
-                const estado = row.get('estado_RSG');
-                return estado === 'RSGP' ? 'SI' : estado === null ? null : 'NO';
-            })(),
-            //} : undefined,
-            //etapaDescargoRSG: row.get('usuarioAnalista4') ? {
-            numero_DRSG: row.get('nro_DRSG'),
-            fecha_DRSG: row.get('fecha_DRSG'),
-            //} : undefined,
-            //etapaRG: row.get('usuarioGerencia') ? {
+            numero_Reconsideracion : row.get('numero_reconsideracion'),
+            fecha_Reconsideracion : row.get('fecha_reconsideracion'),
+
+            fecha_RSG2: row.get('fecha_RSG2'),
+            numero_RSG2: row.get('numero_RSG2'),
+            fecha_notificacion_RSG2: row.get('fecha_notificacion_RSG2'),
+
+            numero_Apelacion : row.get('numero_apelacion'),
+            fecha_Apelacion : row.get('fecha_apelacion'),
+
+            fecha_RG: row.get('fecha_RG'),
             numero_RG: row.get('numero_RG'),
-            fecha_emision_RG: row.get('fecha_RG'),
             fecha_notificacion_RG: row.get('fecha_notificacion_RG'),
-            // resuelve_RG: (() => {
-            //     const estado = row.get('resuelve_RG');
-            //     if (estado === 'FUNDADO') {
-            //         return 'SI';
-            //     } else if (estado === null) {
-            //         return ''; // Devuelve una cadena vacía si es null
-            //     } else {
-            //         return 'NO';
-            //     }
+
+            numero_constancia_Exigibilidad : row.get('numero_constancia_exigibilidad'),
+            fecha_Constancia_Exigibilidad : row.get('fecha_constancia_Exigibilidad'),
+
+            // nro_RSG: row.get('numero_RSG'),
+            // fecha_emision_RSG: row.get('fecha_RSG'),
+            // fecha_notificacion_RSG: row.get('fecha_notificacion_RSG'),
+            // resuelve_RSG: (() => {
+            //     const estado = row.get('estado_RSG');
+            //     return estado === 'RSGP' ? 'SI' : estado === null ? null : 'NO';
             // })(),
-            //} : undefined,
-
-            resuelve_RG: row.get('resuelve_RG'),
-
-            //etapaConsentimiento: row.get('usuarioAnalista5') ? {
-            // usuarioAnalista5: row.get('usuarioAnalista5'),
-            // documento_Acta: {
-            //     nombre: row.get('nombre_Acta'),
-            //     path: row.get('documento_Acta'),
-            // },
-            // analista5_createdAt: row.get('Acta_createdAt'),
-            //} : undefined
 
         }));
 
