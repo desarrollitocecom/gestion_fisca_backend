@@ -8,6 +8,7 @@ const getAllDataController = async (page = 1, limit = 20, ordenanza = null, acti
     limit = page == 0 ? null : limit;
 
     let whereCondition = {
+        '$tramiteInspector.nro_nc$': { [Sequelize.Op.ne]: null },
         ...(ordenanza && { ordenanza_municipal: { [Op.iLike]: `%${ordenanza}%` } }),
         ...(actividad_economica && {
             '$entidad.giro_entidad$': { [Op.iLike]: `%${actividad_economica}%` }
@@ -34,7 +35,6 @@ const getAllDataController = async (page = 1, limit = 20, ordenanza = null, acti
             where: whereCondition,
             order: [['createdAt', 'ASC']],
             limit,
-            //logging: console.log,
             offset,
             attributes: [
                 'id',
@@ -512,7 +512,7 @@ const getAllDataController = async (page = 1, limit = 20, ordenanza = null, acti
             ejecucion_medida: row.get('tipo_ejecucionMC'),
             levantamiento_medida: row.get('numero_ejecucion'),
             observaciones: row.get('observaciones'),
-            nombre_inspector: row.get('nombre_inspector'),
+            nombre_inspector: row.get('usuarioInspector'),
             estado_NC: '',
 
             //} : undefined,
@@ -571,11 +571,20 @@ const getAllDataController = async (page = 1, limit = 20, ordenanza = null, acti
             numero_RG: row.get('numero_RG'),
             fecha_emision_RG: row.get('fecha_RG'),
             fecha_notificacion_RG: row.get('fecha_notificacion_RG'),
-            resuelve_RG: (() => {
-                const estado = row.get('resuelve_RG');
-                return estado === 'FUNDADO' ? 'SI' : estado === null ? null : 'NO';
-            })(),
+            // resuelve_RG: (() => {
+            //     const estado = row.get('resuelve_RG');
+            //     if (estado === 'FUNDADO') {
+            //         return 'SI';
+            //     } else if (estado === null) {
+            //         return ''; // Devuelve una cadena vacía si es null
+            //     } else {
+            //         return 'NO';
+            //     }
+            // })(),
             //} : undefined,
+
+            resuelve_RG: row.get('resuelve_RG'),
+
             //etapaConsentimiento: row.get('usuarioAnalista5') ? {
             // usuarioAnalista5: row.get('usuarioAnalista5'),
             // documento_Acta: {

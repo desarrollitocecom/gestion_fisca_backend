@@ -7,7 +7,7 @@ const getAllNCController = async () => {
     try {
         const response = await NC.findAll({
             attributes: [
-                'id', 
+                'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
                 'createdAt'
             ],
@@ -45,8 +45,8 @@ const createNC = async ({ id_tramiteInspector }) => {
 
 const getNC = async (id) => {
     try {
-        const findNC = await NC.findOne({ 
-            where: { id } 
+        const findNC = await NC.findOne({
+            where: { id }
         });
 
         return findNC || null;
@@ -63,8 +63,8 @@ const updateNC = async (id, data) => {
         if (findNC) {
             await findNC.update(data);
         }
-        
-        return findNC || null;    
+
+        return findNC || null;
     } catch (error) {
         console.error("Error actualizando NC en el controlador:", error);
         return false;
@@ -74,10 +74,10 @@ const updateNC = async (id, data) => {
 const getAllNCforDigitadorController = async () => {
     try {
         const response = await NC.findAll({
-            where: { 
+            where: {
                 estado_digitado: 'NO_DIGITADO',
                 '$tramiteInspector.nro_nc$': { [Sequelize.Op.ne]: null },
-            }, 
+            },
             order: [['createdAt', 'DESC']],
             attributes: [
                 'id',
@@ -94,7 +94,7 @@ const getAllNCforDigitadorController = async () => {
                     as: 'tramiteInspector',
                     include: [
                         {
-                            model: Usuario, 
+                            model: Usuario,
                             as: 'inspectorUsuario',
                             attributes: []
                         },
@@ -107,7 +107,7 @@ const getAllNCforDigitadorController = async () => {
         const modifiedResponse = response.map((item, index) => {
             const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
             const cachedValue = myCache.get(`Digitador-${id}`); // Obtener valor del cache si existe
-            
+
             return {
                 ...item.toJSON(),
                 disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
@@ -125,7 +125,7 @@ const getAllNCforDigitadorController = async () => {
 
 const getNCforDigitador = async (id) => {
     try {
-        const findNC = await NC.findOne({ 
+        const findNC = await NC.findOne({
             where: { id },
             attributes: [
                 'id',
@@ -141,7 +141,7 @@ const getNCforDigitador = async (id) => {
                     as: 'tramiteInspector',
                     include: [
                         {
-                            model: Usuario, 
+                            model: Usuario,
                             as: 'inspectorUsuario',
                             attributes: []
                         },
@@ -150,7 +150,7 @@ const getNCforDigitador = async (id) => {
                 }
             ],
         });
-        
+
         return findNC || null;
     } catch (error) {
         console.error({ message: "Error obteniendo todos los NC para el digitador en el controlador", data: error });
@@ -160,15 +160,15 @@ const getNCforDigitador = async (id) => {
 
 const getNCforAnalista = async (id) => {
     try {
-        const findNC = await NC.findOne({ 
-            where: { id } ,
+        const findNC = await NC.findOne({
+            where: { id },
             attributes: [
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],
                 [Sequelize.col('tramiteInspector.inspectorUsuario.usuario'), 'digitador'],
                 [Sequelize.col('tramiteInspector.createdAt'), 'createdAt'],
                 [Sequelize.col('estado'), 'estado'],
-                
+
             ],
             include: [
                 {
@@ -176,7 +176,7 @@ const getNCforAnalista = async (id) => {
                     as: 'tramiteInspector',
                     include: [
                         {
-                            model: Usuario, 
+                            model: Usuario,
                             as: 'inspectorUsuario',
                             attributes: []
                         },
@@ -184,13 +184,13 @@ const getNCforAnalista = async (id) => {
                     attributes: []
                 },
                 {
-                    model: Usuario, 
+                    model: Usuario,
                     as: 'digitadorUsuario',
                     attributes: []
                 },
             ],
         });
-        
+
         return findNC || null;
     } catch (error) {
         console.error({ message: "Error al encontrar el NC", data: error });
@@ -200,8 +200,8 @@ const getNCforAnalista = async (id) => {
 
 const getNCforInstructiva = async (id) => {
     try {
-        const response = await NC.findOne({ 
-            where: { id: id }, 
+        const response = await NC.findOne({
+            where: { id: id },
             order: [['id', 'ASC']],
             attributes: [
                 'id',
@@ -211,7 +211,7 @@ const getNCforInstructiva = async (id) => {
             ],
             include: [
                 {
-                    model: DescargoNC, 
+                    model: DescargoNC,
                     as: 'descargoNC',
                     include: [
                         {
@@ -219,13 +219,13 @@ const getNCforInstructiva = async (id) => {
                             as: 'analistaUsuario',
                             attributes: []
                         }
-                    ] ,
+                    ],
                     attributes: []
                 },
                 {
-                    model: TramiteInspector, 
-                    as: 'tramiteInspector', 
-                    attributes: [], 
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
+                    attributes: [],
                 },
             ],
         });
@@ -238,10 +238,10 @@ const getNCforInstructiva = async (id) => {
 
 const getAllNCforInstructiva = async () => {
     console.log('asddasdasd');
-    
+
     try {
-        const response = await NC.findAll({ 
-            where: { estado: 'A_I' }, 
+        const response = await NC.findAll({
+            where: { estado: 'A_I' },
             order: [['updatedAt', 'ASC']],
             attributes: [
                 'id',
@@ -251,7 +251,7 @@ const getAllNCforInstructiva = async () => {
             ],
             include: [
                 {
-                    model: DescargoNC, 
+                    model: DescargoNC,
                     as: 'descargoNC',
                     include: [
                         {
@@ -259,13 +259,13 @@ const getAllNCforInstructiva = async () => {
                             as: 'analistaUsuario',
                             attributes: []
                         }
-                    ] ,
+                    ],
                     attributes: []
                 },
                 {
-                    model: TramiteInspector, 
-                    as: 'tramiteInspector', 
-                    attributes: [], 
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
+                    attributes: [],
                 },
             ],
         });
@@ -273,7 +273,7 @@ const getAllNCforInstructiva = async () => {
         const modifiedResponse = response.map(item => {
             const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
             const cachedValue = myCache.get(`AInstructiva-${id}`); // Obtener valor del cache si existe
-        
+
             return {
                 ...item.toJSON(),
                 disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
@@ -289,8 +289,8 @@ const getAllNCforInstructiva = async () => {
 
 const getAllNCforAnalista = async () => {
     try {
-        const response = await NC.findAll({ 
-            where: { estado: 'INICIADO' }, 
+        const response = await NC.findAll({
+            where: { estado: 'INICIADO' },
             // order: [['id', 'ASC']],
             attributes: [
                 'id',
@@ -301,14 +301,14 @@ const getAllNCforAnalista = async () => {
             ],
             include: [
                 {
-                    model: Usuario, 
+                    model: Usuario,
                     as: 'digitadorUsuario',
                     attributes: []
                 },
                 {
-                    model: TramiteInspector, 
-                    as: 'tramiteInspector', 
-                    attributes: [], 
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
+                    attributes: [],
                 },
             ],
         });
@@ -316,7 +316,7 @@ const getAllNCforAnalista = async () => {
         const modifiedResponse = response.map(item => {
             const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
             const cachedValue = myCache.get(`AnalistaOne-${id}`); // Obtener valor del cache si existe
-        
+
             return {
                 ...item.toJSON(),
                 disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
@@ -335,11 +335,11 @@ const getAllNCforAnalista = async () => {
 
 const getAllNCforPlataformaController = async () => {
     try {
-        const response = await NC.findAll({ 
-            where: { 
+        const response = await NC.findAll({
+            where: {
                 estado: 'INICIADO',
                 '$tramiteInspector.nro_nc$': { [Sequelize.Op.ne]: null },
-             }, 
+            },
             order: [['createdAt', 'DESC']],
             attributes: [
                 'id',
@@ -350,17 +350,17 @@ const getAllNCforPlataformaController = async () => {
             ],
             include: [
                 {
-                    model: Usuario, 
+                    model: Usuario,
                     as: 'digitadorUsuario',
                     attributes: []
                 },
                 {
-                    model: TramiteInspector, 
-                    as: 'tramiteInspector', 
-                    attributes: [], 
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
+                    attributes: [],
                     include: [
                         {
-                            model: Usuario, 
+                            model: Usuario,
                             as: 'inspectorUsuario',
                             attributes: []
                         },
@@ -372,7 +372,7 @@ const getAllNCforPlataformaController = async () => {
         const modifiedResponse = response.map(item => {
             const id = item.id; // Asumiendo que 'id' es la clave para buscar en el cache
             const cachedValue = myCache.get(`AnalistaOne-${id}`); // Obtener valor del cache si existe
-        
+
             return {
                 ...item.toJSON(),
                 disabled: cachedValue ? cachedValue.disabled : false, // Si existe en cache usa el valor, si no, default false
@@ -388,36 +388,52 @@ const getAllNCforPlataformaController = async () => {
 
 const getAllNCCaduco = async () => {
     try {
-      // Obtén la fecha actual y ajusta la zona horaria a Lima, Perú
-      const currentDate = new Date(); // Fecha actual
-      const limaOffset = -5 * 60; // UTC-5, que es la zona horaria de Lima
-      const limaDate = new Date(currentDate.getTime() + (currentDate.getTimezoneOffset() + limaOffset) * 60000);
-      //console.log('dia hoy: ', limaDate);
-      
-  
-      // Calcula la fecha de hace 9 meses
-      limaDate.setMonth(limaDate.getMonth() - 9);
-      limaDate.setHours(0, 0, 0, 0); // Ajusta la hora al inicio del día
-  
-      // Realiza la consulta
-      const response = await NC.findAll({
-        where: {
-          createdAt: {
-            [Op.lt]: limaDate // Fecha menor a 9 meses
-          },
-          id_nro_IFI: null
-        }
-      });
-      //console.log('resposne: ', response);
-      
-      // Devuelve la respuesta, o null si no hay datos
-      return response.length > 0 ? response : [];
+        // Obtén la fecha actual y ajusta la zona horaria a Lima, Perú
+        const currentDate = new Date(); // Fecha actual
+        const limaOffset = -5 * 60; // UTC-5, que es la zona horaria de Lima
+        const limaDate = new Date(currentDate.getTime() + (currentDate.getTimezoneOffset() + limaOffset) * 60000);
+        //console.log('dia hoy: ', limaDate);
+
+
+        // Calcula la fecha de hace 9 meses
+        limaDate.setMonth(limaDate.getMonth() - 9);
+        limaDate.setHours(0, 0, 0, 0); // Ajusta la hora al inicio del día
+
+        // Realiza la consulta
+        const response = await NC.findAll({
+            where: {
+                createdAt: {
+                    [Op.lt]: limaDate // Fecha menor a 9 meses
+                },
+                id_nro_IFI: null
+            }
+        });
+        //console.log('resposne: ', response);
+
+        // Devuelve la respuesta, o null si no hay datos
+        return response.length > 0 ? response : [];
     } catch (error) {
-      console.error("Error al obtener los NC caducos:", error);
-      return false;
+        console.error("Error al obtener los NC caducos:", error);
+        return false;
     }
-  };
-module.exports = { createNC, getNCforInstructiva, updateNC, getAllNCforDigitadorController , 
+};
+
+const validateActa = async (nro_acta) => {
+    try {
+        const nroActaFormatted = nro_acta.toString().padStart(6, '0');
+
+        const findActa = await TramiteInspector.findOne({
+            where: { nro_acta: nroActaFormatted },
+        });
+
+        return findActa || null;
+    } catch (error) {
+        console.error({ message: "Error al encontrar el Acta", data: error });
+        return false;
+    }
+}
+module.exports = {
+    createNC, getNCforInstructiva, updateNC, getAllNCforDigitadorController,
     getNCforDigitador, getNCforAnalista, getAllNCforInstructiva, getNC, getAllNCforAnalista,
-    getAllNCforPlataformaController, getAllNCCaduco /*getAllNCCaduco*/ , getAllNCController
+    getAllNCforPlataformaController, getAllNCCaduco /*getAllNCCaduco*/, getAllNCController, validateActa
 };

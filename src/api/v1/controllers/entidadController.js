@@ -24,15 +24,19 @@ const createEntidad = async ({
  };
 
  const createInfraccion = async ({
+    actividad_economica,
     codigo,
     descripcion,
+    tipo,
     monto
     }) => {
 
     try {
         const newInfraccion = Infraccion.create({
+            actividad_economica,
             codigo,
             descripcion,
+            tipo,
             monto
         });
 

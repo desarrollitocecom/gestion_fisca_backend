@@ -1,4 +1,5 @@
 const { validateUserExistController } = require("../controllers/usuarioController")
+const { validateActa } = require("../controllers/ncController")
 
 const allowedFields = [
     'nombre_MC',
@@ -51,6 +52,12 @@ const inspectorValidation = async (receivedBody, files) => {
         if (!existingUser) {
             errors.push('Este inspector no existe');
         }
+    }
+
+    const existingActa = await validateActa(receivedBody.nro_acta)
+
+    if(existingActa){
+        errors.push('Esta acta ya fue registrada. Por favor comuniquese con su superior');
     }
 
 
