@@ -6,6 +6,9 @@ const getAllNCSeguimientoController = async () => {
     try {
         const response = await NC.findAll({
             order: [['createdAt', 'ASC']],
+            where: { 
+                '$tramiteInspector.nro_nc$': { [Sequelize.Op.ne]: null },
+            }, 
             attributes: [
                 'id',
                 [Sequelize.col('tramiteInspector.nro_nc'), 'nro_nc'],

@@ -66,6 +66,7 @@ const createTramiteHandler = async (req, res) => {
 
     } = req.body;
 
+    nro_acta = nro_acta.toString().padStart(6, '0');
 
     if (nombre_MC == 1) {
         nombre_MC = null;
