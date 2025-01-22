@@ -74,7 +74,10 @@ const updateNC = async (id, data) => {
 const getAllNCforDigitadorController = async () => {
     try {
         const response = await NC.findAll({
-            where: { estado_digitado: 'NO_DIGITADO' }, 
+            where: { 
+                estado_digitado: 'NO_DIGITADO',
+                '$tramiteInspector.nro_nc$': { [Sequelize.Op.ne]: null },
+            }, 
             order: [['createdAt', 'DESC']],
             attributes: [
                 'id',
@@ -333,7 +336,10 @@ const getAllNCforAnalista = async () => {
 const getAllNCforPlataformaController = async () => {
     try {
         const response = await NC.findAll({ 
-            where: { estado: 'INICIADO' }, 
+            where: { 
+                estado: 'INICIADO',
+                '$tramiteInspector.nro_nc$': { [Sequelize.Op.ne]: null },
+             }, 
             order: [['createdAt', 'DESC']],
             attributes: [
                 'id',

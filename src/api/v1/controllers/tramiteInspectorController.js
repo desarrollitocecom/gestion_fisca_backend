@@ -59,6 +59,7 @@ const getAllTramiteInspectorById = async (id, page = 1, limit = 20) => {
         const response = await TramiteInspector.findAndCountAll({
             where: {
                 id_inspector: id,
+                nro_nc: { [Sequelize.Op.ne]: null },
             },
             order: [['createdAt', 'DESC']],
             attributes: ['id', 'nro_nc', 'documento_nc', 'nro_acta', 'documento_acta',

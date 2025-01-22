@@ -347,7 +347,7 @@ const getAllRSGforAnalista5Controller = async () => {
                 [Sequelize.col('NCs.id'), 'id_nc'],
                 // [Sequelize.col('NCs.tramiteInspector.nro_nc'), 'nro_nc'],
                 // [Sequelize.col('DescargoRSAs.Usuarios.usuario'), 'usuario'],
-                [Sequelize.col('Usuarios.usuario'), 'usuario'],
+                [Sequelize.col('rsgUsuario.usuario'), 'usuario'],
                 [Sequelize.literal(`'Analista 4'`), 'area'],
                 'createdAt'
             ],
@@ -367,7 +367,7 @@ const getAllRSGforAnalista5Controller = async () => {
                 },
                 {
                     model: Usuario,
-                    as: 'Usuarios',
+                    as: 'rsgUsuario',
                     attributes: []
                 },
 
