@@ -44,7 +44,7 @@ app.get('/verPDF123', (req, res) => {
 
   const friendlyName = nombre; 
 
-  res.setHeader('Content-Disposition', `inline; filename="${friendlyName}"`);
+  res.setHeader('Content-Disposition', `inline; filename="${friendlyName}.pdf"`);
   res.setHeader('Content-Type', 'application/pdf'); 
 
   res.sendFile(filePath, (err) => {
