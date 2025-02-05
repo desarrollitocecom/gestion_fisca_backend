@@ -111,13 +111,14 @@ const createTramiteHandler = async (req, res) => {
 
         const newTramiteInspector = await createTramiteInspector({
             nro_nc: nroNC.numero_acta,
-            documento_nc: req.files['documento_nc'][0],
+            documento_nc: req.files['documento_nc'] ? req.files['documento_nc'][0] : null,
             nro_acta,
-            documento_acta: req.files['documento_acta'][0],
+            documento_acta: req.files['documento_acta'] ? req.files['documento_acta'][0] : null,
             id_medida_complementaria,
             estado: 'DIGITADOR',
             id_inspector
         });
+        
 
         if (!newTramiteInspector) {
             return res.status(400).json({ error: 'Error al crear el Trámite Inspector' });
