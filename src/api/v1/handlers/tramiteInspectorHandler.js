@@ -107,10 +107,13 @@ const createTramiteHandler = async (req, res) => {
             }
         }
 
-        const nroNC = await getDoc(id_controlActa);
+        let nroNC
+        if (id_controlActa) {
+            nroNC = await getDoc(id_controlActa);
+        } 
 
         const newTramiteInspector = await createTramiteInspector({
-            nro_nc: nroNC.numero_acta,
+            nro_nc: nroNC ? nroNC.numero_acta : null,
             documento_nc: req.files['documento_nc'] ? req.files['documento_nc'][0] : null,
             nro_acta,
             documento_acta: req.files['documento_acta'] ? req.files['documento_acta'][0] : null,
@@ -118,7 +121,7 @@ const createTramiteHandler = async (req, res) => {
             estado: 'DIGITADOR',
             id_inspector
         });
-        
+
 
         if (!newTramiteInspector) {
             return res.status(400).json({ error: 'Error al crear el Trámite Inspector' });
@@ -126,11 +129,14 @@ const createTramiteHandler = async (req, res) => {
 
         const newNC = await createNC({ id_tramiteInspector: newTramiteInspector.id });
 
+        if (id_controlActa) {
             const controlActa = await updateControlActaController(id_controlActa, id_inspector);
 
-            const modelNC = 'NOTIFICACIÓN DE CARGO';
-            
-            const nuevo_doc=newTramiteInspector.documento_nc
+        }
+
+        const modelNC = 'NOTIFICACIÓN DE CARGO';
+
+        const nuevo_doc = newTramiteInspector.documento_nc
 
         const id_nc = newNC.id;
 
