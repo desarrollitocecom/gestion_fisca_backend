@@ -24,18 +24,22 @@ const inspectorValidation = async (receivedBody, files) => {
         errors.push('Ingrese nro_nc obligatorio');
     }
 
+    if (receivedBody.nro_nc != 0) {
+        if (!files || !files['documento_nc']) {
+            errors.push('El documento_nc es obligatorio');
+        } else {
+            const file = files['documento_nc'][0];
+            if (!['image/jpeg', 'image/png', 'image/gif'].includes(file.mimetype)) {
+                errors.push('El documento_nc debe ser una imagen en formato JPEG o PNG');
+            }
+        }
+    }
+
     if (!receivedBody.nro_acta) {
         errors.push('Ingrese nro_acta obligatorio');
     }
 
-    if (!files || !files['documento_nc']) {
-        errors.push('El documento_nc es obligatorio');
-    } else {
-        const file = files['documento_nc'][0];
-        if (!['image/jpeg', 'image/png', 'image/gif'].includes(file.mimetype)) {
-            errors.push('El documento_nc debe ser una imagen en formato JPEG o PNG');
-        }
-    }
+
     if (!files || !files['documento_acta']) {
         errors.push('El documento_acta es obligatorio');
     } else {
@@ -56,7 +60,7 @@ const inspectorValidation = async (receivedBody, files) => {
 
     const existingActa = await validateActa(receivedBody.nro_acta)
 
-    if(existingActa){
+    if (existingActa) {
         errors.push('Esta acta ya fue registrada. Por favor comuniquese con su superior');
     }
 
@@ -82,7 +86,7 @@ const inspectorValidation = async (receivedBody, files) => {
             }
         }
     }
-    
+
     return errors;
 };
 
