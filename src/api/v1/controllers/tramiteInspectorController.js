@@ -23,14 +23,18 @@ const getMyActasController = async (id) => {
 
 
 const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, id_medida_complementaria, estado, id_inspector }) => {
-
-
-    let documento_ncPath;
-    let documento_actaPath;
+    let documento_ncPath = null;
+    let documento_actaPath = null;
 
     try {
-        documento_ncPath = saveImage(documento_nc, "NC");
-        documento_actaPath = saveImage(documento_acta, 'AF');
+        // Solo guardar si el archivo existe
+        if (documento_nc) {
+            documento_ncPath = saveImage(documento_nc, "NC");
+        }
+
+        if (documento_acta) {
+            documento_actaPath = saveImage(documento_acta, 'AF');
+        }
 
         const newTramiteNC = await TramiteInspector.create({
             nro_nc,
@@ -46,12 +50,13 @@ const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, document
     } catch (error) {
         console.error('Error creando trámite:', error);
 
-        deleteFile(documento_ncPath);
-        deleteFile(documento_actaPath);
+        if (documento_ncPath) deleteFile(documento_ncPath);
+        if (documento_actaPath) deleteFile(documento_actaPath);
 
         return false;
     }
 };
+
 
 const getAllTramiteInspectorById = async (id, page = 1, limit = 20) => {
     const offset = (page - 1) * limit;
