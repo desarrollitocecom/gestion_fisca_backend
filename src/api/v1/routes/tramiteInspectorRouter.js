@@ -2,7 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const { uploadDocuments }  = require('../../../middlewares/uploadMiddleware');
 
-const { createTramiteHandler, allTramiteHandler, getMyActasHandler, getAllTipoMC } = require('../handlers/tramiteInspectorHandler');
+const { createTramiteHandler, allTramiteHandler, getMyActasHandler, getAllTipoMC, getTramiteHandler } = require('../handlers/tramiteInspectorHandler');
 const permisoAutorizacion = require("../../../checkers/roleAuth");
 const {inspectorLoginPhoto}=require('../../../middlewares/uploadMiddleware')
 const { verifyPhotoHandler } = require('../handlers/usuarioHandler');
@@ -14,5 +14,6 @@ router.get('/tipoMC', getAllTipoMC);
 
 router.post('/nuevoTramiteNC', uploadDocuments, createTramiteHandler);
 router.get('/misTramites/:id', allTramiteHandler);
+router.get('/tramite/:id', getTramiteHandler);
 
 module.exports = router;    

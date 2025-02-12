@@ -1,4 +1,4 @@
-const { createTramiteInspector, getAllTramiteInspectorById, getMyActasController, getDoc } = require('../controllers/tramiteInspectorController');
+const { createTramiteInspector, getAllTramiteInspectorById, getMyActasController, getDoc, getTramiteInspector } = require('../controllers/tramiteInspectorController');
 const { createMedidaComplementaria, getAllTipoMCController } = require('../controllers/medidaComplementariaController')
 const { createNC, getNCforDigitador } = require('../controllers/ncController');
 const { updateControlActaController } = require('../controllers/controlActaController')
@@ -36,7 +36,7 @@ const getMyActasHandler = async (req, res) => {
 
 const createTramiteHandler = async (req, res) => {
     const io = getIo();
-
+    console.log(req.body)
     const invalidFields = await inspectorValidation(req.body, req.files);
 
     if (invalidFields.length > 0) {
@@ -55,6 +55,11 @@ const createTramiteHandler = async (req, res) => {
         });
     }
 
+    // return res.status(400).json({
+    //     message: 'Si pasamos',
+    //     data: 'hola'
+    // });
+
     let {
         nombre_MC,
         nro_medida_complementaria,
@@ -67,6 +72,10 @@ const createTramiteHandler = async (req, res) => {
     } = req.body;
 
     nro_acta = nro_acta.toString().padStart(6, '0');
+
+    if (nro_medida_complementaria) {
+        nro_medida_complementaria = nro_medida_complementaria.toString().padStart(6, '0');
+    }
 
     if (nombre_MC == 1) {
         nombre_MC = null;
@@ -108,7 +117,7 @@ const createTramiteHandler = async (req, res) => {
         }
 
         let nroNC
-        if (id_controlActa) {
+        if (id_controlActa != 0) {
             nroNC = await getDoc(id_controlActa);
         } 
 
@@ -129,7 +138,7 @@ const createTramiteHandler = async (req, res) => {
 
         const newNC = await createNC({ id_tramiteInspector: newTramiteInspector.id });
 
-        if (id_controlActa) {
+        if (id_controlActa != 0) {
             const controlActa = await updateControlActaController(id_controlActa, id_inspector);
 
         }
@@ -181,7 +190,7 @@ const createTramiteHandler = async (req, res) => {
 const allTramiteHandler = async (req, res) => {
     const id = req.params.id;
 
-    const { page = 1, limit = 20 } = req.query;
+    const { page = 1, limit = 20, inicio = null, fin = null } = req.query;
     const errores = [];
 
     if (isNaN(page)) errores.push("El page debe ser un número");
@@ -194,7 +203,7 @@ const allTramiteHandler = async (req, res) => {
     }
 
     try {
-        const response = await getAllTramiteInspectorById(id, Number(page), Number(limit));
+        const response = await getAllTramiteInspectorById(id, Number(page), Number(limit), inicio, fin);
 
         if (response.data.length === 0) {
             return res.status(200).json({
@@ -216,6 +225,30 @@ const allTramiteHandler = async (req, res) => {
         res.status(500).json({ error: "Error interno del servidor al obtener los tramites." });
     }
 };
+
+const getTramiteHandler = async (req, res) => {
+    const id = req.params.id;
+    console.log(id)
+    try {
+        const response = await getTramiteInspector(id);
+
+        if (response) {
+            return res.status(200).json({
+                message: "Tramite obtenido correctamente",
+                data: response,
+            });
+        } else {
+            return res.status(200).json({
+                message: 'no existe este tramite',
+                data: []
+            });
+        }
+
+        
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 const getAllTipoMC = async (req, res) => {
@@ -241,4 +274,4 @@ const getAllTipoMC = async (req, res) => {
 
 
 
-module.exports = { createTramiteHandler, allTramiteHandler, getMyActasHandler, getAllTipoMC };
+module.exports = { createTramiteHandler, allTramiteHandler, getMyActasHandler, getAllTipoMC, getTramiteHandler };

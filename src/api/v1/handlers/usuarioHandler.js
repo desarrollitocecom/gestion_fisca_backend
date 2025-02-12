@@ -42,10 +42,12 @@ const verifyPhotoHandler = async (req, res) => {
             });
         }
         console.log('2');
-        const filePath = req.files['photoInspector'][0].path;
+        const file = req.files['photoInspector'][0];
+        console.log(file)
 
-        const imageBuffer = await sharp(filePath)
+        const imageBuffer = await sharp(file.path, {failOn: "truncated"})
             .rotate()
+            .jpeg({quality: 80, mozjpeg: true})
             .toBuffer();
 
         const base64Image = imageBuffer.toString('base64');

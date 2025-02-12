@@ -31,6 +31,7 @@
     "dotenv": "^16.4.5",
     "express": "^5.0.1",
     "fisca_backend": "file:",
+    "heic-convert": "^2.1.0",
     "jsonwebtoken": "^9.0.2",
     "moment": "^2.30.1",
     "mssql": "^11.0.1",

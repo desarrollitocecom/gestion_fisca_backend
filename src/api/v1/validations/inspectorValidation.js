@@ -11,7 +11,7 @@ const allowedFields = [
 ];
 
 const inspectorValidation = async (receivedBody, files) => {
-    const errors = [];
+    const errors = [];                  
 
     const receivedFields = Object.keys(receivedBody);
     const invalidFields = receivedFields.filter(field => !allowedFields.includes(field));
@@ -20,11 +20,7 @@ const inspectorValidation = async (receivedBody, files) => {
         errors.push(`El campo "${field}" no está permitido`);
     });
 
-    if (!receivedBody.nro_nc) {
-        errors.push('Ingrese nro_nc obligatorio');
-    }
-
-    if (receivedBody.nro_nc != 0) {
+    if (receivedBody.nro_nc) {
         if (!files || !files['documento_nc']) {
             errors.push('El documento_nc es obligatorio');
         } else {
@@ -34,6 +30,7 @@ const inspectorValidation = async (receivedBody, files) => {
             }
         }
     }
+
 
     if (!receivedBody.nro_acta) {
         errors.push('Ingrese nro_acta obligatorio');
