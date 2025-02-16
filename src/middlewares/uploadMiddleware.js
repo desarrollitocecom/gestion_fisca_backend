@@ -67,8 +67,27 @@ const uploadRecursoAdministrativo = upload.fields([
 ])
 
 const uploadCargo1 = upload.fields([
-    { name: 'documento1', maxCount: 1}
+    { name: 'documento1', maxCount: 1},
+    { name: 'evidencia1', maxCount: 1 }
 ])
+
+
+
+
+// const uploadCargo1 = upload.fields([
+//     { name: 'documento_nc', maxCount: 1 },
+//     { name: 'documento_acta', maxCount: 1 },
+//     { name: 'documento_medida_complementaria', maxCount: 1 },
+
+// ]);
+
+
+
+
+
+
+
+
 
 const uploadCargo2 = upload.fields([
     { name: 'documento2', maxCount: 1}

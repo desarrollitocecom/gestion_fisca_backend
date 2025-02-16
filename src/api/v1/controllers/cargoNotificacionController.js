@@ -1,4 +1,4 @@
-const { CargoNotificacion, IFI, ResolucionSubgerencial, ResolucionSancionadora, RSG, RG } = require('../../../config/db_connection');
+const { CargoNotificacion, IFI, ResolucionSubgerencial, ResolucionSancionadora, RSG, RG, TramiteInspector, NC } = require('../../../config/db_connection');
 const { Sequelize } = require('sequelize');
 const { saveImage, deleteFile } = require("../../../utils/fileUtils");
 
@@ -21,40 +21,92 @@ const createCargoNotificacionController = async ({
 
 //aqui
 const getAllCargoNotificacionForIFIController = async () => {
+    console.log('holaaaa')
     try {
-        const response = await IFI.findAll({
+        // const response = await IFI.findAll({
+        //     where: {
+        //         [Sequelize.Op.and]: [
+        //             Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'IFI'),
+        //             {
+        //                 [Sequelize.Op.or]: [
+        //                     Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null),
+        //                     Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), 'NO_ESTA')
+        //                 ]
+        //             }
+        //         ]
+        //     },
+        //     attributes: [
+        //         'id',
+        //         [Sequelize.col('cargoNotifi.id'), 'id_cargo'],
+        //         [Sequelize.col('nro_ifi'), 'nro'],
+        //         [Sequelize.col('id_nc'), 'id_nc'],
+        //         [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
+        //         [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
+        //         [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
+        //         [Sequelize.col('cargoNotifi.documento1'), 'documento1'],
+        //         [Sequelize.col('cargoNotifi.fecha2'), 'fecha2'],
+        //         [Sequelize.col('cargoNotifi.documento2'), 'documento2'],
+        //         [Sequelize.col('cargoNotifi.estado_visita'), 'estado_visita'],
+        //         [Sequelize.col('cargoNotifi.estado_entrega'), 'estado_entrega'],
+        //         [Sequelize.col('cargoNotifi.id_motorizado'), 'id_motorizado'],
+        //     ],
+        //     include: [
+        //         {
+        //             model: CargoNotificacion,
+        //             as: 'cargoNotifi',
+        //             attributes: []
+        //         }
+        //     ]
+        // });
+
+        const response = await NC.findAll({
             where: {
                 [Sequelize.Op.and]: [
-                    Sequelize.where(Sequelize.col('cargoNotifi.tipo'), 'IFI'),
+                    Sequelize.where(Sequelize.col('IFI.cargoNotifi.tipo'), 'IFI'),
                     {
                         [Sequelize.Op.or]: [
-                            Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), null),
-                            Sequelize.where(Sequelize.col('cargoNotifi.estado_entrega'), 'NO_ESTA')
+                            Sequelize.where(Sequelize.col('IFI.cargoNotifi.estado_entrega'), null),
+                            Sequelize.where(Sequelize.col('IFI.cargoNotifi.estado_entrega'), 'NO_ESTA')
                         ]
                     }
                 ]
             },
             attributes: [
-                'id',
-                [Sequelize.col('cargoNotifi.id'), 'id_cargo'],
-                [Sequelize.col('nro_ifi'), 'nro'],
-                [Sequelize.col('id_nc'), 'id_nc'],
-                [Sequelize.col('cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
-                [Sequelize.col('cargoNotifi.tipo'), 'tipo'],
-                [Sequelize.col('cargoNotifi.fecha1'), 'fecha1'],
-                [Sequelize.col('cargoNotifi.documento1'), 'documento1'],
-                [Sequelize.col('cargoNotifi.fecha2'), 'fecha2'],
-                [Sequelize.col('cargoNotifi.documento2'), 'documento2'],
-                [Sequelize.col('cargoNotifi.estado_visita'), 'estado_visita'],
-                [Sequelize.col('cargoNotifi.estado_entrega'), 'estado_entrega'],
-                [Sequelize.col('cargoNotifi.id_motorizado'), 'id_motorizado'],
+                [Sequelize.col('IFI.id'), 'id'],
+                [Sequelize.col('IFI.cargoNotifi.id'), 'id_cargo'],
+                [Sequelize.col('IFI.nro_ifi'), 'nro'],
+                [Sequelize.col('IFI.id_nc'), 'id_nc'],
+                [Sequelize.col('IFI.cargoNotifi.numero_cargoNotificacion'), 'numero_cargoNotificacion'],
+                [Sequelize.col('IFI.cargoNotifi.tipo'), 'tipo'],
+                [Sequelize.col('IFI.cargoNotifi.fecha1'), 'fecha1'],
+                [Sequelize.col('IFI.cargoNotifi.documento1'), 'documento1'],
+                [Sequelize.col('IFI.cargoNotifi.fecha2'), 'fecha2'],
+                [Sequelize.col('IFI.cargoNotifi.documento2'), 'documento2'],
+                [Sequelize.col('IFI.cargoNotifi.estado_visita'), 'estado_visita'],
+                [Sequelize.col('IFI.cargoNotifi.estado_entrega'), 'estado_entrega'],
+                [Sequelize.col('IFI.cargoNotifi.id_motorizado'), 'id_motorizado'],
+                [Sequelize.col('tramiteInspector.latitud'), 'latitud'],
+                [Sequelize.col('tramiteInspector.longitud'), 'longitud'],
             ],
             include: [
                 {
-                    model: CargoNotificacion,
-                    as: 'cargoNotifi',
+                    model: IFI,
+                    as: 'IFI',
+                    attributes: [],
+                    include: [
+                        {
+                            model: CargoNotificacion,
+                            as: 'cargoNotifi',
+                            attributes: []
+                        }
+                    ]
+                },
+                {
+                    model: TramiteInspector,
+                    as: 'tramiteInspector',
                     attributes: []
                 }
+                
             ]
         });
 
@@ -138,12 +190,27 @@ const getAllCargoNotificacionForRSGController = async () => {
                 [Sequelize.col('cargoNotifi.estado_visita'), 'estado_visita'],
                 [Sequelize.col('cargoNotifi.estado_entrega'), 'estado_entrega'],
                 [Sequelize.col('cargoNotifi.id_motorizado'), 'id_motorizado'],
+                [Sequelize.col('NCs.tramiteInspector.latitud'), 'latitud'],
+                [Sequelize.col('NCs.tramiteInspector.longitud'), 'longitud'],
+
             ],
             include: [
                 {
                     model: CargoNotificacion,
                     as: 'cargoNotifi',
                     attributes: []
+                },
+                {
+                    model: NC,
+                    as: 'NCs',
+                    attributes: [],
+                    include: [
+                        {
+                            model: TramiteInspector,
+                            as: 'tramiteInspector',
+                            attributes: []
+                        },
+                    ]
                 }
             ]
         });
@@ -476,9 +543,11 @@ const getCargoNotificacionController = async ({ id }) => {
 }
 
 //aqui
-const updateCargoNotificacionController = async (id, { numero_cargoNotificacion, fecha1, estado_visita, fecha2, estado_entrega, documento1, documento2, id_motorizado, numero_cargoNotificacion2 }) => {
+const updateCargoNotificacionController = async (id, { numero_cargoNotificacion, fecha1, estado_visita, fecha2, estado_entrega, documento1, evidencia1, documento2, evidencia2, id_motorizado, numero_cargoNotificacion2 }) => {
     let documento_path_1;
+    let evidencia_path_1;
     let documento_path_2;
+    let evidencia_path_2
     try {
 
 
@@ -487,9 +556,19 @@ const updateCargoNotificacionController = async (id, { numero_cargoNotificacion,
 
             documento_path_1 = saveImage(documento1, "Notificacion Cargo IFI 1");
         }
+        if (evidencia1) {
+            console.log('asd');
+
+            evidencia_path_1 = saveImage(evidencia1, "Evidencia Cargo IFI 1");
+        }
         if (documento2) {
             documento_path_2 = saveImage(documento2, "Notificacion Cargo IFI 2");
         }
+
+        if (evidencia2) {
+            evidencia_path_2 = saveImage(evidencia2, "Evidencia Cargo IFI 2");
+        }
+
 
         const response = await CargoNotificacion.findOne({
             where: {
@@ -497,7 +576,7 @@ const updateCargoNotificacionController = async (id, { numero_cargoNotificacion,
             }
         })
 
-        const res = await response.update({ numero_cargoNotificacion, fecha1, fecha2, estado_visita, estado_entrega, documento1: documento_path_1, documento2: documento_path_2, id_motorizado, numero_cargoNotificacion2 })
+        const res = await response.update({ numero_cargoNotificacion, fecha1, fecha2, estado_visita, estado_entrega, documento1: documento_path_1, evidencia1: evidencia_path_1, evidencia2: evidencia_path_2, documento2: documento_path_2, id_motorizado, numero_cargoNotificacion2 })
         //console.log(res);
 
         return res || null
@@ -506,8 +585,14 @@ const updateCargoNotificacionController = async (id, { numero_cargoNotificacion,
         if (documento_path_1) {
             deleteFile(documento_path_1);
         }
+        if (evidencia_path_1) {
+            deleteFile(evidencia_path_1);
+        }
         if (documento_path_2) {
             deleteFile(documento_path_2);
+        }
+        if (evidencia_path_2) {
+            deleteFile(evidencia_path_2);
         }
         console.error("Error al crear el Informe Final desde el Controlador:", error);
         return false;

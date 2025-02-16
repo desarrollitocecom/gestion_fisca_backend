@@ -16,8 +16,8 @@ const getAllDataController = async (page = 1, limit = 20, ordenanza = null, acti
     };
 
     if (fecha_NC) {
-        let fechaStart = new Date(fecha_NC.start); 
-        let fechaEnd = new Date(fecha_NC.end);    
+        let fechaStart = new Date(fecha_NC.start);
+        let fechaEnd = new Date(fecha_NC.end);
 
         fechaStart.setUTCHours(0, 0, 0, 0);
         fechaEnd.setUTCHours(23, 59, 59, 999);
@@ -126,15 +126,16 @@ const getAllDataController = async (page = 1, limit = 20, ordenanza = null, acti
 
 
 
-                // // //RESOLUCION SANCIONADORA
-                // [Sequelize.col('IFI.RSA.nro_rsa'), 'numero_RSA'],
-                // [Sequelize.col('IFI.RSA.createdAt'), 'fecha_RSA'],
+                // //RESOLUCION SANCIONADORA
+                [Sequelize.col('IFI.RSA.nro_rsa'), 'numero_RSA'],
+                [Sequelize.col('IFI.RSA.createdAt'), 'fecha_RSA'],
+                [Sequelize.col('IFI.RSA.createdAt'), 'fecha_notificacion_RSA'],
 
-                // //RECONSIDERACION SUBGERENCIAL
-                // [Sequelize.col('IFI.RSA.Reconsideracion.RecursoReconUsuario.usuario'), 'usuarioReconsiSubg_Reconcideracion_Sanc'],
-                // [Sequelize.literal(`'RECURSO DE RECONSIDERACION'`), 'nombre_ReconsiSubg_Reconcideracion_Sanc'],
-                // [Sequelize.col('IFI.RSA.Reconsideracion.documento'), 'documento_ReconsiSubg_Reconcideracion_Sanc'],
-                // [Sequelize.col('IFI.RSA.Reconsideracion.createdAt'), 'ReconsiSubg_createdAt_Reconcideracion_Sanc'],
+                //RECONSIDERACION SUBGERENCIAL
+                [Sequelize.col('IFI.RSA.Reconsideracion.RecursoReconUsuario.usuario'), 'usuarioReconsiSubg_Reconcideracion_Sanc'],
+                [Sequelize.literal(`'RECURSO DE RECONSIDERACION'`), 'nombre_ReconsiSubg_Reconcideracion_Sanc'],
+                [Sequelize.col('IFI.RSA.Reconsideracion.documento'), 'documento_ReconsiSubg_Reconcideracion_Sanc'],
+                [Sequelize.col('IFI.RSA.Reconsideracion.createdAt'), 'ReconsiSubg_createdAt_Reconcideracion_Sanc'],
 
                 // //SUBGERENCIA
                 // [Sequelize.col('IFI.RSA.Reconsideracion.RSGs.rsgUsuario.usuario'), 'usuarioRSG_Reconcideracion_Sanc'],
@@ -519,6 +520,7 @@ const getAllDataController = async (page = 1, limit = 20, ordenanza = null, acti
             numero_DIFI: row.get('numero_DIFI'),
             fecha_descargoIFI: row.get('fecha_descargo'),
 
+            //aqui
             numero_RSG1: row.get('numero_RSG1'),
             fecha_RSG1: row.get('fecha_RSG1'),
             fecha_notificacion_RSG1: row.get('fecha_notificacion_RSG1'),
@@ -527,22 +529,22 @@ const getAllDataController = async (page = 1, limit = 20, ordenanza = null, acti
             fecha_RSA: row.get('fecha_RSA'),
             fecha_notificacion_RSA: row.get('fecha_notificacion_RSA'),
 
-            numero_Reconsideracion : row.get('numero_reconsideracion'),
-            fecha_Reconsideracion : row.get('fecha_reconsideracion'),
+            numero_Reconsideracion: row.get('numero_reconsideracion'),
+            fecha_Reconsideracion: row.get('fecha_reconsideracion'),
 
             fecha_RSG2: row.get('fecha_RSG2'),
             numero_RSG2: row.get('numero_RSG2'),
             fecha_notificacion_RSG2: row.get('fecha_notificacion_RSG2'),
 
-            numero_Apelacion : row.get('numero_apelacion'),
-            fecha_Apelacion : row.get('fecha_apelacion'),
+            numero_Apelacion: row.get('numero_apelacion'),
+            fecha_Apelacion: row.get('fecha_apelacion'),
 
             fecha_RG: row.get('fecha_RG'),
             numero_RG: row.get('numero_RG'),
             fecha_notificacion_RG: row.get('fecha_notificacion_RG'),
 
-            numero_constancia_Exigibilidad : row.get('numero_constancia_exigibilidad'),
-            fecha_Constancia_Exigibilidad : row.get('fecha_constancia_Exigibilidad'),
+            numero_constancia_Exigibilidad: row.get('numero_constancia_exigibilidad'),
+            fecha_Constancia_Exigibilidad: row.get('fecha_constancia_Exigibilidad'),
 
             // nro_RSG: row.get('numero_RSG'),
             // fecha_emision_RSG: row.get('fecha_RSG'),

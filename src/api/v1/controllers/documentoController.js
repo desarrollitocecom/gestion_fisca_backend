@@ -1,10 +1,22 @@
 const {
-    Documento, DocumentoOpcional, DocumetoOpcionalLista
+    Documento, DocumentoOpcional, DocumentoOpcionalLista
 } = require('../../../config/db_connection');
 
 const getDocumento = async (id) => {
     try {
         const response = await Documento.findOne({
+            where: { id_nc: id }
+        })
+        return response || null
+    } catch (error) {
+        console.error({ message: "Error en el Controlador al traer el documento", data: error })
+        return false
+    }
+}
+
+const getDocumentoOpcional = async (id) => {
+    try {
+        const response = await DocumentoOpcionalLista.findOne({
             where: { id_nc: id }
         })
         return response || null
@@ -85,5 +97,6 @@ module.exports = {
     createDocumento,
     getDocumento,
     updateDocumento,
-    createDocumentoOpcional
+    createDocumentoOpcional,
+    getDocumentoOpcional
 }

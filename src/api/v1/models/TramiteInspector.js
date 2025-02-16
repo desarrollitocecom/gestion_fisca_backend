@@ -23,6 +23,17 @@ module.exports = (sequelize) => {
             type:DataTypes.STRING,
             allowNull:true
         },
+
+        latitud:{
+            type:DataTypes.STRING,
+            allowNull:true
+        },
+
+        longitud:{
+            type:DataTypes.STRING,
+            allowNull:true
+        },
+
         id_medida_complementaria: {
             type: DataTypes.UUID,
             references: {

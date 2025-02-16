@@ -55,19 +55,15 @@ const createTramiteHandler = async (req, res) => {
         });
     }
 
-    // return res.status(400).json({
-    //     message: 'Si pasamos',
-    //     data: 'hola'
-    // });
-
     let {
         nombre_MC,
         nro_medida_complementaria,
 
         id_controlActa,
-        nro_nc,
         nro_acta,
         id_inspector,
+        latitud,
+        longitud
 
     } = req.body;
 
@@ -117,9 +113,12 @@ const createTramiteHandler = async (req, res) => {
         }
 
         let nroNC
-        if (id_controlActa != 0) {
-            nroNC = await getDoc(id_controlActa);
-        } 
+        if(id_controlActa){
+            if (id_controlActa != 0) {
+                nroNC = await getDoc(id_controlActa);
+            } 
+        }
+        
 
         const newTramiteInspector = await createTramiteInspector({
             nro_nc: nroNC ? nroNC.numero_acta : null,
@@ -128,6 +127,8 @@ const createTramiteHandler = async (req, res) => {
             documento_acta: req.files['documento_acta'] ? req.files['documento_acta'][0] : null,
             id_medida_complementaria,
             estado: 'DIGITADOR',
+            latitud,
+            longitud,
             id_inspector
         });
 
@@ -138,12 +139,11 @@ const createTramiteHandler = async (req, res) => {
 
         const newNC = await createNC({ id_tramiteInspector: newTramiteInspector.id });
 
+        if(id_controlActa){
         if (id_controlActa != 0) {
             const controlActa = await updateControlActaController(id_controlActa, id_inspector);
-
         }
-
-        const modelNC = 'NOTIFICACIÓN DE CARGO';
+        }
 
         const nuevo_doc = newTramiteInspector.documento_nc
 
@@ -155,7 +155,7 @@ const createTramiteHandler = async (req, res) => {
         let nuevoModulo = 'ACTA DE FISCALIZACIÓN';
 
 
-        await createDocumento(modelNC, id_nc, nuevo_doc);
+        await createDocumento('NOTIFICACIÓN DE CARGO', id_nc, nuevo_doc);
 
         await updateDocumento({ id_nc, total_documentos, nuevoModulo });
 
@@ -272,6 +272,27 @@ const getAllTipoMC = async (req, res) => {
     }
 }
 
+const getAllNCHandler = async (req, res) => {
+    try {
+        const response = await getAllNC();
+
+        if (response.data === 0) {
+            return res.status(200).json({
+                message: 'No hay NC',
+                data: []
+            });
+        }
+
+        return res.status(200).json({
+            message: "NC obtenidas correctamente",
+            data: response,
+        });
+    } catch (error) {
+        console.error("Error al obtener los NCs:", error);
+        res.status(500).json({ error: "Error interno del servidor al obtener los NCs." });
+    }
+}
 
 
-module.exports = { createTramiteHandler, allTramiteHandler, getMyActasHandler, getAllTipoMC, getTramiteHandler };
+
+module.exports = { createTramiteHandler, allTramiteHandler, getMyActasHandler, getAllTipoMC, getTramiteHandler, getAllNCHandler };

@@ -8,6 +8,8 @@ const allowedFields = [
     'nro_nc',
     'nro_acta',
     'id_inspector',
+    'latitud',
+    'longitud'
 ];
 
 const inspectorValidation = async (receivedBody, files) => {

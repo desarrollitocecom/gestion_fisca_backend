@@ -62,6 +62,8 @@ const createOpcionalDocumentHandler = async (req, res) => {
 
         const existingLista = await getDocumentoOpcional(id);
 
+        console.log(existingLista)
+
         if (existingLista){
             await updateDocumentoOpcionalLista({ id_nc: id, total_DocumentoOpcionalLista: newDocumentOptional.documento_opcional, nuevoModulo: tipo_documentoOpcional });
         } else {

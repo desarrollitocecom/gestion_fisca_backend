@@ -1,4 +1,4 @@
-const { TramiteInspector, MedidaComplementaria, EstadoMC, Doc, TipoDocumentoComplementario, EjecucionMC, ControlActa } = require('../../../config/db_connection');
+const { TramiteInspector, MedidaComplementaria, EstadoMC, Doc, TipoDocumentoComplementario, EjecucionMC, ControlActa, NC } = require('../../../config/db_connection');
 const { saveImage, deleteFile } = require('../../../utils/fileUtils');
 const { Sequelize, Op } = require('sequelize');
 
@@ -22,7 +22,7 @@ const getMyActasController = async (id) => {
 
 
 
-const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, id_medida_complementaria, estado, id_inspector }) => {
+const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, documento_acta, id_medida_complementaria, estado, latitud, longitud , id_inspector }) => {
     let documento_ncPath = null;
     let documento_actaPath = null;
 
@@ -43,6 +43,8 @@ const createTramiteInspector = async ({ nro_nc, documento_nc, nro_acta, document
             documento_acta: documento_actaPath,
             id_medida_complementaria,
             estado,
+            latitud,
+            longitud,
             id_inspector
         });
 
@@ -150,7 +152,17 @@ const getDoc = async (id) => {
     }
 }
 
+const getAllNC = async (id) => {
+    try {
+        const response = await NC.findAll()
+
+        return response
+    } catch (error) {
+        return false
+    }
+}
 
 
 
-module.exports = { createTramiteInspector, getTramiteInspector, getAllTramiteInspectorById, getMyActasController, getDoc };
+
+module.exports = { createTramiteInspector, getTramiteInspector, getAllTramiteInspectorById, getMyActasController, getDoc, getAllNC };

@@ -12,7 +12,7 @@ const getAllDataHandler = async (req, res) => {
 
     if (fecha_NC) {
         const fechas = fecha_NC.split('|');
-        
+
         if (fechas.length !== 2) {
             errores.push("El parámetro fecha_NC debe tener el formato 'start|end'.");
         } else {
@@ -41,12 +41,12 @@ const getAllDataHandler = async (req, res) => {
     }
 
     let fecha_NCObj = null;
-        if (fecha_NC) {
-            const [start, end] = fecha_NC.split('|'); // Suponiendo que se pasa como "start|end"
-            fecha_NCObj = { start, end };
-        }
+    if (fecha_NC) {
+        const [start, end] = fecha_NC.split('|'); // Suponiendo que se pasa como "start|end"
+        fecha_NCObj = { start, end };
+    }
     console.log(fecha_NCObj);
-    
+
     try {
         const response = await getAllDataController(Number(page), Number(limit), ordenanza, actividad_economica, fecha_NCObj);
 

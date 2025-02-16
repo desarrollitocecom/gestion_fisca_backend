@@ -238,10 +238,9 @@ const getAllHistoryCargoNotificacionForRGHandler = async (req, res) => {
 //el bueno
 const updateCargoNotificacion1ForIFIHandler = async (req, res) => {
     const { id_ifi, id_nc, numero_cargoNotificacion, fecha1, estado_visita, estado_entrega, id_motorizado } = req.body;
-    console.log(id_ifi, id_nc, numero_cargoNotificacion, fecha1, estado_visita, estado_entrega, id_motorizado);
     
     const { id } = req.params
-    console.log('este id: ', id)
+
     try {
         const updateCargoNotificacion = await updateCargoNotificacionController(id, {
             numero_cargoNotificacion,
@@ -249,6 +248,7 @@ const updateCargoNotificacion1ForIFIHandler = async (req, res) => {
             estado_visita,
             estado_entrega,
             documento1: req.files['documento1'][0],
+            evidencia1: req.files['evidencia1'][0],
             id_motorizado
         });
 

@@ -27,6 +27,12 @@ module.exports = (sequelize) => {
             allowNull: true
         },
 
+        evidencia1: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+
+
         numero_cargoNotificacion2: {
             type: DataTypes.STRING,
             allowNull: true
@@ -38,6 +44,11 @@ module.exports = (sequelize) => {
         },
 
         documento2: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        
+        evidencia2: {
             type: DataTypes.STRING,
             allowNull: true
         },
